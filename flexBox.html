@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flexbox Sakura · Práctica</title>
+<style>
+:root{--bg:#fff7f9;--p1:#fde4ec;--p2:#f7b6c9;--p3:#e8789a;--p4:#c2456c;--ink:#4a2c3a;--leaf:#7fa38a;--wood:#6b4a3a}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#fbd3df,#f7b6c9 60%,#e8789a);padding:28px 16px 18px;text-align:center}
+header h1{margin:0;font-size:clamp(1.8rem,5vw,2.8rem)}
+header p{margin:4px 0 12px}
+#bar{max-width:360px;margin:auto;height:12px;background:#fff8;border-radius:9px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:var(--p4);transition:width .4s}
+#pt{font-size:.9rem;margin-top:4px}
+nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:8px;background:#fff7f9ee;border-bottom:2px solid var(--p2)}
+nav button,.btn{font:inherit;font-weight:600;border:2px solid var(--p3);background:#fff;color:var(--p4);padding:5px 14px;border-radius:20px;cursor:pointer}
+nav button.on,.btn:hover,.btn.on{background:var(--p3);color:#fff}
+main{max-width:1000px;margin:auto;padding:8px 14px 50px}
+section{display:none}section.on{display:block}
+h2{color:var(--p4);border-bottom:3px dotted var(--p2);padding-bottom:4px}
+.card{background:#fff;border:2px solid var(--p1);border-radius:16px;padding:6px 18px 16px;margin:14px 0}
+.card.ok{border-color:var(--leaf)}
+.card h3{color:var(--wood)}
+code,pre,textarea{font-family:Consolas,monospace}
+code{background:var(--p1);padding:1px 6px;border-radius:5px;color:var(--p4)}
+pre{background:var(--ink);color:#ffe4ec;padding:12px;border-radius:10px;overflow:auto;margin:8px 0}
+.tag{font-size:.75rem;background:var(--leaf);color:#fff;padding:2px 8px;border-radius:10px;vertical-align:middle}
+.tag.h{background:var(--p3)}
+.tip{background:#eef7ef;border-left:5px solid var(--leaf);padding:8px 12px;border-radius:8px;margin:8px 0}
+.warn{background:#fff0f3;border-left-color:var(--p3)}
+.demo{display:flex;height:120px;max-width:440px;border:2px dashed var(--p3);background:var(--bg);border-radius:8px}
+.b{width:44px;padding:9px 0;text-align:center;font-weight:700;border-radius:6px;background:var(--p2)}
+.b:nth-child(2n){background:#f2a0b8}.b:nth-child(3n){background:var(--p3);color:#fff}
+.vals{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.vals .btn{padding:2px 10px;font:600 13px Consolas,monospace}
+.lab{display:grid;grid-template-columns:260px 1fr;gap:14px}
+@media(max-width:700px){.lab{grid-template-columns:1fr}}
+#lc label{display:block;font-size:.85rem;margin:6px 0}
+#lc span{font-family:Consolas,monospace;color:var(--p4)}
+#lc select{width:100%;font:inherit;padding:3px;border:2px solid var(--p2);border-radius:8px}
+.li{cursor:pointer}.li.sel{outline:3px solid var(--leaf)}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+textarea{width:100%;height:210px;background:var(--ink);color:#ffe4ec;border:0;border-radius:10px;padding:10px;tab-size:2;font-size:14px}
+iframe{width:100%;height:220px;border:2px solid var(--p2);border-radius:10px;background:#fff}
+.msg{font-weight:600;min-height:1.6em;margin:6px 0 0}
+.chip{display:inline-block;background:#fff;border:2px solid var(--p3);color:var(--p4);border-radius:10px;padding:3px 10px;margin:3px;cursor:grab;font:600 13px Consolas,monospace}
+.chip.s{background:var(--p1)}.chip.bad{border-color:#d33;background:#ffe3e3}
+.dz{min-height:50px;border:2px dashed var(--p3);border-radius:10px;padding:4px;background:var(--bg)}
+.dz:empty::before{content:"Suelta aquí…";color:#c9a;font-size:.85rem}
+.dz.pool{background:#fff;border-color:var(--p2);margin-top:8px}
+.row{display:grid;grid-template-columns:1fr 210px;gap:8px;align-items:center;margin:6px 0}
+</style>
+</head>
+<body>
+<header><h1>🌸 Flexbox Sakura</h1><p>Aprende Flexbox practicando: teoría, laboratorio, código y arrastrar y soltar</p>
+<div id="bar"><i></i></div><div id="pt"></div></header>
+<nav></nav>
+<main>
+<section id="teoria"></section>
+<section id="lab"></section>
+<section id="codigo"></section>
+<section id="dnd"></section>
+</main>
+<script>
+const $=s=>document.querySelector(s),el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+let done={};try{done=JSON.parse(localStorage.getItem('fxs')||'{}')}catch(e){}
+function prog(){const n=Object.keys(done).length;$('#bar i').style.width=100*n/TOTAL+'%';$('#pt').textContent=n+' / '+TOTAL+' retos completados'+(n>=TOTAL?' 🎉 ¡Maestro del flex!':'')}
+function win(id,c){done[id]=1;try{localStorage.setItem('fxs',JSON.stringify(done))}catch(e){}c.classList.add('ok');prog()}
+
+/* ---------- Pestañas ---------- */
+[['teoria','📖 Teoría'],['lab','🧪 Laboratorio'],['codigo','⌨️ Ejercicios de código'],['dnd','🖐️ Arrastrar y soltar']].forEach(([id,t],i)=>{
+ const b=el('button','',t);b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));b.classList.add('on');scrollTo(0,0)};
+ $('nav').append(b);if(!i)b.click()});
+
+/* ---------- TEORÍA ---------- */
+const PROPS=[
+{p:'display',d:'Convierte un elemento en <b>contenedor flexible</b>. Sus hijos directos pasan a colocarse en una fila. Es siempre lo primero que escribes: sin esta línea, el resto de propiedades flex no hacen nada.',v:['block','flex'],tip:'Por defecto un <code>div</code> es <code>block</code>: sus hijos se apilan uno debajo de otro.'},
+{p:'flex-direction',d:'Elige la dirección del <b>eje principal</b>: en fila (<code>row</code>) o en columna (<code>column</code>). Con <code>-reverse</code> se invierte el orden.',v:['row','row-reverse','column','column-reverse'],tip:'Al pasar a <code>column</code> los ejes se intercambian: el principal pasa a ser el vertical.'},
+{p:'justify-content',d:'Coloca los hijos a lo largo del <b>eje principal</b> (en fila: de izquierda a derecha) y reparte el espacio libre.',v:['flex-start','center','flex-end','space-between','space-around','space-evenly'],tip:'<code>space-between</code>: primero y último pegados a los bordes. <code>space-around</code>: espacio a ambos lados de cada caja. <code>space-evenly</code>: todos los huecos iguales.'},
+{p:'align-items',d:'Coloca los hijos en el <b>eje cruzado</b> (en fila: de arriba abajo).',v:['stretch','flex-start','center','flex-end'],tip:'Solo se nota si el contenedor es más alto que los hijos. <code>stretch</code> es el valor por defecto: los hijos sin altura propia se estiran.'},
+{p:'flex-wrap',d:'Si los hijos no caben en una línea: ¿se aprietan (<code>nowrap</code>, por defecto) o saltan a la línea siguiente (<code>wrap</code>)?',v:['nowrap','wrap'],n:7,bw:90,tip:'Aquí las cajas miden 90px. Con <code>nowrap</code> se encogen para caber.'},
+{p:'gap',d:'Separación entre los hijos. No añade espacio en los bordes exteriores.',v:['0px','10px','25px']},
+{p:'flex-grow',h:1,d:'Número que indica cuánto del <b>espacio sobrante</b> se queda este hijo. <code>0</code> = nada (por defecto).',v:['0','1'],tip:'Si varios hijos tienen <code>1</code> se reparten el sobrante a partes iguales; uno con <code>2</code> se lleva el doble.'},
+{p:'flex-basis',h:1,d:'Tamaño inicial del hijo en el eje principal, antes de repartir el espacio. <code>auto</code> = usa su <code>width</code>.',v:['auto','100px','160px']},
+{p:'flex',h:1,d:'Atajo para los tres valores de crecimiento. Lo más habitual: <code>flex: 1</code> → «ocupa el espacio sobrante a partes iguales».',v:['0 1 auto','1','2']},
+{p:'align-self',h:1,d:'Igual que <code>align-items</code>, pero solo para <b>un hijo</b>: se alinea distinto al resto.',v:['auto','flex-start','center','flex-end']},
+{p:'order',h:1,d:'Cambia la posición visual de un hijo sin tocar el HTML. Todos valen <code>0</code>; el número menor va antes. Admite negativos.',v:['-1','0','1']}];
+
+const T=$('#teoria');
+T.innerHTML=`<h2>📖 Teoría paso a paso</h2>
+<div class=card><h3>1. ¿Qué es Flexbox?</h3><p>Es una forma de colocar elementos en una <b>fila</b> o en una <b>columna</b> y de repartir el espacio entre ellos. Sin Flexbox, los <code>div</code> se apilan uno debajo de otro. Con Flexbox decides: ¿fila o columna?, ¿pegados a un lado, centrados o separados?, ¿alineados arriba, en medio o abajo?</p></div>
+<div class=card><h3>2. Padre e hijos</h3><p>Flexbox siempre tiene dos niveles. El <b>padre</b> (contenedor) manda sobre el conjunto; los <b>hijos</b> (ítems) pueden tener sus propias reglas.</p>
+<pre>&lt;div class="contenedor"&gt;   &lt;!-- padre --&gt;
+  &lt;div class="caja"&gt;1&lt;/div&gt;   &lt;!-- hijo --&gt;
+  &lt;div class="caja"&gt;2&lt;/div&gt;   &lt;!-- hijo --&gt;
+&lt;/div&gt;
+
+.contenedor { display: flex; }</pre>
+<div class="tip warn">⚠️ Solo los hijos <b>directos</b> son ítems flex. Los «nietos» no se ven afectados.</div></div>
+<div class=card><h3>3. Los dos ejes</h3><p>Todo Flexbox gira alrededor de dos ejes:</p>
+<div class=demo style="height:90px;align-items:center;justify-content:space-around"><div class=b>1</div><div class=b>2</div><div class=b>3</div></div>
+<p>➡️ <b>Eje principal</b>: por donde avanzan los hijos (en <code>row</code>, horizontal). Lo controla <code>justify-content</code>.<br>⬇️ <b>Eje cruzado</b>: el perpendicular (en <code>row</code>, vertical). Lo controla <code>align-items</code>.</p>
+<div class=tip>💡 Truco: <b>justify = eje principal</b>, <b>align = eje cruzado</b>. Si cambias a <code>column</code>, se intercambian.</div></div>
+<h2>Propiedades del padre <span class=tag>padre</span></h2><p>Pulsa los valores y mira qué pasa. Se escriben en el <code>.contenedor</code>.</p><div id=tp></div>
+<h2>Propiedades de los hijos <span class="tag h">hijo</span></h2><p>Aquí el padre ya es flex; las reglas se aplican <b>solo a la caja 2</b>.</p><div id=th></div>
+<h2>Errores frecuentes</h2><div class=card><ul>
+<li>Olvidar <code>display: flex</code> en el padre.</li>
+<li>Escribir una propiedad del padre en el hijo (o al revés).</li>
+<li>Confundir <code>justify-content</code> (eje principal) con <code>align-items</code> (eje cruzado).</li>
+<li>Esperar que <code>align-items: center</code> centre en vertical cuando el contenedor <b>no tiene altura</b> extra.</li>
+<li>Pensar que <code>order</code> cambia el HTML: solo cambia lo que se ve.</li></ul>
+<div class=tip>🎓 Cuando domines esto, mira también <code>flex-shrink</code> y <code>align-content</code>. De momento, no los necesitas.</div></div>`;
+PROPS.forEach(P=>{
+ const c=el('div','card',`<h3><code>${P.p}</code> <span class="tag ${P.h?'h':''}">${P.h?'hijo':'padre'}</span></h3><p>${P.d}</p>${P.tip?`<div class=tip>💡 ${P.tip}</div>`:''}`);
+ const d=el('div','demo');d.style.display=P.p=='display'?'block':'flex';if(P.n)d.style.height='180px';
+ for(let i=1;i<=(P.n||3);i++){const b=el('div','b',i);if(P.bw)b.style.width=P.bw+'px';d.append(b)}
+ const tg=P.h?d.children[1]:d,code=el('code','','👇 elige un valor'),vals=el('div','vals');
+ P.v.forEach(v=>{const b=el('button','btn',v);b.onclick=()=>{tg.style.setProperty(P.p,v);vals.querySelectorAll('.btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');code.textContent=(P.h?'.caja2':'.contenedor')+' { '+P.p+': '+v+'; }'};vals.append(b)});
+ c.append(vals,d,code);$(P.h?'#th':'#tp').append(c)});
+
+/* ---------- LABORATORIO ---------- */
+const CO={'flex-direction':['row','row-reverse','column','column-reverse'],'justify-content':['flex-start','center','flex-end','space-between','space-around','space-evenly'],'align-items':['stretch','flex-start','center','flex-end'],'flex-wrap':['nowrap','wrap'],gap:['0px','10px','20px']};
+const CH={'flex-grow':['0','1','2'],'flex-basis':['auto','60px','120px'],'align-self':['auto','flex-start','center','flex-end'],order:['-1','0','1','2']};
+const DC={'flex-direction':'row','justify-content':'flex-start','align-items':'stretch','flex-wrap':'nowrap',gap:'0px'},DI={'flex-grow':'0','flex-basis':'auto','align-self':'auto',order:'0'};
+let st,IT,sel=0;
+$('#lab').innerHTML='<h2>🧪 Laboratorio libre</h2><p>Cambia el <b>padre</b> a la izquierda. Haz clic en una caja para cambiar las propiedades de ese <b>hijo</b>. Abajo verás el CSS que se genera.</p><div class=lab><div id=lc class=card></div><div><div id=lv class=demo></div><pre id=lcode></pre></div></div>';
+function reset(){st={...DC};IT=[0,1,2,3,4].map(()=>({...DI}));sel=0;panel();draw()}
+function sl(p,o,k,opts){const w=el('label','','<span>'+k+'</span>'),s=el('select');opts.forEach(x=>s.add(new Option(x)));s.value=o[k];s.onchange=()=>{o[k]=s.value;draw()};w.append(s);p.append(w)}
+function panel(){const p=$('#lc');p.innerHTML='<h3>Padre <span class=tag>padre</span></h3>';Object.keys(CO).forEach(k=>sl(p,st,k,CO[k]));p.append(el('h3','','Caja '+(sel+1)+' <span class="tag h">hijo</span>'));Object.keys(CH).forEach(k=>sl(p,IT[sel],k,CH[k]));const r=el('button','btn','↺ Reiniciar');r.onclick=reset;p.append(r)}
+function draw(){const v=$('#lv');v.style.cssText='display:flex;height:280px;max-width:none';Object.entries(st).forEach(([k,x])=>v.style.setProperty(k,x));v.innerHTML='';
+ IT.forEach((o,i)=>{const b=el('div','b li'+(i==sel?' sel':''),i+1);b.style.padding=[8,26,14,36,20][i]+'px 0';b.style.width='58px';Object.entries(o).forEach(([k,x])=>b.style.setProperty(k,x));b.onclick=()=>{sel=i;panel();draw()};v.append(b)});
+ let c='.contenedor {\n  display: flex;\n'+Object.entries(st).map(([k,x])=>'  '+k+': '+x+';\n').join('')+'}';
+ IT.forEach((o,i)=>{const l=Object.entries(o).filter(([k,x])=>x!=DI[k]);if(l.length)c+='\n\n.caja'+(i+1)+' {\n'+l.map(([k,x])=>'  '+k+': '+x+';\n').join('')+'}'});
+ $('#lcode').textContent=c}
+reset();
+
+/* ---------- MOTOR DE PREVIEW (iframes) ---------- */
+const doc=(n,base,css)=>{let h='';for(let i=1;i<=n;i++)h+=`<div class="caja c${i}">${i}</div>`;
+ return `<!doctype html><!--${Math.random()}--><style>*{box-sizing:border-box}body{margin:0;padding:6px;font:bold 15px sans-serif;color:#4a2c3a}.contenedor{border:2px dashed #e8789a;height:200px;background:#fff7f9;overflow:hidden}.caja{width:50px;height:50px;line-height:46px;text-align:center;border-radius:8px;background:#f7b6c9}.caja:nth-child(3n+2){background:#f2a0b8}.caja:nth-child(3n){background:#e8789a;color:#fff}${base||''}${css}</style><div class="contenedor">${h}</div>`};
+const R=(f,n,base,css)=>new Promise(r=>{f.onload=()=>r();f.srcdoc=doc(n,base,css)});
+const rects=f=>{const d=f.contentDocument,c=d.querySelector('.contenedor').getBoundingClientRect();return[...d.querySelectorAll('.caja')].map(b=>{const r=b.getBoundingClientRect();return[r.left-c.left,r.top-c.top,r.width,r.height]})};
+const same=(a,b)=>a.length==b.length&&b.some(r=>r[2]>0)&&a.every((r,i)=>r.every((v,j)=>Math.abs(v-b[i][j])<1.5));
+const pretty=s=>s.replace(/([^{};]+)\{/g,'$1 {\n  ').replace(/:/g,': ').replace(/;\s*/g,';\n  ').replace(/\s*\}/g,'\n}\n');
+
+/* ---------- EJERCICIOS DE CÓDIGO ---------- */
+const F='.contenedor {\n  display: flex;\n  \n}';
+const EX=[
+['Enciende flex','Ahora las cajas están una debajo de otra. Colócalas en <b>fila</b> con la propiedad que activa Flexbox.',3,'','.contenedor {\n  \n}','.contenedor{display:flex;}','Dentro de .contenedor escribe: display: flex;'],
+['Cambia la dirección','Pon las cajas en una <b>columna</b>.',3,'',F,'.contenedor{display:flex;flex-direction:column;}','flex-direction: column;'],
+['Al centro de la fila','Coloca las cajas en el <b>centro</b> horizontal del contenedor.',3,'',F,'.contenedor{display:flex;justify-content:center;}','justify-content actúa sobre el eje principal.'],
+['Reparte el espacio','Primera caja pegada a la izquierda, última pegada a la derecha y la de en medio con el espacio sobrante a cada lado.',3,'',F,'.contenedor{display:flex;justify-content:space-between;}','justify-content: space-between;'],
+['Eje cruzado','Cajas en fila y <b>centradas en vertical</b>.',3,'',F,'.contenedor{display:flex;align-items:center;}','align-items controla el eje cruzado.'],
+['Centrado perfecto','Una sola caja justo en el <b>centro exacto</b>. Necesitas dos propiedades.',1,'',F,'.contenedor{display:flex;justify-content:center;align-items:center;}','Una para cada eje: justify-content y align-items, las dos con center.'],
+['Que salten de línea','Hay 8 cajas anchas (90px). Las que no caben deben pasar a la línea siguiente, con 10px de separación.',8,'.caja{width:90px;}',F,'.contenedor{display:flex;flex-wrap:wrap;gap:10px;}','Necesitas flex-wrap: wrap; y gap: 10px;'],
+['El hijo que crece','El padre ya es flex. La <b>caja 2</b> debe ocupar todo el espacio sobrante. Esta vez la regla va en el hijo.',3,'','.contenedor {\n  display: flex;\n}\n\n.c2 {\n  \n}','.contenedor{display:flex;}.c2{flex-grow:1;}','flex-grow: 1; dentro de .c2'],
+['Todas iguales','Las 4 cajas deben repartirse el ancho a partes iguales. Escribe la regla en <code>.caja</code> (afecta a todos los hijos).',4,'','.contenedor {\n  display: flex;\n}\n\n.caja {\n  \n}','.contenedor{display:flex;}.caja{flex:1;}','flex: 1;'],
+['Un hijo rebelde','Todas las cajas arriba, salvo la <b>caja 1</b>, que baja al fondo.',3,'','.contenedor {\n  display: flex;\n}\n\n.c1 {\n  \n}','.contenedor{display:flex;}.c1{align-self:flex-end;}','align-self: flex-end; en .c1'],
+['Cambia el orden','Sin tocar el HTML, que la <b>caja 3</b> aparezca la primera.',3,'','.contenedor {\n  display: flex;\n}\n\n.c3 {\n  \n}','.contenedor{display:flex;}.c3{order:-1;}','order: -1; (menor número va antes)'],
+['Reto final: tarjetas centradas','7 cajas de 90px: en fila, que salten de línea, centradas horizontalmente y con 12px de separación.',7,'.caja{width:90px;}',F,'.contenedor{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}','Cuatro propiedades: display, flex-wrap, justify-content y gap.']];
+
+const CX=$('#codigo');
+CX.innerHTML='<h2>⌨️ Ejercicios de código</h2><p>Escribe el CSS para que <b>tu resultado</b> sea idéntico al <b>objetivo</b>. El padre es <code>.contenedor</code>; todas las cajas son <code>.caja</code> y además cada una tiene su clase <code>.c1</code>, <code>.c2</code>, <code>.c3</code>… Se comprueba la posición real de cada caja, así que hay varias formas correctas.</p>';
+EX.forEach(([t,d,n,base,start,sol,hint],i)=>{
+ const id='e'+i,c=el('div','card'+(done[id]?' ok':''),`<h3>${i+1}. ${t}</h3><p>${d}</p>`),ta=el('textarea'),fy=el('iframe'),fg=el('iframe');
+ ta.value=start;ta.spellcheck=false;
+ const pair=el('div','pair'),A=el('div','','<b>Tu CSS</b>'),B=el('div','','<b>Tu resultado</b>'),G=el('div','','<b>🎯 Objetivo</b>');
+ A.append(ta);B.append(fy);G.append(fg);pair.append(A,B,G);
+ const ok=el('button','btn','▶ Comprobar'),hb=el('button','btn','💡 Pista'),sb=el('button','btn','👁 Ver solución'),msg=el('p','msg');
+ const draw=()=>R(fy,n,base,ta.value);let tm;
+ ta.oninput=()=>{clearTimeout(tm);tm=setTimeout(draw,250)};
+ ok.onclick=async()=>{await Promise.all([draw(),R(fg,n,base,sol)]);if(same(rects(fy),rects(fg))){msg.textContent='✅ ¡Perfecto! Tu resultado coincide con el objetivo.';win(id,c)}else msg.textContent='🌧️ Todavía no coincide. Compara las posiciones y prueba otra vez (o pide una pista).'};
+ hb.onclick=()=>msg.textContent='💡 '+hint;
+ sb.onclick=()=>{ta.value=pretty(sol);draw()};
+ c.append(pair,el('div','vals'),msg);c.children[2].append(ok,hb,sb);CX.append(c);
+ R(fg,n,base,sol);draw()});
+
+/* ---------- ARRASTRAR Y SOLTAR ---------- */
+let drag=null,pick=null;
+const zone=(cls,max)=>{const z=el('div','dz '+(cls||''));if(max)z.dataset.max=max;z.ondragover=e=>e.preventDefault();z.ondrop=e=>{e.preventDefault();if(drag)put(drag,z);drag=null};z.onclick=e=>{if(pick&&!e.target.classList.contains('chip'))put(pick,z)};return z};
+function put(c,z){if(pick===c){pick=null;c.classList.remove('s')}
+ if(!z.classList.contains('pool')&&z.dataset.max&&z.children.length>=+z.dataset.max&&c.parentNode!==z)put(z.firstChild,c._pool);
+ z.appendChild(c);c._cb()}
+function chip(txt,pool,cb,ds){const c=el('span','chip',txt);c.draggable=true;Object.assign(c.dataset,ds);c._pool=pool;c._cb=cb;
+ c.ondragstart=e=>{drag=c;e.dataTransfer.setData('text','x')};
+ c.onclick=()=>{if(c.parentNode!==pool)return put(c,pool);
+  const zs=[...c.closest('.dnd').querySelectorAll('.dz:not(.pool)')].filter(z=>!z.dataset.max||z.children.length<+z.dataset.max);
+  if(zs.length==1)return put(c,zs[0]);if(pick)pick.classList.remove('s');pick=c;c.classList.add('s')};return c}
+
+const D=(p,v)=>[p+': '+v,'.contenedor{'+p+':'+v+';}'];
+const LV=[
+['Centro de todo','Arrastra las piezas necesarias para dejar las 2 cajas en el centro exacto.',2,'','.contenedor{display:flex;justify-content:center;align-items:center;}',[D('display','flex'),D('justify-content','center'),D('align-items','center'),D('flex-direction','column'),D('gap','20px'),D('justify-content','flex-end')]],
+['Columna repartida','Columna, con la primera caja arriba y la última abajo.',3,'','.contenedor{display:flex;flex-direction:column;justify-content:space-between;}',[D('display','flex'),D('flex-direction','column'),D('justify-content','space-between'),D('justify-content','center'),D('flex-wrap','wrap'),D('align-items','flex-end')]],
+['Tarjetas con aire','7 cajas de 90px que saltan de línea, centradas y separadas.',7,'.caja{width:90px;}','.contenedor{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}',[D('display','flex'),D('flex-wrap','wrap'),D('gap','12px'),D('justify-content','center'),D('flex-direction','row-reverse'),D('align-items','center')]],
+['Al revés y abajo','Orden 3-2-1 y todas las cajas pegadas al fondo.',3,'','.contenedor{display:flex;flex-direction:row-reverse;align-items:flex-end;}',[D('display','flex'),D('flex-direction','row-reverse'),D('align-items','flex-end'),D('justify-content','space-around'),D('gap','20px'),D('flex-direction','column')]],
+['Hijos con carácter','La caja 1 se estira ocupando el sobrante y la caja 3 se va al fondo.',3,'','.contenedor{display:flex;}.c1{flex-grow:1;}.c3{align-self:flex-end;}',[['display: flex (padre)','.contenedor{display:flex;}'],['.c1 → flex-grow: 1','.c1{flex-grow:1;}'],['.c3 → align-self: flex-end','.c3{align-self:flex-end;}'],['.c2 → order: 1','.c2{order:1;}'],['.c3 → order: -1','.c3{order:-1;}'],['.c1 → align-self: center','.c1{align-self:center;}']]]];
+
+const DN=$('#dnd');
+DN.innerHTML='<h2>🖐️ Arrastrar y soltar</h2><p>Arrastra las piezas (o tócalas: en pantalla táctil, toca la pieza y luego la zona). Toca una pieza colocada para devolverla.</p><h3>A. Monta el CSS</h3>';
+LV.forEach(([t,d,n,base,goal,chips],i)=>{
+ const id='l'+i,c=el('div','card dnd'+(done[id]?' ok':''),`<h3>Nivel ${i+1}: ${t}</h3><p>${d}</p>`),fy=el('iframe'),fg=el('iframe'),z=zone(),pool=zone('pool');
+ const css=()=>[...z.children].map(x=>x.dataset.css).join(''),draw=()=>R(fy,n,base,css());
+ const pair=el('div','pair'),A=el('div','','<b>Tu resultado</b>'),G=el('div','','<b>🎯 Objetivo</b>');A.append(fy);G.append(fg);pair.append(A,G);
+ sh(chips).forEach(([l,s])=>pool.append(chip(l,pool,draw,{css:s})));
+ const ok=el('button','btn','▶ Comprobar'),msg=el('p','msg');
+ ok.onclick=async()=>{await Promise.all([draw(),R(fg,n,base,goal)]);if(same(rects(fy),rects(fg))){msg.textContent='✅ ¡Correcto!';win(id,c)}else msg.textContent='🌧️ Aún no coincide. Revisa qué piezas sobran o faltan.'};
+ c.append(pair,el('b','','Tu CSS (zona de montaje):'),z,el('b','','Piezas:'),pool,ok,msg);DN.append(c);R(fg,n,base,goal);draw()});
+
+/* B. Emparejar */
+const MP=[['display: flex','Convierte al padre en contenedor flexible'],['flex-direction','Elige si los hijos van en fila o en columna'],['justify-content','Reparte los hijos a lo largo del eje principal'],['align-items','Alinea los hijos en el eje cruzado'],['flex-wrap','Permite que los hijos salten a otra línea'],['gap','Deja espacio entre los hijos'],['flex-grow','Un hijo reclama el espacio sobrante'],['align-self','Un hijo se alinea distinto al resto'],['order','Un hijo cambia de posición sin tocar el HTML']];
+DN.append(el('h3','','B. Empareja cada propiedad con su función'));
+{const id='m',c=el('div','card dnd'+(done[id]?' ok':'')),pool=zone('pool'),slots=[],msg=el('p','msg'),cb=()=>{};
+ MP.forEach(([,d],i)=>{const r=el('div','row','<span>'+d+'</span>'),s=zone('',1);s.dataset.k=i;slots.push(s);r.append(s);c.append(r)});
+ sh(MP.map((m,i)=>[m[0],i])).forEach(([l,i])=>pool.append(chip(l,pool,cb,{k:i})));
+ const ok=el('button','btn','▶ Comprobar');
+ ok.onclick=()=>{let g=0;slots.forEach(s=>{const x=s.firstChild;if(x)x.classList.remove('bad');if(x&&x.dataset.k==s.dataset.k)g++;else if(x)x.classList.add('bad')});
+  if(g==MP.length){msg.textContent='✅ ¡Todas correctas!';win(id,c)}else msg.textContent=g+' de '+MP.length+' correctas. Las rojas están mal colocadas.'};
+ c.append(pool,ok,msg);DN.append(c)}
+
+/* C. Clasificar */
+DN.append(el('h3','','C. ¿Va en el padre o en el hijo?'));
+{const id='k',c=el('div','card dnd'+(done[id]?' ok':'')),pool=zone('pool'),zp=zone(),zh=zone(),msg=el('p','msg'),cb=()=>{};
+ zp.dataset.k='p';zh.dataset.k='h';
+ sh([['display','p'],['flex-direction','p'],['justify-content','p'],['align-items','p'],['flex-wrap','p'],['gap','p'],['flex-grow','h'],['flex-basis','h'],['align-self','h'],['order','h'],['flex','h']]).forEach(([l,k])=>pool.append(chip(l,pool,cb,{k})));
+ const pair=el('div','pair'),a=el('div','','<b>Padre (.contenedor)</b>'),b=el('div','','<b>Hijo (.caja)</b>');a.append(zp);b.append(zh);pair.append(a,b);
+ const ok=el('button','btn','▶ Comprobar');
+ ok.onclick=()=>{let g=0,t=0;[zp,zh].forEach(z=>[...z.children].forEach(x=>{t++;x.classList.toggle('bad',x.dataset.k!=z.dataset.k);if(x.dataset.k==z.dataset.k)g++}));
+  if(g==11&&t==11){msg.textContent='✅ ¡Perfecto!';win(id,c)}else msg.textContent=pool.children.length?'Faltan piezas por colocar.':'Las piezas en rojo están en el sitio equivocado.'};
+ c.append(pair,pool,ok,msg);DN.append(c)}
+
+const TOTAL=EX.length+LV.length+2;prog();
+</script>
+</body>
+</html>
