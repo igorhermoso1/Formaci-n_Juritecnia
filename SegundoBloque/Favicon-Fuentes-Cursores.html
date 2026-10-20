@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Favicon, fuentes y cursores · Escenario Noh</title>
+<link rel="icon" id="favLink" href="data:,">
+<meta name="theme-color" content="#1e1719">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+Antique:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Shippori+Mincho:wght@500;800&family=Yuji+Syuku&family=Dela+Gothic+One&family=Hachi+Maru+Pop&family=Reggae+One&family=Rampart+One&family=DotGothic16&family=Noto+Serif+JP:wght@200..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1e1719; --urushi:#2a1517; --urushi2:#3a1d1f; --shu:#cf3f2b; --beni:#b0253a; --kin:#c9a24b; --kin2:#e8cd7e; --kin3:#8f6d22;
+  --gofun:#fbf6ec; --washi:#f4ecdf; --washi2:#eadfcb; --hinoki:#d8b48a; --hinoki2:#9a6a40; --matsu:#3f5b3a; --matsu2:#6f8a5c;
+  --sakura:#f3c2cf; --sakura2:#e48aa3; --fuji:#6b4d8f; --ai:#2d3b5c; --kitsunebi:#bfe7ff;
+  --ink:#2a2224; --ink2:#62555a;
+  --deco:'Zen Antique','Shippori Mincho','Hiragino Mincho ProN',Georgia,serif;
+  --body:'Zen Kaku Gothic Antique',system-ui,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --goshiki:linear-gradient(90deg,var(--fuji) 0 20%,var(--kin) 0 40%,var(--shu) 0 60%,var(--gofun) 0 80%,var(--matsu2) 0);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:78px;overflow-x:clip}
+body{margin:0;color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.75;overflow-x:clip;
+  background:
+   radial-gradient(1.5px 1.5px at 20% 30%,rgba(201,162,75,.5),transparent),radial-gradient(1px 1px at 70% 60%,rgba(201,162,75,.45),transparent),radial-gradient(2px 2px at 40% 80%,rgba(201,162,75,.35),transparent) 0 0/240px 240px,
+   linear-gradient(180deg,var(--washi),#f7f0e4 50%,var(--washi))}
+::selection{background:var(--shu);color:#fff}
+*{scrollbar-width:thin;scrollbar-color:#d6c3a6 transparent}
+a{color:var(--beni)}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.84em;background:#fff;color:var(--beni);padding:1px 7px;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(176,37,58,.22);overflow-wrap:anywhere}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--shu);outline-offset:3px}
+
+/* pétalos y fuegos de zorro */
+.petals{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.petal{position:absolute;top:-30px;width:13px;height:10px;border-radius:12px 0 12px 0;background:linear-gradient(135deg,#fde2ea,var(--sakura2));opacity:.85;animation:fall linear infinite}
+@keyframes fall{0%{transform:translate(0,-30px) rotate(0)}30%{transform:translate(50px,30vh) rotate(150deg)}60%{transform:translate(-20px,60vh) rotate(300deg)}100%{transform:translate(40px,105vh) rotate(520deg)}}
+
+/* ===== HERO: escenario Noh ===== */
+.hero{position:relative;z-index:3;overflow:hidden;background:radial-gradient(ellipse at 60% 30%,#3a2224,#1e1719 70%);color:var(--gofun);padding:0 0 0}
+.stage{position:relative;max-width:1240px;margin:0 auto;min-height:min(88vh,820px);display:flex;flex-direction:column}
+.roof{position:relative;height:66px;margin:0 -40px;background:linear-gradient(180deg,#140e0f,#2b1b17 60%,#4a2e20);box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:3}
+.roof::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:6px;background:repeating-linear-gradient(90deg,var(--kin) 0 18px,transparent 18px 120px)}
+.roof::before{content:"";position:absolute;left:0;right:0;bottom:-10px;height:12px;background:linear-gradient(180deg,#5a3a26,#2a1a14)}
+.wall{position:relative;flex:1;display:flex;margin:0 48px;
+  background:linear-gradient(180deg,rgba(0,0,0,.15),transparent 30%,rgba(0,0,0,.25)),
+   linear-gradient(90deg,rgba(143,109,34,.35) 1px,transparent 1px) 0 0/46px 46px,linear-gradient(rgba(143,109,34,.35) 1px,transparent 1px) 0 0/46px 46px,
+   linear-gradient(135deg,#e9cf82,#c9a24b 40%,#e3c271 60%,#b88f3a)}
+.wall canvas.pine{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.95}
+.pillar{position:absolute;top:0;bottom:0;width:48px;z-index:4;background:linear-gradient(90deg,#6f4a2c,#b98a5c 35%,#d8b48a 50%,#9a6a40 80%,#5a3a22);box-shadow:0 0 30px rgba(0,0,0,.5)}
+.pillar.l{left:0}.pillar.r{right:0}
+.floor{position:relative;height:70px;margin:0 -40px;z-index:3;background:linear-gradient(180deg,#d8b48a,#b98a5c 30%,#8a5d38),repeating-linear-gradient(90deg,transparent 0 160px,rgba(0,0,0,.18) 160px 162px);background-blend-mode:multiply;box-shadow:inset 0 10px 20px rgba(255,240,200,.25)}
+.curtain{position:absolute;right:48px;top:0;width:min(84px,8vw);height:62%;z-index:2;transform-origin:top;animation:sway 6s ease-in-out infinite;
+  background:linear-gradient(90deg,var(--fuji) 0 20%,var(--kin2) 0 40%,var(--shu) 0 60%,var(--gofun) 0 80%,var(--matsu2) 0);box-shadow:-8px 0 20px rgba(0,0,0,.35);border-radius:0 0 6px 6px}
+@keyframes sway{0%,100%{transform:skewX(0)}50%{transform:skewX(-3deg)}}
+.hero-in{position:relative;z-index:5;display:flex;align-items:center;gap:30px;padding:40px calc(min(84px,8vw) + 70px) 40px 70px;width:100%}
+.hero-txt{flex:1 1 460px;max-width:540px;padding:30px 32px;border-radius:6px;background:linear-gradient(160deg,rgba(30,23,25,.94),rgba(42,21,23,.9));box-shadow:0 30px 60px -20px rgba(0,0,0,.7),inset 0 0 0 1px rgba(232,205,126,.4),inset 0 0 0 6px rgba(30,23,25,1),inset 0 0 0 7px rgba(232,205,126,.25)}
+.hero .kick{font:500 15px var(--body);letter-spacing:.06em;color:var(--kin2);margin:0}
+.hero h1{font:400 clamp(38px,5.6vw,68px)/1.08 var(--deco);margin:8px 0 6px;color:var(--gofun)}
+.hero h1 span{display:block;color:var(--kin2);font-size:.58em;margin-top:6px}
+.lead{font-size:17.5px;color:#e9dccb;margin:10px 0 20px}
+.masks{flex:1 1 420px;display:flex;justify-content:center;align-items:flex-start;gap:clamp(8px,2vw,26px);padding-top:10px}
+.mask{display:flex;flex-direction:column;align-items:center;gap:8px}
+.mask canvas{width:clamp(80px,13vw,176px);height:auto;aspect-ratio:3/4;display:block;filter:drop-shadow(0 18px 18px rgba(0,0,0,.45));transition:transform .5s cubic-bezier(.34,1.3,.64,1)}
+.mask .cord{width:2px;height:36px;background:var(--shu);margin-bottom:-6px}
+.mask small{font:500 13px/1.3 var(--body);color:var(--urushi);background:rgba(251,246,236,.88);padding:3px 10px;border-radius:10px;text-align:center}.mask small b{display:block;font:600 12px var(--mono);color:var(--beni)}
+.mask.k1{cursor:pointer}.mask.k2{cursor:help}.mask.k3{cursor:grab}.mask.k3:active{cursor:grabbing}
+.mask:hover canvas{transform:perspective(500px) rotateX(16deg)}
+.mask:active canvas{transform:perspective(500px) rotateX(-16deg)}
+.hint{font-size:14px;color:var(--kin2);margin:14px 0 0}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:6px;border:none;cursor:pointer;font:700 15px var(--body);text-decoration:none;transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(1px)}
+.btn.shu{background:linear-gradient(180deg,#e2563f,var(--shu) 60%,#a92f1f);color:#fff;box-shadow:0 10px 20px -10px rgba(207,63,43,.9),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.kin{background:linear-gradient(180deg,#f1dc98,var(--kin) 60%,var(--kin3));color:var(--sumi);box-shadow:0 10px 20px -10px rgba(201,162,75,.9)}
+.btn.claro{background:#fff;color:var(--beni);box-shadow:inset 0 0 0 1.5px rgba(176,37,58,.35)}
+.btn.sm{padding:8px 15px;font-size:13.5px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px}
+.kitsunebi{position:absolute;inset:0;pointer-events:none;z-index:6}
+.kitsunebi i{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,#fff,var(--kitsunebi) 40%,rgba(191,231,255,0) 70%);box-shadow:0 0 16px 6px rgba(191,231,255,.45);animation:float 9s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0);opacity:.2}50%{transform:translate(30px,-50px);opacity:1}}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(30,23,25,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 0 var(--shu)}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:4px;background:var(--goshiki);opacity:.9}
+.nav .wrap{display:flex;align-items:center;gap:10px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:400 20px var(--deco);color:var(--gofun);white-space:nowrap}
+.brand img{width:28px;height:28px;border-radius:50%}
+.nav-links{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 16px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:6px 12px;border-radius:4px;color:#e2d5c4;text-decoration:none;font-size:13.5px;transition:background-color .3s,color .3s}
+.nav-links a span{color:var(--kin2);margin-right:5px;font-family:var(--deco)}
+.nav-links a:hover{background:rgba(232,205,126,.12);color:#fff}
+.nav-links a.on{background:var(--shu);color:#fff}
+.nav-arrow{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1px solid rgba(232,205,126,.55);background:transparent;color:var(--kin2);cursor:pointer}
+.prog{position:absolute;left:0;bottom:-6px;height:4px;width:0;background:var(--shu);z-index:2}
+
+/* secciones */
+main{position:relative;z-index:2;padding-bottom:40px}
+section.sec{padding:86px 0 8px;position:relative}
+.wm{position:absolute;right:0;top:40px;font:400 150px/1 var(--deco);color:rgba(176,37,58,.06);pointer-events:none;writing-mode:vertical-rl;z-index:-1}
+.sec-head{display:grid;grid-template-columns:88px 1fr;gap:24px;align-items:center;margin-bottom:28px}
+.mon{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle,var(--urushi2) 0 54%,var(--kin) 55% 58%,var(--sumi) 59% 100%);box-shadow:0 14px 26px -12px rgba(30,23,25,.7),inset 0 0 0 3px var(--kin)}
+.mon b{font:400 30px var(--deco);color:var(--kin2)}
+.mon::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1.5px dashed rgba(201,162,75,.6)}
+.sec-head .kick{font:500 15px var(--body);letter-spacing:.04em;color:var(--beni);margin:0}
+.sec-head h2{font:400 clamp(32px,4.6vw,52px)/1.1 var(--deco);margin:4px 0 8px;color:var(--sumi)}
+.sec-head h2 code{font-size:.66em;background:var(--urushi);color:var(--kin2);box-shadow:none;vertical-align:.1em;padding:2px 12px}
+.sec-head p{margin:0;font-size:18px;color:var(--ink2);max-width:760px}
+
+.card{position:relative;margin-bottom:26px;padding:34px;border-radius:4px;background:linear-gradient(180deg,#fffdf8,var(--gofun));box-shadow:0 0 0 1px rgba(154,106,64,.18),0 30px 60px -40px rgba(42,21,23,.5)}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--shu)}
+.card::after{content:"";position:absolute;right:14px;top:18px;width:34px;height:34px;border-top:2px solid var(--kin);border-right:2px solid var(--kin);opacity:.7}
+.card h3{font:400 28px/1.25 var(--deco);margin:0 0 12px;color:var(--sumi)}
+.card h4{font:700 17px var(--body);margin:24px 0 6px;color:var(--beni)}
+.card p{margin:0 0 13px}
+.card ul,.card ol{margin:0 0 13px;padding-left:22px}
+.card li{margin-bottom:7px}
+.card li::marker{color:var(--shu)}
+.sub-h{font:400 24px var(--deco)!important;color:var(--sumi)!important;margin:30px 0 10px!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2>*,.g3>*{min-width:0}
+
+/* fichas "se pone en / necesita / por defecto" */
+.fichas{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.ficha{padding:12px 14px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2);font-size:15.5px}
+.ficha b.k{display:flex;align-items:center;gap:8px;font:700 13px var(--body);letter-spacing:.06em;color:var(--beni);margin-bottom:2px}
+.ficha b.k i{font:400 14px var(--deco);font-style:normal;width:24px;height:24px;display:grid;place-items:center;border-radius:3px;background:var(--shu);color:#fff}
+
+/* notas */
+.note{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:14px 18px;border-radius:4px;margin:16px 0;font-size:16px;background:#fff;box-shadow:inset 3px 0 0 var(--g),inset 0 0 0 1px rgba(154,106,64,.15)}
+.note .ic{width:30px;height:30px;border-radius:3px;display:grid;place-items:center;font:400 16px var(--deco);color:#fff;background:var(--g)}
+.note b.t{display:block;font:700 15px var(--body);margin-bottom:2px;color:var(--g)}
+.note p{margin:0}.note p+p{margin-top:6px}
+.note.shu{--g:var(--shu)}.note.kin{--g:var(--kin3)}.note.matsu{--g:var(--matsu)}.note.ai{--g:var(--ai)}
+
+/* ofuda: resumen */
+.ofuda{position:relative;display:grid;grid-template-columns:58px 1fr 64px;gap:18px;align-items:center;margin:6px 0 10px;padding:18px 22px;border-radius:2px;background:linear-gradient(90deg,#fffaf0,#f6ecd8);box-shadow:0 0 0 1px rgba(154,106,64,.3),0 18px 30px -24px rgba(42,21,23,.7)}
+.ofuda::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--goshiki);background-size:100% 100%;opacity:.9}
+.ofuda{min-height:96px}.ofuda .lb{display:block;text-align:center;align-self:center;line-height:1.15;font:400 22px var(--deco);color:var(--beni);letter-spacing:.2em;margin:0 auto}
+.ofuda p{margin:0;font:400 20px/1.5 var(--deco);color:var(--sumi)}
+.ofuda .hanko{width:52px;height:52px;border-radius:6px;display:grid;place-items:center;font:400 22px var(--deco);color:#fff;background:var(--shu);transform:rotate(-8deg);box-shadow:inset 0 0 0 3px rgba(255,255,255,.35)}
+
+/* código */
+.code{position:relative;margin:14px 0 8px;border-radius:4px;background:#1f191b;color:#efe6da;overflow:hidden;box-shadow:0 0 0 1px rgba(201,162,75,.35),0 18px 30px -22px rgba(0,0,0,.7)}
+.code .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px 7px 14px;background:linear-gradient(90deg,var(--urushi),#24191b);box-shadow:inset 0 -1px 0 rgba(201,162,75,.35)}
+.code .bar span{font:500 13px var(--body);letter-spacing:.06em;color:var(--kin2)}
+.copy{border:none;border-radius:4px;padding:4px 12px;background:var(--shu);color:#fff;font:700 12px var(--body);cursor:pointer}
+.copy.ok{background:var(--matsu2)}
+.code pre{margin:0;padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.72;white-space:pre-wrap;word-break:break-word}
+.code .s{color:#f2a3b5}.code .p{color:#f0c07a}.code .v{color:#b9dba0}.code .c{color:#a8968a;font-style:italic}.code .t{color:#f2a3b5}.code .ps{color:#9fc6ff}.code .fn{color:#9fd8e6}.code .at{color:#e8cd7e}
+.code .new{display:inline-block;width:100%;background:rgba(207,63,43,.18);box-shadow:inset 3px 0 0 var(--shu)}
+.pair{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px;align-items:start}
+.pair>.code{margin-top:6px}
+
+/* controles */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.chip{border:none;background:#fff;color:var(--beni);border-radius:4px;padding:6px 12px;font:600 12.5px var(--mono);cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(176,37,58,.28)}
+.chip:hover{background:#fdeef0}
+.chip.on{background:var(--beni);color:#fff;box-shadow:none}
+.rng{display:grid;grid-template-columns:120px 1fr 80px;gap:10px;align-items:center;font:600 12.5px var(--mono);color:var(--ink2);margin:7px 0}
+.rng input{width:100%;accent-color:var(--shu)}
+.rng output{text-align:right;color:var(--beni)}
+.exp{padding:12px 16px;border-radius:4px;background:#fdf3e1;font-size:15.5px;margin-top:10px;box-shadow:inset 0 0 0 1px rgba(201,162,75,.35)}
+.exp p{margin:0}
+
+/* pestañas del navegador */
+.browser{border-radius:10px 10px 6px 6px;overflow:hidden;background:#e8e2d8;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 20px 40px -26px rgba(0,0,0,.5)}
+.tabs{display:flex;gap:2px;padding:8px 10px 0;background:#d9d1c4}
+.tab{display:flex;align-items:center;gap:8px;max-width:220px;padding:8px 12px;border-radius:8px 8px 0 0;background:#cfc6b8;font-size:13px;color:#3a3134;white-space:nowrap;overflow:hidden}
+.tab.on{background:#f6f2ea}
+.tab img,.tab i{width:16px;height:16px;flex:0 0 16px;border-radius:2px}
+.tab i{background:#a99d8e}
+.urlbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f6f2ea;font:13px var(--mono);color:#5d5156}
+.urlbar span{flex:1;padding:5px 12px;border-radius:999px;background:#fff}
+.bpage{height:90px;background:#fffdf8;display:flex;align-items:center;justify-content:center;font:400 22px var(--deco);color:var(--ink2)}
+.places{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.place{padding:12px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2);text-align:center;font-size:14px}
+.place .ico{display:flex;align-items:center;justify-content:center;height:70px}
+.place b{display:block;font-size:13px;color:var(--beni)}
+
+/* tabla */
+.sheet{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;box-shadow:0 0 0 1px rgba(154,106,64,.25)}
+.sheet th{background:var(--urushi);color:var(--kin2);text-align:left;padding:10px 12px;font:700 13px var(--body);letter-spacing:.04em}
+.sheet td{padding:9px 12px;border-top:1px solid rgba(154,106,64,.15);vertical-align:top}
+.sheet td:first-child{font:600 13px var(--mono);color:var(--beni);white-space:nowrap}
+.sheet tr.grp td{background:#fbf1e2;font:400 17px var(--deco);color:var(--sumi)}
+.sheet-wrap{overflow-x:auto}
+
+/* taller de kamon */
+.kamon{display:grid;grid-template-columns:300px minmax(0,1fr);gap:26px;align-items:start}
+.kamon canvas.big{width:300px;height:300px;border-radius:4px;background:repeating-conic-gradient(#eee6d8 0 25%,#fff 0 50%) 0 0/20px 20px;box-shadow:inset 0 0 0 1px rgba(154,106,64,.25)}
+.sizes{display:flex;align-items:flex-end;gap:14px;margin:12px 0}
+.sizes div{display:flex;flex-direction:column;align-items:center;gap:4px;font:600 11px var(--mono);color:var(--ink2)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.swatches button{width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(0,0,0,.15)}
+.swatches button.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--shu)}
+
+/* fuentes */
+.stack{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.stack button{border:none;cursor:pointer;padding:10px 14px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1.5px rgba(154,106,64,.3);font:600 13px var(--mono);color:var(--ink)}
+.stack button.off{opacity:.45;text-decoration:line-through}
+.stack span{color:var(--kin3);font-weight:700}
+.preview{padding:22px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2);font-size:30px;line-height:1.35;min-height:120px}
+.fonts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.font-card{border:none;cursor:pointer;text-align:left;padding:16px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.22);font:inherit;color:inherit;display:flex;flex-direction:column;gap:6px}
+.font-card:hover{box-shadow:inset 0 0 0 2px var(--shu)}
+.font-card.on{box-shadow:inset 0 0 0 2px var(--shu),0 12px 24px -16px rgba(207,63,43,.8)}
+.font-card .sample{font-size:30px;line-height:1.2;color:var(--sumi)}
+.font-card .who{font:600 12px var(--mono);color:var(--beni)}
+.font-card .role{font-size:13px;color:var(--ink2)}
+.steps{counter-reset:s;list-style:none;padding:0!important;display:grid;gap:10px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:12px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2)}
+.steps li::before{content:counter(s);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--shu);color:#fff;font:400 18px var(--deco)}
+.fd{display:grid;gap:10px;margin:12px 0}
+.fd-row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:center}
+.fd-row b{font:600 13px var(--mono);color:var(--beni)}
+.fd-bar{position:relative;height:46px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2);overflow:hidden;display:flex;align-items:center;padding:0 12px;font-size:20px}
+.fd-bar .t{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(207,63,43,.08)}
+.fd-bar .txt{position:relative}
+.var-demo{font-family:'Noto Serif JP',serif;font-size:44px;line-height:1.3;padding:18px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.2)}
+
+/* cursores */
+.cursors{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cur{padding:14px 12px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.22);min-height:92px;display:flex;flex-direction:column;justify-content:space-between}
+.cur:hover{background:#fdf1ec;box-shadow:inset 0 0 0 2px var(--shu)}
+.cur code{align-self:flex-start;font-weight:600}
+.cur span{font-size:13px;color:var(--ink2);line-height:1.4}
+.cgrp{font:400 20px var(--deco);margin:20px 0 8px;color:var(--sumi)}
+.hot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start}
+.hot-grid{display:grid;grid-template-columns:repeat(16,14px);grid-template-rows:repeat(16,14px);gap:1px;padding:6px;border-radius:4px;background:#e9e0d1;cursor:crosshair;position:relative}
+.hot-grid i{background-color:#fff}
+.hot-grid i.px{background-color:var(--c)}
+.hot-grid i.hs{box-shadow:inset 0 0 0 3px var(--shu)}
+.target{position:relative;height:230px;border-radius:4px;overflow:hidden;background:radial-gradient(circle at 50% 50%,#fff 0 18px,var(--shu) 19px 22px,#fff 23px 40px,var(--shu) 41px 44px,#fff 45px 64px,var(--kin) 65px 68px,transparent 69px),linear-gradient(135deg,#fbf3e6,#f3e6d0);box-shadow:inset 0 0 0 1px rgba(154,106,64,.25)}
+.target .hit{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--ai);box-shadow:0 0 0 2px #fff}
+.target .lbl{position:absolute;left:10px;bottom:8px;font-size:13px;color:var(--ink2)}
+
+/* enlaces */
+.links{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.scroll-list{display:flex;flex-direction:column;gap:8px;padding:18px;border-radius:4px;background:#fffdf8;box-shadow:inset 0 0 0 1px rgba(154,106,64,.22)}
+.scroll-list a{font:500 19px var(--deco);text-decoration:underline;text-underline-offset:4px}
+.demo-links a:link{color:var(--ai)}
+.demo-links a:visited{color:var(--fuji)}
+.demo-links a:hover{color:var(--shu);background-color:#fdf0e8;cursor:pointer}
+.demo-links a:focus-visible{outline:3px dashed var(--kin);outline-offset:3px}
+.demo-links a:active{color:#fff;background-color:var(--shu)}
+.lvha{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.lvha div{flex:1 1 120px;padding:10px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.22);text-align:center}
+.lvha b{display:block;font:400 34px var(--deco);color:var(--shu)}
+.lvha code{font-size:12px}
+.lvha span{display:block;font-size:13px;color:var(--ink2)}
+
+/* errores / test */
+.fix{border-radius:4px;padding:16px 18px;margin-bottom:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(154,106,64,.22)}
+.fix .hd{display:flex;gap:12px;align-items:baseline;font-weight:700;margin-bottom:6px}
+.fix .hd .n{flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--urushi);color:var(--kin2);font:400 16px var(--deco)}
+.fix .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.fix label{display:flex;gap:10px;align-items:center;padding:7px 12px;border-radius:4px;border:2px solid transparent;cursor:pointer;font-size:15.5px}
+.fix label:hover{background:#fbf3e6}
+.fix input{accent-color:var(--shu);width:17px;height:17px;flex:0 0 auto}
+.fix label.right{border-color:var(--matsu2);background:#eef3e6}.fix label.wrong{border-color:var(--shu);background:#fdeceb}
+.fix .ex{display:none;margin-top:8px;padding:10px 14px;border-radius:4px;background:#fbf3e6;font-size:15px}.fix .ex.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 20px;border-radius:4px;background:var(--urushi);color:var(--gofun);font-weight:700}
+.score b{font:400 34px var(--deco);color:var(--kin2)}
+
+/* zorro guardián */
+#guardian{position:fixed;right:18px;bottom:18px;z-index:35;width:76px;height:auto;cursor:pointer;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));transition:transform .4s}
+#guardian:hover{transform:rotate(-8deg) scale(1.08)}
+
+footer{position:relative;z-index:2;margin-top:70px;background:var(--sumi);color:#e2d5c4}
+footer::before{content:"";display:block;height:6px;background:var(--goshiki)}
+footer .wrap{padding:40px 20px 50px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .ft{font:400 30px var(--deco);color:var(--kin2)}
+footer p{margin:4px 0 0}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .hero-in{flex-direction:column;padding:28px 60px}
+  .masks{order:-1}
+  .g2,.pair,.kamon,.links,.hot{grid-template-columns:1fr}
+  .g3,.fonts,.fichas{grid-template-columns:1fr 1fr}
+  .cursors,.places{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .wall{margin:0 22px}.pillar{width:22px}.curtain{right:22px;width:44px;height:40%}
+  .hero-in{padding:16px 30px 24px}
+  .masks{gap:6px}.mask canvas{width:24vw}.mask small{font-size:11px;padding:2px 6px}.mask .cord{height:20px}
+  .hero-txt{padding:22px 18px}
+  .card{padding:24px 16px}
+  .g3,.fonts,.fichas{grid-template-columns:1fr}
+  .cursors,.places{grid-template-columns:1fr 1fr}
+  .sec-head{grid-template-columns:60px 1fr;gap:14px}.mon{width:60px;height:60px}.mon b{font-size:22px}
+  .wm{font-size:90px}
+  .ofuda{grid-template-columns:34px 1fr;padding:16px}.ofuda .hanko{display:none}.ofuda p{font-size:17px}
+  .rng{grid-template-columns:90px 1fr 70px}
+  .kamon canvas.big{width:100%;height:auto;aspect-ratio:1}
+  .hot-grid{grid-template-columns:repeat(16,12px);grid-template-rows:repeat(16,12px)}
+  .brand span{display:none}
+  #guardian{width:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  .petals,.kitsunebi{display:none}.curtain{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="petals" id="petals" aria-hidden="true"></div>
+
+<header class="hero" id="inicio">
+  <div class="stage">
+    <div class="roof" aria-hidden="true"></div>
+    <div class="wall">
+      <canvas class="pine" id="pine" aria-hidden="true"></canvas>
+      <div class="pillar l" aria-hidden="true"></div><div class="pillar r" aria-hidden="true"></div>
+      <div class="curtain" aria-hidden="true"></div>
+      <div class="kitsunebi" id="kitsunebi" aria-hidden="true"></div>
+      <div class="hero-in">
+        <div class="hero-txt">
+          <p class="kick">CSS · El rostro de tu web</p>
+          <h1>Favicon, fuentes y cursores<span>la identidad de una página</span></h1>
+          <p class="lead">En el teatro Noh, el actor se convierte en su personaje con una máscara, el escenario lleva el emblema de su casa y cada gesto del abanico dice algo. Tu web hace lo mismo: un <b>favicon</b> como emblema, <b>fuentes</b> como rostro y <b>cursores</b> como gestos.</p>
+          <div class="hero-btns"><a class="btn shu" href="#escenario">Empezar</a><a class="btn kin" href="#kamon">Crear mi favicon</a></div>
+          <p class="hint">Pasa el ratón por las máscaras: cada una tiene su cursor. Arriba (teru) su gesto se ilumina; si pulsas, baja (kumoru) y se ensombrece.</p>
+        </div>
+        <div class="masks" id="masks"></div>
+      </div>
+    </div>
+    <div class="floor" aria-hidden="true"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones"><div class="wrap">
+  <a class="brand" href="#inicio"><img id="brandIco" alt=""><span>Escenario Noh</span></a>
+  <button class="nav-arrow" id="navL" aria-label="Secciones anteriores">‹</button>
+  <div class="nav-links"><ul id="navUl"></ul></div>
+  <button class="nav-arrow" id="navR" aria-label="Secciones siguientes">›</button>
+  <div class="prog" id="prog"></div>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section class="sec" id="escenario" data-nav="Los tres rostros" data-wm="顔">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Antes de empezar</p><h2>Los tres rostros de una web</h2><p>Tres detalles pequeños que hacen que una página se reconozca a primera vista y se sienta cuidada.</p></div></div>
+  <div class="card reveal">
+    <div class="g3">
+      <div><h3>Favicon · el kamon</h3><p>Las familias japonesas tienen un <b>kamon</b>: un emblema sencillo que las identifica. El favicon es el kamon de tu web: el iconito de la <b>pestaña</b>, los <b>marcadores</b> y la <b>pantalla de inicio</b> del móvil.</p></div>
+      <div><h3>Fuentes · la máscara</h3><p>Una misma frase con otra fuente parece dicha por otro personaje, igual que un actor Noh cambia de máscara. Aprenderás a usar fuentes de <b>Google Fonts</b> y fuentes propias con <b>@font-face</b>.</p></div>
+      <div><h3>Cursor · el gesto</h3><p>El cursor avisa de lo que se puede hacer: pulsar, arrastrar, escribir, esperar… Verás todos los cursores del sistema, cómo crear uno <b>propio</b> y cómo cambian los enlaces con <b>:hover</b>, <b>:active</b> y <b>:visited</b>.</p></div>
+    </div>
+    <div class="note shu"><div class="ic">注</div><div><b class="t">Un aviso antes de empezar</b><p><code>:visited</code> (enlace ya visitado) es especial: por <b>privacidad</b>, el navegador solo deja cambiarle <b>colores</b>. No se le puede poner otro cursor, ni otro tamaño, ni otra fuente. Lo verás en detalle en la sección de estados de los enlaces.</p></div></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="favicon" data-nav="Favicon" data-wm="紋">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">El emblema</p><h2>El favicon</h2><p>El pequeño icono que identifica tu web fuera de la propia página.</p></div></div>
+  <div class="card reveal">
+    <h3>¿Dónde aparece?</h3>
+    <div class="places" id="places"></div>
+    <div class="fichas">
+      <div class="ficha"><b class="k"><i>所</i>Se pone en</b>El <code>&lt;head&gt;</code> del HTML, con una etiqueta <code>&lt;link&gt;</code>. En <b>todas</b> las páginas de tu web.</div>
+      <div class="ficha"><b class="k"><i>要</i>Necesita</b>Un archivo de imagen dentro de tu proyecto y una <b>ruta correcta</b> hasta él (igual que una imagen).</div>
+      <div class="ficha"><b class="k"><i>初</i>Si no lo pones</b>El navegador busca <code>favicon.ico</code> en la raíz. Si no existe, muestra un icono gris genérico.</div>
+    </div>
+    <h4>El código mínimo</h4>
+    <div class="pair" id="favMin"></div>
+    <h4 class="sub-h">Formatos y tamaños</h4>
+    <div class="sheet-wrap"><table class="sheet">
+      <tr><th>Archivo</th><th>Para qué</th><th>Tamaño</th><th>Etiqueta</th></tr>
+      <tr><td>favicon.ico</td><td>El clásico. Funciona en cualquier navegador, incluso antiguos. Puede guardar varios tamaños dentro.</td><td>32 × 32 (y 16 × 16)</td><td><code>rel="icon"</code></td></tr>
+      <tr><td>icon.png</td><td>Lo más sencillo para empezar: una imagen PNG con fondo transparente.</td><td>32 × 32 o 48 × 48</td><td><code>rel="icon" type="image/png"</code></td></tr>
+      <tr><td>icon.svg</td><td>Vectorial: se ve nítido a cualquier tamaño y pesa muy poco. Puede cambiar de color en modo oscuro.</td><td>Sin tamaño fijo</td><td><code>rel="icon" type="image/svg+xml"</code></td></tr>
+      <tr><td>apple-touch-icon.png</td><td>El icono cuando alguien "añade a pantalla de inicio" en iPhone o iPad. Sin transparencia (iOS pone fondo negro).</td><td>180 × 180</td><td><code>rel="apple-touch-icon"</code></td></tr>
+      <tr><td>icon-192 / icon-512</td><td>Iconos de app para Android, que se declaran en un archivo <code>manifest</code> (lo verás más adelante).</td><td>192 y 512</td><td>en el manifest</td></tr>
+    </table></div>
+    <h4 class="sub-h">El conjunto recomendado</h4>
+    <p>Con estas cuatro líneas cubres prácticamente todos los navegadores y dispositivos:</p>
+    <div class="pair" id="favFull"></div>
+    <div class="g2">
+      <div class="note kin"><div class="ic">色</div><div><b class="t">theme-color</b><p>No es un icono, pero va de la mano: en el móvil, <code>&lt;meta name="theme-color"&gt;</code> tiñe la barra del navegador con el color de tu web. Esta página usa el negro laca del escenario.</p></div></div>
+      <div class="note matsu"><div class="ic">技</div><div><b class="t">Diseñar un buen favicon</b><p>Se ve a <b>16 píxeles</b>: una forma sencilla, uno o dos colores, mucho contraste y nada de texto largo. Una inicial o un símbolo, como un kamon.</p></div></div>
+    </div>
+    <div class="note shu"><div class="ic">困</div><div><b class="t">"He cambiado el favicon y sigue saliendo el viejo"</b><p>Los navegadores guardan el favicon en <b>caché</b> durante mucho tiempo. Prueba a recargar sin caché (<b>Ctrl + F5</b> o <b>Ctrl + Mayús + R</b>), abre la página en una ventana privada o añade una versión a la ruta: <code>href="img/favicon.png?v=2"</code>.</p></div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="kamon" data-nav="Taller de kamon" data-wm="家">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Taller</p><h2>Crea tu kamon</h2><p>Diseña un emblema, míralo a tamaño real, úsalo como favicon de esta misma página y descárgalo.</p></div></div>
+  <div class="card reveal">
+    <div class="kamon">
+      <div><canvas class="big" id="kBig" width="512" height="512"></canvas>
+        <div class="sizes" id="kSizes"></div></div>
+      <div>
+        <h4 style="margin-top:0">Motivo</h4><div id="kMot"></div>
+        <div id="kLetterBox" hidden><input id="kLetter" maxlength="2" value="P" aria-label="Letra" style="width:90px;padding:8px 12px;border-radius:4px;border:1.5px solid rgba(154,106,64,.4);font:700 20px var(--body)"></div>
+        <h4>Forma del fondo</h4><div id="kShape"></div>
+        <h4>Color del fondo</h4><div class="swatches" id="kBg"></div>
+        <h4>Color del motivo</h4><div class="swatches" id="kFg"></div>
+        <div class="browser" style="margin-top:16px"><div class="tabs"><div class="tab on"><img id="kTabIco" alt=""><span>Mi web · Inicio</span></div><div class="tab"><i></i><span>Otra pestaña</span></div></div><div class="urlbar">←&nbsp;→&nbsp;<span>mi-web.com</span></div><div class="bpage">Así se ve en la pestaña</div></div>
+        <div class="hero-btns" style="margin-top:14px"><button class="btn shu sm" id="kUse" type="button">Usar como favicon de esta página</button><a class="btn kin sm" id="kDl32" download="favicon-32.png">Descargar 32 × 32</a><a class="btn claro sm" id="kDl180" download="apple-touch-icon.png">Descargar 180 × 180</a></div>
+        <p style="font-size:14.5px;color:var(--ink2);margin-top:10px">Mira la pestaña de tu navegador después de pulsar el primer botón: el icono de esta página cambia al instante.</p>
+      </div>
+    </div>
+    <div class="pair" id="kCode"></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="fuentes" data-nav="Cómo funcionan las fuentes" data-wm="面">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Las máscaras</p><h2>Cómo elige el navegador una fuente</h2><p>Antes de cargar fuentes de fuera, hay que entender qué hace <code>font-family</code> cuando una fuente no está disponible.</p></div></div>
+  <div class="card reveal">
+    <h3>El problema: la fuente está en TU ordenador, no en el del visitante</h3>
+    <p>Si escribes <code>font-family: "Mi Fuente Bonita"</code> y esa fuente solo está instalada en tu ordenador, tú la verás perfecta… y el resto del mundo verá otra. El navegador solo puede usar fuentes que <b>tenga el visitante</b> o que <b>tu web le envíe</b> (Google Fonts o @font-face).</p>
+    <h4 class="sub-h">La pila de fuentes (font stack)</h4>
+    <p>Por eso <code>font-family</code> admite una <b>lista</b> separada por comas. El navegador prueba la primera; si no la tiene, la segunda; y así hasta el final. La última siempre debe ser una <b>familia genérica</b>, que existe siempre. Pulsa las fuentes para "quitarlas" del ordenador del visitante:</p>
+    <div class="stack" id="stack"></div>
+    <div class="preview" id="stackPrev">El zorro de Inari cruza el escenario.</div>
+    <div class="pair" id="stackCode"></div>
+    <h4 class="sub-h">Las familias genéricas</h4>
+    <div class="g3" id="generic"></div>
+    <div class="note kin"><div class="ic">引</div><div><b class="t">Comillas</b><p>Si el nombre tiene espacios, ponlo <b>entre comillas</b>: <code>"Zen Antique"</code>. Las genéricas (<code>serif</code>, <code>sans-serif</code>…) van <b>sin</b> comillas: si las entrecomillas, el navegador busca una fuente que se llame así y no la encuentra.</p></div></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="google" data-nav="Google Fonts" data-wm="借">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Fuentes prestadas</p><h2>Google Fonts</h2><p>Más de 1.500 fuentes gratuitas que se cargan desde los servidores de Google con una línea de HTML.</p></div></div>
+  <div class="card reveal">
+    <h3>Paso a paso</h3>
+    <ol class="steps">
+      <li><div>Entra en <b>fonts.google.com</b> y busca una fuente. Puedes filtrar por idioma (Japanese), estilo (Serif, Handwriting…) o grosor.</div></li>
+      <li><div>Pulsa <b>Get font</b> y luego <b>Get embed code</b>. Elige solo los <b>pesos</b> que vas a usar (400, 700…): cada peso es un archivo más que descargar.</div></li>
+      <li><div>Copia las etiquetas <code>&lt;link&gt;</code> y pégalas en el <code>&lt;head&gt;</code>, <b>antes</b> de tu propio CSS.</div></li>
+      <li><div>En tu CSS, usa el nombre exacto en <code>font-family</code> y termina con una genérica de respaldo.</div></li>
+    </ol>
+    <h4 class="sub-h">La galería de máscaras</h4>
+    <p>Todas estas fuentes de Google están cargadas en esta página. Elige una: verás la misma frase con otro "rostro" y el código exacto para usarla.</p>
+    <div class="fonts" id="fonts"></div>
+    <div class="preview" id="gPrev" contenteditable="true" spellcheck="false" style="margin-top:14px">Cada máscara cuenta la misma historia de otra manera</div>
+    <p style="font-size:14px;color:var(--ink2);margin-top:6px">Puedes escribir en el recuadro para probar tu propio texto.</p>
+    <div class="pair" id="gCode"></div>
+    <div class="g2">
+      <div class="note shu"><div class="ic">偽</div><div><b class="t">La negrita falsa</b><p>Si pones <code>font-weight: 700</code> pero solo has cargado el peso 400, el navegador "engorda" las letras artificialmente y quedan feas. Carga en el enlace <b>cada peso que uses</b>: <code>wght@400;700</code>.</p></div></div>
+      <div class="note ai"><div class="ic">速</div><div><b class="t">preconnect y display=swap</b><p>Las dos primeras líneas (<code>preconnect</code>) abren la conexión con Google antes de tiempo: la fuente llega antes. El <code>&amp;display=swap</code> del final hace que el texto se vea desde el principio con la fuente de respaldo (lo explicamos en la siguiente sección).</p></div></div>
+    </div>
+    <div class="note kin"><div class="ic">重</div><div><b class="t">Las fuentes japonesas pesan mucho</b><p>Tienen miles de caracteres. Google las divide en trozos y solo envía los que tu página usa, pero aun así conviene no cargar más familias de las necesarias: <b>dos fuentes</b> (una para títulos y otra para texto) suelen bastar.</p></div></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="fontface" data-nav="@font-face" data-wm="作">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Máscaras talladas a mano</p><h2><code>@font-face</code></h2><p>Para usar una fuente que está en tus propios archivos, sin depender de Google.</p></div></div>
+  <div class="card reveal">
+    <div class="fichas">
+      <div class="ficha"><b class="k"><i>何</i>Cuándo</b>La fuente no está en Google Fonts, es la fuente de una marca, o quieres que la web funcione sin depender de otro servidor.</div>
+      <div class="ficha"><b class="k"><i>所</i>Se pone en</b>Al <b>principio</b> de tu archivo CSS, fuera de cualquier regla. Un bloque @font-face por cada peso o estilo.</div>
+      <div class="ficha"><b class="k"><i>要</i>Necesita</b>Los archivos de la fuente (mejor <b>.woff2</b>) en una carpeta del proyecto, por ejemplo <code>fonts/</code>, y permiso de licencia.</div>
+    </div>
+    <h4>Estructura del proyecto</h4>
+    <div class="pair" id="ffTree"></div>
+    <h4 class="sub-h">El código, línea a línea</h4>
+    <div class="pair" id="ffCode"></div>
+    <div class="note shu"><div class="ic">道</div><div><b class="t">La ruta es desde el archivo CSS</b><p>La <code>url()</code> se calcula desde donde está el <b>archivo CSS</b>, no desde el HTML. Si tu CSS está en <code>css/</code> y las fuentes en <code>fonts/</code>, necesitas salir de la carpeta: <code>url("../fonts/…")</code>.</p></div></div>
+    <h4 class="sub-h">Formatos de fuente</h4>
+    <div class="sheet-wrap"><table class="sheet">
+      <tr><th>Formato</th><th>Qué es</th><th>¿Usarlo en la web?</th></tr>
+      <tr><td>.woff2</td><td>Formato web comprimido. El más ligero.</td><td>Sí, siempre el primero</td></tr>
+      <tr><td>.woff</td><td>Versión anterior, menos comprimida.</td><td>Solo como respaldo para navegadores muy antiguos</td></tr>
+      <tr><td>.ttf / .otf</td><td>Fuentes de escritorio, las que instalas en tu ordenador.</td><td>Funcionan, pero pesan mucho: conviértelas a woff2</td></tr>
+      <tr><td>.eot / .svg</td><td>Formatos antiguos de Internet Explorer y Safari viejo.</td><td>No: obsoletos</td></tr>
+    </table></div>
+    <p style="margin-top:12px">Para convertir un .ttf a .woff2 hay herramientas gratuitas en línea (busca "webfont generator"). Y ojo con la <b>licencia</b>: que una fuente sea descargable no significa que puedas usarla en una web.</p>
+
+    <h4 class="sub-h">font-display: ¿qué se ve mientras la fuente llega?</h4>
+    <p>Una fuente tarda un poco en descargarse. <code>font-display</code> decide qué pasa mientras tanto. Pulsa el botón para simular una conexión lenta (la fuente tarda 2 segundos):</p>
+    <button class="btn shu sm" id="fdGo" type="button">Simular carga lenta</button>
+    <div class="fd" id="fd"></div>
+    <div class="note matsu"><div class="ic">勧</div><div><b class="t">Recomendación</b><p>Usa <code>swap</code> para el texto: el visitante puede leer desde el primer momento. Por eso Google Fonts añade <code>&amp;display=swap</code> a sus enlaces.</p></div></div>
+
+    <h4 class="sub-h">Fuentes variables</h4>
+    <p>Una fuente normal necesita un archivo por cada peso. Una <b>fuente variable</b> guarda todos los pesos en un solo archivo y admite <b>cualquier valor</b>, no solo 400 o 700. Mueve el deslizador (esta es Noto Serif JP, variable de 200 a 900):</p>
+    <div id="varCtl"></div>
+    <div class="var-demo" id="varDemo">能の舞台 · Escenario Noh</div>
+    <div class="pair" id="varCode"></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="cursor" data-nav="La propiedad cursor" data-wm="扇">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Los gestos</p><h2><code>cursor</code></h2><p>Cambia la forma del puntero del ratón cuando pasa por encima de un elemento.</p></div></div>
+  <div class="card reveal">
+    <div class="fichas">
+      <div class="ficha"><b class="k"><i>所</i>Se pone en</b>Cualquier elemento. No hace falta <code>:hover</code>: el cursor ya cambia solo al pasar por encima.</div>
+      <div class="ficha"><b class="k"><i>継</i>Se hereda</b>Los hijos heredan el cursor del padre (salvo enlaces, botones y campos, que traen el suyo).</div>
+      <div class="ficha"><b class="k"><i>初</i>Por defecto</b><code>auto</code>: el navegador decide (flecha en general, barra en el texto, mano en los enlaces).</div>
+    </div>
+    <p>Pasa el ratón por cada tarjeta para ver su cursor. En pantallas táctiles no hay cursor, así que el cursor nunca debe ser la única pista de que algo se puede pulsar.</p>
+    <div id="cursors"></div>
+    <div class="pair" id="curCode"></div>
+    <div class="note matsu"><div class="ic">礼</div><div><b class="t">Buenos modales con el cursor</b><p>Usa el cursor que la persona espera: <code>pointer</code> en lo que se puede pulsar, <code>not-allowed</code> en lo desactivado, <code>text</code> donde se escribe. Poner <code>pointer</code> en algo que no hace nada, o <code>none</code> sin motivo, confunde.</p></div></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="propio" data-nav="Cursor propio" data-wm="狐">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Tu propio gesto</p><h2>Cursor personalizado</h2><p>Puedes usar una imagen como cursor. Hay tres reglas que no se pueden olvidar.</p></div></div>
+  <div class="card reveal">
+    <div class="pair" id="ownCode" style="grid-template-columns:1fr"></div>
+    <div class="g3">
+      <div class="note shu" style="margin:0"><div class="ic">一</div><div><b class="t">Cursor de respaldo obligatorio</b><p>Después de la <code>url()</code> va una coma y un cursor normal (<code>pointer</code>, <code>auto</code>…). Sin él, la línea entera se ignora.</p></div></div>
+      <div class="note kin" style="margin:0"><div class="ic">二</div><div><b class="t">Tamaño pequeño</b><p>Usa imágenes de <b>32 × 32 píxeles</b>. Muchos navegadores no muestran cursores de más de 128 × 128 y, aunque los muestren, estorban.</p></div></div>
+      <div class="note ai" style="margin:0"><div class="ic">三</div><div><b class="t">El punto caliente</b><p>Los dos números tras la url (<code>4 2</code>) indican el píxel que hace clic, contados desde la esquina de arriba a la izquierda. Si no los pones, es el <code>0 0</code>.</p></div></div>
+    </div>
+    <h4 class="sub-h">Laboratorio del punto caliente</h4>
+    <p>Elige un cursor y haz clic en la cuadrícula para marcar su punto caliente (cada casilla son 2 píxeles). Después haz clic en la diana: el punto azul marca <b>dónde ha caído el clic de verdad</b>. Prueba a poner el punto caliente lejos de la punta y verás cómo fallas.</p>
+    <div id="ownChips"></div>
+    <div class="hot"><div><div class="hot-grid" id="hotGrid" title="Haz clic para mover el punto caliente"></div><p style="font:600 13px var(--mono);color:var(--beni);margin:8px 0 0" id="hotTxt"></p></div><div class="target" id="target"><span class="lbl">Haz clic en el centro de la diana</span></div></div>
+    <div class="pair" id="hotCode"></div>
+    <div class="note matsu"><div class="ic">形</div><div><b class="t">Formatos</b><p><b>PNG</b> con fondo transparente es lo más seguro. <b>SVG</b> también funciona en la mayoría de navegadores. Existe el formato <b>.cur</b> de Windows, que guarda el punto caliente dentro. Las imágenes animadas (GIF) no se animan como cursor.</p></div></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="estados" data-nav="Estados de los enlaces" data-wm="道">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">El recorrido</p><h2>Estados de los enlaces</h2><p>Un enlace cambia según lo que haga la persona: si no lo ha visitado, si ya lo visitó, si pasa el ratón, si llega con el teclado o si lo está pulsando.</p></div></div>
+  <div class="card reveal">
+    <div class="lvha">
+      <div><b>L</b><code>:link</code><span>sin visitar todavía</span></div>
+      <div><b>V</b><code>:visited</code><span>ya visitado</span></div>
+      <div><b>F</b><code>:focus-visible</code><span>elegido con el teclado (Tab)</span></div>
+      <div><b>H</b><code>:hover</code><span>con el ratón encima</span></div>
+      <div><b>A</b><code>:active</code><span>mientras se pulsa</span></div>
+    </div>
+    <div class="links">
+      <div>
+        <h4 style="margin-top:0">Pruébalo</h4>
+        <div class="scroll-list demo-links" id="demoLinks">
+          <a href="#ruta-1" id="ruta-1">El puente de los espíritus</a>
+          <a href="#ruta-2" id="ruta-2">El santuario de Inari</a>
+          <a href="#ruta-3" id="ruta-3">La máscara de Hannya</a>
+          <a href="#ruta-4" id="ruta-4">El pino del escenario</a>
+        </div>
+        <p style="font-size:14.5px;color:var(--ink2);margin-top:8px">Haz clic en un enlace: se vuelve <b style="color:var(--fuji)">morado</b> porque ya lo has visitado. Pasa el ratón (rojo), mantén pulsado (blanco sobre rojo) o recórrelos con la tecla <b>Tab</b> (borde dorado).</p>
+      </div>
+      <div id="stCode"></div>
+    </div>
+    <h4 class="sub-h">El orden importa: LoVe HAte</h4>
+    <p>Varios estados pueden cumplirse a la vez (un enlace visitado con el ratón encima es <code>:visited</code> <b>y</b> <code>:hover</code>). Como tienen la misma fuerza, <b>gana la regla escrita más abajo</b>. Por eso se escriben en este orden: <b>L</b>ink, <b>V</b>isited, (Focus), <b>H</b>over, <b>A</b>ctive. Para recordarlo: <i>LoVe HAte</i>. Si pones <code>:hover</code> antes que <code>:visited</code>, los enlaces visitados ya no cambiarán al pasar el ratón.</p>
+    <div class="g2">
+      <div><h4 style="margin-top:0">Orden correcto</h4><div class="scroll-list ord-ok"><a href="#ruta-1">El puente de los espíritus (visitado)</a><a href="#ok-nuevo">Un camino sin visitar</a></div></div>
+      <div><h4 style="margin-top:0">Orden incorrecto (:hover antes que :visited)</h4><div class="scroll-list ord-ko"><a href="#ruta-1">El puente de los espíritus (visitado)</a><a href="#ko-nuevo">Un camino sin visitar</a></div></div>
+    </div>
+    <p style="font-size:14.5px;color:var(--ink2);margin-top:8px">Visita primero "El puente de los espíritus" en la demo de arriba y luego pasa el ratón por las dos listas: en la incorrecta, el enlace visitado no se pone rojo.</p>
+    <h4 class="sub-h">Lo que :visited no permite</h4>
+    <div class="note shu"><div class="ic">秘</div><div><b class="t">Privacidad</b><p>Si una web pudiera cambiar libremente el estilo de los enlaces visitados, podría medirlos y averiguar <b>qué páginas has visitado</b>. Por eso los navegadores solo dejan cambiar en <code>:visited</code> los <b>colores</b>: <code>color</code>, <code>background-color</code>, <code>border-color</code>, <code>outline-color</code> y <code>text-decoration-color</code>. Todo lo demás (<b>cursor</b>, tamaño, fuente, imágenes, sombras…) se ignora en silencio.</p></div></div>
+    <div class="pair" id="visCode"></div>
+    <h4 class="sub-h">Cursores y estados que sí funcionan juntos</h4>
+    <p>El cursor se puede cambiar en <code>:hover</code> y en <code>:active</code>, como en las máscaras del principio (la de Kitsune usa <code>grab</code> y, al pulsar, <code>grabbing</code>):</p>
+    <div class="pair" id="maskCode"></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="errores" data-nav="Arregla el código" data-wm="誤">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Detective</p><h2>Arregla el código</h2><p>Siete errores habituales con favicons, fuentes y cursores.</p></div></div>
+  <div class="card reveal"><div id="fixes"></div></div>
+</section>
+
+<!-- 11 -->
+<section class="sec" id="test" data-nav="Test" data-wm="試">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Comprueba lo que sabes</p><h2>Test final</h2><p>Diez preguntas con explicación.</p></div></div>
+  <div class="card reveal"><div id="quiz"></div><div class="score"><span>Puntuación:</span><b id="qScore">0 / 10</b><button class="btn kin sm" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn claro sm" id="qReset" type="button">Empezar de nuevo</button></div></div>
+</section>
+
+<!-- 12 -->
+<section class="sec" id="chuleta" data-nav="Chuleta" data-wm="要">
+  <div class="sec-head reveal"><div class="mon"></div><div><p class="kick">Resumen</p><h2>Chuleta</h2><p>Todo el bloque en una tabla.</p></div></div>
+  <div class="sheet-wrap reveal"><table class="sheet">
+    <tr><th>Código</th><th>Qué hace</th><th>Recuerda</th></tr>
+    <tr class="grp"><td colspan="3">Favicon</td></tr>
+    <tr><td>&lt;link rel="icon" href="img/favicon.png"&gt;</td><td>Icono de la pestaña</td><td>En el &lt;head&gt; de todas las páginas</td></tr>
+    <tr><td>type="image/svg+xml"</td><td>Favicon vectorial</td><td>Nítido a cualquier tamaño</td></tr>
+    <tr><td>&lt;link rel="apple-touch-icon"&gt;</td><td>Icono de pantalla de inicio en iOS</td><td>180 × 180, sin transparencia</td></tr>
+    <tr><td>&lt;meta name="theme-color"&gt;</td><td>Color de la barra en el móvil</td><td>Opcional</td></tr>
+    <tr><td>?v=2</td><td>Saltarse la caché</td><td>Si no ves el favicon nuevo</td></tr>
+    <tr class="grp"><td colspan="3">Fuentes</td></tr>
+    <tr><td>font-family: "A", "B", serif;</td><td>Pila de fuentes</td><td>Comillas si hay espacios; genérica al final y sin comillas</td></tr>
+    <tr><td>&lt;link href="fonts.googleapis.com/…"&gt;</td><td>Cargar Google Fonts</td><td>Antes de tu CSS; solo los pesos que uses</td></tr>
+    <tr><td>@font-face{ … }</td><td>Fuente propia</td><td>Al principio del CSS; url() desde el CSS</td></tr>
+    <tr><td>src: url() format("woff2")</td><td>Archivo de la fuente</td><td>woff2 primero</td></tr>
+    <tr><td>font-display: swap;</td><td>Texto visible mientras carga</td><td>Recomendado</td></tr>
+    <tr><td>font-weight: 650;</td><td>Peso libre</td><td>Solo con fuentes variables</td></tr>
+    <tr class="grp"><td colspan="3">Cursores</td></tr>
+    <tr><td>cursor: pointer;</td><td>Mano: se puede pulsar</td><td>En botones y elementos clicables</td></tr>
+    <tr><td>cursor: not-allowed;</td><td>Prohibido</td><td>En lo desactivado</td></tr>
+    <tr><td>cursor: grab / grabbing;</td><td>Arrastrar</td><td>grabbing en :active</td></tr>
+    <tr><td>cursor: url("img/c.png") 4 2, pointer;</td><td>Cursor propio</td><td>32 × 32 · punto caliente · respaldo obligatorio</td></tr>
+    <tr class="grp"><td colspan="3">Estados de enlace</td></tr>
+    <tr><td>a:link</td><td>Sin visitar</td><td rowspan="1">Orden LVHA: link, visited, hover, active</td></tr>
+    <tr><td>a:visited</td><td>Visitado</td><td>Solo colores (privacidad)</td></tr>
+    <tr><td>a:focus-visible</td><td>Elegido con el teclado</td><td>No le quites el contorno sin sustituirlo</td></tr>
+    <tr><td>a:hover</td><td>Ratón encima</td><td>Admite cursor</td></tr>
+    <tr><td>a:active</td><td>Mientras se pulsa</td><td>Admite cursor</td></tr>
+  </table></div>
+</section>
+
+</main>
+
+<canvas id="guardian" width="160" height="200" title="Kitsune, el guardián" aria-hidden="true"></canvas>
+<footer><div class="wrap"><div><div class="ft">Escenario Noh</div><p>Un emblema, un rostro y un gesto.</p></div><a class="btn kin sm" href="#inicio">Volver arriba</a></div></footer>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dyn=el('style');document.head.appendChild(dyn);const rules={};
+const setRule=(k,css)=>{rules[k]=css;dyn.textContent=Object.values(rules).join('\n');};
+const fmt=n=>{const r=Math.round(n*1000)/1000;return Object.is(r,-0)?'0':String(r);};
+const pad=(s,n)=>s+' '.repeat(Math.max(1,n-s.length));
+
+/* ---------- resaltado de código ---------- */
+function hlVal(v){return esc(v).replace(/([a-zA-Z][\w-]*)\(/g,'<span class="fn">$1</span>(');}
+function hlDecl(d){return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+hlVal(v)+'</span>'+sc);}
+function hlSel(s){return esc(s).replace(/(:[\w-]+(\([^)]*\))?)/g,'<span class="ps">$1</span>');}
+function hlCssLine(line){let code=line,com='';const i=line.indexOf('/*');if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+ let out;
+ if(code.indexOf('{')>=0){const j=code.indexOf('{');const rest=code.slice(j+1);const cl=rest.match(/\}(\s*)$/);const inner=cl?rest.slice(0,rest.length-cl[0].length):rest;out='<span class="s">'+hlSel(code.slice(0,j))+'</span>{'+(inner.indexOf(':')>=0?hlDecl(inner):esc(inner))+(cl?'}'+cl[1]:'');}
+ else if(/^\s*\}/.test(code))out=esc(code);
+ else if(/^\s*[\w-]+\s*:/.test(code))out=hlDecl(code);
+ else out=code.trim()?'<span class="v">'+hlVal(code)+'</span>':esc(code);
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+function hlHtmlLine(h){let code=h,com='';const i=h.indexOf('<!--');if(i>=0){code=h.slice(0,i);com=h.slice(i);}
+ const out=esc(code).replace(/([\w-]+)="([^"]*)"/g,'<span class="p">$1</span>=<span class="v">"$2"</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+/* » = línea destacada · ~ = línea del próximo bloque (transition) */
+function render(lang,src){return src.split('\n').map(l=>{const n=l.startsWith('»'),s0=l.startsWith('~');const s=(n||s0)?l.slice(1):l;const h=lang==='html'?hlHtmlLine(s):hlCssLine(s);return n?'<span class="new">'+(h||' ')+'</span>':s0?'<span class="soon">'+h+'</span>':h;}).join('\n');}
+function copyText(txt,btn){const done=()=>{if(!btn)return;const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+ const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+function codeBox(lang,src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang.toUpperCase())}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+ w.set=s=>{w.src=s.split('\n').map(l=>/^[»~]/.test(l)?l.slice(1):l).join('\n');$('pre',w).innerHTML=render(lang,s);};w.set(src||'');$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+/* pareja HTML + CSS */
+function pair(sel,html,css,th,tc){const h=typeof sel==='string'?$(sel):sel;const a=codeBox('html',html,th||'HTML'),b=codeBox('css',css,tc||'CSS');h.append(a,b);return{h:a,c:b};}
+const put=(sel,...b)=>{const h=$(sel);if(h)h.append(...b);};
+
+function rng(label,min,max,step,val,unit,onIn){const w=el('label','rng');w.innerHTML=`<span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${val}"><output></output>`;
+ const i=$('input',w),o=$('output',w);const show=()=>{o.innerHTML=fmt(+i.value)+(unit||'')+'<button class="r" type="button" title="Volver al valor inicial">↺</button>';$('.r',o).onclick=e=>{e.preventDefault();i.value=val;show();onIn();};};
+ i.addEventListener('input',()=>{show();onIn();});show();w.inp=i;w.get=()=>+i.value;w.setV=v=>{i.value=v;show();};return w;}
+function chips(list,onPick,first){const c=el('div','chips');list.forEach((t,k)=>{const b=el('button','chip',esc(t.label||t));b.type='button';b.onclick=()=>{$$('.chip',c).forEach(x=>x.classList.remove('on'));b.classList.add('on');onPick(t,k);};c.appendChild(b);});
+ if(first!=null&&c.children[first])c.children[first].classList.add('on');c.pick=k=>c.children[k]&&c.children[k].click();return c;}
+
+/* ---------- navegación ---------- */
+{const ul=$('#navUl'),secs=$$('section.sec');secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${i+1}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<150)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollTo({left:a.offsetLeft-ul.clientWidth/2+a.clientWidth/2,behavior:'smooth'});}}};
+ addEventListener('scroll',on,{passive:true});on();}
+
+
+/* ---------- comentarios alineados ---------- */
+/* rows: 'línea' o ['línea','comentario'] · la línea puede empezar por » o ~ */
+const AUTO={width:'ancho',height:'alto','border-radius':'esquinas redondeadas','background-color':'color de fondo','background':'fondo','background-image':'imagen de fondo',color:'color del texto','font-size':'tamaño de letra','font-weight':'grosor de letra','justify-content':'centrado principal','align-items':'centrado cruzado','flex-direction':'dirección de los hijos',gap:'separación entre hijos','box-shadow':'sombra',opacity:'transparencia',transform:'transformación','grid-area':'celda del grid','line-height':'altura de línea',border:'borde',margin:'margen',padding:'relleno','transition':'qué se suaviza y cómo','transition-delay':'espera antes de empezar','transition-duration':'cuánto dura','transition-property':'qué se suaviza','outline':'contorno','perspective':'profundidad 3D','font-family':'la fuente (y sus respaldos)','font-display':'qué se ve mientras carga','font-style':'normal o cursiva','src':'dónde está el archivo',cursor:'forma del puntero','text-decoration-color':'color del subrayado','border-color':'color del borde','outline-color':'color del contorno'};
+function autoC(c){const m=/^[»~]?\s*([\w-]+)\s*:\s*([^;]*);\s*$/.exec(c);if(!m)return null;const p=m[1],v=m[2].trim();if(p==='display')return v==='flex'?'caja flexible':v==='grid'?'rejilla (grid)':v==='inline-block'?'caja en línea':'tipo de caja';return AUTO[p]||null;}
+function CM(rows){rows=rows.map(r=>typeof r==='string'||r[1]?r:[r[0],autoC(r[0])]);const body=r=>{const c=r[0];return /^[»~]/.test(c)?c.slice(1):c;};const w=rows.filter(r=>typeof r!=='string'&&r[1]).map(r=>body(r).length);const col=Math.min(Math.max(...w,10)+3,40);return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;const pre=/^[»~]/.test(c)?c[0]:'';const b=pre?c.slice(1):c;return pre+(m?pad(b,col)+'/* '+m+' */':b);}).join('\n');}
+function HM(rows){return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;if(!m)return c;const ind=c.match(/^\s*/)[0];return ind+'<!-- '+m+' -->\n'+c;}).join('\n');}
+
+/* ---------- emblemas numerados y kanji de fondo ---------- */
+$$('section.sec').forEach((s,i)=>{const m=$('.mon',s);if(m)m.innerHTML=`<b>${i+1}</b>`;if(s.dataset.wm){const w=el('div','wm',s.dataset.wm);w.setAttribute('aria-hidden','true');s.prepend(w);}});
+
+/* ---------- pétalos y fuegos de zorro ---------- */
+if(!reduce){const p=$('#petals');for(let k=0;k<16;k++){const x=el('i','petal');x.style.left=Math.random()*100+'%';x.style.animationDuration=(11+Math.random()*12)+'s';x.style.animationDelay=(-Math.random()*20)+'s';const s=.6+Math.random()*.8;x.style.width=13*s+'px';x.style.height=10*s+'px';p.appendChild(x);}
+ const f=$('#kitsunebi');for(let k=0;k<9;k++){const x=el('i');x.style.left=(5+Math.random()*90)+'%';x.style.top=(10+Math.random()*75)+'%';x.style.animationDelay=(-Math.random()*9)+'s';x.style.animationDuration=(7+Math.random()*6)+'s';f.appendChild(x);}}
+
+/* ---------- dibujo: máscaras Noh ---------- */
+const DR={
+ eye(c,x,y,w,h,ang,ex,ey,iris,rim){c.save();c.translate(x,y);c.rotate(ang);c.beginPath();c.moveTo(-w/2,0);c.quadraticCurveTo(0,-h*1.2,w/2,0);c.quadraticCurveTo(0,h*1.2,-w/2,0);c.closePath();
+  if(rim){c.lineWidth=rim[1];c.strokeStyle=rim[0];c.stroke();}c.fillStyle='#120c0c';c.fill();c.clip();
+  c.fillStyle=iris;c.beginPath();c.arc(ex*w*.22,ey*h*.25,h*.62,0,7);c.fill();c.fillStyle='rgba(255,255,255,.85)';c.beginPath();c.arc(ex*w*.22-h*.18,ey*h*.25-h*.2,h*.16,0,7);c.fill();c.restore();},
+ koomote(c,W,H,ex,ey){const cx=W/2;c.clearRect(0,0,W,H);
+  let g=c.createRadialGradient(cx,H*.45,10,cx,H*.5,W*.62);g.addColorStop(0,'#fffaf0');g.addColorStop(.7,'#f3e7d2');g.addColorStop(1,'#d9c7a6');
+  c.fillStyle=g;c.beginPath();c.ellipse(cx,H*.52,W*.36,H*.42,0,0,7);c.fill();
+  // pelo con raya en medio
+  c.fillStyle='#141012';[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx,H*.12);c.quadraticCurveTo(cx-s*W*.26,H*.13,cx-s*W*.35,H*.42);c.lineTo(cx-s*W*.33,H*.47);c.quadraticCurveTo(cx-s*W*.22,H*.22,cx,H*.19);c.closePath();c.fill();});
+  c.strokeStyle='rgba(20,16,18,.6)';c.lineWidth=1.2;for(let k=0;k<6;k++)[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx,H*(.13+k*.008));c.quadraticCurveTo(cx-s*W*(.2+k*.01),H*.17,cx-s*W*(.3+k*.006),H*.4);c.stroke();});
+  // cejas pintadas en la frente
+  [1,-1].forEach(s=>{const r=c.createRadialGradient(cx-s*W*.15,H*.3,1,cx-s*W*.15,H*.3,W*.07);r.addColorStop(0,'rgba(60,50,55,.75)');r.addColorStop(1,'rgba(60,50,55,0)');c.fillStyle=r;c.beginPath();c.ellipse(cx-s*W*.15,H*.3,W*.07,H*.022,0,0,7);c.fill();});
+  DR.eye(c,cx-W*.15,H*.47,W*.15,H*.03,.06,ex,ey,'#3a2a22');DR.eye(c,cx+W*.15,H*.47,W*.15,H*.03,-.06,ex,ey,'#3a2a22');
+  c.strokeStyle='rgba(150,120,100,.35)';c.lineWidth=2;c.beginPath();c.moveTo(cx-2,H*.5);c.quadraticCurveTo(cx-6,H*.62,cx+4,H*.64);c.stroke();
+  [1,-1].forEach(s=>{const r=c.createRadialGradient(cx-s*W*.19,H*.62,1,cx-s*W*.19,H*.62,W*.1);r.addColorStop(0,'rgba(240,150,160,.35)');r.addColorStop(1,'rgba(240,150,160,0)');c.fillStyle=r;c.fillRect(0,0,W,H);});
+  c.fillStyle='#c2283c';c.beginPath();c.moveTo(cx-W*.08,H*.735);c.quadraticCurveTo(cx,H*.71,cx+W*.08,H*.735);c.quadraticCurveTo(cx,H*.78,cx-W*.08,H*.735);c.fill();
+  c.strokeStyle='#120c0c';c.lineWidth=2.5;c.beginPath();c.moveTo(cx-W*.06,H*.738);c.lineTo(cx+W*.06,H*.738);c.stroke();},
+ hannya(c,W,H,ex,ey){const cx=W/2;c.clearRect(0,0,W,H);
+  // cuernos
+  [1,-1].forEach(s=>{const g=c.createLinearGradient(cx-s*W*.2,H*.25,cx-s*W*.44,H*.02);g.addColorStop(0,'#8f6d22');g.addColorStop(.5,'#e8cd7e');g.addColorStop(1,'#fff3c4');c.fillStyle=g;c.beginPath();c.moveTo(cx-s*W*.12,H*.24);c.quadraticCurveTo(cx-s*W*.36,H*.2,cx-s*W*.44,H*.02);c.quadraticCurveTo(cx-s*W*.3,H*.15,cx-s*W*.24,H*.3);c.closePath();c.fill();});
+  let g=c.createRadialGradient(cx,H*.42,10,cx,H*.5,W*.6);g.addColorStop(0,'#fbf0d6');g.addColorStop(.7,'#e9d3a3');g.addColorStop(1,'#b99554');c.fillStyle=g;
+  c.beginPath();c.moveTo(cx,H*.16);c.bezierCurveTo(cx+W*.36,H*.16,cx+W*.42,H*.45,cx+W*.36,H*.7);c.bezierCurveTo(cx+W*.3,H*.92,cx+W*.12,H*.98,cx,H*.98);c.bezierCurveTo(cx-W*.12,H*.98,cx-W*.3,H*.92,cx-W*.36,H*.7);c.bezierCurveTo(cx-W*.42,H*.45,cx-W*.36,H*.16,cx,H*.16);c.fill();
+  c.strokeStyle='rgba(20,16,18,.7)';c.lineWidth=1.3;for(let k=0;k<9;k++){c.beginPath();c.moveTo(cx-W*.2+k*W*.05,H*.17);c.quadraticCurveTo(cx-W*.25+k*W*.06,H*.24,cx-W*.3+k*W*.075,H*.3);c.stroke();}
+  // cejo fruncido
+  c.fillStyle='rgba(90,60,40,.55)';[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx-s*W*.03,H*.33);c.quadraticCurveTo(cx-s*W*.15,H*.28,cx-s*W*.28,H*.37);c.quadraticCurveTo(cx-s*W*.15,H*.33,cx-s*W*.04,H*.38);c.fill();});
+  // ojos dorados
+  [1,-1].forEach(s=>{c.save();c.translate(cx-s*W*.15,H*.44);c.fillStyle='#c9a24b';c.strokeStyle='#8a1f2a';c.lineWidth=3;c.beginPath();c.ellipse(0,0,W*.085,H*.045,s*.25,0,7);c.fill();c.stroke();c.fillStyle='#120c0c';c.beginPath();c.arc(ex*W*.04,ey*H*.018,H*.027,0,7);c.fill();c.restore();});
+  // boca enorme
+  c.fillStyle='#5a0f17';c.beginPath();c.moveTo(cx-W*.3,H*.68);c.quadraticCurveTo(cx,H*.62,cx+W*.3,H*.68);c.quadraticCurveTo(cx+W*.2,H*.92,cx,H*.93);c.quadraticCurveTo(cx-W*.2,H*.92,cx-W*.3,H*.68);c.fill();
+  c.fillStyle='#e8cd7e';for(let k=-4;k<=4;k++){c.fillRect(cx+k*W*.04-W*.016,H*.67-Math.abs(k)*0.6,W*.032,H*.035);c.fillRect(cx+k*W*.035-W*.014,H*.86-Math.abs(k)*1.2,W*.028,H*.03);}
+  c.fillStyle='#fff3c4';[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx-s*W*.2,H*.69);c.lineTo(cx-s*W*.16,H*.69);c.lineTo(cx-s*W*.18,H*.79);c.fill();});
+  c.strokeStyle='rgba(120,70,40,.5)';c.lineWidth=2;[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx-s*W*.08,H*.52);c.quadraticCurveTo(cx-s*W*.2,H*.58,cx-s*W*.3,H*.64);c.stroke();});},
+ kitsune(c,W,H,ex,ey){const cx=W/2;c.clearRect(0,0,W,H);
+  [1,-1].forEach(s=>{c.fillStyle='#fffaf0';c.beginPath();c.moveTo(cx-s*W*.12,H*.3);c.lineTo(cx-s*W*.36,H*.03);c.lineTo(cx-s*W*.38,H*.38);c.closePath();c.fill();c.fillStyle='#cf3f2b';c.beginPath();c.moveTo(cx-s*W*.17,H*.29);c.lineTo(cx-s*W*.33,H*.1);c.lineTo(cx-s*W*.33,H*.33);c.closePath();c.fill();});
+  let g=c.createRadialGradient(cx,H*.4,10,cx,H*.5,W*.6);g.addColorStop(0,'#ffffff');g.addColorStop(.75,'#f4ecdf');g.addColorStop(1,'#d8c8ad');c.fillStyle=g;
+  c.beginPath();c.moveTo(cx,H*.2);c.bezierCurveTo(cx+W*.34,H*.2,cx+W*.44,H*.42,cx+W*.36,H*.56);c.bezierCurveTo(cx+W*.24,H*.72,cx+W*.1,H*.86,cx,H*.92);c.bezierCurveTo(cx-W*.1,H*.86,cx-W*.24,H*.72,cx-W*.36,H*.56);c.bezierCurveTo(cx-W*.44,H*.42,cx-W*.34,H*.2,cx,H*.2);c.fill();
+  // llama roja de la frente
+  c.fillStyle='#cf3f2b';c.beginPath();c.moveTo(cx,H*.22);c.quadraticCurveTo(cx+W*.06,H*.3,cx,H*.38);c.quadraticCurveTo(cx-W*.06,H*.3,cx,H*.22);c.fill();
+  [1,-1].forEach(s=>{c.beginPath();c.moveTo(cx-s*W*.08,H*.33);c.quadraticCurveTo(cx-s*W*.2,H*.3,cx-s*W*.27,H*.38);c.quadraticCurveTo(cx-s*W*.17,H*.35,cx-s*W*.08,H*.36);c.fill();});
+  // ojos rasgados con borde rojo y dorado
+  DR.eye(c,cx-W*.15,H*.46,W*.16,H*.032,-.32,ex,ey,'#c9a24b',['#cf3f2b',5]);DR.eye(c,cx+W*.15,H*.46,W*.16,H*.032,.32,ex,ey,'#c9a24b',['#cf3f2b',5]);
+  c.strokeStyle='#c9a24b';c.lineWidth=2;[1,-1].forEach(s=>{c.beginPath();c.moveTo(cx-s*W*.08,H*.58);c.quadraticCurveTo(cx-s*W*.14,H*.62,cx-s*W*.12,H*.7);c.stroke();});
+  c.fillStyle='#141012';c.beginPath();c.ellipse(cx,H*.84,W*.05,H*.025,0,0,7);c.fill();
+  c.strokeStyle='#cf3f2b';c.lineWidth=2.5;c.beginPath();c.moveTo(cx,H*.86);c.lineTo(cx,H*.89);c.moveTo(cx-W*.06,H*.9);c.quadraticCurveTo(cx,H*.93,cx+W*.06,H*.9);c.stroke();
+  c.fillStyle='#8f6d22';[[-.18,.74],[-.22,.7],[.18,.74],[.22,.7],[-.2,.78],[.2,.78]].forEach(([a,b])=>{c.beginPath();c.arc(cx+a*W,b*H,2.2,0,7);c.fill();});}
+};
+
+/* ---------- pino pintado sobre pan de oro ---------- */
+function drawPine(){const cv=$('#pine');const r=cv.getBoundingClientRect();const D=Math.min(2,devicePixelRatio||1);cv.width=r.width*D;cv.height=r.height*D;const c=cv.getContext('2d');c.scale(D,D);const W=r.width,H=r.height;
+ let s=5;const rnd=()=>{s=(s*16807)%2147483647;return(s-1)/2147483646;};
+ const tx=W>900?W*.6:W*.5,base=H;
+ c.lineCap='round';c.strokeStyle='#3b2a20';
+ const trunk=[[tx,base],[tx-30,H*.75],[tx+40,H*.55],[tx-10,H*.38],[tx+30,H*.22]];
+ for(let w=38;w>4;w-=6){c.lineWidth=w*(W>600?1:.6);c.strokeStyle=w>30?'#2c1f18':w>18?'#4a3426':'#6b4c36';c.beginPath();c.moveTo(trunk[0][0],trunk[0][1]);for(let i=1;i<trunk.length;i++){const p=trunk[i-1],q=trunk[i];c.quadraticCurveTo(p[0]+(rnd()-.5)*10,(p[1]+q[1])/2,q[0],q[1]);}c.stroke();}
+ const branches=[[tx-20,H*.62,-1,.38],[tx+30,H*.5,1,.36],[tx-5,H*.4,-1,.3],[tx+25,H*.28,1,.26],[tx+10,H*.2,-1,.2]];
+ branches.forEach(([x,y,d,len])=>{const ex=x+d*W*len,ey=y-H*.06;c.lineWidth=12*(W>600?1:.6);c.strokeStyle='#3b2a20';c.beginPath();c.moveTo(x,y);c.quadraticCurveTo((x+ex)/2,y-H*.08,ex,ey);c.stroke();
+  for(let k=0;k<4;k++){const px=x+d*W*len*(.35+k*.22),py=y-H*.05-k*4;const rw=W*(.07+rnd()*.04),rh=H*.045;
+   c.fillStyle='rgba(47,72,42,.92)';c.beginPath();c.ellipse(px,py,rw,rh,0,Math.PI,0);c.quadraticCurveTo(px,py+rh*.5,px-rw,py);c.fill();
+   c.strokeStyle='rgba(120,150,95,.6)';c.lineWidth=1;for(let n=0;n<24;n++){const a=Math.PI+n/23*Math.PI;c.beginPath();c.moveTo(px,py+rh*.2);c.lineTo(px+Math.cos(a)*rw*.95,py+Math.sin(a)*rh*.95);c.stroke();}}});}
+addEventListener('resize',()=>{clearTimeout(drawPine.t);drawPine.t=setTimeout(drawPine,150);});drawPine();
+
+/* ---------- máscaras del escenario con ojos que siguen al ratón ---------- */
+const MASKS=[{k:'koomote',n:'Ko-omote',cur:'pointer',cls:'k1'},{k:'hannya',n:'Hannya',cur:'help',cls:'k2'},{k:'kitsune',n:'Kitsune',cur:'grab',cls:'k3'}];
+const live=[];
+{const host=$('#masks');MASKS.forEach(m=>{const d=el('div','mask '+m.cls,`<i class="cord"></i><canvas width="300" height="400" aria-hidden="true"></canvas><small>${m.n}<b>cursor: ${m.cur}</b></small>`);host.appendChild(d);live.push({cv:$('canvas',d),fn:DR[m.k]});});
+ const g=$('#guardian');live.push({cv:g,fn:DR.kitsune});
+ let mx=0,my=0,pend=false;const redraw=()=>{pend=false;live.forEach(o=>{const r=o.cv.getBoundingClientRect();const dx=mx-(r.left+r.width/2),dy=my-(r.top+r.height*.45);const L=Math.hypot(dx,dy)||1;const k=Math.min(1,L/300);o.fn(o.cv.getContext('2d'),o.cv.width,o.cv.height,dx/L*k,dy/L*k);});};
+ addEventListener('pointermove',e=>{mx=e.clientX;my=e.clientY;if(!pend){pend=true;requestAnimationFrame(redraw);}},{passive:true});
+ live.forEach(o=>o.fn(o.cv.getContext('2d'),o.cv.width,o.cv.height,0,0));
+ g.onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});};}
+
+/* ---------- kamon: el emblema que sirve de favicon ---------- */
+const KAMON={mot:'sakura',shape:'circle',bg:'#cf3f2b',fg:'#fbf6ec',letter:'P'};
+function petal(c,r){c.beginPath();c.moveTo(0,0);c.bezierCurveTo(-r*.55,-r*.25,-r*.5,-r*.85,-r*.14,-r);c.lineTo(0,-r*.86);c.lineTo(r*.14,-r);c.bezierCurveTo(r*.5,-r*.85,r*.55,-r*.25,0,0);c.fill();}
+function drawKamon(c,S,o){o=o||KAMON;c.clearRect(0,0,S,S);const cx=S/2,R=S/2;
+ if(o.shape!=='none'&&o.bg!=='transparent'){c.fillStyle=o.bg;c.beginPath();if(o.shape==='circle')c.arc(cx,cx,R,0,7);else{const r=S*.2;c.moveTo(r,0);c.arcTo(S,0,S,S,r);c.arcTo(S,S,0,S,r);c.arcTo(0,S,0,0,r);c.arcTo(0,0,S,0,r);}c.fill();}
+ if(o.shape==='ring'){c.strokeStyle=o.fg;c.lineWidth=S*.07;c.beginPath();c.arc(cx,cx,R*.9,0,7);c.stroke();}
+ const k=o.shape==='ring'?.72:o.shape==='none'?.98:.82;c.fillStyle=o.fg;c.save();c.translate(cx,cx);
+ if(o.mot==='sakura'){for(let i=0;i<5;i++){c.save();c.rotate(i*Math.PI*2/5);petal(c,R*k);c.restore();}c.fillStyle=o.bg==='transparent'?'#fff':o.bg;c.beginPath();c.arc(0,0,R*k*.16,0,7);c.fill();c.fillStyle=o.fg;for(let i=0;i<5;i++){const a=i*Math.PI*2/5+Math.PI/5;c.beginPath();c.arc(Math.sin(a)*R*k*.28,-Math.cos(a)*R*k*.28,R*k*.05,0,7);c.fill();}}
+ else if(o.mot==='ume'){for(let i=0;i<5;i++){const a=i*Math.PI*2/5;c.beginPath();c.arc(Math.sin(a)*R*k*.5,-Math.cos(a)*R*k*.5,R*k*.42,0,7);c.fill();}c.fillStyle=o.bg==='transparent'?'#fff':o.bg;c.beginPath();c.arc(0,0,R*k*.2,0,7);c.fill();}
+ else if(o.mot==='tomoe'){const rs=R*k*.48,sz=Math.ceil(rs*2+4);const m=document.createElement('canvas');m.width=m.height=sz;const x=m.getContext('2d');x.translate(sz/2,sz/2);x.fillStyle=o.fg;
+  x.beginPath();x.arc(0,0,rs,-Math.PI/2,Math.PI/2);x.closePath();x.fill();x.beginPath();x.arc(0,-rs/2,rs/2,0,7);x.fill();x.globalCompositeOperation='destination-out';x.beginPath();x.arc(0,rs/2,rs/2,0,7);x.fill();
+  for(let i=0;i<3;i++){c.save();c.rotate(i*Math.PI*2/3);c.translate(0,-rs*.92);c.rotate(-Math.PI/2.4);c.drawImage(m,-sz/2,-sz/2);c.restore();}}
+ else if(o.mot==='kitsune'){c.restore();c.save();const m=document.createElement('canvas');m.width=300;m.height=400;DR.kitsune(m.getContext('2d'),300,400,0,0);const h=S*k*.98,w=h*.75;c.drawImage(m,cx-w/2,cx-h/2,w,h);}
+ else{const t=o.mot==='kanji'?'能':(o.letter||'P').slice(0,2);c.font=`${o.mot==='kanji'?400:900} ${R*k*(t.length>1?1:1.35)}px ${o.mot==='kanji'?"'Zen Antique', serif":"'Zen Kaku Gothic Antique', sans-serif"}`;c.textAlign='center';c.textBaseline='middle';c.fillText(t,0,R*.06);}
+ c.restore();}
+function kamonURL(S,o,solid){const cv=document.createElement('canvas');cv.width=cv.height=S;const c=cv.getContext('2d');if(solid){c.fillStyle='#fbf6ec';c.fillRect(0,0,S,S);}drawKamon(c,S,o);return cv.toDataURL('image/png');}
+function setFavicon(){const u=kamonURL(64);$('#favLink').href=u;$('#brandIco').src=u;}
+document.fonts&&document.fonts.ready.then(setFavicon);setFavicon();
+
+/* ---------- 2. favicon ---------- */
+{const ico=kamonURL(64),ico180=kamonURL(180,null,true);
+ const P=[['Pestaña del navegador',`<div class="browser" style="width:100%"><div class="tabs" style="padding:6px 6px 0"><div class="tab on" style="padding:6px 8px"><img src="${ico}" alt=""><span>Mi web</span></div></div></div>`],
+  ['Marcadores / favoritos',`<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:4px;background:#f1ebe0;font-size:13px"><img src="${ico}" width="16" height="16" alt="">Mi web</div>`],
+  ['Pantalla de inicio del móvil',`<img src="${ico180}" width="56" height="56" style="border-radius:14px;box-shadow:0 6px 12px -6px rgba(0,0,0,.5)" alt="">`],
+  ['Resultados del buscador',`<div style="display:flex;align-items:center;gap:8px;font-size:12px;text-align:left"><img src="${ico}" width="22" height="22" style="border-radius:50%;background:#f1ebe0;padding:2px" alt=""><span>mi-web.com<br><b style="color:#1a0dab;font-size:13px">Mi web · Inicio</b></span></div>`]];
+ P.forEach(([t,h])=>{const d=el('div','place',`<div class="ico">${h}</div><b>${t}</b>`);$('#places').appendChild(d);});
+ pair('#favMin',HM(['<!DOCTYPE html>',['<html lang="es">'],['<head>'],['  <meta charset="utf-8">'],['  <title>Mi web</title>'],['  <link rel="icon" href="img/favicon.png">','el favicon: tipo de enlace "icon" + ruta'],['  <link rel="stylesheet" href="css/estilos.css">','tu CSS, como siempre'],['</head>']]),
+  ['mi-proyecto/','├── index.html','├── css/','│   └── estilos.css','└── img/','    └── favicon.png      ← aquí está el icono'].join('\n'),'HTML · index.html','Carpetas del proyecto');
+ {const b=$$('#favMin .code')[1],t=['mi-proyecto/','├── index.html','├── css/','│   └── estilos.css','└── img/','    └── favicon.png      ← aquí está el icono'].join('\n');$('pre',b).textContent=t;b.src=t;}
+ pair('#favFull',HM([['<head>'],['  <link rel="icon" href="favicon.ico" sizes="32x32">','1. el clásico, para todos los navegadores'],['  <link rel="icon" href="img/icon.svg" type="image/svg+xml">','2. vectorial: lo usan los navegadores modernos'],['  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">','3. iPhone / iPad (180 × 180)'],['  <meta name="theme-color" content="#cf3f2b">','4. color de la barra en el móvil'],['</head>']]),
+  ['<!-- img/icon.svg: un favicon SVG que cambia en modo oscuro -->','<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">','  <style>','    circle { fill: #cf3f2b; }            /* rojo en modo claro */','    @media (prefers-color-scheme: dark) {','      circle { fill: #e8cd7e; }          /* dorado en modo oscuro */','    }','  </style>','  <circle cx="16" cy="16" r="14"/>','</svg>'].join('\n'),'HTML · el &lt;head&gt;','SVG · icon.svg (lo verás más adelante)');
+ $$('#favFull .code')[1].querySelector('pre').textContent=$$('#favFull .code')[1].src;
+ $$('#favFull .code .bar span').forEach(s=>s.innerHTML=s.textContent);}
+
+/* ---------- 3. taller de kamon ---------- */
+{const big=$('#kBig'),bc=big.getContext('2d');const cd=pair('#kCode','','','HTML · en el <head>','Carpetas: dónde guardar los archivos');
+ const MOT=[['sakura','Sakura'],['ume','Ume'],['tomoe','Tomoe'],['kitsune','Kitsune'],['kanji','能'],['letter','Tu inicial']];
+ const SH=[['circle','Círculo'],['square','Cuadrado redondeado'],['ring','Aro'],['none','Sin fondo']];
+ const BG=['#cf3f2b','#1e1719','#fbf6ec','#c9a24b','#2d3b5c','#3f5b3a','transparent'],FG=['#fbf6ec','#1e1719','#cf3f2b','#e8cd7e','#f3c2cf','#2d3b5c'];
+ $('#kMot').appendChild(chips(MOT.map(m=>m[1]),(t,k)=>{KAMON.mot=MOT[k][0];$('#kLetterBox').hidden=KAMON.mot!=='letter';draw();},0));
+ $('#kShape').appendChild(chips(SH.map(m=>m[1]),(t,k)=>{KAMON.shape=SH[k][0];draw();},0));
+ const sw=(host,list,key)=>{list.forEach(col=>{const b=el('button');b.type='button';b.title=col;b.setAttribute('aria-label',col);b.style.background=col==='transparent'?'repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/10px 10px':col;b.onclick=()=>{KAMON[key]=col;$$('button',$(host)).forEach(x=>x.classList.toggle('on',x===b));draw();};if(col===KAMON[key])b.classList.add('on');$(host).appendChild(b);});};
+ sw('#kBg',BG,'bg');sw('#kFg',FG,'fg');
+ $('#kLetter').addEventListener('input',e=>{KAMON.letter=e.target.value||'P';draw();});
+ const sizes=$('#kSizes');[16,32,48,180].forEach(s=>{const d=el('div');const c=document.createElement('canvas');c.width=c.height=s;c.style.width=c.style.height=(s>90?90:s)+'px';c.style.borderRadius=s>90?'18px':'0';d.append(c,document.createTextNode(s+' × '+s));sizes.appendChild(d);});
+ function draw(){drawKamon(bc,512);$$('canvas',sizes).forEach((c,i)=>{const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);if(c.width===180){x.fillStyle='#fbf6ec';x.fillRect(0,0,180,180);}drawKamon(x,c.width);});
+  $('#kTabIco').src=kamonURL(32);$('#kDl32').href=kamonURL(32);$('#kDl180').href=kamonURL(180,null,true);
+  cd.h.set(HM([['<head>'],['  <link rel="icon" type="image/png" href="img/favicon-32.png">','tu kamon en la pestaña'],['  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">','tu kamon en la pantalla de inicio'],['  <meta name="theme-color" content="'+(KAMON.bg==='transparent'?'#1e1719':KAMON.bg)+'">','la barra del móvil, del color del fondo'],['</head>']]));
+  cd.c.set('');$('pre',cd.c).textContent=['mi-proyecto/','├── index.html','└── img/','    ├── favicon-32.png        ← "Descargar 32 × 32"','    └── apple-touch-icon.png  ← "Descargar 180 × 180"'].join('\n');cd.c.src=$('pre',cd.c).textContent;}
+ $('#kUse').onclick=()=>{setFavicon();const b=$('#kUse');b.textContent='¡Hecho! Mira la pestaña';setTimeout(()=>b.textContent='Usar como favicon de esta página',1800);};
+ (document.fonts?document.fonts.ready:Promise.resolve()).then(draw);draw();}
+
+/* ---------- 4. pila de fuentes ---------- */
+{const ST=[{f:'"Mi Fuente Bonita"',css:'"Mi Fuente Bonita"',fixed:'off',note:'solo está en tu ordenador'},{f:'"Zen Antique"',css:"'Zen Antique'"},{f:'Georgia',css:'Georgia'},{f:'serif',css:'serif',fixed:'on',note:'genérica: siempre existe'}];
+ const av=ST.map(s=>s.fixed!=='off');const host=$('#stack'),prev=$('#stackPrev'),cd=pair('#stackCode',HM([['<p class="texto">El zorro de Inari cruza el escenario.</p>','un párrafo']]),'');
+ ST.forEach((s,i)=>{const b=el('button',null,esc(s.f)+(s.note?` <small style="font-weight:400">(${s.note})</small>`:''));b.type='button';b.onclick=()=>{if(s.fixed)return;av[i]=!av[i];draw();};host.appendChild(b);if(i<ST.length-1)host.appendChild(el('span',null,'→'));});
+ function draw(){$$('button',host).forEach((b,i)=>b.classList.toggle('off',!av[i]));const use=ST.findIndex((s,i)=>av[i]);prev.style.fontFamily=ST[use].css;
+  cd.c.set(CM([['.texto{'],['»  font-family: "Mi Fuente Bonita", "Zen Antique", Georgia, serif;','prueba de izquierda a derecha'],['}'],'',`/* Ahora el visitante ve: ${ST[use].f.replace(/"/g,'')} */`]));
+  prev.title='Se está usando: '+ST[use].f;$('#stackPrev').dataset.using=ST[use].f;}
+ draw();
+ const G=[['serif','Con remates (los "pies" de las letras). Clásica, de libro.'],['sans-serif','Sin remates. Limpia, de pantalla.'],['monospace','Todas las letras miden lo mismo. Para código.'],['cursive','Imita la escritura a mano. Cambia mucho según el sistema.'],['fantasy','Decorativa. Impredecible: úsala poco.'],['system-ui','La fuente del sistema operativo de quien visita.']];
+ G.forEach(([g,t])=>$('#generic').appendChild(el('div','ficha',`<b class="k"><i>体</i>${g}</b><span style="display:block;font-family:${g};font-size:24px;margin:4px 0">Noh 能 Aa</span>${t}`)));}
+
+/* ---------- 5. Google Fonts ---------- */
+const FONTS=[
+ {f:'Shippori Mincho',m:'Ko-omote · la dama',u:'Shippori+Mincho:wght@500;800',g:'serif',d:'Mincho elegante y sereno.'},
+ {f:'Zen Antique',m:'Okina · el anciano',u:'Zen+Antique',g:'serif',d:'Antigua, solemne. Los títulos de esta página.'},
+ {f:'Yuji Syuku',m:'Kitsune · el zorro',u:'Yuji+Syuku',g:'serif',d:'Trazo de pincel caligráfico.'},
+ {f:'Dela Gothic One',m:'Hannya · el demonio',u:'Dela+Gothic+One',g:'sans-serif',d:'Muy gruesa y rotunda.'},
+ {f:'Hachi Maru Pop',m:'Okame · la risueña',u:'Hachi+Maru+Pop',g:'cursive',d:'Redondeada y alegre.'},
+ {f:'Reggae One',m:'Tengu · el del monte',u:'Reggae+One',g:'sans-serif',d:'Enérgica, de cartel.'},
+ {f:'Rampart One',m:'Oni · el ogro',u:'Rampart+One',g:'sans-serif',d:'Letras en relieve.'},
+ {f:'DotGothic16',m:'Tsukumogami · el objeto con alma',u:'DotGothic16',g:'sans-serif',d:'Píxeles de videojuego.'},
+ {f:'Zen Kaku Gothic Antique',m:'Kōken · el ayudante',u:'Zen+Kaku+Gothic+Antique:wght@400;700',g:'sans-serif',d:'El texto de esta página.'}];
+{const host=$('#fonts'),prev=$('#gPrev'),cd=pair('#gCode','','','HTML · en el <head>','CSS');
+ const pick=i=>{const F=FONTS[i];$$('.font-card',host).forEach((b,k)=>b.classList.toggle('on',k===i));prev.style.fontFamily=`'${F.f}', ${F.g}`;
+  cd.h.set(HM([['<head>'],['  <link rel="preconnect" href="https://fonts.googleapis.com">','1. abre la conexión con Google…'],['  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>','…y con su almacén de fuentes'],[`  <link href="https://fonts.googleapis.com/css2?family=${F.u}&display=swap" rel="stylesheet">`,'2. la fuente (copiada de Google)'],['  <link rel="stylesheet" href="css/estilos.css">','3. tu CSS, después'],['</head>']]));
+  $$('#gCode .code .bar span')[0].textContent='HTML · en el <head>';
+  cd.c.set(CM([['h1{','donde quieras usarla'],[`»  font-family: "${F.f}", ${F.g};`,'el nombre exacto + genérica de respaldo'],F.u.includes('wght')?['  font-weight: '+F.u.split('@')[1].split(';').pop()+';','un peso que SÍ has cargado']:['  font-weight: 400;','esta fuente solo tiene peso 400'],['}']]));};
+ FONTS.forEach((F,i)=>{const b=el('button','font-card',`<span class="who">${esc(F.f)}</span><span class="sample" style="font-family:'${F.f}',${F.g}">能 Máscara</span><span class="role"><b>${F.m}</b><br>${F.d}</span>`);b.type='button';b.onclick=()=>pick(i);host.appendChild(b);});
+ pick(1);}
+
+/* ---------- 6. @font-face ---------- */
+{put('#ffTree',codeBox('html','','Carpetas'),codeBox('html',HM([['<head>'],['  <link rel="stylesheet" href="css/estilos.css">','las fuentes se declaran dentro del CSS'],['</head>'],['<body>'],['  <h1>Escenario Noh</h1>','se verá con la fuente propia'],['</body>']]),'HTML'));
+ const t=['mi-proyecto/','├── index.html','├── css/','│   └── estilos.css        ← aquí va @font-face','└── fonts/','    ├── kitsune-regular.woff2','    ├── kitsune-regular.woff','    └── kitsune-bold.woff2'].join('\n');const tb=$$('#ffTree .code')[0];$('pre',tb).textContent=t;tb.src=t;
+ pair('#ffCode',HM([['<h1>Escenario Noh</h1>','usa "Kitsune" en negrita (700)'],['<p>Texto normal…</p>','usa "Kitsune" normal (400)']]),
+  CM(['/* 1. Declarar la fuente: una vez por cada peso o estilo */',['@font-face{','"existe una fuente que se llama…"'],['»  font-family: "Kitsune";','el nombre que TÚ eliges'],['»  src: url("../fonts/kitsune-regular.woff2") format("woff2"),','primero el formato ligero…'],['»       url("../fonts/kitsune-regular.woff") format("woff");','…y el de respaldo'],['  font-weight: 400;','este archivo es el peso normal'],['  font-style: normal;','sin cursiva'],['  font-display: swap;','texto visible mientras carga'],['}'],'',['@font-face{','mismo nombre, otro archivo'],['  font-family: "Kitsune";','¡el MISMO nombre!'],['  src: url("../fonts/kitsune-bold.woff2") format("woff2");','el archivo en negrita'],['  font-weight: 700;','este es el peso 700'],['  font-style: normal;'],['  font-display: swap;'],['}'],'','/* 2. Usarla como cualquier otra fuente */',['h1{'],['»  font-family: "Kitsune", serif;','con respaldo, siempre'],['  font-weight: 700;','el navegador elige kitsune-bold'],['}'],['p{'],['  font-family: "Kitsune", serif;','y aquí, kitsune-regular'],['}']]),'HTML','CSS · css/estilos.css');
+
+ /* font-display */
+ const FD=[['block','Texto invisible hasta 3s esperando a la fuente.'],['swap','Muestra el respaldo al instante y cambia cuando llega.'],['fallback','Invisible un momento (0,1s), luego respaldo; cambia solo si llega pronto (unos 3s).'],['optional','Invisible 0,1s; si la fuente no ha llegado, se queda el respaldo y la usa en la próxima visita.']];
+ const host=$('#fd');FD.forEach(([n,t])=>{host.appendChild(el('div','fd-row',`<b>${n}</b><div><div class="fd-bar"><i class="t"></i><span class="txt">El zorro de Inari</span></div><span style="font-size:13px;color:var(--ink2)">${t}</span></div>`));});
+ const rows=$$('.fd-row',host);const FONT="'Zen Antique',serif",FB="Arial,sans-serif";
+ const reset=()=>rows.forEach(r=>{const s=$('.txt',r);s.style.fontFamily=FONT;s.style.visibility='visible';const t=$('.t',r);t.style.transition='none';t.style.width='0';});reset();
+ let timers=[];$('#fdGo').onclick=()=>{timers.forEach(clearTimeout);timers=[];reset();
+  rows.forEach((r,i)=>{const s=$('.txt',r),t=$('.t',r);void t.offsetWidth;t.style.transition='width 4s linear';t.style.width='100%';const n=FD[i][0];
+   if(n==='block'){s.style.visibility='hidden';timers.push(setTimeout(()=>{s.style.visibility='visible';s.style.fontFamily=FONT;},2000));}
+   if(n==='swap'){s.style.fontFamily=FB;timers.push(setTimeout(()=>s.style.fontFamily=FONT,2000));}
+   if(n==='fallback'){s.style.visibility='hidden';timers.push(setTimeout(()=>{s.style.visibility='visible';s.style.fontFamily=FB;},100),setTimeout(()=>s.style.fontFamily=FONT,2000));}
+   if(n==='optional'){s.style.visibility='hidden';timers.push(setTimeout(()=>{s.style.visibility='visible';s.style.fontFamily=FB;},100));}});};
+
+ /* variable */
+ const demo=$('#varDemo');const cd=pair('#varCode','','');
+ const R=rng('font-weight',200,900,10,400,'',()=>{const v=R.get();demo.style.fontWeight=v;
+  cd.h.set(HM([['<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200..900&display=swap" rel="stylesheet">','200..900 = todo el rango en un archivo']]));
+  cd.c.set(CM([['.titulo{'],['  font-family: "Noto Serif JP", serif;'],['»  font-weight: '+v+';','cualquier número del 200 al 900'],['}']]));});
+ $('#varCtl').appendChild(R);R.inp.dispatchEvent(new Event('input'));}
+
+/* ---------- 7. galería de cursores ---------- */
+{const GR=[['Generales',[['auto','El navegador decide (valor por defecto).'],['default','La flecha normal.'],['none','Sin cursor: desaparece.']]],
+ ['Enlaces y estado',[['pointer','Mano: se puede pulsar.'],['help','Hay ayuda disponible.'],['wait','Espera: no se puede hacer nada.'],['progress','Cargando, pero se puede seguir usando.'],['not-allowed','Prohibido / desactivado.'],['context-menu','Hay un menú contextual.']]],
+ ['Selección',[['text','Barra para seleccionar texto.'],['vertical-text','Texto vertical.'],['crosshair','Cruz de precisión.'],['cell','Celda de tabla.'],['copy','Se va a copiar.'],['alias','Se va a crear un acceso directo.']]],
+ ['Arrastrar',[['move','Se puede mover.'],['grab','Se puede agarrar.'],['grabbing','Agarrando (en :active).'],['all-scroll','Desplazar en todas direcciones.'],['no-drop','No se puede soltar aquí.']]],
+ ['Redimensionar',[['col-resize','Cambiar el ancho de una columna.'],['row-resize','Cambiar el alto de una fila.'],['ew-resize','Izquierda-derecha.'],['ns-resize','Arriba-abajo.'],['nwse-resize','Diagonal ↖↘.'],['nesw-resize','Diagonal ↗↙.']]],
+ ['Zoom',[['zoom-in','Acercar.'],['zoom-out','Alejar.']]]];
+ const host=$('#cursors');GR.forEach(([g,list])=>{host.appendChild(el('div','cgrp',g));const gr=el('div','cursors');list.forEach(([v,t])=>{const d=el('div','cur',`<code>${v}</code><span>${t}</span>`);d.style.cursor=v;gr.appendChild(d);});host.appendChild(gr);});
+ pair('#curCode',HM([['<button class="boton">Comprar</button>','se puede pulsar'],['<button class="boton" disabled>Agotado</button>','desactivado'],['<div class="mapa">…</div>','se puede arrastrar']]),
+  CM([['.boton{'],['»  cursor: pointer;','mano: "púlsame"'],['}'],['.boton:disabled{','cuando está desactivado…'],['»  cursor: not-allowed;','…prohibido'],['}'],['.mapa{'],['»  cursor: grab;','mano abierta: "agárrame"'],['}'],['.mapa:active{','mientras se mantiene pulsado…'],['»  cursor: grabbing;','…mano cerrada'],['}']]));}
+
+/* ---------- 8. cursor propio ---------- */
+put('#ownCode',codeBox('css',CM(['/* imagen            punto caliente   cursor de respaldo */',['.zona{'],['»  cursor: url("img/kitsune.png") 4 2, pointer;','imagen · x y · respaldo'],['}'],'',['.zona:active{','al pulsar, otro cursor'],['  cursor: url("img/kitsune-pulsado.png") 4 2, pointer;'],['}']]),'CSS · la sintaxis'));
+{const IC={
+  'flecha':{hs:[2,2],d:c=>{c.fillStyle='#cf3f2b';c.strokeStyle='#1e1719';c.lineWidth=2;c.beginPath();c.moveTo(2,2);c.lineTo(2,24);c.lineTo(8,18);c.lineTo(13,29);c.lineTo(17,27);c.lineTo(12,16);c.lineTo(20,16);c.closePath();c.fill();c.stroke();c.fillStyle='#fbf6ec';c.beginPath();c.moveTo(4,7);c.lineTo(4,14);c.lineTo(8,11);c.fill();}},
+  'pincel':{hs:[3,28],d:c=>{c.lineCap='round';c.strokeStyle='#8a5d38';c.lineWidth=5;c.beginPath();c.moveTo(28,4);c.lineTo(12,20);c.stroke();c.strokeStyle='#c9a24b';c.lineWidth=6;c.beginPath();c.moveTo(13,19);c.lineTo(10,22);c.stroke();c.fillStyle='#1e1719';c.beginPath();c.moveTo(9,20);c.quadraticCurveTo(4,24,3,29);c.quadraticCurveTo(8,28,12,23);c.closePath();c.fill();}},
+  'sakura':{hs:[16,16],d:c=>{c.save();c.translate(16,16);c.fillStyle='#e48aa3';c.strokeStyle='#b0253a';c.lineWidth=1;for(let i=0;i<5;i++){c.save();c.rotate(i*Math.PI*2/5);petal(c,14);c.stroke();c.restore();}c.fillStyle='#c9a24b';c.beginPath();c.arc(0,0,3,0,7);c.fill();c.restore();}},
+  'kitsune':{hs:[16,14],d:c=>{const m=document.createElement('canvas');m.width=300;m.height=400;DR.kitsune(m.getContext('2d'),300,400,0,0);c.drawImage(m,4,0,24,32);}}};
+ let cur='flecha',hs=[2,2];const grid=$('#hotGrid'),tgt=$('#target'),cd=pair('#hotCode',HM([['<div class="diana">…</div>','la zona con el cursor propio']]),'');
+ const cv=document.createElement('canvas');cv.width=cv.height=32;const cx=cv.getContext('2d');
+ for(let k=0;k<256;k++){const i=el('i');i.dataset.k=k;grid.appendChild(i);}
+ grid.addEventListener('click',e=>{const i=e.target.closest('i');if(!i)return;const k=+i.dataset.k;hs=[(k%16)*2+1,Math.floor(k/16)*2+1];draw();});
+ function draw(){cx.clearRect(0,0,32,32);IC[cur].d(cx);const url=cv.toDataURL();const px=cx.getImageData(0,0,32,32).data;
+  $$('i',grid).forEach((c,k)=>{const x=(k%16)*2+1,y=Math.floor(k/16)*2+1,o=(y*32+x)*4;const a=px[o+3];c.classList.toggle('px',a>40);c.style.setProperty('--c',`rgba(${px[o]},${px[o+1]},${px[o+2]},${a/255})`);c.classList.toggle('hs',Math.floor(hs[0]/2)===k%16&&Math.floor(hs[1]/2)===Math.floor(k/16));});
+  tgt.style.cursor=`url(${url}) ${hs[0]} ${hs[1]}, crosshair`;
+  $('#hotTxt').textContent=`punto caliente: x = ${hs[0]}, y = ${hs[1]}`;
+  cd.c.set(CM([['.diana{'],[`»  cursor: url("img/${cur}.png") ${hs[0]} ${hs[1]}, crosshair;`,`el clic está en el píxel ${hs[0]}, ${hs[1]} de la imagen`],['}']]));}
+ tgt.addEventListener('click',e=>{const r=tgt.getBoundingClientRect();const h=el('i','hit');h.style.left=(e.clientX-r.left)+'px';h.style.top=(e.clientY-r.top)+'px';tgt.appendChild(h);const hits=$$('.hit',tgt);if(hits.length>6)hits[0].remove();});
+ $('#ownChips').appendChild(chips(Object.keys(IC),t=>{cur=t;hs=IC[t].hs.slice();$$('.hit',tgt).forEach(h=>h.remove());draw();},0));
+ const wrong=el('button','btn claro sm','Poner el punto caliente mal (0, 0)');wrong.type='button';wrong.style.marginBottom='10px';wrong.onclick=()=>{hs=[0,0];draw();};$('#ownChips').appendChild(wrong);
+ draw();}
+
+/* ---------- 9. estados de los enlaces ---------- */
+{setRule('ord','.ord-ok a:link{color:var(--ai)}.ord-ok a:visited{color:var(--fuji)}.ord-ok a:hover{color:var(--shu)}.ord-ko a:link{color:var(--ai)}.ord-ko a:hover{color:var(--shu)}.ord-ko a:visited{color:var(--fuji)}');
+ /* los enlaces navegan de verdad (así quedan "visitados"), pero sin mover la página */
+ $$('#demoLinks a,.ord-ok a,.ord-ko a').forEach(a=>a.addEventListener('click',()=>{const y=scrollY,h=document.documentElement;h.style.scrollBehavior='auto';requestAnimationFrame(()=>{scrollTo(0,y);requestAnimationFrame(()=>{scrollTo(0,y);h.style.scrollBehavior='';});});}));
+ pair('#stCode',HM([['<nav class="rutas">','una lista de enlaces'],['  <a href="puente.html">El puente de los espíritus</a>'],['  <a href="inari.html">El santuario de Inari</a>'],['</nav>']]),
+  CM(['/* Orden LVHA: link, visited, (focus), hover, active */',['a:link{','L · sin visitar'],['  color: #2d3b5c;','azul añil'],['}'],['a:visited{','V · ya visitado'],['  color: #6b4d8f;','morado (solo colores)'],['}'],['a:focus-visible{','F · elegido con el teclado'],['  outline: 3px dashed #c9a24b;','contorno dorado bien visible'],['}'],['a:hover{','H · con el ratón encima'],['  color: #cf3f2b;','rojo bermellón'],['  background-color: #fdf0e8;','fondo suave'],['  cursor: pointer;','mano (ya la traen los enlaces)'],['}'],['a:active{','A · mientras se pulsa'],['  color: white;'],['  background-color: #cf3f2b;','se "enciende"'],['}']]));
+ pair('#visCode',HM([['<a href="inari.html">El santuario de Inari</a>','un enlace ya visitado']]),
+  CM([['a:visited{'],['  color: purple;','✓ se aplica'],['  background-color: lavender;','✓ se aplica'],['  border-color: purple;','✓ se aplica'],['  cursor: wait;','✗ se ignora (no es un color)'],['  font-size: 30px;','✗ se ignora'],['  font-family: "Yuji Syuku";','✗ se ignora'],['  box-shadow: 0 0 10px red;','✗ se ignora'],['}']]));
+ pair('#maskCode',HM([['<div class="mascara ko-omote">…</div>','cursor: pointer'],['<div class="mascara hannya">…</div>','cursor: help'],['<div class="mascara kitsune">…</div>','cursor: grab / grabbing']]),
+  CM([['.ko-omote{ cursor: pointer; }','se puede pulsar'],['.hannya{ cursor: help; }','flecha con interrogación'],['.kitsune{ cursor: grab; }','mano abierta…'],['.kitsune:active{ cursor: grabbing; }','…que se cierra al pulsar']]));}
+
+/* ---------- motor de preguntas ---------- */
+function qBlock(host,items,withScore){const h=$(host);const cards=items.map((q,i)=>{const d=el('div','fix');d.innerHTML=`<div class="hd"><span class="n">${i+1}</span><span>${q.q}</span></div>`;
+  if(q.html||q.code){const pr=el('div','pair');if(q.html)pr.appendChild(codeBox('html',q.html,'HTML'));else pr.style.gridTemplateColumns='1fr';if(q.code)pr.appendChild(codeBox('css',q.code,'CSS'));d.appendChild(pr);}
+  const o=el('div','opts');q.o.forEach((t,k)=>{const l=el('label');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${t}</span>`;o.appendChild(l);});d.appendChild(o);
+  const ex=el('div','ex',q.e);d.appendChild(ex);
+  d.grade=()=>{const sel=$('input:checked',d);$$('label',d).forEach((l,k)=>{l.classList.remove('right','wrong');if(k===q.a&&sel)l.classList.add('right');});if(sel&&+sel.value!==q.a)sel.closest('label').classList.add('wrong');if(sel)ex.classList.add('show');return sel&&+sel.value===q.a;};
+  $$('input',d).forEach(inp=>inp.addEventListener('change',()=>{d.grade();if(withScore)score();}));h.appendChild(d);return d;});
+ function score(){const n=cards.filter((c,i)=>{const s=$('input:checked',c);return s&&+s.value===items[i].a;}).length;if(withScore)$('#qScore').textContent=n+' / '+items.length;return n;}
+ return{cards,score};}
+
+/* ---------- 10. errores ---------- */
+qBlock('#fixes',[
+ {q:'El favicon no aparece. El archivo está en <code>img/favicon.png</code>.',html:HM([['<body>'],['  <link rel="icon" href="favicon.png">'],['  <h1>Mi web</h1>'],['</body>']]),o:['Dos fallos: va en el &lt;head&gt; y la ruta debe ser img/favicon.png','Hay que usar rel="favicon"','Los favicon solo pueden ser .ico'],a:0,e:'El <code>&lt;link&gt;</code> va dentro del <code>&lt;head&gt;</code> y la ruta tiene que llevar a la carpeta: <code>href="img/favicon.png"</code>.'},
+ {q:'He cambiado el favicon por otro y el navegador sigue enseñando el antiguo.',o:['Es la caché: recarga con Ctrl + F5 o añade ?v=2 a la ruta','El nuevo favicon es demasiado pequeño','Hay que reiniciar el ordenador'],a:0,e:'Los navegadores guardan el favicon mucho tiempo. Recarga sin caché o cambia la URL: <code>href="img/favicon.png?v=2"</code>.'},
+ {q:'La fuente no se carga. El CSS está en <code>css/estilos.css</code> y la fuente en <code>fonts/kitsune.woff2</code>.',code:CM([['@font-face{'],['  font-family: "Kitsune";'],['  src: url("fonts/kitsune.woff2") format("woff2");'],['}']]),o:['La ruta se calcula desde el CSS: hay que salir de css/ con ../fonts/kitsune.woff2','Falta font-weight','format debe ser "truetype"'],a:0,e:'La <code>url()</code> parte de la carpeta del <b>archivo CSS</b>. Desde <code>css/</code> hay que subir un nivel: <code>url("../fonts/kitsune.woff2")</code>.'},
+ {q:'El título se ve en negrita "rara", como engordada a la fuerza.',html:HM([['<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">']]),code:CM([['h1{'],['  font-family: "Shippori Mincho", serif;'],['  font-weight: 800;'],['}']]),o:['Solo se ha cargado el peso 400: hay que pedir el 800 en el enlace (wght@800)','Shippori Mincho no tiene negrita','Falta preconnect'],a:0,e:'Si no cargas el peso, el navegador fabrica una "negrita falsa". Pide los pesos en el enlace: <code>family=Shippori+Mincho:wght@500;800</code>.'},
+ {q:'Las genéricas no funcionan: si falla la primera fuente, sale Times.',code:CM([['p{'],['  font-family: "Zen Antique", "sans-serif";'],['}']]),o:['sans-serif no lleva comillas: con comillas busca una fuente que se llame así','Falta una tercera fuente','Las comillas deben ser simples'],a:0,e:'Las familias genéricas se escriben <b>sin comillas</b>: <code>font-family: "Zen Antique", sans-serif;</code>'},
+ {q:'El cursor personalizado no aparece en ningún navegador.',code:CM([['.zona{'],['  cursor: url("img/kitsune.png");'],['}']]),o:['Falta el cursor de respaldo después de una coma: url(...), pointer','Falta el punto caliente','Los cursores solo admiten .cur'],a:0,e:'Con <code>url()</code> el respaldo es obligatorio: <code>cursor: url("img/kitsune.png") 4 2, pointer;</code>. Sin él, la declaración se ignora.'},
+ {q:'Quería que los enlaces visitados tuvieran otro cursor y otro tamaño, y no cambia nada.',code:CM([['a:visited{'],['  cursor: wait;'],['  font-size: 24px;'],['}']]),o:[':visited solo permite cambiar colores, por privacidad','Falta !important','Hay que escribirlo antes de a:link'],a:0,e:'En <code>:visited</code> solo funcionan <code>color</code>, <code>background-color</code>, <code>border-color</code>, <code>outline-color</code> y similares. El resto se ignora para que ninguna web pueda espiar tu historial.'},
+],false);
+
+/* ---------- 11. test ---------- */
+const Q=[
+ {q:'¿Dónde se escribe la etiqueta del favicon?',o:['En el &lt;head&gt;','Al final del &lt;body&gt;','En el CSS'],a:0,e:'<code>&lt;link rel="icon" href="…"&gt;</code> va en el &lt;head&gt; de cada página.'},
+ {q:'¿Qué tamaño es el habitual para un favicon PNG?',o:['32 × 32 píxeles','800 × 600 píxeles','Da igual, el navegador lo recorta'],a:0,e:'32 × 32 (o 48 × 48). Para la pantalla de inicio de iOS, 180 × 180.'},
+ {q:'¿Para qué sirve <code>rel="apple-touch-icon"</code>?',o:['Para el icono al añadir la web a la pantalla de inicio del iPhone','Para que la web funcione en Mac','Para cambiar el cursor en tabletas'],a:0,e:'Es el icono de 180 × 180 que se usa como "app" en iOS.'},
+ {q:'En <code>font-family: "Zen Antique", Georgia, serif;</code>, ¿qué fuente se usa si el visitante no tiene Zen Antique pero sí Georgia?',o:['Georgia','serif','Ninguna: da error'],a:0,e:'El navegador recorre la lista de izquierda a derecha y usa la primera disponible.'},
+ {q:'¿Dónde se pegan los &lt;link&gt; de Google Fonts?',o:['En el &lt;head&gt;, antes de tu CSS','Dentro del CSS','Al final del &lt;body&gt;'],a:0,e:'En el &lt;head&gt;, y antes de tu hoja de estilos para que la fuente esté declarada cuando tu CSS la use.'},
+ {q:'¿Cuál es el mejor formato para una fuente en la web?',o:['.woff2','.ttf','.eot'],a:0,e:'woff2 está comprimido y lo entienden todos los navegadores actuales.'},
+ {q:'¿Qué hace <code>font-display: swap</code>?',o:['Muestra el texto con la fuente de respaldo y la cambia cuando llega la buena','Oculta el texto hasta que carga la fuente','Cambia de fuente cada pocos segundos'],a:0,e:'Así el texto se puede leer desde el primer momento.'},
+ {q:'¿Qué cursor debes usar en un botón desactivado?',o:['not-allowed','pointer','wait'],a:0,e:'<code>not-allowed</code> avisa de que no se puede usar.'},
+ {q:'En <code>cursor: url("img/c.png") 4 2, pointer;</code>, ¿qué son 4 y 2?',o:['El punto caliente: el píxel que hace clic','El tamaño del cursor','El tiempo de animación'],a:0,e:'Coordenadas x e y del punto caliente, desde la esquina de arriba a la izquierda de la imagen.'},
+ {q:'¿En qué orden deben escribirse los estados de un enlace?',o:[':link, :visited, :hover, :active',':hover, :active, :link, :visited',':active, :hover, :visited, :link'],a:0,e:'LVHA (LoVe HAte): así cada estado gana cuando debe.'}];
+{const qb=qBlock('#quiz',Q,true);$('#qAll').onclick=()=>{qb.cards.forEach((c,i)=>{c.grade();$('.ex',c).classList.add('show');$$('label',c)[Q[i].a].classList.add('right');});const n=qb.score();if(n===Q.length)$('#qScore').textContent=n+' / '+Q.length+' · ¡perfecto!';};
+ $('#qReset').onclick=()=>{$$('#quiz input').forEach(i=>i.checked=false);$$('#quiz label').forEach(l=>l.classList.remove('right','wrong'));$$('#quiz .ex').forEach(e=>e.classList.remove('show'));qb.score();};}
+
+/* ---------- ofuda: resumen de cada sección ---------- */
+{const D={
+ escenario:['顔','Favicon, fuentes y cursor son el emblema, el rostro y el gesto de tu web.'],
+ favicon:['紋','El favicon va en el head con &lt;link rel="icon"&gt;, en un archivo pequeño (32 × 32) y con la ruta correcta.'],
+ kamon:['家','Un buen favicon es sencillo, de pocos colores y se entiende a 16 píxeles.'],
+ fuentes:['面','font-family es una lista: el navegador usa la primera fuente disponible y la genérica del final es la red de seguridad.'],
+ google:['借','Google Fonts: &lt;link&gt; en el head, solo los pesos que uses y font-family con el nombre exacto más una genérica.'],
+ fontface:['作','@font-face declara tu fuente con un nombre y su archivo woff2; la ruta va desde el CSS y font-display: swap deja leer desde el principio.'],
+ cursor:['扇','cursor cambia el puntero sobre un elemento: pointer para pulsar, not-allowed para lo desactivado, grab para arrastrar.'],
+ propio:['狐','Cursor propio: url() + punto caliente + cursor de respaldo, con una imagen de 32 × 32.'],
+ estados:['道','Enlaces en orden LVHA; :visited solo admite colores.'],
+ errores:['誤','Head y rutas para el favicon, ../ en @font-face, genéricas sin comillas, respaldo en el cursor y solo colores en :visited.'],
+ chuleta:['要','Un emblema, un rostro y un gesto: tres detalles, una identidad.']};
+ Object.entries(D).forEach(([id,[k,t]])=>{const s=$('#'+id);if(!s)return;const d=el('div','ofuda reveal');d.innerHTML=`<span class="lb">御<br>札</span><p>${t}</p><span class="hanko">${k}</span>`;s.appendChild(d);});}
+
+/* ---------- aparición al hacer scroll ---------- */
+if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.04});$$('.reveal').forEach(x=>io.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+})();
+</script>
+</body></html>

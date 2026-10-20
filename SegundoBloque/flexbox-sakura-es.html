@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía Flexbox Sakura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --washi:#fbf5ee; --washi2:#f4e9de; --papel:#fffaf6;
+  --sakura:#f7c9d6; --sakura-soft:#fde9ef; --sakura-deep:#e2809f;
+  --beni:#c43a4b; --beni-dark:#9e2537;
+  --sumi:#2a2126; --sumi-soft:#5e4d55;
+  --matcha:#7f9a6e; --matcha-soft:#e7efdf; --kin:#c59a4f;
+  --line:#ecd9d1;
+  --mincho:'Shippori Mincho', 'Hiragino Mincho ProN', Georgia, serif;
+  --gothic:'Zen Kaku Gothic New', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  margin:0; color:var(--sumi); font-family:var(--gothic); font-size:17px; line-height:1.75;
+  background-color:var(--washi);
+  background-image:
+    radial-gradient(1200px 600px at 110% -10%, rgba(247,201,214,.55), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(253,233,239,.8), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .3 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  overflow-x:hidden;
+}
+::selection{background:var(--sakura);color:var(--beni-dark)}
+a{color:var(--beni)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px;position:relative;z-index:2}
+code{font-family:var(--mono);font-size:.88em;background:var(--sakura-soft);color:var(--beni-dark);padding:2px 7px;border-radius:6px;border:1px solid #f6d3de;overflow-wrap:anywhere}
+
+/* petals canvas */
+#petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:40;background:rgba(251,245,238,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mincho);font-weight:800;font-size:20px;color:var(--sumi);text-decoration:none;white-space:nowrap}
+.hanko{display:inline-grid;place-items:center;width:34px;height:34px;background:var(--beni);color:#fff;border-radius:6px;font-family:var(--mincho);font-size:19px;transform:rotate(-4deg);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.nav ul{min-width:0;list-style:none;margin:0 0 0 auto;padding:0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav ul::-webkit-scrollbar{display:none}
+.nav li a{display:block;padding:6px 12px;border-radius:999px;color:var(--sumi-soft);text-decoration:none;font-size:14.5px;font-weight:500;white-space:nowrap;transition:.2s}
+.nav li a:hover,.nav li a.active{background:var(--sakura-soft);color:var(--beni)}
+.progress{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--sakura-deep),var(--beni));transition:width .1s}
+.petal-toggle{border:1px solid var(--line);background:var(--papel);border-radius:999px;padding:5px 12px;font-family:var(--gothic);font-size:13px;color:var(--sumi-soft);cursor:pointer;white-space:nowrap}
+
+/* HERO */
+.hero{position:relative;padding:56px 0 40px}
+.hero .wrap.hgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--beni);font-weight:700}
+.eyebrow::before{content:"";width:38px;height:2px;background:var(--beni)}
+.hero h1{font-family:var(--mincho);font-weight:800;font-size:clamp(44px,7vw,82px);line-height:1.02;margin:14px 0 18px;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--beni);position:relative}
+.hero h1 small{display:block;font-size:.38em;font-weight:700;color:var(--sumi-soft);margin-top:10px;letter-spacing:.02em}
+.hero p.lead{font-size:19px;color:var(--sumi-soft);max-width:520px;margin:0 0 26px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:999px;background:var(--beni);color:#fff;text-decoration:none;font-weight:700;border:none;cursor:pointer;font-family:var(--gothic);font-size:16px;box-shadow:0 10px 24px -10px rgba(196,58,75,.7);transition:.2s}
+.btn:hover{transform:translateY(-2px);background:var(--beni-dark)}
+.btn.ghost{background:transparent;color:var(--beni);border:1.5px solid var(--beni);box-shadow:none}
+.btn.ghost:hover{background:var(--sakura-soft)}
+.btn.small{padding:8px 16px;font-size:14px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-art{position:relative}
+.hero-art svg{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 30px rgba(226,128,159,.25))}
+.vertical{position:absolute;left:0;top:0;writing-mode:vertical-rl;font-family:var(--mincho);font-size:26px;font-weight:700;letter-spacing:.35em;color:var(--sumi)}
+.vertical .seal{writing-mode:horizontal-tb;display:inline-grid;place-items:center;width:38px;height:38px;margin-top:12px;background:var(--beni);color:#fff;border-radius:5px;font-size:20px;letter-spacing:0}
+
+/* STUDENT CARD */
+.ikaslea{margin:6px auto 0;background:var(--papel);border:1px solid var(--line);border-radius:22px;padding:20px 22px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:14px;align-items:end;box-shadow:0 20px 40px -30px rgba(158,37,55,.45)}
+.ikaslea label{min-width:0;display:flex;flex-direction:column;font-size:13px;font-weight:700;color:var(--sumi-soft);letter-spacing:.04em;gap:5px}
+.ikaslea input{min-width:0;width:100%;font:inherit;font-weight:500;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--sumi);outline:none;transition:.2s}
+.ikaslea input:focus{border-color:var(--sakura-deep);box-shadow:0 0 0 4px var(--sakura-soft)}
+.kronometroa{display:flex;align-items:center;gap:10px;background:var(--sumi);color:#fbe9ef;border-radius:16px;padding:8px 10px 8px 16px}
+.kronometroa .time{font-family:var(--mono);font-size:22px;font-weight:600;min-width:108px;letter-spacing:.04em}
+.kronometroa button{border:none;border-radius:10px;padding:8px 12px;font-family:var(--gothic);font-weight:700;font-size:13px;cursor:pointer}
+.kr-start{background:var(--sakura);color:var(--beni-dark)}
+.kr-stop{background:var(--beni);color:#fff}
+.kr-reset{background:#4a3c43;color:#fbe9ef}
+
+/* SECTIONS */
+section.chap{padding:64px 0 10px;position:relative}
+.chap-head{position:relative;margin-bottom:28px;padding-left:4px}
+.chap-head .kanji{position:absolute;left:-10px;top:-46px;font-family:var(--mincho);font-weight:800;font-size:140px;line-height:1;color:var(--sakura);opacity:.55;z-index:-1;user-select:none}
+.chap-head .num{font-size:13px;font-weight:700;letter-spacing:.2em;color:var(--beni);text-transform:uppercase}
+.chap-head h2{font-family:var(--mincho);font-weight:800;font-size:clamp(32px,4.6vw,48px);line-height:1.12;margin:6px 0 10px}
+.chap-head p{color:var(--sumi-soft);max-width:720px;margin:0;font-size:18px}
+h3{font-family:var(--mincho);font-weight:800;font-size:26px;margin:0 0 10px;line-height:1.25}
+h4{font-family:var(--mincho);font-weight:700;font-size:19px;margin:18px 0 6px}
+
+.card{background:var(--papel);border:1px solid var(--line);border-radius:22px;padding:28px;margin-bottom:24px;position:relative;box-shadow:0 24px 50px -36px rgba(158,37,55,.5)}
+.card::after{content:"";pointer-events:none;position:absolute;top:16px;right:18px;width:30px;height:30px;opacity:.65;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 60 60'%3E%3Cg fill='%23f4adc1'%3E%3Cpath id='p' d='M0,-3 C-9,-8 -10,-20 -3,-26 L0,-22 L3,-26 C10,-20 9,-8 0,-3Z'/%3E%3Cuse href='%23p' transform='rotate(72)'/%3E%3Cuse href='%23p' transform='rotate(144)'/%3E%3Cuse href='%23p' transform='rotate(216)'/%3E%3Cuse href='%23p' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='5' fill='%23f6d98d'/%3E%3C/svg%3E") no-repeat center/contain}
+.grid2>*,.grid3>*,.lab>*,.game>*,.cheat>*,.axes-wrap>*{min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:999px;text-transform:uppercase}
+.tag.g{background:var(--sakura-soft);color:var(--beni)}
+.tag.u{background:var(--matcha-soft);color:#4f6a40}
+
+.note{display:flex;gap:14px;padding:14px 18px;border-radius:14px;margin:16px 0;font-size:16px}
+.note .ico{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--mincho);font-weight:800;font-size:16px}
+.note.tip{background:var(--matcha-soft);border:1px solid #d3e1c6}
+.note.tip .ico{background:var(--matcha);color:#fff}
+.note.warn{background:#fff0ec;border:1px solid #f6cfc5}
+.note.warn .ico{background:var(--beni);color:#fff}
+.note p{margin:0}
+
+/* code */
+pre.code{background:var(--sumi);color:#f7e4ea;border-radius:14px;padding:16px 18px;font-family:var(--mono);font-size:14.5px;line-height:1.65;overflow-x:auto;margin:14px 0 0;position:relative;border:1px solid #3d3037}
+pre.code .s{color:#b8dca9}
+pre.code .p{color:#f7a8c0}
+pre.code .v{color:#f0d68e}
+pre.code .c{color:#9a8890;font-style:italic}
+pre.code .t{color:#9fc6e8}
+
+/* tables */
+table.vals{width:100%;border-collapse:collapse;font-size:15.5px;margin-top:8px}
+table.vals th{text-align:left;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sumi-soft);padding:8px 10px;border-bottom:2px solid var(--sakura)}
+table.vals td{padding:9px 10px;border-bottom:1px dashed var(--line);vertical-align:top}
+table.vals td:first-child{width:1%}
+table.vals td:first-child code{white-space:nowrap;overflow-wrap:normal}
+
+/* DEMO */
+.demo{margin-top:18px}
+.demo-label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sumi-soft);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.demo-label::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--beni);box-shadow:0 0 0 4px var(--sakura-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1.5px solid var(--sakura-deep);background:#fff;color:var(--beni-dark);border-radius:999px;padding:6px 14px;font-family:var(--mono);font-size:13.5px;cursor:pointer;transition:.18s}
+.chip:hover{background:var(--sakura-soft)}
+.chip.on{background:var(--beni);border-color:var(--beni);color:#fff;box-shadow:0 6px 14px -8px rgba(196,58,75,.9)}
+.stage{border-radius:18px;padding:12px;background:
+  repeating-linear-gradient(45deg, rgba(247,201,214,.22) 0 10px, transparent 10px 20px), #fff7f9;
+  border:2px dashed #eeb3c5;overflow:hidden}
+.demo-box{border-radius:12px;background:rgba(255,255,255,.75);padding:10px;min-height:150px;outline:2px solid rgba(226,128,159,.35);outline-offset:-2px;position:relative}
+.demo-box::before{content:"padre";position:absolute;top:-1px;right:10px;font-family:var(--mono);font-size:11px;color:var(--sakura-deep);background:#fff7f9;padding:0 6px;border-radius:0 0 6px 6px;pointer-events:none}
+.umea{background:linear-gradient(150deg,#ffe2ea 0%,#f5afc3 100%);color:#7a2440;border-radius:14px;min-width:58px;min-height:58px;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mincho);font-weight:800;font-size:20px;border:2px solid #fff;box-shadow:0 8px 16px -10px rgba(158,37,55,.6);padding:8px 12px;position:relative;transition:background .3s}
+.umea svg{width:22px;height:22px;color:#fff;flex:0 0 auto}
+.umea.nab{background:linear-gradient(150deg,#ec6f88 0%,#b82e45 100%);color:#fff}
+.umea.nab svg{color:#ffd6e1}
+.umea.v1{padding-top:8px;padding-bottom:8px;font-size:16px}
+.umea.v2{padding-top:26px;padding-bottom:26px;font-size:24px}
+.umea.v3{padding-top:14px;padding-bottom:14px;font-size:30px}
+.umea.v4{padding-top:36px;padding-bottom:10px;font-size:18px}
+.demo .code{margin-top:12px}
+
+/* axes */
+.axes-wrap{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.axes{position:relative;width:100%;max-width:440px;aspect-ratio:1.45;margin:0 auto}
+.axes .box{position:absolute;inset:16% 10%;border-radius:14px;background:#fff;border:2px dashed #eeb3c5;display:flex;gap:10px;padding:12px;transition:.4s}
+.axes .box .umea{min-width:46px;min-height:46px;font-size:16px;padding:4px}
+.arrow{position:absolute;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12.5px;font-weight:600;transition:.5s}
+.arrow.main{left:4%;right:4%;top:5%;height:16px;border-top:3px solid var(--beni);color:var(--beni)}
+.arrow.main::after{content:"";position:absolute;right:-2px;top:-10px;border:8px solid transparent;border-left:12px solid var(--beni)}
+.arrow.main span{background:#fffaf6;padding:0 8px;transform:translateY(-14px)}
+.arrow.cross{top:12%;bottom:6%;left:3%;width:16px;border-left:3px solid var(--matcha);color:#4f6a40}
+.arrow.cross::after{content:"";position:absolute;bottom:-2px;left:-10px;border:8px solid transparent;border-top:12px solid var(--matcha)}
+.arrow.cross span{writing-mode:vertical-rl;background:#fffaf6;padding:8px 0;transform:translateX(-14px)}
+.axes.col .arrow.main{left:3%;right:auto;top:12%;bottom:6%;width:16px;height:auto;border-top:none;border-left:3px solid var(--beni)}
+.axes.col .arrow.main::after{right:auto;top:auto;bottom:-2px;left:-10px;border:8px solid transparent;border-top:12px solid var(--beni)}
+.axes.col .arrow.main span{writing-mode:vertical-rl;padding:8px 0;transform:translateX(-14px)}
+.axes.col .arrow.cross{top:5%;bottom:auto;left:4%;right:4%;width:auto;height:16px;border-left:none;border-top:3px solid var(--matcha)}
+.axes.col .arrow.cross::after{bottom:auto;left:auto;right:-2px;top:-10px;border:8px solid transparent;border-left:12px solid var(--matcha)}
+.axes.col .arrow.cross span{writing-mode:horizontal-tb;padding:0 8px;transform:translateY(-14px)}
+.axes.col .box{flex-direction:column;align-items:flex-start}
+.mnemo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.mnemo div{border-radius:14px;padding:14px;text-align:center}
+.mnemo b{display:block;font-family:var(--mono);font-size:15px}
+.mnemo .m1{background:var(--sakura-soft);color:var(--beni-dark);border:1px solid #f6d3de}
+.mnemo .m2{background:var(--matcha-soft);color:#4f6a40;border:1px solid #d3e1c6}
+
+/* Family diagram */
+.family{display:flex;flex-direction:column;align-items:center;gap:0;padding:10px 0}
+.family .parent{background:var(--beni);color:#fff;padding:10px 22px;border-radius:14px;font-family:var(--mono);font-weight:600;font-size:15px;box-shadow:0 10px 20px -12px rgba(196,58,75,.9)}
+.family .stem{width:2px;height:22px;background:var(--sakura-deep)}
+.family .bar{height:2px;background:var(--sakura-deep);width:74%}
+.family .kids{display:flex;justify-content:space-between;width:80%}
+.family .kid{display:flex;flex-direction:column;align-items:center}
+.family .kid .stem{height:18px}
+.family .kid span{background:linear-gradient(150deg,#ffe2ea,#f5afc3);color:#7a2440;padding:8px 12px;border-radius:12px;font-family:var(--mono);font-size:13px;font-weight:600;border:2px solid #fff}
+.family .grand{margin-top:10px;font-size:12px;color:var(--sumi-soft);font-family:var(--mono);border:1px dashed var(--sumi-soft);padding:3px 8px;border-radius:8px;opacity:.75}
+
+/* PROP CARDS header */
+.prop-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.prop-head h3{margin:0;font-family:var(--mono);font-size:24px;font-weight:600;color:var(--beni-dark)}
+.prop-head .def{font-size:13px;color:var(--sumi-soft);font-family:var(--mono);background:var(--washi2);padding:2px 10px;border-radius:999px}
+.what{font-size:17.5px;margin:6px 0 0}
+
+/* playground */
+.lab{display:grid;grid-template-columns:300px 1fr;gap:22px}
+.controls{display:flex;flex-direction:column;gap:12px}
+.controls label{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--beni-dark)}
+.controls select,.controls input[type=range]{font:inherit;font-family:var(--mono);font-size:14px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--sumi);accent-color:var(--beni)}
+.controls input[type=range]{padding:0}
+.controls .rv{font-family:var(--mono);color:var(--sumi-soft);font-weight:400}
+#lab-box{min-height:320px;transition:height .2s}
+.copy{position:absolute;top:10px;right:10px;font-family:var(--gothic);font-size:12px;border:none;border-radius:8px;padding:5px 10px;background:#4a3c43;color:#fbe9ef;cursor:pointer}
+
+/* EXERCISES */
+.ex-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.ex-tab{border:1.5px solid var(--line);background:var(--papel);border-radius:14px;padding:10px 18px;cursor:pointer;font-family:var(--gothic);font-weight:700;font-size:15px;color:var(--sumi-soft);display:flex;align-items:center;gap:10px;transition:.2s}
+.ex-tab .k{font-family:var(--mincho);font-size:20px;color:var(--sakura-deep)}
+.ex-tab.on{background:var(--sumi);color:#fff;border-color:var(--sumi)}
+.ex-tab.on .k{color:var(--sakura)}
+.ex-panel{display:none}
+.ex-panel::after{display:none}
+.ex-panel.on{display:block;animation:fade .4s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* game */
+.game-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.levels{display:flex;gap:6px;flex-wrap:wrap}
+.lvl{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--sakura-deep);background:#fff;color:var(--beni-dark);font-family:var(--mincho);font-weight:800;cursor:pointer;transition:.2s}
+.lvl.on{background:var(--beni);color:#fff;border-color:var(--beni)}
+.lvl.done{background:var(--matcha);border-color:var(--matcha);color:#fff}
+.lvl.done.on{box-shadow:0 0 0 3px var(--matcha-soft),0 0 0 5px var(--beni)}
+.game{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.game-text h3{font-size:24px}
+.editor{background:var(--sumi);border-radius:14px;padding:14px 16px;font-family:var(--mono);font-size:15px;color:#f7e4ea;line-height:1.7}
+.editor .ro{color:#9a8890}
+.editor textarea{width:100%;min-height:96px;resize:vertical;background:#3a2e34;color:#f7e4ea;border:1.5px solid #5a4850;border-radius:10px;padding:10px 12px;font-family:var(--mono);font-size:15px;line-height:1.6;outline:none;margin:4px 0}
+.editor textarea:focus{border-color:var(--sakura-deep)}
+.game-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.hint{display:none;margin-top:10px;font-size:15px;background:var(--matcha-soft);border:1px solid #d3e1c6;border-radius:12px;padding:10px 14px}
+.hint.show{display:block}
+.garden{position:relative;height:330px;border-radius:18px;overflow:hidden;border:2px solid #f0c4d1;
+  background:
+   radial-gradient(circle at 82% 18%, rgba(255,255,255,.95) 0 34px, rgba(255,240,244,.6) 35px 52px, transparent 53px),
+   linear-gradient(180deg,#fde3ea 0%,#fbeef0 55%,#e8efdf 100%)}
+.garden::before{content:"";position:absolute;left:0;right:0;bottom:0;height:60px;background:
+  radial-gradient(60% 100% at 20% 100%, #cfe0c2 0 60%, transparent 61%),
+  radial-gradient(50% 90% at 75% 100%, #c4d8b5 0 60%, transparent 61%);opacity:.8}
+.layer{position:absolute;inset:0;padding:16px;display:flex}
+.layer .it{flex:0 0 58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.layer.target .it{border:2.5px dashed var(--c);background:rgba(255,255,255,.55)}
+.layer.target .it::before{content:"";width:22px;height:30px;border-radius:12px;background:var(--c);opacity:.35}
+.layer.user .it{background:var(--c);box-shadow:0 10px 18px -10px rgba(60,20,30,.7);border:2px solid #fff;z-index:2}
+.layer.user .it svg{width:34px;height:34px;color:#fff}
+.layer.user{z-index:2}
+.result{margin-top:12px;font-weight:700;min-height:28px}
+.result.ok{color:#4f6a40}
+.result.ko{color:var(--beni)}
+
+/* quiz */
+.q{border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px;background:#fff}
+.q .qt{font-weight:700;margin-bottom:10px;display:flex;gap:10px}
+.q .qt .n{flex:0 0 28px;height:28px;border-radius:50%;background:var(--sakura-soft);color:var(--beni);display:grid;place-items:center;font-family:var(--mincho);font-weight:800;font-size:15px}
+.q label.opt{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;cursor:pointer;border:1.5px solid transparent;transition:.15s;font-size:16px}
+.q label.opt:hover{background:var(--washi)}
+.q input{accent-color:var(--beni);width:17px;height:17px}
+.q label.opt.right{border-color:var(--matcha);background:var(--matcha-soft)}
+.q label.opt.wrong{border-color:#f0a9b3;background:#fff0ec}
+.q .exp{display:none;margin-top:10px;font-size:15px;padding:10px 14px;border-radius:10px;background:var(--washi)}
+.q .exp.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:8px;padding:16px 20px;border-radius:16px;background:var(--sumi);color:#fff}
+.score b{font-family:var(--mincho);font-size:28px;color:var(--sakura)}
+
+/* fill */
+.fill pre.code select{font-family:var(--mono);font-size:14px;background:#4a3c43;color:#f0d68e;border:1.5px solid #6b5761;border-radius:7px;padding:2px 6px;outline:none;cursor:pointer}
+.fill pre.code select.right{border-color:#9fd08a;background:#3d4d36}
+.fill pre.code select.wrong{border-color:#ff8e9e;background:#5a2f38}
+
+/* match */
+.match-row{display:grid;grid-template-columns:200px 1fr 34px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.match-row code{font-size:15px;justify-self:start}
+.match-row select{font:inherit;font-size:15px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;width:100%;color:var(--sumi)}
+.match-row .mk{font-family:var(--mincho);font-weight:800;font-size:20px;text-align:center}
+.match-row .mk.ok{color:var(--matcha)}
+.match-row .mk.ko{color:var(--beni)}
+
+/* cheat */
+.cheat{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.cheat-col{background:var(--papel);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.cheat-col h3{margin:0;padding:16px 22px;font-size:22px;display:flex;align-items:center;gap:10px}
+.cheat-col.g h3{background:var(--beni);color:#fff}
+.cheat-col.u h3{background:var(--matcha);color:#fff}
+.cheat-col dl{margin:0;padding:8px 22px 18px}
+.cheat-col dt{font-family:var(--mono);font-weight:600;color:var(--beni-dark);margin-top:12px;font-size:15px}
+.cheat-col.u dt{color:#4f6a40}
+.cheat-col dd{margin:2px 0 0;font-size:15px;color:var(--sumi-soft)}
+.cheat-col dd code{font-size:13px}
+
+/* recipes */
+.recipe .demo-box{min-height:120px}
+
+/* footer */
+footer{margin-top:70px;position:relative;z-index:2;color:#fbe9ef;background:var(--sumi)}
+.seigaiha{height:70px;background-color:var(--washi);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cg fill='none' stroke='%23e2809f' stroke-width='1.5' stroke-opacity='.7'%3E%3Cpath d='M0 40a40 40 0 0 1 80 0M8 40a32 32 0 0 1 64 0M16 40a24 24 0 0 1 48 0M24 40a16 16 0 0 1 32 0M32 40a8 8 0 0 1 16 0'/%3E%3Cpath d='M-40 20a40 40 0 0 1 80 0M40 20a40 40 0 0 1 80 0'/%3E%3C/g%3E%3C/svg%3E");background-size:80px 40px;background-position:bottom;opacity:1}
+footer .wrap{padding:36px 16px 46px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+footer .f-title{font-family:var(--mincho);font-size:24px;font-weight:800}
+footer p{margin:4px 0 0;color:#cdb7bf;font-size:15px}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+
+/* ---- composiciones ---- */
+.comp-intro{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:start}
+.comp-index{display:flex;flex-direction:column;gap:6px}
+.comp-index a{display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:12px;background:#fff;border:1px solid var(--line);color:var(--sumi);text-decoration:none;font-weight:500;font-size:15.5px;transition:.2s}
+.comp-index a:hover{background:var(--sakura-soft);color:var(--beni)}
+.comp-index a span{font-family:var(--mincho);font-weight:800;font-size:20px;color:var(--beni);width:24px;text-align:center}
+.allowed{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.allowed code{font-size:12.5px}
+.comp-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.comp-head h3{margin:0}
+.comp-num{font-family:var(--mono);font-weight:600;font-size:14px;color:#fff;background:var(--beni);border-radius:8px;padding:2px 8px}
+.comp-kanji{font-family:var(--mincho);font-weight:800;font-size:30px;color:var(--sakura-deep);line-height:1}
+.comp-props{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.comp-props code{background:var(--matcha-soft);color:#4f6a40;border-color:#d3e1c6;font-size:12.5px}
+.comp-stage{margin:18px 0 6px;border-radius:18px;padding:40px 16px;overflow-x:auto;
+  background:repeating-linear-gradient(45deg, rgba(247,201,214,.18) 0 10px, transparent 10px 20px), #fff7f9;
+  border:2px dashed #eeb3c5;
+  line-height:normal;font-size:16px;color:#000;font-family:serif;text-align:left;font-weight:400}
+.comp-inner{width:max-content;margin:0 auto}
+.comp-keys{margin-top:14px}
+.comp-keys h4{margin:0 0 6px}
+.comp-keys ol{margin:0;padding-left:22px}
+.comp-keys li{margin-bottom:6px}
+.comp-keys li::marker{color:var(--beni);font-weight:700}
+details.comp-code{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+details.comp-code summary{cursor:pointer;padding:10px 16px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--sumi-soft);background:var(--washi)}
+details.comp-code summary:hover{color:var(--beni)}
+details.comp-code pre.code{margin:0;border-radius:0;border:none;font-size:13.5px}
+@media (max-width:900px){.comp-intro{grid-template-columns:1fr}}
+
+@media (max-width:900px){
+  .hero .wrap.hgrid{grid-template-columns:1fr}
+  .hero-art{max-width:460px;margin:0 auto;width:100%}
+  .ikaslea{grid-template-columns:1fr 1fr}
+  .kronometroa{grid-column:1/-1;justify-content:space-between}
+  .grid2,.grid3,.lab,.game,.cheat,.axes-wrap{grid-template-columns:1fr}
+  .brand span.txt{display:none}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .card{padding:20px 16px}
+  .ikaslea{grid-template-columns:1fr}
+  .match-row{grid-template-columns:1fr 34px}
+  .match-row code{grid-column:1/-1}
+  .chap-head .kanji{font-size:100px;top:-30px}
+  .petal-toggle{display:none}
+  .kronometroa .time{font-size:19px;min-width:90px}
+  .kronometroa button{padding:7px 9px}
+}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+@media print{
+  #petals,.nav,.petal-toggle{display:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="lore" viewBox="-30 -30 60 60">
+      <g fill="currentColor">
+        <path id="pt" d="M0,-3 C-9,-8 -10,-20 -3,-26 L0,-22 L3,-26 C10,-20 9,-8 0,-3Z"/>
+        <use href="#pt" transform="rotate(72)"/>
+        <use href="#pt" transform="rotate(144)"/>
+        <use href="#pt" transform="rotate(216)"/>
+        <use href="#pt" transform="rotate(288)"/>
+      </g>
+      <circle r="5.5" fill="#f6d98d"/>
+      <circle r="2.4" fill="#d9577a"/>
+    </symbol>
+  </defs>
+</svg>
+
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#hasiera" class="brand"><span class="hanko">花</span><span class="txt">Flexbox Sakura</span></a>
+    <ul id="navlinks">
+      <li><a href="#zer">¿Qué es?</a></li>
+      <li><a href="#ardatzak">Ejes</a></li>
+      <li><a href="#gurasoa">Padre</a></li>
+      <li><a href="#umeak">Hijos</a></li>
+      <li><a href="#errezetak">Recetas</a></li>
+      <li><a href="#composiciones">Composiciones</a></li>
+      <li><a href="#laborategia">Laboratorio</a></li>
+      <li><a href="#ariketak">Ejercicios</a></li>
+      <li><a href="#txuleta">Chuleta</a></li>
+    </ul>
+    <button class="petal-toggle" id="petalToggle">Pétalos: ON</button>
+    <div class="progress" id="progress"></div>
+  </div>
+</nav>
+
+<header class="hero" id="hasiera">
+  <div class="wrap hgrid">
+    <div>
+      <span class="eyebrow">CSS · Diseño · Guía completa</span>
+      <h1>Flex<em>box</em><small>Padres e hijos, como en las ramas de un cerezo en flor</small></h1>
+      <p class="lead">Aprende a alinear, distribuir y ordenar elementos con CSS Flexbox. Teoría clara, demos interactivas, un laboratorio y ejercicios en forma de juego, todo en esta página.</p>
+      <div class="hero-btns">
+        <a class="btn" href="#zer">Empezar a aprender</a>
+        <a class="btn ghost" href="#ariketak">Ir a los ejercicios</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 520 470" id="heroSvg" aria-hidden="true">
+        <defs>
+          <radialGradient id="sun" cx="50%" cy="45%" r="55%">
+            <stop offset="0" stop-color="#fbd5df"/>
+            <stop offset=".75" stop-color="#f6b3c5"/>
+            <stop offset="1" stop-color="#f19ab2"/>
+          </radialGradient>
+          <linearGradient id="mt" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e9cfd6"/>
+            <stop offset="1" stop-color="#f6e9ec"/>
+          </linearGradient>
+        </defs>
+        <circle cx="270" cy="225" r="175" fill="url(#sun)"/>
+        <circle cx="270" cy="225" r="175" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2" stroke-dasharray="2 9"/>
+        <path d="M60 420 L190 300 Q205 288 220 300 L250 325 L300 280 Q312 270 325 280 L470 420Z" fill="url(#mt)"/>
+        <path d="M190 300 Q205 288 220 300 L232 310 L222 318 L210 308 L198 318 L186 305Z" fill="#fff"/>
+        <path d="M300 280 Q312 270 325 280 L340 293 L328 298 L316 289 L305 298 L292 288Z" fill="#fff"/>
+        <g fill="none" stroke="#3e2b31" stroke-linecap="round">
+          <path d="M540,52 C440,88 380,148 300,190 C230,226 160,252 70,330" stroke-width="12"/>
+          <path d="M386,136 C394,104 420,82 456,68" stroke-width="5"/>
+          <path d="M304,188 C292,150 262,124 226,112" stroke-width="5"/>
+          <path d="M204,240 C214,280 242,300 274,312" stroke-width="4"/>
+          <path d="M124,288 C104,262 82,252 48,252" stroke-width="3.5"/>
+          <path d="M460,92 C470,120 488,138 510,146" stroke-width="3.5"/>
+        </g>
+        <g id="blossoms"></g>
+        <g font-family="Shippori Mincho, serif" font-size="13" fill="#9e2537" opacity=".75">
+          <text x="62" y="452">display: flex;</text>
+        </g>
+      </svg>
+      <div class="vertical">桜の手引き<span class="seal">花</span></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="ikaslea" id="ikaslea">
+      <label>Nombre<input type="text" id="izena" placeholder="Tu nombre" autocomplete="off"></label>
+      <label>Apellidos<input type="text" id="abizenak" placeholder="Tus apellidos" autocomplete="off"></label>
+      <label>Curso / grupo<input type="text" id="taldea" placeholder="Ej. 1º A" autocomplete="off"></label>
+      <div class="kronometroa">
+        <span class="time" id="krTime">00:00:00</span>
+        <button class="kr-start" id="krStart">Iniciar</button>
+        <button class="kr-stop" id="krStop">Parar</button>
+        <button class="kr-reset" id="krReset" title="Reiniciar">0</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section class="chap" id="zer">
+  <div class="chap-head reveal">
+    <span class="kanji">一</span>
+    <span class="num">01 · Introducción</span>
+    <h2>¿Qué es Flexbox?</h2>
+    <p>Es un sistema de CSS para organizar elementos en una línea (en fila o en columna). Centrar, repartir, ordenar y ajustar tamaños: todo con unas pocas líneas.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card reveal">
+      <h3>La rama y las flores</h3>
+      <p>En Flexbox siempre hay dos papeles:</p>
+      <p><span class="tag g">Padre</span> <b>Contenedor flex.</b> Es la rama del cerezo: decide cómo se reparten las flores, en qué dirección y con qué separación.</p>
+      <p><span class="tag u">Hijos</span> <b>Elementos flex.</b> Son las flores de la rama: cada una puede tener sus propios deseos (crecer más, cambiar de sitio, alinearse en otro lugar...).</p>
+      <div class="note warn"><span class="ico">!</span><p><code>display: flex</code> se pone en el <b>padre</b>, no en los hijos. El padre recibe el "superpoder" flex y solo lo notan sus hijos <b>directos</b>.</p></div>
+    </div>
+    <div class="card reveal">
+      <h3>¿Quién es quién?</h3>
+      <div class="family">
+        <div class="parent">&lt;div class="padre"&gt;</div>
+        <div class="stem"></div>
+        <div class="bar"></div>
+        <div class="kids">
+          <div class="kid"><div class="stem"></div><span>hijo 1</span></div>
+          <div class="kid"><div class="stem"></div><span>hijo 2</span><div class="grand">nieto (no es hijo flex)</div></div>
+          <div class="kid"><div class="stem"></div><span>hijo 3</span></div>
+        </div>
+      </div>
+      <pre class="code"><span class="t">&lt;div</span> <span class="p">class</span>=<span class="v">"padre"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="p">class</span>=<span class="v">"hijo"</span><span class="t">&gt;</span>1<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="p">class</span>=<span class="v">"hijo"</span><span class="t">&gt;</span>2<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="p">class</span>=<span class="v">"hijo"</span><span class="t">&gt;</span>3<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="s">.padre</span> {
+  <span class="p">display</span>: <span class="v">flex</span>; <span class="c">/* aquí empieza la magia */</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>display</h3><span class="tag g">Padre</span></div>
+    <p class="what">El primer paso. Mira qué pasa al cambiar entre <code>block</code> y <code>flex</code>: los hijos pasan de estar uno debajo de otro a estar uno al lado del otro.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Qué hace</th></tr>
+      <tr><td><code>flex</code></td><td>El padre es un elemento de bloque (ocupa toda la línea) y convierte a sus hijos en flex.</td></tr>
+      <tr><td><code>inline-flex</code></td><td>Igual, pero el padre se coloca como si estuviera dentro del texto (solo ocupa el ancho que necesita).</td></tr>
+    </table>
+    <div class="demo" data-demo="display"></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="chap" id="ardatzak">
+  <div class="chap-head reveal">
+    <span class="kanji">二</span>
+    <span class="num">02 · La clave</span>
+    <h2>Los dos ejes</h2>
+    <p>El secreto para entender Flexbox: todo ocurre según dos ejes. Si entiendes los ejes, entenderás todas las propiedades.</p>
+  </div>
+  <div class="card reveal">
+    <div class="grid2">
+      <div>
+        <h4 style="margin-top:0;color:var(--beni)">Eje principal (main axis)</h4>
+        <p style="margin:0">La dirección en la que los hijos se colocan <b>uno tras otro</b>. La decide <code>flex-direction</code>. Por defecto: horizontal, de izquierda a derecha.</p>
+        <h4 style="color:#4f6a40">Eje transversal (cross axis)</h4>
+        <p style="margin:0">Es <b>perpendicular</b> al principal. Si el principal es horizontal, el transversal es vertical, y al revés.</p>
+        <div class="mnemo">
+          <div class="m1"><b>justify-content</b>eje principal</div>
+          <div class="m2"><b>align-items</b>eje transversal</div>
+        </div>
+        <div class="note tip"><span class="ico">✓</span><p>Para recordarlo: <b>justify</b> trabaja en el eje por el que los hijos van <b>en fila</b> (principal). <b>align</b> trabaja en el eje que lo <b>atraviesa</b> (transversal).</p></div>
+        <div class="chips" id="axisChips" style="margin-top:14px">
+          <button class="chip on" data-v="row">flex-direction: row</button>
+          <button class="chip" data-v="column">flex-direction: column</button>
+        </div>
+      </div>
+      <div>
+        <div class="axes" id="axes">
+          <div class="arrow main"><span>eje principal</span></div>
+          <div class="arrow cross"><span>transversal</span></div>
+          <div class="box"><div class="umea">1</div><div class="umea">2</div><div class="umea">3</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note warn"><span class="ico">!</span><p>Al poner <code>flex-direction: column</code> los ejes se <b>intercambian</b>: <code>justify-content</code> pasa a actuar en vertical y <code>align-items</code> en horizontal. Es el error más habitual.</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="chap" id="gurasoa">
+  <div class="chap-head reveal">
+    <span class="kanji">三</span>
+    <span class="num">03 · La rama</span>
+    <h2>Propiedades del padre</h2>
+    <p>Todas estas se ponen en el <b>padre</b> (el elemento que tiene <code>display: flex</code>). Pulsa los botones y mira el cambio en directo.</p>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-direction</h3><span class="tag g">Padre</span><span class="def">por defecto: row</span></div>
+    <p class="what">Decide la <b>dirección</b> del eje principal: hijos en fila o en columna, y en qué sentido.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Resultado</th></tr>
+      <tr><td><code>row</code></td><td>En fila, de izquierda a derecha.</td></tr>
+      <tr><td><code>row-reverse</code></td><td>En fila, de derecha a izquierda (orden invertido).</td></tr>
+      <tr><td><code>column</code></td><td>En columna, de arriba abajo.</td></tr>
+      <tr><td><code>column-reverse</code></td><td>En columna, de abajo arriba.</td></tr>
+    </table>
+    <div class="demo" data-demo="direction"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>justify-content</h3><span class="tag g">Padre</span><span class="def">por defecto: flex-start</span></div>
+    <p class="what">Cómo alinear a los hijos en el <b>eje principal</b> y cómo repartir el espacio sobrante.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Resultado</th></tr>
+      <tr><td><code>flex-start</code></td><td>Agrupados al principio.</td></tr>
+      <tr><td><code>center</code></td><td>En el centro.</td></tr>
+      <tr><td><code>flex-end</code></td><td>Agrupados al final.</td></tr>
+      <tr><td><code>space-between</code></td><td>El primero al principio, el último al final y huecos iguales entre medias.</td></tr>
+      <tr><td><code>space-around</code></td><td>Cada hijo tiene el mismo hueco a cada lado (en los bordes se ve la mitad).</td></tr>
+      <tr><td><code>space-evenly</code></td><td>Todos los huecos exactamente iguales, bordes incluidos.</td></tr>
+    </table>
+    <div class="demo" data-demo="justify"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>align-items</h3><span class="tag g">Padre</span><span class="def">por defecto: stretch</span></div>
+    <p class="what">Cómo alinear a los hijos en el <b>eje transversal</b>. En esta demo los hijos tienen alturas distintas para que se vea bien la diferencia.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Resultado</th></tr>
+      <tr><td><code>stretch</code></td><td>Se estiran para llenar toda la altura del padre (si no tienen altura fija).</td></tr>
+      <tr><td><code>flex-start</code></td><td>Arriba (al principio del eje transversal).</td></tr>
+      <tr><td><code>center</code></td><td>En el centro. El famoso truco para centrar en vertical.</td></tr>
+      <tr><td><code>flex-end</code></td><td>Abajo.</td></tr>
+      <tr><td><code>baseline</code></td><td>Alineados según la línea base del texto.</td></tr>
+    </table>
+    <div class="demo" data-demo="alignItems"></div>
+    <div class="note tip"><span class="ico">✓</span><p>Receta para centrar cualquier cosa en el medio exacto: <code>display:flex; justify-content:center; align-items:center;</code></p></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-wrap</h3><span class="tag g">Padre</span><span class="def">por defecto: nowrap</span></div>
+    <p class="what">Si los hijos deben apretarse en una <b>sola</b> línea o pueden repartirse en <b>varias</b> líneas cuando no caben.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Resultado</th></tr>
+      <tr><td><code>nowrap</code></td><td>Todos en una sola línea (se encogen o se desbordan).</td></tr>
+      <tr><td><code>wrap</code></td><td>Si no hay sitio, bajan a la línea siguiente.</td></tr>
+      <tr><td><code>wrap-reverse</code></td><td>Las líneas nuevas se crean hacia arriba.</td></tr>
+    </table>
+    <div class="demo" data-demo="wrap"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-flow</h3><span class="tag g">Padre</span><span class="def">abreviatura</span></div>
+    <p class="what">Abreviatura para escribir <code>flex-direction</code> y <code>flex-wrap</code> en una sola línea. Por ejemplo: <code>flex-flow: column wrap;</code></p>
+    <div class="demo" data-demo="flow"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>align-content</h3><span class="tag g">Padre</span><span class="def">por defecto: normal (stretch)</span></div>
+    <p class="what">Cómo se reparten las <b>líneas</b> (no los hijos) en el eje transversal. Solo tiene efecto cuando hay <b>más de una línea</b>, es decir, con <code>flex-wrap: wrap</code> y espacio suficiente.</p>
+    <table class="vals">
+      <tr><th>Valor</th><th>Resultado</th></tr>
+      <tr><td><code>flex-start</code></td><td>Todas las líneas agrupadas arriba.</td></tr>
+      <tr><td><code>center</code></td><td>Todas las líneas agrupadas en el centro.</td></tr>
+      <tr><td><code>flex-end</code></td><td>Todas las líneas agrupadas abajo.</td></tr>
+      <tr><td><code>space-between</code></td><td>La primera línea arriba, la última abajo y los huecos entre medias.</td></tr>
+      <tr><td><code>space-around</code></td><td>Cada línea tiene el mismo hueco arriba y abajo.</td></tr>
+      <tr><td><code>space-evenly</code></td><td>Todos los huecos iguales, bordes incluidos.</td></tr>
+      <tr><td><code>stretch</code></td><td>Las líneas se estiran para llenar todo el espacio.</td></tr>
+    </table>
+    <div class="demo" data-demo="alignContent"></div>
+    <div class="note warn"><span class="ico">!</span><p><code>align-items</code> vs <code>align-content</code>: el primero mueve cada hijo dentro de su línea; el segundo mueve líneas completas.</p></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>gap</h3><span class="tag g">Padre</span><span class="def">por defecto: 0</span></div>
+    <p class="what">El hueco <b>entre</b> los hijos, sin pelearse con márgenes. No pone hueco en los bordes. Admite dos valores: <code>gap: filas columnas</code> (o <code>row-gap</code> y <code>column-gap</code> por separado).</p>
+    <div class="demo" data-demo="gap"></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="chap" id="umeak">
+  <div class="chap-head reveal">
+    <span class="kanji">四</span>
+    <span class="num">04 · Las flores</span>
+    <h2>Propiedades de los hijos</h2>
+    <p>Estas se ponen en los <b>hijos</b>, uno a uno. En todas las demos, el hijo <b>rojo</b> es el que recibe la propiedad.</p>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>order</h3><span class="tag u">Hijo</span><span class="def">por defecto: 0</span></div>
+    <p class="what">Cambia el <b>orden de aparición</b> del hijo sin tocar el HTML. El número más bajo va primero. Como todos tienen 0, con <code>-1</code> será el primero y con <code>1</code> o más, el último.</p>
+    <div class="demo" data-demo="order"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-grow</h3><span class="tag u">Hijo</span><span class="def">por defecto: 0</span></div>
+    <p class="what">La <b>capacidad</b> de ocupar el espacio libre que sobra. El número es una proporción: el que tiene <code>2</code> recibe el doble de espacio libre que el que tiene <code>1</code>. En esta demo los demás hijos tienen <code>flex-grow: 1</code>.</p>
+    <div class="demo" data-demo="grow"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-shrink</h3><span class="tag u">Hijo</span><span class="def">por defecto: 1</span></div>
+    <p class="what">Cuánto se <b>encoge</b> el hijo cuando no hay sitio. <code>0</code> = no se encoge nunca. Número mayor = se encoge más que los demás. En esta demo todos los hijos quieren 260px y no caben.</p>
+    <div class="demo" data-demo="shrink"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex-basis</h3><span class="tag u">Hijo</span><span class="def">por defecto: auto</span></div>
+    <p class="what">El <b>tamaño inicial</b> del hijo en el eje principal, antes de crecer o encoger. En fila actúa como el ancho; en columna, como la altura.</p>
+    <div class="demo" data-demo="basis"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>flex</h3><span class="tag u">Hijo</span><span class="def">abreviatura</span></div>
+    <p class="what">Las tres a la vez: <code>flex: grow shrink basis</code>. Es la que más se usa en la práctica.</p>
+    <table class="vals">
+      <tr><th>Escribes</th><th>Significa</th></tr>
+      <tr><td><code>flex: 1</code></td><td><code>1 1 0%</code> · reparte el espacio libre a partes iguales con los demás.</td></tr>
+      <tr><td><code>flex: auto</code></td><td><code>1 1 auto</code> · crece y encoge partiendo de su contenido.</td></tr>
+      <tr><td><code>flex: none</code></td><td><code>0 0 auto</code> · rígido, no cambia.</td></tr>
+      <tr><td><code>flex: 0 0 120px</code></td><td>Siempre 120px exactos.</td></tr>
+    </table>
+    <div class="demo" data-demo="flex"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="prop-head"><h3>align-self</h3><span class="tag u">Hijo</span><span class="def">por defecto: auto</span></div>
+    <p class="what">La alineación transversal de <b>un solo</b> hijo, sobrescribiendo el <code>align-items</code> del padre. Tiene los mismos valores. En esta demo el padre tiene <code>align-items: flex-start</code>.</p>
+    <div class="demo" data-demo="alignSelf"></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="chap" id="errezetak">
+  <div class="chap-head reveal">
+    <span class="kanji">五</span>
+    <span class="num">05 · En la práctica</span>
+    <h2>Recetas clásicas</h2>
+    <p>Tres diseños que aparecen una y otra vez en las páginas web, hechos con Flexbox.</p>
+  </div>
+  <div class="grid3">
+    <div class="card recipe reveal">
+      <h4 style="margin-top:0">Centrado total</h4>
+      <div class="stage"><div class="demo-box" style="display:flex;justify-content:center;align-items:center;height:140px"><div class="umea nab"><svg><use href="#lore"/></svg>!</div></div></div>
+      <pre class="code"><span class="s">.padre</span> {
+  <span class="p">display</span>: <span class="v">flex</span>;
+  <span class="p">justify-content</span>: <span class="v">center</span>;
+  <span class="p">align-items</span>: <span class="v">center</span>;
+}</pre>
+    </div>
+    <div class="card recipe reveal">
+      <h4 style="margin-top:0">Barra de navegación</h4>
+      <div class="stage"><div class="demo-box" style="display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:80px"><div class="umea nab" style="font-size:15px">Logo</div><div style="display:flex;gap:6px"><div class="umea" style="font-size:13px;min-width:0;min-height:40px">A</div><div class="umea" style="font-size:13px;min-width:0;min-height:40px">B</div><div class="umea" style="font-size:13px;min-width:0;min-height:40px">C</div></div></div></div>
+      <pre class="code"><span class="s">.nav</span> {
+  <span class="p">display</span>: <span class="v">flex</span>;
+  <span class="p">justify-content</span>: <span class="v">space-between</span>;
+  <span class="p">align-items</span>: <span class="v">center</span>;
+}</pre>
+    </div>
+    <div class="card recipe reveal">
+      <h4 style="margin-top:0">Rejilla de tarjetas</h4>
+      <div class="stage"><div class="demo-box" style="display:flex;flex-wrap:wrap;gap:8px"><div class="umea" style="flex:1 1 60px">1</div><div class="umea" style="flex:1 1 60px">2</div><div class="umea" style="flex:1 1 60px">3</div><div class="umea" style="flex:1 1 60px">4</div><div class="umea" style="flex:1 1 60px">5</div></div></div>
+      <pre class="code"><span class="s">.rejilla</span> { <span class="p">display</span>:<span class="v">flex</span>;
+  <span class="p">flex-wrap</span>:<span class="v">wrap</span>; <span class="p">gap</span>:<span class="v">8px</span>; }
+<span class="s">.tarjeta</span> { <span class="p">flex</span>: <span class="v">1 1 60px</span>; }</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="chap" id="composiciones">
+  <div class="chap-head reveal">
+    <span class="kanji">六</span>
+    <span class="num">06 · Composiciones</span>
+    <h2>Composiciones con Flexbox</h2>
+    <p>Siete diseños reales hechos solo con Flexbox y las propiedades que ya conoces. Cada uno funciona en directo, con su HTML y su CSS comentado línea a línea para que puedas copiarlo y modificarlo.</p>
+  </div>
+  <div class="card reveal">
+    <div class="comp-intro">
+      <div>
+        <h3>El truco: cajas de tamaño fijo + flex para centrar</h3>
+        <p>Todavía no hemos visto cómo dar espacio interior a una caja. Por eso, en todas las composiciones usamos el mismo truco:</p>
+        <ol style="padding-left:22px;margin:0 0 10px">
+          <li>Damos a la caja un <code>width</code> y un <code>height</code> fijos en px.</li>
+          <li>La convertimos en contenedor flex y centramos su contenido con <code>justify-content</code> y <code>align-items</code>.</li>
+          <li>Separamos los hijos con <code>gap</code> o con <code>space-evenly</code>, que deja aire también en los bordes.</li>
+        </ol>
+        <p style="margin:0">Y la idea más importante: <b>componer es meter flex dentro de flex</b>. Una tarjeta es una columna, dentro hay una fila, y dentro de esa fila cada botón es otro flex que centra su texto.</p>
+        <div class="allowed"><code>display:flex</code><code>flex-*</code><code>justify-content</code><code>align-*</code><code>order</code><code>gap</code><code>width</code><code>height</code><code>font-size</code><code>font-family</code><code>font-weight</code><code>color</code><code>background-color</code><code>text-align</code><code>text-shadow</code><code>-webkit-text-stroke</code><code>box-shadow</code><code>outline</code><code>border-radius</code><code>opacity</code></div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Índice de composiciones</h4>
+        <div class="comp-index" id="compIndex"></div>
+        <div class="note warn" style="margin-bottom:0"><span class="ico">!</span><p><code>text-stroke</code> se escribe <code>-webkit-text-stroke</code>. El prefijo <code>-webkit-</code> es obligatorio, pero funciona en todos los navegadores actuales.</p></div>
+      </div>
+    </div>
+  </div>
+  <div id="comps"></div>
+</section>
+
+<!-- 7 -->
+<section class="chap" id="laborategia">
+  <div class="chap-head reveal">
+    <span class="kanji">七</span>
+    <span class="num">07 · Experimenta</span>
+    <h2>Laboratorio Flexbox</h2>
+    <p>Combina todas las propiedades del padre como quieras. El código se genera automáticamente y puedes copiarlo.</p>
+  </div>
+  <div class="card reveal">
+    <div class="lab">
+      <div class="controls" id="labControls"></div>
+      <div>
+        <div class="stage"><div class="demo-box" id="lab-box"></div></div>
+        <pre class="code" id="lab-code"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="chap" id="ariketak">
+  <div class="chap-head reveal">
+    <span class="kanji">八</span>
+    <span class="num">08 · Practica</span>
+    <h2>Ejercicios</h2>
+    <p>Cuatro tipos de ejercicio. Puedes corregir cada respuesta y, si lo necesitas, ver ayuda.</p>
+  </div>
+
+  <div class="ex-tabs" id="exTabs">
+    <button class="ex-tab on" data-p="p-joko"><span class="k">花</span>Reto Hanami</button>
+    <button class="ex-tab" data-p="p-test"><span class="k">問</span>Test</button>
+    <button class="ex-tab" data-p="p-bete"><span class="k">書</span>Completa el código</button>
+    <button class="ex-tab" data-p="p-lotu"><span class="k">結</span>Relaciona</button>
+  </div>
+
+  <div class="ex-panel on card" id="p-joko">
+    <div class="game-top">
+      <div><span class="tag g">Juego</span> <b style="font-family:var(--mincho);font-size:20px;margin-left:6px">Lleva cada flor a su farolillo</b></div>
+      <div class="levels" id="levels"></div>
+    </div>
+    <div class="game">
+      <div class="game-text">
+        <h3 id="gTitle"></h3>
+        <p id="gText"></p>
+        <div class="editor">
+          <div id="gBefore" class="ro"></div>
+          <textarea id="gInput" spellcheck="false" placeholder="propiedad: valor;"></textarea>
+          <div class="ro">}</div>
+        </div>
+        <div class="game-btns">
+          <button class="btn small" id="gCheck">Comprobar</button>
+          <button class="btn small ghost" id="gHint">Pista</button>
+          <button class="btn small ghost" id="gSol">Solución</button>
+        </div>
+        <div class="hint" id="gHintBox"></div>
+        <div class="result" id="gResult"></div>
+      </div>
+      <div>
+        <div class="garden" id="garden">
+          <div class="layer target" id="gTarget"></div>
+          <div class="layer user" id="gUser"></div>
+        </div>
+        <p style="font-size:14px;color:var(--sumi-soft);margin:8px 2px 0">Cada flor tiene que ocupar el farolillo de su color (el de línea discontinua). Se mueven mientras escribes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex-panel card" id="p-test">
+    <div id="quiz"></div>
+    <div class="score"><span>Puntuación:</span> <b id="qScore">0 / 10</b> <button class="btn small" id="qAll" style="margin-left:auto">Corregir todo</button> <button class="btn small ghost" id="qReset" style="color:#fff;border-color:#fff">Empezar de nuevo</button></div>
+  </div>
+
+  <div class="ex-panel card fill" id="p-bete">
+    <h3>Construye un menú de navegación</h3>
+    <p>Elige el valor correcto en cada hueco. Los comentarios dicen qué se quiere conseguir.</p>
+    <pre class="code" id="fillCode"></pre>
+    <div class="game-btns">
+      <button class="btn small" id="fCheck">Corregir</button>
+      <button class="btn small ghost" id="fShow">Ver respuestas</button>
+    </div>
+    <div class="result" id="fResult"></div>
+  </div>
+
+  <div class="ex-panel card" id="p-lotu">
+    <h3>La propiedad y su función</h3>
+    <p>Relaciona cada propiedad con su descripción.</p>
+    <div id="matchBox"></div>
+    <div class="game-btns">
+      <button class="btn small" id="mCheck">Corregir</button>
+      <button class="btn small ghost" id="mShow">Ver respuestas</button>
+    </div>
+    <div class="result" id="mResult"></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="chap" id="txuleta">
+  <div class="chap-head reveal">
+    <span class="kanji">九</span>
+    <span class="num">09 · Resumen</span>
+    <h2>Chuleta</h2>
+    <p>Todo Flexbox de un vistazo. Esto es lo que tienes que repasar antes del examen.</p>
+  </div>
+  <div class="cheat">
+    <div class="cheat-col g reveal">
+      <h3><span class="hanko" style="background:#fff;color:var(--beni)">枝</span>Padre</h3>
+      <dl>
+        <dt>display: flex | inline-flex</dt><dd>Activa Flexbox.</dd>
+        <dt>flex-direction</dt><dd>Eje principal: <code>row</code>, <code>row-reverse</code>, <code>column</code>, <code>column-reverse</code>.</dd>
+        <dt>flex-wrap</dt><dd>Una línea o varias: <code>nowrap</code>, <code>wrap</code>, <code>wrap-reverse</code>.</dd>
+        <dt>flex-flow</dt><dd>Abreviatura de direction + wrap.</dd>
+        <dt>justify-content</dt><dd>Alinear en el eje principal: <code>flex-start</code>, <code>center</code>, <code>flex-end</code>, <code>space-between</code>, <code>space-around</code>, <code>space-evenly</code>.</dd>
+        <dt>align-items</dt><dd>Alinear en el eje transversal: <code>stretch</code>, <code>flex-start</code>, <code>center</code>, <code>flex-end</code>, <code>baseline</code>.</dd>
+        <dt>align-content</dt><dd>Repartir las líneas (solo con wrap).</dd>
+        <dt>gap</dt><dd>Hueco entre los hijos.</dd>
+      </dl>
+    </div>
+    <div class="cheat-col u reveal">
+      <h3><span class="hanko" style="background:#fff;color:var(--matcha)">花</span>Hijos</h3>
+      <dl>
+        <dt>order</dt><dd>Orden de aparición. Por defecto <code>0</code>; el menor va primero.</dd>
+        <dt>flex-grow</dt><dd>Proporción para ocupar el espacio libre. Por defecto <code>0</code>.</dd>
+        <dt>flex-shrink</dt><dd>Proporción para encoger. Por defecto <code>1</code>; <code>0</code> = no encoger.</dd>
+        <dt>flex-basis</dt><dd>Tamaño inicial en el eje principal. Por defecto <code>auto</code>.</dd>
+        <dt>flex</dt><dd>grow + shrink + basis. <code>flex: 1</code> = repartir a partes iguales.</dd>
+        <dt>align-self</dt><dd>El <code>align-items</code> propio de un solo hijo.</dd>
+      </dl>
+      <div class="note tip" style="margin:0 22px 22px"><span class="ico">✓</span><p>Si dudas: primero decide cuál es el eje principal. Después, justify = principal, align = transversal.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="seigaiha"></div>
+  <div class="wrap">
+    <div>
+      <div class="f-title">Guía Flexbox Sakura</div>
+      <p>La rama organiza, pero las flores tienen la última palabra.</p>
+    </div>
+    <a class="btn small" href="#hasiera" style="background:var(--sakura);color:var(--beni-dark)">Volver arriba</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const COMPS=[
+{
+id:'perfil', kanji:'札', title:'Tarjeta de perfil',
+props:['flex-direction: column','gap','border-radius','outline','box-shadow','opacity'],
+intro:'La típica tarjeta de una red social o de un equipo: foto, nombre, cargo, datos y botón, todo perfectamente centrado.',
+keys:[
+ 'El contenedor usa <code>flex-direction: column</code> + <code>justify-content: center</code> + <code>align-items: center</code>: todo apilado y centrado en las dos direcciones.',
+ 'La foto y el botón son <b>flex dentro de flex</b>: cada uno centra su propio texto. Así no necesitamos espacio interior: la caja tiene un tamaño fijo y el texto va en el medio.',
+ 'El doble anillo de la foto se hace con <code>outline</code> (rojo) + <code>box-shadow</code> sin desenfoque (rosa claro).'
+],
+challenge:'Cambia <code>flex-direction: column</code> por <code>row</code> en <code>.perfil-datos</code>... ¿y si lo cambias en <code>.dato</code>?',
+html:`<div class="perfil">
+  <div class="perfil-foto">花</div>
+  <div class="perfil-nombre">Hana Sato</div>
+  <div class="perfil-rol">Diseñadora web</div>
+  <div class="perfil-datos">
+    <div class="dato">
+      <span class="dato-num">128</span>
+      <span>proyectos</span>
+    </div>
+    <div class="dato">
+      <span class="dato-num">4.200</span>
+      <span>seguidores</span>
+    </div>
+    <div class="dato">
+      <span class="dato-num">36</span>
+      <span>premios</span>
+    </div>
+  </div>
+  <div class="perfil-boton">Seguir</div>
+</div>`,
+css:`.perfil {
+  display: flex;  /* la tarjeta es un contenedor flex */
+  flex-direction: column;  /* sus hijos se apilan de arriba abajo */
+  justify-content: center;  /* el grupo entero, centrado en vertical */
+  align-items: center;  /* cada hijo, centrado en horizontal */
+  gap: 18px;  /* aire entre foto, nombre, cargo, datos y botón */
+  width: 300px;  /* ancho fijo de la tarjeta */
+  height: 440px;  /* alto fijo de la tarjeta */
+  background-color: #fffaf6;  /* fondo color papel */
+  border-radius: 28px;  /* esquinas redondeadas */
+  box-shadow: 0 20px 40px rgba(158, 37, 55, 0.25);  /* sombra que la "levanta" */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra de toda la tarjeta */
+}
+.perfil-foto {
+  display: flex;  /* flex dentro de flex: para centrar el kanji */
+  justify-content: center;  /* kanji centrado en horizontal */
+  align-items: center;  /* kanji centrado en vertical */
+  width: 110px;  /* caja cuadrada... */
+  height: 110px;  /* ...de 110 x 110 */
+  border-radius: 55px;  /* la mitad del ancho = círculo perfecto */
+  background-color: #f7c9d6;  /* rosa sakura */
+  outline: 4px solid #c43a4b;  /* primer anillo, rojo */
+  box-shadow: 0 0 0 12px #fde9ef;  /* segundo anillo: sombra sin desenfoque */
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra con pincelada */
+  font-size: 52px;  /* kanji grande */
+  color: #c43a4b;  /* kanji rojo */
+}
+.perfil-nombre {
+  font-size: 26px;  /* el nombre es lo más importante */
+  font-weight: 700;  /* en negrita */
+  color: #2a2126;  /* casi negro */
+}
+.perfil-rol {
+  font-size: 15px;  /* más pequeño que el nombre */
+  color: #c43a4b;  /* rojo de acento */
+  opacity: 0.8;  /* un poco transparente: dato secundario */
+}
+.perfil-datos {
+  display: flex;  /* los tres datos, uno al lado del otro */
+  gap: 26px;  /* separación entre los tres datos */
+}
+.dato {
+  display: flex;  /* cada dato es otro contenedor flex */
+  flex-direction: column;  /* número arriba, texto abajo */
+  align-items: center;  /* los dos centrados */
+  font-size: 12px;  /* texto pequeño */
+  color: #5e4d55;  /* gris rosado */
+}
+.dato-num {
+  font-size: 20px;  /* el número destaca */
+  font-weight: 800;  /* muy grueso */
+  color: #2a2126;  /* oscuro */
+}
+.perfil-boton {
+  display: flex;  /* para centrar la palabra dentro del botón */
+  justify-content: center;  /* palabra centrada en horizontal */
+  align-items: center;  /* palabra centrada en vertical */
+  width: 170px;  /* ancho del botón */
+  height: 46px;  /* alto del botón */
+  border-radius: 23px;  /* la mitad del alto = forma de píldora */
+  background-color: #c43a4b;  /* fondo rojo */
+  color: #ffffff;  /* letra blanca */
+  font-weight: 700;  /* letra gruesa */
+  box-shadow: 0 8px 18px rgba(196, 58, 75, 0.45);  /* sombra roja debajo */
+}`
+},
+{
+id:'portada', kanji:'表', title:'Portada (hero) de una web',
+props:['justify-content: space-evenly','-webkit-text-stroke','text-shadow','outline','box-shadow'],
+intro:'La primera pantalla de una web: texto a un lado y un elemento visual grande al otro. Es una de las composiciones más usadas en internet.',
+keys:[
+ 'El contenedor reparte sus dos hijos (bloque de texto y sol) con <code>justify-content: space-evenly</code>: el mismo aire a los lados y en el centro, sin márgenes.',
+ 'El bloque de texto es una columna (<code>flex-direction: column</code>) y, dentro, los botones vuelven a ser una fila. Componer = meter flex dentro de flex.',
+ 'El título "hueco" se consigue pintando la letra del mismo color que el fondo y dibujando solo su borde con <code>-webkit-text-stroke</code>. La sombra roja desplazada le da profundidad.'
+],
+challenge:'Añade <code>flex-direction: row-reverse;</code> a <code>.portada</code> y verás el sol a la izquierda sin tocar el HTML.',
+html:`<div class="portada">
+  <div class="portada-texto">
+    <div class="portada-mini">PRIMAVERA 2027</div>
+    <div class="portada-titulo">Hanami</div>
+    <div class="portada-sub">Festival del cerezo en flor</div>
+    <div class="portada-botones">
+      <div class="boton-lleno">Reservar</div>
+      <div class="boton-borde">Ver programa</div>
+    </div>
+  </div>
+  <div class="portada-sol">桜</div>
+</div>`,
+css:`.portada {
+  display: flex;  /* texto y sol, uno al lado del otro */
+  justify-content: space-evenly;  /* mismo hueco a los lados y entre ellos */
+  align-items: center;  /* los dos centrados en vertical */
+  width: 640px;  /* ancho de la portada */
+  height: 320px;  /* alto de la portada */
+  background-color: #2a2126;  /* fondo tinta oscura */
+  border-radius: 24px;  /* esquinas redondeadas */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra general */
+}
+.portada-texto {
+  display: flex;  /* el bloque de texto también es flex */
+  flex-direction: column;  /* sus líneas, de arriba abajo */
+  gap: 12px;  /* aire entre cada línea */
+}
+.portada-mini {
+  font-size: 12px;  /* texto muy pequeño, tipo etiqueta */
+  font-weight: 700;  /* en negrita */
+  color: #f7c9d6;  /* rosa */
+}
+.portada-titulo {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra elegante */
+  font-size: 76px;  /* título enorme */
+  font-weight: 800;  /* muy grueso */
+  color: #2a2126;  /* mismo color que el fondo: la letra "desaparece" */
+  -webkit-text-stroke: 2px #f7c9d6;  /* solo se ve el contorno rosa */
+  text-shadow: 5px 5px 0 #c43a4b;  /* sombra roja dura, desplazada */
+}
+.portada-sub {
+  font-size: 18px;  /* subtítulo mediano */
+  color: #ffffff;  /* blanco */
+  opacity: 0.75;  /* algo apagado para no competir con el título */
+}
+.portada-botones {
+  display: flex;  /* los botones, en fila */
+  gap: 12px;  /* separación entre botones */
+}
+.boton-lleno {
+  display: flex;  /* para centrar el texto del botón */
+  justify-content: center;  /* texto centrado en horizontal */
+  align-items: center;  /* texto centrado en vertical */
+  width: 130px;  /* ancho del botón */
+  height: 44px;  /* alto del botón */
+  border-radius: 22px;  /* forma de píldora */
+  background-color: #c43a4b;  /* botón principal: relleno rojo */
+  color: #ffffff;  /* texto blanco */
+  font-weight: 700;  /* texto grueso */
+}
+.boton-borde {
+  display: flex;  /* igual que el otro botón */
+  justify-content: center;  /* texto centrado en horizontal */
+  align-items: center;  /* texto centrado en vertical */
+  width: 150px;  /* un poco más ancho: el texto es más largo */
+  height: 44px;  /* mismo alto que el otro botón */
+  border-radius: 22px;  /* forma de píldora */
+  outline: 2px solid #f7c9d6;  /* botón secundario: solo contorno */
+  color: #f7c9d6;  /* texto rosa */
+  font-weight: 700;  /* texto grueso */
+}
+.portada-sol {
+  display: flex;  /* para centrar el kanji dentro del círculo */
+  justify-content: center;  /* kanji centrado en horizontal */
+  align-items: center;  /* kanji centrado en vertical */
+  width: 200px;  /* círculo de... */
+  height: 200px;  /* ...200 x 200 */
+  border-radius: 100px;  /* la mitad = círculo */
+  background-color: #f7c9d6;  /* sol rosa */
+  box-shadow: 0 0 0 16px rgba(247, 201, 214, 0.25), 0 0 0 32px rgba(247, 201, 214, 0.1);  /* dos halos cada vez más suaves */
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra elegante */
+  font-size: 96px;  /* kanji grande */
+  color: #c43a4b;  /* kanji rojo */
+}`
+},
+{
+id:'mosaico', kanji:'畳', title:'Mosaico de fotos (estilo bento)',
+props:['flex (proporciones)','flex-direction: column','justify-content: space-evenly','opacity'],
+intro:'Una cuadrícula de bloques de distintos tamaños, como una caja de bento japonesa. Se usa en portfolios, galerías y webs de destinos.',
+keys:[
+ 'La fila principal tiene tres hijos: el grande con <code>flex: 2</code> y dos columnas con <code>flex: 1</code>. El grande ocupa siempre el doble que cada columna.',
+ 'Cada columna es <code>flex-direction: column</code> y sus bloques tienen <code>flex: 1</code>: se reparten la altura a partes iguales, haya 2 o 3.',
+ 'Dentro de cada bloque, <code>justify-content: space-evenly</code> separa el kanji y el nombre de los bordes sin necesidad de márgenes. La última columna crea un "degradado" con <code>opacity</code>.'
+],
+challenge:'Pon <code>flex: 3</code> en <code>.bloque-grande</code>. Después añade un cuarto bloque a la última columna: los demás se encogen solos.',
+html:`<div class="mosaico">
+  <div class="bloque bloque-grande">
+    <span class="kanji-xl">京</span>
+    <span class="nombre">Kioto</span>
+  </div>
+  <div class="mosaico-col">
+    <div class="bloque bloque-rosa">
+      <span class="kanji-m">奈</span>
+      <span class="nombre">Nara</span>
+    </div>
+    <div class="bloque bloque-verde">
+      <span class="kanji-m">大</span>
+      <span class="nombre">Osaka</span>
+    </div>
+  </div>
+  <div class="mosaico-col">
+    <div class="bloque bloque-tinta">
+      <span class="kanji-s">東</span>
+      <span class="nombre">Tokio</span>
+    </div>
+    <div class="bloque bloque-tinta medio">
+      <span class="kanji-s">日</span>
+      <span class="nombre">Nikko</span>
+    </div>
+    <div class="bloque bloque-tinta suave">
+      <span class="kanji-s">富</span>
+      <span class="nombre">Fuji</span>
+    </div>
+  </div>
+</div>`,
+css:`.mosaico {
+  display: flex;  /* bloque grande + 2 columnas, en fila */
+  gap: 12px;  /* hueco entre todas las piezas */
+  width: 640px;  /* ancho total del mosaico */
+  height: 360px;  /* alto total del mosaico */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra general */
+}
+.mosaico-col {
+  display: flex;  /* cada columna es un contenedor flex */
+  flex-direction: column;  /* sus bloques, de arriba abajo */
+  gap: 12px;  /* mismo hueco que en la fila */
+  flex: 1;  /* cada columna vale 1 parte del ancho */
+}
+.bloque {
+  display: flex;  /* cada bloque coloca kanji + nombre */
+  flex-direction: column;  /* kanji arriba, nombre abajo */
+  justify-content: space-evenly;  /* aire igual arriba, en medio y abajo */
+  align-items: center;  /* centrados en horizontal */
+  flex: 1;  /* los bloques de una columna se reparten el alto */
+  border-radius: 22px;  /* esquinas redondeadas */
+  box-shadow: 0 10px 22px rgba(42, 33, 38, 0.18);  /* sombra suave */
+}
+.bloque-grande {
+  flex: 2;  /* vale 2 partes: el doble que cada columna */
+  background-color: #c43a4b;  /* rojo */
+  color: #ffffff;  /* texto blanco */
+}
+.bloque-rosa {
+  background-color: #f7c9d6;  /* rosa sakura */
+  color: #9e2537;  /* texto granate */
+}
+.bloque-verde {
+  background-color: #7f9a6e;  /* verde matcha */
+  color: #ffffff;  /* texto blanco */
+}
+.bloque-tinta {
+  background-color: #2a2126;  /* tinta oscura */
+  color: #f7c9d6;  /* texto rosa */
+}
+.medio {
+  opacity: 0.75;  /* el segundo, un poco transparente */
+}
+.suave {
+  opacity: 0.5;  /* el tercero, medio transparente: efecto degradado */
+}
+.kanji-xl {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra con pincelada */
+  font-size: 130px;  /* kanji gigante */
+  font-weight: 800;  /* muy grueso */
+  text-shadow: 6px 6px 0 #9e2537;  /* sombra dura granate */
+}
+.kanji-m {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra con pincelada */
+  font-size: 48px;  /* kanji mediano */
+  font-weight: 800;  /* muy grueso */
+}
+.kanji-s {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra con pincelada */
+  font-size: 28px;  /* kanji pequeño */
+  font-weight: 800;  /* muy grueso */
+}
+.nombre {
+  font-size: 14px;  /* nombre de la ciudad */
+  font-weight: 700;  /* en negrita */
+}`
+},
+{
+id:'precios', kanji:'値', title:'Tabla de precios con plan destacado',
+props:['order','align-items: center','outline','opacity','text-shadow'],
+intro:'Tres planes uno al lado del otro y el más recomendado en el centro, más grande y oscuro. Lo verás en cualquier web que venda una suscripción.',
+keys:[
+ 'En el HTML el plan destacado está el <b>último</b>, pero con <code>order</code> lo colocamos en el <b>centro</b>: básico (1), destacado (2), pro (3).',
+ 'El destacado es más alto que los otros. Con <code>align-items: center</code> en el padre, los tres quedan centrados en vertical y el grande sobresale por arriba y por abajo.',
+ 'Los planes normales tienen <code>opacity: 0.85</code>; el destacado la sube a 1. Como su regla va después, gana a la de <code>.plan</code>.'
+],
+challenge:'Cambia <code>align-items: center</code> por <code>flex-end</code> en <code>.precios</code>. ¿Qué plan sobresale ahora y por dónde?',
+html:`<div class="precios">
+  <div class="plan basico">
+    <div class="plan-nombre">Básico</div>
+    <div class="plan-precio">9€</div>
+    <div class="plan-detalle">1 picnic<br>Mapa del parque</div>
+    <div class="plan-boton">Elegir</div>
+  </div>
+  <div class="plan pro">
+    <div class="plan-nombre">Pro</div>
+    <div class="plan-precio">29€</div>
+    <div class="plan-detalle">3 picnics<br>Guía<br>Fotos</div>
+    <div class="plan-boton">Elegir</div>
+  </div>
+  <div class="plan destacado">
+    <div class="plan-etiqueta">MÁS ELEGIDO</div>
+    <div class="plan-nombre">Sakura</div>
+    <div class="plan-precio precio-brillo">19€</div>
+    <div class="plan-detalle">2 picnics<br>Guía en español</div>
+    <div class="plan-boton boton-claro">Elegir</div>
+  </div>
+</div>`,
+css:`.precios {
+  display: flex;  /* los tres planes, en fila */
+  justify-content: center;  /* el grupo, centrado en horizontal */
+  align-items: center;  /* centrados en vertical: el alto sobresale */
+  gap: 18px;  /* separación entre planes */
+  width: 640px;  /* ancho de la zona de precios */
+  height: 400px;  /* alto de la zona de precios */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra general */
+}
+.plan {
+  display: flex;  /* cada plan es un contenedor flex */
+  flex-direction: column;  /* sus líneas, de arriba abajo */
+  justify-content: space-evenly;  /* reparte el alto: aire uniforme */
+  align-items: center;  /* todo centrado en horizontal */
+  width: 180px;  /* ancho de los planes normales */
+  height: 290px;  /* alto de los planes normales */
+  background-color: #ffffff;  /* fondo blanco */
+  border-radius: 20px;  /* esquinas redondeadas */
+  box-shadow: 0 10px 24px rgba(42, 33, 38, 0.12);  /* sombra suave */
+  opacity: 0.85;  /* algo apagados: el protagonista es el otro */
+  color: #2a2126;  /* texto oscuro */
+}
+.basico {
+  order: 1;  /* primero por la izquierda */
+}
+.destacado {
+  order: 2;  /* en el centro, aunque en el HTML vaya el último */
+  width: 200px;  /* un poco más ancho... */
+  height: 350px;  /* ...y bastante más alto */
+  background-color: #2a2126;  /* fondo oscuro */
+  color: #ffffff;  /* texto blanco */
+  opacity: 1;  /* totalmente opaco: gana a la regla .plan */
+  outline: 3px solid #f7c9d6;  /* contorno rosa para destacarlo */
+  box-shadow: 0 20px 40px rgba(196, 58, 75, 0.45);  /* sombra roja más fuerte */
+}
+.pro {
+  order: 3;  /* último por la derecha */
+}
+.plan-etiqueta {
+  display: flex;  /* para centrar el texto de la etiqueta */
+  justify-content: center;  /* texto centrado en horizontal */
+  align-items: center;  /* texto centrado en vertical */
+  width: 120px;  /* ancho de la etiqueta */
+  height: 26px;  /* alto de la etiqueta */
+  border-radius: 13px;  /* forma de píldora */
+  background-color: #c43a4b;  /* fondo rojo */
+  font-size: 11px;  /* texto muy pequeño */
+  font-weight: 700;  /* en negrita */
+}
+.plan-nombre {
+  font-size: 18px;  /* nombre del plan */
+  font-weight: 700;  /* en negrita */
+}
+.plan-precio {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra elegante */
+  font-size: 46px;  /* el precio, muy grande */
+  font-weight: 800;  /* muy grueso */
+  color: #c43a4b;  /* rojo */
+}
+.precio-brillo {
+  color: #f7c9d6;  /* rosa sobre fondo oscuro */
+  text-shadow: 0 0 18px rgba(247, 201, 214, 0.7);  /* sombra difuminada = brillo */
+}
+.plan-detalle {
+  font-size: 13px;  /* detalles pequeños */
+  text-align: center;  /* las líneas centradas entre sí */
+  opacity: 0.75;  /* texto secundario */
+}
+.plan-boton {
+  display: flex;  /* para centrar el texto del botón */
+  justify-content: center;  /* texto centrado en horizontal */
+  align-items: center;  /* texto centrado en vertical */
+  width: 130px;  /* ancho del botón */
+  height: 40px;  /* alto del botón */
+  border-radius: 20px;  /* forma de píldora */
+  outline: 2px solid #c43a4b;  /* botón de contorno rojo */
+  color: #c43a4b;  /* texto rojo */
+  font-weight: 700;  /* texto grueso */
+}
+.boton-claro {
+  background-color: #f7c9d6;  /* el del destacado, relleno rosa */
+  outline: 2px solid #f7c9d6;  /* contorno del mismo color */
+  color: #9e2537;  /* texto granate */
+}`
+},
+{
+id:'grafico', kanji:'図', title:'Gráfico de barras',
+props:['align-items: flex-end','gap','border-radius (4 valores)','box-shadow'],
+intro:'Un gráfico sencillo hecho solo con cajas: cada barra es un div con una altura distinta. Ideal para paneles de datos y estadísticas.',
+keys:[
+ 'La clave es <code>align-items: flex-end</code> en <code>.barras</code>: todas las columnas se apoyan en el suelo y crecen hacia arriba.',
+ 'Cada columna (<code>.barra-col</code>) es a su vez una columna flex: barra arriba y día abajo. Como todas terminan en la misma línea, los días quedan alineados.',
+ '<code>border-radius</code> con 4 valores redondea solo las esquinas de arriba (sentido de las agujas: arriba-izq, arriba-der, abajo-der, abajo-izq).'
+],
+challenge:'Cambia <code>flex-end</code> por <code>flex-start</code> en <code>.barras</code>: el gráfico se queda "colgando" del techo.',
+html:`<div class="grafico">
+  <div class="grafico-cabecera">
+    <div class="grafico-titulo">Flores abiertas</div>
+    <div class="grafico-sub">Parque Maruyama · semana 14</div>
+  </div>
+  <div class="barras">
+    <div class="barra-col"><div class="barra alto-1">5</div><span class="dia">Lun</span></div>
+    <div class="barra-col"><div class="barra alto-2">8</div><span class="dia">Mar</span></div>
+    <div class="barra-col"><div class="barra alto-3">11</div><span class="dia">Mié</span></div>
+    <div class="barra-col"><div class="barra alto-4">7</div><span class="dia">Jue</span></div>
+    <div class="barra-col"><div class="barra alto-5">15</div><span class="dia">Vie</span></div>
+    <div class="barra-col"><div class="barra alto-6 barra-max">19</div><span class="dia">Sáb</span></div>
+    <div class="barra-col"><div class="barra alto-7">13</div><span class="dia">Dom</span></div>
+  </div>
+</div>`,
+css:`.grafico {
+  display: flex;  /* tarjeta del gráfico */
+  flex-direction: column;  /* cabecera arriba, barras abajo */
+  justify-content: space-evenly;  /* aire uniforme alrededor */
+  align-items: center;  /* todo centrado en horizontal */
+  width: 540px;  /* ancho de la tarjeta */
+  height: 380px;  /* alto de la tarjeta */
+  background-color: #fffaf6;  /* fondo papel */
+  border-radius: 24px;  /* esquinas redondeadas */
+  box-shadow: 0 18px 36px rgba(158, 37, 55, 0.18);  /* sombra suave */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra general */
+  color: #2a2126;  /* texto oscuro */
+}
+.grafico-cabecera {
+  display: flex;  /* título y subtítulo */
+  flex-direction: column;  /* uno debajo del otro */
+  align-items: center;  /* centrados */
+  gap: 4px;  /* muy juntos */
+}
+.grafico-titulo {
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra elegante */
+  font-size: 24px;  /* título */
+  font-weight: 800;  /* muy grueso */
+}
+.grafico-sub {
+  font-size: 13px;  /* subtítulo pequeño */
+  opacity: 0.6;  /* apagado */
+}
+.barras {
+  display: flex;  /* columnas en fila */
+  align-items: flex-end;  /* LA CLAVE: todas apoyadas abajo */
+  gap: 14px;  /* separación entre columnas */
+  height: 240px;  /* altura máxima del gráfico */
+}
+.barra-col {
+  display: flex;  /* cada columna: barra + día */
+  flex-direction: column;  /* barra arriba, día abajo */
+  align-items: center;  /* centrados entre sí */
+  gap: 8px;  /* hueco entre barra y día */
+}
+.barra {
+  display: flex;  /* para colocar el número dentro */
+  justify-content: center;  /* número centrado en horizontal */
+  align-items: center;  /* número centrado en vertical */
+  width: 46px;  /* todas las barras, igual de anchas */
+  border-radius: 12px 12px 4px 4px;  /* redondas arriba, casi rectas abajo */
+  background-color: #f7c9d6;  /* rosa */
+  color: #9e2537;  /* número granate */
+  font-weight: 700;  /* número grueso */
+}
+.alto-1 { height: 50px; }  /* cada barra, su altura */
+.alto-2 { height: 80px; }
+.alto-3 { height: 110px; }
+.alto-4 { height: 70px; }
+.alto-5 { height: 150px; }
+.alto-6 { height: 190px; }
+.alto-7 { height: 130px; }
+.barra-max {
+  background-color: #c43a4b;  /* el día récord, en rojo */
+  color: #ffffff;  /* número blanco */
+  box-shadow: 0 10px 20px rgba(196, 58, 75, 0.45);  /* y con sombra para destacar */
+}
+.dia {
+  font-size: 13px;  /* nombre del día */
+  opacity: 0.7;  /* algo apagado */
+}`
+},
+{
+id:'cartel', kanji:'縦', title:'Cartel japonés en vertical',
+props:['flex-direction: row-reverse','align-self','-webkit-text-stroke','outline + box-shadow (marco)'],
+intro:'En los carteles japoneses tradicionales el texto va en columnas que se leen de arriba abajo y de <b>derecha a izquierda</b>. Con Flexbox lo montamos sin trucos raros.',
+keys:[
+ 'Cada columna de texto es <code>flex-direction: column</code>: los caracteres se apilan uno debajo de otro.',
+ 'El poema usa <code>flex-direction: row-reverse</code>: la primera columna del HTML aparece a la <b>derecha</b>, como se lee en japonés.',
+ 'Con <code>align-self</code> cada columna se coloca a una altura distinta (arriba, centro, abajo), lo que da el aspecto escalonado típico. El marco doble es un <code>outline</code> + dos <code>box-shadow</code> sin desenfoque.'
+],
+challenge:'Cambia <code>row-reverse</code> por <code>row</code> en <code>.poema</code>. ¿En qué orden se leería ahora?',
+html:`<div class="cartel">
+  <div class="poema">
+    <div class="columna-texto arriba">
+      <span>春</span><span>の</span><span>風</span>
+    </div>
+    <div class="columna-texto hueca">
+      <span>花</span><span>ひ</span><span>ら</span><span>く</span>
+    </div>
+    <div class="columna-texto sombra abajo">
+      <span>京</span><span>の</span><span>夢</span>
+    </div>
+    <div class="firma">
+      <span>春</span><span>子</span>
+      <div class="sello">印</div>
+    </div>
+  </div>
+  <div class="traduccion">Viento de primavera · Las flores se abren · Sueño de Kioto</div>
+</div>`,
+css:`.cartel {
+  display: flex;  /* el cartel es un contenedor flex */
+  flex-direction: column;  /* poema arriba, traducción abajo */
+  justify-content: space-evenly;  /* aire uniforme */
+  align-items: center;  /* todo centrado en horizontal */
+  width: 420px;  /* ancho del cartel */
+  height: 460px;  /* alto del cartel */
+  background-color: #fbf5ee;  /* papel washi */
+  border-radius: 6px;  /* esquinas casi rectas */
+  outline: 2px solid #2a2126;  /* primer marco, oscuro */
+  box-shadow: 0 0 0 10px #fbf5ee, 0 0 0 12px #2a2126, 0 24px 40px rgba(42, 33, 38, 0.3);  /* papel + segundo marco + sombra */
+}
+.poema {
+  display: flex;  /* las columnas, una al lado de otra */
+  flex-direction: row-reverse;  /* de DERECHA a IZQUIERDA, como en japonés */
+  align-items: center;  /* por defecto, centradas en vertical */
+  gap: 28px;  /* separación entre columnas */
+  height: 300px;  /* alto de la zona del poema */
+}
+.columna-texto {
+  display: flex;  /* cada columna es flex */
+  flex-direction: column;  /* los caracteres, de arriba abajo */
+  align-items: center;  /* centrados */
+  font-family: 'Shippori Mincho', Georgia, serif;  /* letra con pincelada */
+  font-size: 42px;  /* caracteres grandes */
+  font-weight: 800;  /* muy gruesos */
+  color: #2a2126;  /* tinta negra */
+}
+.arriba {
+  align-self: flex-start;  /* esta columna sube arriba del todo */
+}
+.abajo {
+  align-self: flex-end;  /* esta baja abajo del todo */
+}
+.hueca {
+  color: #fbf5ee;  /* relleno del color del papel... */
+  -webkit-text-stroke: 1.5px #c43a4b;  /* ...y solo el contorno en rojo */
+}
+.sombra {
+  color: #c43a4b;  /* rojo */
+  text-shadow: 3px 3px 0 #f7c9d6;  /* sombra rosa dura */
+}
+.firma {
+  display: flex;  /* la firma también es una columna */
+  flex-direction: column;  /* nombre y sello, de arriba abajo */
+  align-items: center;  /* centrados */
+  align-self: flex-end;  /* la firma va abajo, como en los cuadros */
+  gap: 4px;  /* poco hueco */
+  font-family: 'Shippori Mincho', Georgia, serif;  /* misma letra */
+  font-size: 16px;  /* nombre pequeño */
+  font-weight: 700;  /* grueso */
+  color: #2a2126;  /* oscuro */
+}
+.sello {
+  display: flex;  /* para centrar el kanji del sello */
+  justify-content: center;  /* centrado en horizontal */
+  align-items: center;  /* centrado en vertical */
+  width: 32px;  /* sello cuadrado... */
+  height: 32px;  /* ...de 32 x 32 */
+  border-radius: 6px;  /* esquinas un poco redondeadas */
+  background-color: #c43a4b;  /* tinta roja de sello (hanko) */
+  color: #ffffff;  /* kanji blanco */
+  font-size: 18px;  /* tamaño del kanji */
+}
+.traduccion {
+  width: 340px;  /* ancho de la línea de traducción */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra sencilla */
+  font-size: 13px;  /* pequeña */
+  text-align: center;  /* centrada */
+  color: #2a2126;  /* oscura... */
+  opacity: 0.65;  /* ...pero suave */
+}`
+},
+{
+id:'chat', kanji:'話', title:'Ventana de chat',
+props:['flex-direction: row-reverse','align-items: flex-end','justify-content: space-evenly','opacity'],
+intro:'Mensajes de los demás a la izquierda y los tuyos a la derecha, con avatar, burbujas y barra para escribir. Es la estructura de WhatsApp, Telegram o Discord.',
+keys:[
+ 'Cada mensaje es una fila (avatar + burbuja). Para <b>tus</b> mensajes basta añadir la clase <code>.mio</code> con <code>flex-direction: row-reverse</code>: la fila se da la vuelta y se pega a la derecha.',
+ 'Con <code>align-items: flex-end</code> el avatar queda a la altura de la parte de abajo de la burbuja, como en las apps reales.',
+ 'Los tres puntos de "escribiendo..." son cajas redondas con distinta <code>opacity</code>. La barra inferior reparte icono, texto y botón con <code>space-evenly</code>.'
+],
+challenge:'Quita la clase <code>mio</code> del segundo mensaje en el HTML. ¿Qué pasa con la burbuja y el avatar?',
+html:`<div class="chat">
+  <div class="chat-cabecera">
+    <div class="chat-avatar">桜</div>
+    <div class="chat-info">
+      <span class="chat-nombre">Grupo Hanami</span>
+      <span class="chat-estado">3 personas en línea</span>
+    </div>
+  </div>
+  <div class="mensaje">
+    <div class="avatar-mini">ユ</div>
+    <div class="burbuja ancho-l">¿Quedamos el sábado en el parque?</div>
+  </div>
+  <div class="mensaje mio">
+    <div class="avatar-mini avatar-yo">Yo</div>
+    <div class="burbuja burbuja-mia ancho-m">¡Sí! Yo llevo el picnic</div>
+  </div>
+  <div class="mensaje">
+    <div class="avatar-mini">ケ</div>
+    <div class="burbuja ancho-s">¡Y yo las mantas!</div>
+  </div>
+  <div class="mensaje">
+    <div class="avatar-mini">ユ</div>
+    <div class="burbuja escribiendo">
+      <div class="punto p1"></div>
+      <div class="punto p2"></div>
+      <div class="punto p3"></div>
+    </div>
+  </div>
+  <div class="chat-entrada">
+    <div class="entrada-icono">+</div>
+    <div class="entrada-texto">Escribe un mensaje...</div>
+    <div class="entrada-enviar">↑</div>
+  </div>
+</div>`,
+css:`.chat {
+  display: flex;  /* la ventana de chat es flex */
+  flex-direction: column;  /* cabecera, mensajes y barra, de arriba abajo */
+  justify-content: space-evenly;  /* reparte el alto con aire uniforme */
+  align-items: center;  /* todo centrado en horizontal */
+  width: 380px;  /* ancho de la ventana */
+  height: 500px;  /* alto de la ventana */
+  background-color: #fde9ef;  /* fondo rosa muy claro */
+  border-radius: 28px;  /* esquinas redondeadas */
+  box-shadow: 0 20px 40px rgba(158, 37, 55, 0.25);  /* sombra */
+  font-family: 'Zen Kaku Gothic New', Arial, sans-serif;  /* letra general */
+  color: #2a2126;  /* texto oscuro */
+}
+.chat-cabecera {
+  display: flex;  /* avatar + información, en fila */
+  align-items: center;  /* centrados en vertical */
+  gap: 12px;  /* hueco entre avatar y texto */
+  width: 340px;  /* mismo ancho que los mensajes */
+}
+.chat-avatar {
+  display: flex;  /* para centrar el kanji */
+  justify-content: center;  /* centrado en horizontal */
+  align-items: center;  /* centrado en vertical */
+  width: 46px;  /* círculo de... */
+  height: 46px;  /* ...46 x 46 */
+  border-radius: 23px;  /* la mitad = círculo */
+  background-color: #c43a4b;  /* rojo */
+  color: #ffffff;  /* kanji blanco */
+  font-size: 22px;  /* tamaño del kanji */
+  outline: 3px solid #ffffff;  /* anillo blanco alrededor */
+}
+.chat-info {
+  display: flex;  /* nombre y estado */
+  flex-direction: column;  /* uno debajo del otro */
+}
+.chat-nombre {
+  font-size: 16px;  /* nombre del grupo */
+  font-weight: 700;  /* en negrita */
+}
+.chat-estado {
+  font-size: 12px;  /* estado pequeño */
+  opacity: 0.6;  /* apagado */
+}
+.mensaje {
+  display: flex;  /* avatar + burbuja, en fila */
+  align-items: flex-end;  /* avatar a la altura de la base de la burbuja */
+  gap: 8px;  /* hueco entre avatar y burbuja */
+  width: 340px;  /* todas las filas igual de anchas */
+}
+.mio {
+  flex-direction: row-reverse;  /* MIS mensajes: fila al revés, pegada a la derecha */
+}
+.avatar-mini {
+  display: flex;  /* para centrar la inicial */
+  justify-content: center;  /* centrada en horizontal */
+  align-items: center;  /* centrada en vertical */
+  width: 30px;  /* círculo pequeño */
+  height: 30px;
+  border-radius: 15px;  /* la mitad = círculo */
+  background-color: #f7c9d6;  /* rosa */
+  color: #9e2537;  /* inicial granate */
+  font-size: 12px;  /* inicial pequeña */
+  font-weight: 700;  /* en negrita */
+}
+.avatar-yo {
+  background-color: #2a2126;  /* mi avatar, oscuro */
+  color: #f7c9d6;  /* con letra rosa */
+}
+.burbuja {
+  display: flex;  /* para centrar el texto dentro */
+  justify-content: center;  /* texto centrado en horizontal */
+  align-items: center;  /* texto centrado en vertical */
+  height: 44px;  /* alto de la burbuja */
+  border-radius: 18px 18px 18px 4px;  /* la esquina de abajo-izquierda en pico */
+  background-color: #ffffff;  /* burbuja blanca */
+  box-shadow: 0 4px 10px rgba(42, 33, 38, 0.12);  /* sombra muy suave */
+  font-size: 14px;  /* tamaño del texto */
+  text-align: center;  /* si el texto ocupa dos líneas, centradas */
+}
+.burbuja-mia {
+  border-radius: 18px 18px 4px 18px;  /* el pico, ahora abajo a la derecha */
+  background-color: #c43a4b;  /* mis burbujas, rojas */
+  color: #ffffff;  /* texto blanco */
+}
+.ancho-l { width: 265px; }  /* burbuja larga */
+.ancho-m { width: 190px; }  /* burbuja mediana */
+.ancho-s { width: 140px; }  /* burbuja corta */
+.escribiendo {
+  width: 70px;  /* burbuja pequeña para los puntos */
+  gap: 5px;  /* hueco entre puntos */
+}
+.punto {
+  width: 8px;  /* cada punto... */
+  height: 8px;  /* ...de 8 x 8 */
+  border-radius: 4px;  /* redondo */
+  background-color: #2a2126;  /* oscuro */
+}
+.p1 { opacity: 0.25; }  /* tres opacidades distintas: */
+.p2 { opacity: 0.5; }  /* parece que los puntos */
+.p3 { opacity: 0.85; }  /* se están moviendo */
+.chat-entrada {
+  display: flex;  /* icono + texto + botón, en fila */
+  justify-content: space-evenly;  /* reparte el hueco sobrante por igual */
+  align-items: center;  /* centrados en vertical */
+  width: 340px;  /* ancho de la barra */
+  height: 52px;  /* alto de la barra */
+  border-radius: 26px;  /* forma de píldora */
+  background-color: #ffffff;  /* fondo blanco */
+  box-shadow: 0 6px 14px rgba(42, 33, 38, 0.1);  /* sombra suave */
+}
+.entrada-icono {
+  display: flex;  /* para centrar el + */
+  justify-content: center;  /* centrado en horizontal */
+  align-items: center;  /* centrado en vertical */
+  width: 36px;  /* círculo de... */
+  height: 36px;  /* ...36 x 36 */
+  border-radius: 18px;  /* la mitad = círculo */
+  background-color: #fde9ef;  /* rosa muy claro */
+  color: #c43a4b;  /* + en rojo */
+  font-size: 22px;  /* + grande */
+}
+.entrada-texto {
+  width: 220px;  /* espacio para el texto */
+  font-size: 14px;  /* tamaño del texto */
+  opacity: 0.45;  /* parece un texto de ejemplo (placeholder) */
+}
+.entrada-enviar {
+  display: flex;  /* para centrar la flecha */
+  justify-content: center;  /* centrada en horizontal */
+  align-items: center;  /* centrada en vertical */
+  width: 40px;  /* círculo de... */
+  height: 40px;  /* ...40 x 40 */
+  border-radius: 20px;  /* la mitad = círculo */
+  background-color: #c43a4b;  /* rojo */
+  color: #ffffff;  /* flecha blanca */
+  font-size: 18px;  /* tamaño de la flecha */
+  font-weight: 700;  /* gruesa */
+  box-shadow: 0 6px 12px rgba(196, 58, 75, 0.4);  /* sombra roja */
+}`
+}
+];
+
+/* ---- helpers ---- */
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function alignComments(css){
+  const lines=css.split('\n');
+  const parts=lines.map(l=>{const i=l.indexOf('/*');return i<0?[l,'']:[l.slice(0,i).replace(/\s+$/,''),l.slice(i)];});
+  const max=Math.min(40,Math.max(...parts.filter(p=>p[1]).map(p=>p[0].length)));
+  return parts.map(([c,k])=>k?(c.length<max?c.padEnd(max):c)+'  '+k:c).join('\n');
+}
+function hlCss(css){
+  return css.split('\n').map(line=>{
+    let code=line,com='';const i=line.indexOf('/*');
+    if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+    let out;
+    const one=code.match(/^(\s*)([^{]+?)(\s*)\{(.*)\}(\s*)$/);
+    if(one){out=one[1]+'<span class="s">'+esc(one[2])+'</span>'+one[3]+'{'+hlDecl(one[4])+'}'+one[5];}
+    else if(code.indexOf('{')>=0){const j=code.indexOf('{');out='<span class="s">'+esc(code.slice(0,j))+'</span>'+esc(code.slice(j));}
+    else if(code.indexOf(':')>=0){out=hlDecl(code);}
+    else out=esc(code);
+    return out+(com?'<span class="c">'+esc(com)+'</span>':'');
+  }).join('\n');
+}
+function hlDecl(d){
+  return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+esc(v)+'</span>'+sc);
+}
+function hlHtml(html){
+  return esc(html)
+   .replace(/class="([^"]*)"/g,'<span class="p">class</span>=<span class="v">"$1"</span>')
+   .replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+}
+
+/* ---- build ---- */
+const root=document.getElementById('comps');
+if(!root)return;
+let allCss='';
+COMPS.forEach((c,idx)=>{
+  allCss+=c.css+'\n';
+  const card=document.createElement('article');
+  card.className='card comp reveal';
+  card.id='comp-'+c.id;
+  card.innerHTML=
+   `<div class="comp-head"><span class="comp-num">${String(idx+1).padStart(2,'0')}</span><span class="comp-kanji">${c.kanji}</span><h3>${c.title}</h3></div>
+    <div class="comp-props">${c.props.map(p=>`<code>${esc(p)}</code>`).join('')}</div>
+    <p class="what">${c.intro}</p>
+    <div class="comp-stage"><div class="comp-inner">${c.html}</div></div>
+    <div class="comp-keys"><h4>Claves de Flexbox</h4><ol>${c.keys.map(k=>`<li>${k}</li>`).join('')}</ol></div>
+    <details class="comp-code" open><summary>HTML</summary><pre class="code">${hlHtml(c.html)}</pre></details>
+    <details class="comp-code" open><summary>CSS comentado línea a línea</summary><pre class="code">${hlCss(alignComments(c.css))}</pre></details>
+    <div class="note tip"><span class="ico">✓</span><p><b>Pruébalo tú:</b> ${c.challenge}</p></div>`;
+  root.appendChild(card);
+});
+const st=document.createElement('style');st.id='comps-css';st.textContent=allCss;document.head.appendChild(st);
+const idx=document.getElementById('compIndex');
+if(idx)idx.innerHTML=COMPS.map((c,i)=>`<a href="#comp-${c.id}"><span>${c.kanji}</span>${i+1}. ${c.title}</a>`).join('');
+})();
+
+</script>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const flowerSVG='<svg><use href="#lore"/></svg>';
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- hero blossoms ---------- */
+const bl=[[456,68,1.1,10],[432,80,.8,40],[470,92,.7,0],[505,146,.9,25],[488,132,.6,60],[396,118,1,15],[372,148,.85,50],[344,168,1.15,5],[360,128,.6,30],
+[226,112,1.05,20],[250,124,.75,45],[278,156,.9,10],[304,186,1,35],[328,200,.7,60],[220,230,.9,5],[274,312,1.1,30],[250,300,.75,10],[186,252,1,40],
+[150,270,.8,20],[124,288,.95,55],[48,252,.9,15],[76,256,.65,40],[92,312,.8,25],[210,124,.55,0],[402,96,.55,20],[160,248,.55,10]];
+const g=$('#blossoms');
+let h='';
+bl.forEach(([x,y,s,r],i)=>{
+  const col=i%3===0?'#fbe3ea':(i%3===1?'#f7c3d3':'#ffffff');
+  h+=`<use href="#lore" x="-30" y="-30" width="60" height="60" transform="translate(${x} ${y}) rotate(${r}) scale(${s*0.75})" style="color:${col}" opacity=".97"/>`;
+});
+[[420,100],[318,176],[240,140],[200,262],[108,300],[480,110]].forEach(([x,y])=>{h+=`<circle cx="${x}" cy="${y}" r="4" fill="#e2809f"/>`;});
+g.innerHTML=h;
+
+/* ---------- petals canvas ---------- */
+const cv=$('#petals'),ctx=cv.getContext('2d');
+let W,H,petals=[],running=!reduce,dpr=Math.min(window.devicePixelRatio||1,2);
+function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+size();addEventListener('resize',size);
+const N=W<600?14:26;
+function mk(init){return{x:Math.random()*W,y:init?Math.random()*H:-20,s:6+Math.random()*7,vy:.4+Math.random()*.8,vx:-.3+Math.random()*.6,a:Math.random()*6.28,va:-.02+Math.random()*.04,ph:Math.random()*6.28,f:.6+Math.random()*.8};}
+for(let i=0;i<N;i++)petals.push(mk(true));
+function drawPetal(p){
+  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.scale(1,Math.abs(Math.cos(p.ph))*.6+.4);
+  const s=p.s;const gr=ctx.createLinearGradient(0,-s,0,s);gr.addColorStop(0,'rgba(255,214,226,.95)');gr.addColorStop(1,'rgba(236,140,170,.85)');
+  ctx.fillStyle=gr;ctx.beginPath();ctx.moveTo(0,s);
+  ctx.bezierCurveTo(-s*.9,s*.3,-s*.8,-s*.7,-s*.18,-s);ctx.lineTo(0,-s*.75);ctx.lineTo(s*.18,-s);
+  ctx.bezierCurveTo(s*.8,-s*.7,s*.9,s*.3,0,s);ctx.fill();ctx.restore();
+}
+function tick(){
+  ctx.clearRect(0,0,W,H);
+  petals.forEach((p,i)=>{p.ph+=.02*p.f;p.y+=p.vy;p.x+=p.vx+Math.sin(p.ph)*.7;p.a+=p.va;
+    if(p.y>H+20||p.x<-30||p.x>W+30)petals[i]=mk(false);drawPetal(p);});
+  if(running)requestAnimationFrame(tick);
+}
+const pt=$('#petalToggle');
+function setPt(){pt.textContent='Pétalos: '+(running?'ON':'OFF');}
+setPt();
+if(running)tick();
+pt.addEventListener('click',()=>{running=!running;setPt();if(running)tick();else ctx.clearRect(0,0,W,H);});
+
+/* ---------- nav progress & active ---------- */
+const prog=$('#progress');const links=$$('#navlinks a');
+const secs=links.map(a=>$(a.getAttribute('href')));
+addEventListener('scroll',()=>{
+  const st=scrollY,dh=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(dh>0?st/dh*100:0)+'%';
+  let cur=-1;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<120)cur=i;});
+  links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+},{passive:true});
+
+/* ---------- reveal ---------- */
+if('IntersectionObserver' in window && !reduce){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.08});
+  $$('.reveal').forEach(el=>io.observe(el));
+}else $$('.reveal').forEach(el=>el.classList.add('in'));
+
+/* ---------- timer ---------- */
+let t0=null,acc=0,iv=null;
+const kt=$('#krTime');
+function fmt(ms){const s=Math.floor(ms/1000);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');}
+function upd(){kt.textContent=fmt(acc+(t0?Date.now()-t0:0));}
+$('#krStart').onclick=()=>{if(t0)return;t0=Date.now();iv=setInterval(upd,500);};
+$('#krStop').onclick=()=>{if(!t0)return;acc+=Date.now()-t0;t0=null;clearInterval(iv);upd();};
+$('#krReset').onclick=()=>{if(!confirm('¿Poner el cronómetro a cero?'))return;t0=null;acc=0;clearInterval(iv);upd();};
+
+/* ---------- axes demo ---------- */
+$$('#axisChips .chip').forEach(b=>b.onclick=()=>{
+  $$('#axisChips .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  $('#axes').classList.toggle('col',b.dataset.v==='column');
+});
+
+/* ---------- generic demos ---------- */
+function parseCss(str){return (str||'').split(';').map(s=>s.trim()).filter(Boolean).map(s=>{const i=s.indexOf(':');return[s.slice(0,i).trim(),s.slice(i+1).trim()];});}
+function codeBlock(sel,pairs,comment){
+  let o=`<span class="s">${sel}</span> {\n`;
+  pairs.forEach(([p,v])=>{o+=`  <span class="p">${p}</span>: <span class="v">${v}</span>;\n`;});
+  o+='}';if(comment)o+=` <span class="c">/* ${comment} */</span>`;return o;
+}
+const DEMOS={
+  display:{kind:'parent',prop:'display',values:['block','flex','inline-flex'],def:'flex',n:4,noFlex:true},
+  direction:{kind:'parent',prop:'flex-direction',values:['row','row-reverse','column','column-reverse'],def:'row',n:4},
+  justify:{kind:'parent',prop:'justify-content',values:['flex-start','center','flex-end','space-between','space-around','space-evenly'],def:'flex-start',n:3},
+  alignItems:{kind:'parent',prop:'align-items',values:['stretch','flex-start','center','flex-end','baseline'],def:'stretch',n:4,varied:true,base:'height:230px'},
+  wrap:{kind:'parent',prop:'flex-wrap',values:['nowrap','wrap','wrap-reverse'],def:'nowrap',n:9,itemCss:'width:150px;flex-shrink:0',base:''},
+  flow:{kind:'parent',prop:'flex-flow',values:['row nowrap','row wrap','row-reverse wrap','column wrap','column-reverse wrap'],def:'row wrap',n:8,itemCss:'width:150px;min-height:50px',base:'height:200px'},
+  alignContent:{kind:'parent',prop:'align-content',values:['flex-start','center','flex-end','space-between','space-around','space-evenly','stretch'],def:'flex-start',n:9,itemCss:'width:150px;min-height:46px',base:'flex-wrap:wrap;height:300px'},
+  gap:{kind:'parent',prop:'gap',values:['0','8px','20px','40px','30px 6px'],def:'8px',n:7,itemCss:'width:140px',base:'flex-wrap:wrap'},
+  order:{kind:'child',prop:'order',child:1,values:['-1','0','2','5'],def:'0',n:4},
+  grow:{kind:'child',prop:'flex-grow',child:2,values:['0','1','2','4'],def:'0',n:3,others:'flex-grow:1'},
+  shrink:{kind:'child',prop:'flex-shrink',child:2,values:['0','1','3','6'],def:'1',n:3,others:'flex-basis:260px',childBase:'flex-basis:260px'},
+  basis:{kind:'child',prop:'flex-basis',child:2,values:['auto','60px','160px','300px'],def:'auto',n:3},
+  flex:{kind:'child',prop:'flex',child:2,values:['none','auto','1','2','0 0 120px'],def:'none',n:3,others:'flex:1'},
+  alignSelf:{kind:'child',prop:'align-self',child:3,values:['auto','flex-start','center','flex-end','stretch'],def:'auto',n:4,base:'align-items:flex-start;height:210px'}
+};
+function itemsHTML(cfg){
+  let s='';for(let i=1;i<=cfg.n;i++){
+    const cls=['umea'];if(cfg.varied)cls.push('v'+(((i-1)%4)+1));
+    if(cfg.kind==='child'&&cfg.child===i)cls.push('nab');
+    s+=`<div class="${cls.join(' ')}" style="${cfg.itemCss||''}">${(cfg.kind==='child'&&cfg.child===i)||cfg.n<=4?flowerSVG:''}${i}</div>`;
+  }return s;
+}
+function buildDemo(el,key){
+  const cfg=DEMOS[key];if(!cfg)return;
+  el.innerHTML=`<div class="demo-label">Pruébalo</div><div class="chips">${cfg.values.map(v=>`<button class="chip" data-v="${v}">${v}</button>`).join('')}</div>
+  <div class="stage">${key==='display'?'<span style="font-size:14px;color:var(--sumi-soft)">Texto antes </span>':''}<div class="demo-box">${itemsHTML(cfg)}</div>${key==='display'?'<span style="font-size:14px;color:var(--sumi-soft)"> texto después.</span>':''}</div><pre class="code"></pre>`;
+  const box=$('.demo-box',el),code=$('pre',el);
+  function apply(v){
+    $$('.chip',el).forEach(c=>c.classList.toggle('on',c.dataset.v===v));
+    if(cfg.kind==='parent'){
+      box.style.cssText=(cfg.noFlex?'':'display:flex;')+(cfg.base?cfg.base+';':'')+cfg.prop+':'+v;
+      if(key==='display')box.style.gap='8px';
+      else if(key!=='gap')box.style.gap=box.style.gap||'8px';
+      const pairs=(cfg.noFlex?[]:[['display','flex']]).concat(parseCss(cfg.base)).concat([[cfg.prop,v]]);
+      if(!cfg.noFlex&&key!=='gap')pairs.push(['gap','8px']);
+      code.innerHTML=codeBlock('.padre',pairs);
+    }else{
+      box.style.cssText='display:flex;gap:8px;'+(cfg.base?cfg.base+';':'');
+      $$('.umea',box).forEach((u,i)=>{
+        u.style.cssText=(i+1===cfg.child)?((cfg.childBase?cfg.childBase+';':'')+cfg.prop+':'+v):(cfg.others||'');
+      });
+      let out=codeBlock('.padre',[['display','flex'],['gap','8px']].concat(parseCss(cfg.base)));
+      if(cfg.others)out+='\n'+codeBlock('.hijo',parseCss(cfg.others));
+      out+='\n'+codeBlock('.hijo-'+cfg.child,parseCss(cfg.childBase).concat([[cfg.prop,v]]),'hijo rojo');
+      code.innerHTML=out;
+    }
+  }
+  $$('.chip',el).forEach(c=>c.onclick=()=>apply(c.dataset.v));
+  apply(cfg.def);
+}
+$$('[data-demo]').forEach(el=>buildDemo(el,el.dataset.demo));
+
+/* ---------- lab ---------- */
+const LAB=[
+  {p:'flex-direction',o:['row','row-reverse','column','column-reverse']},
+  {p:'flex-wrap',o:['nowrap','wrap','wrap-reverse']},
+  {p:'justify-content',o:['flex-start','center','flex-end','space-between','space-around','space-evenly']},
+  {p:'align-items',o:['stretch','flex-start','center','flex-end','baseline']},
+  {p:'align-content',o:['normal','flex-start','center','flex-end','space-between','space-around','space-evenly','stretch']}
+];
+const lc=$('#labControls');
+let lh='';
+LAB.forEach(c=>{lh+=`<label>${c.p}<select data-p="${c.p}">${c.o.map(o=>`<option>${o}</option>`).join('')}</select></label>`;});
+lh+=`<label>gap <span class="rv" id="rvGap">10px</span><input type="range" id="lGap" min="0" max="40" value="10"></label>
+<label>hijos <span class="rv" id="rvN">5</span><input type="range" id="lN" min="1" max="14" value="5"></label>
+<label>altura del padre <span class="rv" id="rvH">320px</span><input type="range" id="lH" min="160" max="520" value="320" step="10"></label>
+<label style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="lVar" checked style="accent-color:var(--beni)"> tamaños distintos</label>`;
+lc.innerHTML=lh;
+function lab(){
+  const box=$('#lab-box');const n=+$('#lN').value,gp=$('#lGap').value,hh=$('#lH').value,vr=$('#lVar').checked;
+  $('#rvGap').textContent=gp+'px';$('#rvN').textContent=n;$('#rvH').textContent=hh+'px';
+  const pairs=[['display','flex']];
+  $$('select',lc).forEach(s=>{if(!(s.dataset.p==='align-content'&&s.value==='normal'))pairs.push([s.dataset.p,s.value]);});
+  pairs.push(['gap',gp+'px']);pairs.push(['height',hh+'px']);
+  box.style.cssText=pairs.map(([p,v])=>p+':'+v).join(';');
+  if(box.children.length!==n||box.dataset.v!==String(vr)){
+    let s='';for(let i=1;i<=n;i++){const w=vr?[60,90,70,110,64][(i-1)%5]:64;s+=`<div class="umea ${vr?'v'+(((i-1)%4)+1):''}" style="min-width:${w}px">${flowerSVG}${i}</div>`;}
+    box.innerHTML=s;box.dataset.v=String(vr);
+  }
+  $('#lab-code').innerHTML='<button class="copy" id="cp">Copiar</button>'+codeBlock('.padre',pairs);
+  $('#cp').onclick=()=>{const txt='.padre {\n'+pairs.map(([p,v])=>'  '+p+': '+v+';').join('\n')+'\n}';
+    (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{$('#cp').textContent='Copiado';}).catch(()=>{$('#cp').textContent='No se ha podido';});};
+}
+lc.addEventListener('input',lab);lab();
+
+/* ---------- tabs ---------- */
+$$('.ex-tab').forEach(t=>t.onclick=()=>{
+  $$('.ex-tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  $$('.ex-panel').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p));
+  if(t.dataset.p==='p-joko')renderLevel();
+});
+
+/* ---------- game ---------- */
+const C=['#e8738f','#c43a4b','#f2a65a','#9b7bc4','#7f9a6e','#5aa3c4','#d9577a','#b88a4a'];
+const LV=[
+ {t:'A la derecha',x:'Los farolillos esperan a las flores en el otro extremo de la rama. Usa la propiedad que alinea en el eje principal para llevarlas a la derecha.',n:3,ed:'parent',fixed:'',sol:'justify-content: flex-end;',hint:'<code>justify-content</code> las mueve en el eje principal. ¿Qué valor significa "final"?'},
+ {t:'Justo en el centro',x:'Las tres flores tienen que quedar en el centro exacto del jardín, en horizontal y en vertical. Necesitas dos propiedades.',n:3,ed:'parent',fixed:'',sol:'justify-content: center;\nalign-items: center;',hint:'<code>justify-content</code> para el eje principal y <code>align-items</code> para el transversal, las dos con <code>center</code>.'},
+ {t:'Cada una en su sitio',x:'La primera flor pegada al borde izquierdo, la última al derecho y las demás con huecos iguales entre medias.',n:4,ed:'parent',fixed:'',sol:'justify-content: space-between;',hint:'De los valores que empiezan por <code>space-</code>, ¿cuál deja las de los extremos pegadas a los bordes?'},
+ {t:'Columna abajo',x:'Ahora las flores van una debajo de otra, y la columna entera abajo del todo. Cuidado: los ejes se intercambian.',n:3,ed:'parent',fixed:'',sol:'flex-direction: column;\njustify-content: flex-end;',hint:'Primero <code>flex-direction: column</code>. Entonces el eje principal es vertical, así que <code>justify-content</code> las mueve de arriba abajo.'},
+ {t:'Orden inverso',x:'Fíjate en los colores: el orden de los farolillos está invertido y están abajo. No toques el HTML.',n:4,ed:'parent',fixed:'',sol:'flex-direction: row-reverse;\nalign-items: flex-end;',hint:'Para invertir la dirección, el valor <code>-reverse</code> de <code>flex-direction</code>. Después, abajo en el eje transversal: <code>align-items</code>.'},
+ {t:'En varias líneas',x:'Hay ocho flores y no caben en una sola línea. Repártelas en varias líneas, centradas, con una línea arriba y otra abajo.',n:8,ed:'parent',fixed:'gap: 10px;',sol:'flex-wrap: wrap;\njustify-content: center;\nalign-content: space-between;',hint:'Tres propiedades: <code>flex-wrap</code> para tener varias líneas, <code>justify-content</code> para centrar cada línea y <code>align-content</code> para repartir las líneas.'},
+ {t:'La flor rebelde',x:'El padre coloca las flores arriba. Solo la tercera flor quiere irse abajo. Esta vez escribes el CSS del hijo.',n:4,ed:'child',ci:3,fixed:'justify-content: space-around;\nalign-items: flex-start;',sol:'align-self: flex-end;',hint:'La propiedad para cambiar la alineación transversal de un solo hijo: <code>align-self</code>.'},
+ {t:'La primera, la última',x:'La primera flor (rosa) quiere estar al final de la fila. Cambia su orden.',n:4,ed:'child',ci:1,fixed:'justify-content: center;\nalign-items: center;\ngap: 14px;',sol:'order: 1;',hint:'Todos los hijos tienen <code>order: 0</code>. Si le pones un número mayor, se va al final.'},
+ {t:'Quiere crecer',x:'La segunda flor quiere llenar todo el espacio libre que queda, hasta ocupar la rama entera.',n:3,ed:'child',ci:2,fixed:'align-items: center;\ngap: 12px;',sol:'flex-grow: 1;',hint:'La capacidad de ocupar el espacio libre: <code>flex-grow</code>. Basta con que sea mayor que 0.'}
+];
+const done=new Set();let cur=0;
+const levelsEl=$('#levels');
+levelsEl.innerHTML=LV.map((l,i)=>`<button class="lvl" data-i="${i}">${i+1}</button>`).join('');
+$$('.lvl').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;renderLevel();});
+function layerItems(n,cls){let s='';for(let i=1;i<=n;i++)s+=`<div class="it" style="--c:${C[(i-1)%C.length]};${cls||''}">${cls==='u'?'':''}${flowerSVG}</div>`;return s;}
+function applyStyles(layer,lv,code){
+  const items=$$('.it',layer);
+  if(lv.ed==='parent'){layer.style.cssText=lv.fixed.replace(/\n/g,'')+code.replace(/\n/g,'');items.forEach(i=>i.style.cssText=i.style.cssText.split(';').filter(s=>s.trim().startsWith('--c')).join(';'));}
+  else{layer.style.cssText=lv.fixed.replace(/\n/g,'');items.forEach((it,k)=>{const base='--c:'+C[k%C.length]+';';it.style.cssText=base+((k+1===lv.ci)?code.replace(/\n/g,''):'');});}
+}
+function renderLevel(){
+  const lv=LV[cur];
+  $$('.lvl').forEach((b,i)=>{b.classList.toggle('on',i===cur);b.classList.toggle('done',done.has(i));});
+  $('#gTitle').textContent=(cur+1)+'. '+lv.t;$('#gText').textContent=lv.x;
+  const fx=lv.fixed?lv.fixed.split('\n').map(l=>'  '+l).join('<br>')+'<br>':'';
+  $('#gBefore').innerHTML=lv.ed==='parent'?`.padre {<br>&nbsp;&nbsp;display: flex;<br>${fx.replace(/  /g,'&nbsp;&nbsp;')}`:`.padre {<br>&nbsp;&nbsp;display: flex;<br>${fx.replace(/  /g,'&nbsp;&nbsp;')}}<br><br>.flor-${lv.ci} {`;
+  $('#gTarget').innerHTML=layerItems(lv.n);$('#gUser').innerHTML=layerItems(lv.n);
+  $$('#gTarget .it').forEach(i=>i.innerHTML='');
+  $('#gInput').value=lv.saved||'';$('#gHintBox').classList.remove('show');$('#gHintBox').innerHTML=lv.hint;
+  $('#gResult').textContent='';$('#gResult').className='result';
+  applyStyles($('#gTarget'),lv,lv.sol);applyStyles($('#gUser'),lv,$('#gInput').value);
+}
+$('#gInput').addEventListener('input',()=>{const lv=LV[cur];lv.saved=$('#gInput').value;applyStyles($('#gUser'),lv,lv.saved);$('#gResult').textContent='';});
+function same(){
+  const a=$$('#gTarget .it'),b=$$('#gUser .it');
+  return a.every((t,i)=>{const r1=t.getBoundingClientRect(),r2=b[i].getBoundingClientRect();
+    return Math.abs(r1.left-r2.left)<3&&Math.abs(r1.top-r2.top)<3&&Math.abs(r1.width-r2.width)<3&&Math.abs(r1.height-r2.height)<3;});
+}
+$('#gCheck').onclick=()=>{
+  const r=$('#gResult');
+  if(same()){done.add(cur);r.className='result ok';r.textContent=cur<LV.length-1?'¡Muy bien! Todas las flores en su farolillo. Al siguiente nivel...':'¡Enhorabuena! Has superado todos los niveles. Eres un maestro de Flexbox.';
+    burst();renderLevelsOnly();if(cur<LV.length-1)setTimeout(()=>{cur++;renderLevel();},1500);}
+  else{r.className='result ko';r.textContent='Todavía no. Mira qué flor no está en su farolillo y vuelve a intentarlo.';}
+};
+function renderLevelsOnly(){$$('.lvl').forEach((b,i)=>{b.classList.toggle('done',done.has(i));});}
+$('#gHint').onclick=()=>$('#gHintBox').classList.toggle('show');
+$('#gSol').onclick=()=>{const lv=LV[cur];$('#gInput').value=lv.sol;lv.saved=lv.sol;applyStyles($('#gUser'),lv,lv.sol);$('#gResult').className='result';$('#gResult').textContent='Esta es una solución. Cuando la entiendas, intenta el siguiente nivel por tu cuenta.';};
+function burst(){
+  if(reduce)return;const gd=$('#garden');
+  for(let i=0;i<18;i++){const s=document.createElement('div');
+    s.style.cssText=`position:absolute;left:50%;top:50%;width:18px;height:18px;color:${C[i%C.length]};z-index:5;pointer-events:none;transition:transform 1s cubic-bezier(.2,.7,.3,1),opacity 1s`;
+    s.innerHTML=flowerSVG.replace('<svg>','<svg style="width:18px;height:18px">');gd.appendChild(s);
+    const a=Math.random()*6.28,d=80+Math.random()*120;
+    requestAnimationFrame(()=>{s.style.transform=`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) rotate(${Math.random()*360}deg)`;s.style.opacity='0';});
+    setTimeout(()=>s.remove(),1100);}
+}
+renderLevel();
+
+/* ---------- quiz ---------- */
+const Q=[
+ {q:'¿A qué elemento se le pone display: flex?',o:['A cada hijo','Al padre (contenedor)','Al padre y a los hijos','Solo al elemento body'],a:1,e:'display: flex se pone en el padre, y sus hijos directos se convierten en elementos flex.'},
+ {q:'Con flex-direction: column, ¿en qué dirección mueve justify-content a los hijos?',o:['En horizontal','En vertical','En diagonal','No hace nada'],a:1,e:'En columna el eje principal es vertical, y justify-content siempre actúa en el eje principal.'},
+ {q:'¿Qué valor deja huecos exactamente iguales entre los hijos Y en los bordes?',o:['space-between','space-around','space-evenly','center'],a:2,e:'space-evenly: todos los huecos iguales. space-around deja la mitad en los bordes y space-between no deja hueco en los bordes.'},
+ {q:'Para que los hijos bajen a la línea siguiente cuando no hay sitio:',o:['flex-wrap: wrap','flex-direction: column','align-content: wrap','flex-shrink: 0'],a:0,e:'flex-wrap: wrap reparte los hijos en varias líneas.'},
+ {q:'¿Cuándo tiene efecto align-content?',o:['Siempre','Cuando hay más de una línea','Cuando hay un solo hijo','Solo con flex-direction: row'],a:1,e:'align-content reparte las líneas; si solo hay una, no hay nada que repartir.'},
+ {q:'¿Cuál es el valor por defecto de order?',o:['1','-1','0','auto'],a:2,e:'Todos los hijos empiezan con order: 0; por eso con -1 pasa a ser el primero.'},
+ {q:'Escribir flex: 1 equivale a:',o:['Solo flex-grow: 1','flex: 1 1 0%','flex: 0 0 1px','width: 100%'],a:1,e:'flex: 1 = flex-grow: 1, flex-shrink: 1, flex-basis: 0%.'},
+ {q:'Quiero alinear un solo hijo de forma distinta a los demás en el eje transversal. ¿Qué uso?',o:['align-items','justify-self','align-self','order'],a:2,e:'align-self cambia la alineación de un hijo sobrescribiendo el align-items del padre.'},
+ {q:'Si un hijo tiene flex-shrink: 0...',o:['Desaparece','No se encoge nunca','Su tamaño es 0','Ocupa todo el espacio libre'],a:1,e:'flex-shrink: 0 → el hijo mantiene su tamaño aunque falte sitio.'},
+ {q:'Al poner gap: 20px en el padre:',o:['Pone 20px entre los hijos, no en los bordes','Pone 20px entre los hijos y en los bordes','Da 20px de margen a cada hijo','Da 20px de padding al padre'],a:0,e:'gap es solo el hueco ENTRE los hijos.'}
+];
+const qz=$('#quiz');
+function renderQuiz(){
+  qz.innerHTML=Q.map((x,i)=>`<div class="q" data-i="${i}"><div class="qt"><span class="n">${i+1}</span><span>${x.q}</span></div>
+  ${x.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> <span>${o}</span></label>`).join('')}
+  <div class="exp"></div></div>`).join('');
+  $$('.q',qz).forEach(d=>d.addEventListener('change',()=>checkQ(d)));
+  $('#qScore').textContent='0 / '+Q.length;
+}
+function checkQ(d){
+  const i=+d.dataset.i,sel=$('input:checked',d);if(!sel)return false;
+  $$('label.opt',d).forEach((l,j)=>{l.classList.remove('right','wrong');if(j===Q[i].a)l.classList.add('right');});
+  const ok=+sel.value===Q[i].a;if(!ok)sel.closest('label').classList.add('wrong');
+  const ex=$('.exp',d);ex.innerHTML=(ok?'<b style="color:#4f6a40">Correcto.</b> ':'<b style="color:var(--beni)">No es correcto.</b> ')+Q[i].e;ex.classList.add('show');
+  $$('input',d).forEach(x=>x.disabled=true);d.dataset.ok=ok?'1':'0';
+  $('#qScore').textContent=$$('.q[data-ok="1"]',qz).length+' / '+Q.length;return ok;
+}
+$('#qAll').onclick=()=>$$('.q',qz).forEach(checkQ);
+$('#qReset').onclick=renderQuiz;
+renderQuiz();
+
+/* ---------- fill ---------- */
+const F=[
+ {a:'flex',o:['block','flex','grid','inline']},
+ {a:'row',o:['row','column','wrap','center']},
+ {a:'space-between',o:['flex-start','center','space-between','stretch']},
+ {a:'center',o:['center','flex-end','baseline','space-around']},
+ {a:'order',o:['order','flex-grow','align-self','z-index']},
+ {a:'1',o:['0','1','-1','none']},
+ {a:'flex-end',o:['flex-start','center','flex-end','stretch']}
+];
+function sel(i){return `<select data-i="${i}"><option value="">?</option>${F[i].o.map(o=>`<option>${o}</option>`).join('')}</select>`;}
+$('#fillCode').innerHTML=
+`<span class="s">.menu</span> {
+  <span class="p">display</span>: ${sel(0)};
+  <span class="p">flex-direction</span>: ${sel(1)};        <span class="c">/* elementos en fila */</span>
+  <span class="p">justify-content</span>: ${sel(2)};       <span class="c">/* a los extremos, huecos en medio */</span>
+  <span class="p">align-items</span>: ${sel(3)};           <span class="c">/* centrado en vertical */</span>
+  <span class="p">gap</span>: <span class="v">12px</span>;
+}
+<span class="s">.logo</span> {
+  ${sel(4)}: <span class="v">-1</span>;                    <span class="c">/* que sea el primero */</span>
+}
+<span class="s">.buscador</span> {
+  <span class="p">flex-grow</span>: ${sel(5)};             <span class="c">/* llenar el espacio que queda */</span>
+}
+<span class="s">.iniciar-sesion</span> {
+  <span class="p">align-self</span>: ${sel(6)};            <span class="c">/* solo este abajo */</span>
+}`;
+$('#fCheck').onclick=()=>{let ok=0;$$('#fillCode select').forEach(s=>{const r=s.value===F[+s.dataset.i].a;s.classList.toggle('right',r);s.classList.toggle('wrong',!r);if(r)ok++;});
+  const R=$('#fResult');R.className='result '+(ok===F.length?'ok':'ko');R.textContent=ok+' / '+F.length+' correctas'+(ok===F.length?'. ¡Excelente!':'. Revisa las que están en rojo.');};
+$('#fShow').onclick=()=>{$$('#fillCode select').forEach(s=>{s.value=F[+s.dataset.i].a;s.classList.add('right');s.classList.remove('wrong');});$('#fResult').className='result';$('#fResult').textContent='Respuestas correctas mostradas.';};
+
+/* ---------- match ---------- */
+const M=[
+ ['justify-content','Alinea a los hijos en el eje principal'],
+ ['align-items','Alinea a los hijos en el eje transversal'],
+ ['flex-direction','Define la dirección del eje principal'],
+ ['flex-wrap','Coloca a los hijos en una línea o en varias'],
+ ['align-content','Reparte las líneas en el eje transversal'],
+ ['order','Cambia el orden de aparición de un hijo'],
+ ['flex-grow','Proporción para ocupar el espacio libre'],
+ ['align-self','Alineación propia de un solo hijo']
+];
+const shuffled=M.map(m=>m[1]).sort(()=>Math.random()-.5);
+$('#matchBox').innerHTML=M.map((m,i)=>`<div class="match-row"><code>${m[0]}</code><select data-i="${i}"><option value="">Elige...</option>${shuffled.map(d=>`<option>${d}</option>`).join('')}</select><span class="mk"></span></div>`).join('');
+$('#mCheck').onclick=()=>{let ok=0;$$('#matchBox select').forEach(s=>{const r=s.value===M[+s.dataset.i][1];const mk=s.nextElementSibling;mk.textContent=r?'○':'×';mk.className='mk '+(r?'ok':'ko');if(r)ok++;});
+  const R=$('#mResult');R.className='result '+(ok===M.length?'ok':'ko');R.textContent=ok+' / '+M.length+' correctas'+(ok===M.length?'. ¡Perfecto!':'.');};
+$('#mShow').onclick=()=>{$$('#matchBox select').forEach(s=>{s.value=M[+s.dataset.i][1];const mk=s.nextElementSibling;mk.textContent='○';mk.className='mk ok';});$('#mResult').className='result';$('#mResult').textContent='Respuestas correctas mostradas.';};
+
+})();
+</script>
+</body>
+</html>

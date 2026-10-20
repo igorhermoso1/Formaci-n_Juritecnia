@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backgrounds Yozakura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yoru:#1b1d3a; --ai:#2c3270; --ai2:#3f4690;
+  --fuji:#a99be0; --fuji-soft:#efebfc; --fuji-mid:#d9d1f6;
+  --sakura:#f6bfd0; --sakura-soft:#fdeef3; --momo:#ea7fa0; --beni:#d6456f;
+  --kin:#e9b85c; --kin-soft:#fcf3de;
+  --wakaba:#5fae8a; --wakaba-soft:#e3f4ea;
+  --washi:#f8f5fc; --papel:#ffffff;
+  --ink:#262744; --ink-soft:#5d5f86; --line:#e4def3;
+  --deco:'Kaisei Decol','Hiragino Mincho ProN',Georgia,serif;
+  --maru:'Zen Maru Gothic',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --chk:conic-gradient(#e7e3f2 25%,#fff 0 50%,#e7e3f2 0 75%,#fff 0) 0 0/16px 16px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;color:var(--ink);font-family:var(--maru);font-size:17px;line-height:1.75;
+  background-color:var(--washi);
+  background-image:
+    radial-gradient(circle at 50% 100%, transparent 0 14px, rgba(169,155,224,.10) 14px 16px, transparent 16px 22px, rgba(169,155,224,.10) 22px 24px, transparent 24px),
+    radial-gradient(circle at 50% 100%, transparent 0 14px, rgba(169,155,224,.10) 14px 16px, transparent 16px 22px, rgba(169,155,224,.10) 22px 24px, transparent 24px);
+  background-size:48px 24px,48px 24px;background-position:0 0,24px 12px;
+  overflow-x:hidden}
+::selection{background:var(--sakura);color:var(--ai)}
+*{scrollbar-width:thin;scrollbar-color:var(--fuji-mid) transparent}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--fuji-mid);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
+a{color:var(--beni)}
+code{font-family:var(--mono);font-size:.86em;background:var(--fuji-soft);color:var(--ai);padding:1px 7px;border-radius:7px;border:1px solid var(--fuji-mid);overflow-wrap:anywhere}
+b,strong{font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+/* ================= HERO ================= */
+.hero{position:relative;overflow:hidden;color:#fff;
+  background:
+    radial-gradient(circle at 82% 30%, rgba(246,191,208,.28), transparent 32%),
+    radial-gradient(rgba(255,255,255,.85) 1px, transparent 1.6px) 0 0/97px 89px,
+    radial-gradient(rgba(255,255,255,.5) 1px, transparent 1.6px) 31px 47px/61px 67px,
+    linear-gradient(180deg,#121433 0%,#232a63 48%,#5b4a8f 78%,#b2729b 100%);
+  padding:0 0 30px}
+#petals{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.lanterns{position:relative;z-index:2;height:120px;margin-bottom:-30px}
+.lanterns svg{width:100%;height:120px;display:block}
+.lan-sway{transform-origin:50% 0;animation:sway 5s ease-in-out infinite}
+.lan-sway:nth-child(2n){animation-duration:6.2s;animation-delay:-2s}
+.lan-sway:nth-child(3n){animation-duration:7s;animation-delay:-1s}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center;padding-top:20px}
+.hero .tag{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sakura)}
+.hero .tag::before{content:"";width:34px;height:2px;background:var(--sakura)}
+.hero h1{font-family:var(--deco);font-weight:700;font-size:clamp(46px,8vw,92px);line-height:1;margin:14px 0 8px;letter-spacing:-.01em;
+  background:linear-gradient(100deg,#fff 10%,#fbd6e2 45%,#e9b85c 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .jp{font-family:var(--deco);font-size:24px;color:var(--fuji);letter-spacing:.3em;margin:0 0 14px}
+.hero p.lead{font-size:19px;color:#e8e4fb;max-width:560px;margin:0 0 24px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;font-family:var(--maru);font-weight:700;font-size:16px;text-decoration:none;transition:transform .15s, box-shadow .15s, background .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:linear-gradient(135deg,var(--momo),var(--beni));color:#fff;box-shadow:0 10px 24px -10px rgba(214,69,111,.9)}
+.btn.sec{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6)}
+.btn.ghost{background:#fff;color:var(--ai);box-shadow:inset 0 0 0 1.5px var(--fuji-mid)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--fuji)}
+.btn.sm{padding:7px 14px;font-size:14px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px}
+.hero-art{position:relative;min-height:340px}
+.hero-art svg{width:100%;height:auto;display:block}
+
+/* student card */
+.ikasle{position:relative;z-index:2;margin-top:26px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:16px 18px;backdrop-filter:blur(6px)}
+.ikasle label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:#e3dcfb;min-width:0}
+.ikasle input{width:100%;min-width:0;font:inherit;font-size:16px;font-weight:500;letter-spacing:0;padding:9px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.95);color:var(--ink);outline:none}
+.ikasle input:focus{border-color:var(--sakura);box-shadow:0 0 0 4px rgba(246,191,208,.35)}
+.timer{display:flex;align-items:center;gap:8px;background:var(--yoru);border-radius:16px;padding:7px 8px 7px 14px;border:1px solid rgba(255,255,255,.18)}
+.timer .t{font-family:var(--mono);font-size:21px;font-weight:600;color:#fde6ee;min-width:104px}
+.timer button{border:none;border-radius:10px;padding:7px 11px;font-family:var(--maru);font-weight:700;font-size:13px;cursor:pointer}
+.t-go{background:var(--sakura);color:var(--ai)}.t-stop{background:var(--beni);color:#fff}.t-rs{background:#3a3d6b;color:#fff}
+
+/* ================= NAV ================= */
+.nav{position:sticky;top:0;z-index:40;background:rgba(248,245,252,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.nav .brand{display:flex;align-items:center;gap:8px;font-family:var(--deco);font-weight:700;font-size:19px;color:var(--ai);text-decoration:none;white-space:nowrap}
+.nav .brand svg{width:30px;height:30px}
+.nav-links{position:relative;flex:1;min-width:0;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 28px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 18px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:6px 12px;border-radius:999px;color:var(--ink-soft);text-decoration:none;font-size:14px;font-weight:700}
+.nav-links a span{font-family:var(--mono);font-size:11px;color:var(--fuji);margin-right:5px}
+.nav-links a:hover,.nav-links a.on{background:var(--sakura-soft);color:var(--beni)}
+.nav-links a.on span{color:var(--momo)}
+.nav-arrow{border:none;background:#fff;width:32px;height:32px;border-radius:50%;box-shadow:0 2px 8px rgba(44,50,112,.15);cursor:pointer;color:var(--ai);font-weight:700;flex:0 0 auto}
+.prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--fuji),var(--momo),var(--kin))}
+
+/* ================= SECTIONS ================= */
+main{padding-bottom:40px}
+section.sec{padding:70px 0 6px;position:relative}
+.sec-head{display:grid;grid-template-columns:76px 1fr;gap:18px;align-items:center;margin-bottom:22px;position:relative}
+.sec-head .lan{width:76px;height:96px}
+.sec-head .lan svg{width:100%;height:100%;filter:drop-shadow(0 10px 14px rgba(214,69,111,.25))}
+.sec-head .kicker{font-size:13px;font-weight:900;letter-spacing:.2em;color:var(--momo);text-transform:uppercase}
+.sec-head h2{font-family:var(--deco);font-weight:700;font-size:clamp(30px,4.4vw,46px);line-height:1.12;margin:2px 0 4px}
+.sec-head h2 code{font-size:.62em;vertical-align:middle;background:var(--ai);color:#fff;border:none;padding:3px 12px;border-radius:10px}
+.sec-head .frase{margin:0;color:var(--ink-soft);font-size:18px}
+.sec-head .wm{position:absolute;right:0;top:-34px;font-family:var(--deco);font-size:130px;line-height:1;color:var(--fuji-mid);opacity:.55;z-index:-1;user-select:none;pointer-events:none}
+
+.card{background:var(--papel);border:1px solid var(--line);border-radius:24px;padding:28px;margin-bottom:22px;box-shadow:0 26px 50px -38px rgba(44,50,112,.55);position:relative}
+.card h3{font-family:var(--deco);font-weight:700;font-size:25px;margin:0 0 10px;line-height:1.25}
+.card h4{font-size:17px;font-weight:900;margin:20px 0 6px;color:var(--ai)}
+.card p{margin:0 0 12px}
+.card ul,.card ol{margin:0 0 12px;padding-left:22px}
+.card li{margin-bottom:5px}
+.card li::marker{color:var(--momo);font-weight:900}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2>*,.g3>*{min-width:0}
+
+/* ficha */
+.ficha{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 18px}
+.ficha>div{border-radius:16px;padding:14px 16px;background:var(--fuji-soft);border:1px solid var(--fuji-mid);min-width:0}
+.ficha .k{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ai2);margin-bottom:4px}
+.ficha .k i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--ai);color:#fff;font-style:normal;font-family:var(--deco);font-size:13px;letter-spacing:0}
+.ficha .v{font-size:15.5px;line-height:1.55}
+.ficha>div:nth-child(2){background:var(--sakura-soft);border-color:#f6d2de}
+.ficha>div:nth-child(2) .k{color:var(--beni)}.ficha>div:nth-child(2) .k i{background:var(--beni)}
+.ficha>div:nth-child(3){background:var(--kin-soft);border-color:#f3dfb2}
+.ficha>div:nth-child(3) .k{color:#9a6d16}.ficha>div:nth-child(3) .k i{background:var(--kin)}
+
+/* notes */
+.note{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;padding:14px 18px;border-radius:18px;margin:16px 0;font-size:16px}
+.note p{margin:0}
+.note p+p{margin-top:6px}
+.note .ic{width:40px;height:40px}
+.note .ic svg{width:100%;height:100%}
+.note.idea{background:var(--kin-soft);border:1px solid #f3dfb2}
+.note.ojo{background:#fff0f3;border:1px solid #f8cbd8}
+.note.clave{background:var(--fuji-soft);border:1px solid var(--fuji-mid)}
+.note.bien{background:var(--wakaba-soft);border:1px solid #c6e6d4}
+.note b.t{display:block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.note.idea b.t{color:#9a6d16}.note.ojo b.t{color:var(--beni)}.note.clave b.t{color:var(--ai2)}.note.bien b.t{color:#2f7a57}
+
+/* code */
+.code{position:relative;margin:12px 0 4px;border-radius:16px;background:var(--yoru);color:#ece9ff;overflow:hidden;border:1px solid #2d3062}
+.code .bar{display:flex;align-items:center;justify-content:space-between;padding:7px 10px 7px 14px;background:#24275a;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:#a9a6d9;text-transform:uppercase}
+.code .bar .dots{display:flex;gap:6px;align-items:center}
+.code .bar .dots i{width:9px;height:9px;border-radius:50%;background:#f28fae}
+.code .bar .dots i:nth-child(2){background:#e9b85c}.code .bar .dots i:nth-child(3){background:#7cc6a2}
+.code .bar .dots span{margin-left:8px}
+.copy{border:none;border-radius:8px;padding:4px 10px;background:#3a3e7c;color:#fff;font-family:var(--maru);font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0;text-transform:none}
+.copy:hover{background:var(--momo)}
+.code pre{margin:0;padding:14px 16px;font-family:var(--mono);font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.code .s{color:#9fd8ff}.code .p{color:#ffa9c4}.code .v{color:#ffe08a}.code .c{color:#8f8cbf;font-style:italic}.code .t{color:#9fe0bd}.code .hl{background:rgba(234,127,160,.25);border-radius:4px;box-shadow:0 0 0 2px rgba(234,127,160,.25)}
+
+/* stage & labs */
+.chk{background:var(--chk)}
+.stage{border-radius:18px;padding:18px;background:
+  linear-gradient(rgba(255,255,255,.7),rgba(255,255,255,.7)),
+  repeating-linear-gradient(45deg,var(--fuji-soft) 0 10px,#fff 10px 20px);border:1.5px dashed var(--fuji-mid)}
+.lab{margin-top:16px}
+.lab-top{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1.5px solid var(--fuji-mid);background:#fff;color:var(--ai);border-radius:999px;padding:6px 14px;font-family:var(--mono);font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--fuji);background:var(--fuji-soft)}
+.chip.on{background:var(--ai);border-color:var(--ai);color:#fff;box-shadow:0 8px 16px -10px rgba(44,50,112,.9)}
+.lab-box{height:220px;border-radius:14px;outline:2px dashed rgba(44,50,112,.25);outline-offset:-2px;transition:none}
+.lab-exp{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;margin-top:12px;padding:12px 16px;border-radius:14px;background:var(--fuji-soft)}
+.lab-exp code{font-size:14px;background:#fff;white-space:nowrap}
+.lab-exp span{font-size:15.5px}
+
+/* value tables */
+table.vals{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:15.5px}
+table.vals th{text-align:left;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);padding:0 10px}
+table.vals td{background:var(--washi);padding:10px;vertical-align:middle}
+table.vals td:first-child{border-radius:12px 0 0 12px;white-space:nowrap;width:1%}
+table.vals td:last-child{border-radius:0 12px 12px 0}
+table.vals .mini{width:64px;height:44px;border-radius:10px;border:1px solid var(--line)}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:14px 0}
+.tile{background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px;cursor:pointer;transition:transform .15s, box-shadow .15s;position:relative;text-align:left;font:inherit;color:inherit}
+.tile:hover{transform:translateY(-3px);box-shadow:0 16px 30px -20px rgba(44,50,112,.6)}
+.tile .sw{height:120px;border-radius:12px}
+.tile b{display:block;margin:8px 4px 2px;font-size:15px}
+.tile small{display:block;margin:0 4px;font-family:var(--mono);font-size:11.5px;line-height:1.45;color:var(--ink-soft);overflow-wrap:anywhere}
+.tile .cp{position:absolute;top:16px;right:16px;font-size:11px;font-weight:900;background:rgba(27,29,58,.75);color:#fff;border-radius:8px;padding:3px 8px;opacity:0;transition:.15s}
+.tile:hover .cp{opacity:1}
+.tile.ok .cp{opacity:1;background:var(--wakaba)}
+
+/* maru / batsu */
+.mb{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;font-family:var(--deco);font-weight:700;font-size:18px;flex:0 0 auto}
+.mb.o{background:var(--wakaba-soft);color:#2f7a57;box-shadow:inset 0 0 0 2px #9fd3b8}
+.mb.x{background:#fff0f3;color:var(--beni);box-shadow:inset 0 0 0 2px #f6b8c9}
+
+/* folder tree */
+.tree{font-family:var(--mono);font-size:14.5px;background:var(--washi);border-radius:16px;padding:14px 18px;line-height:1.9;border:1px solid var(--line)}
+.tree .d{color:var(--ai2);font-weight:600}
+.tree .f{color:var(--ink)}
+.tree .me{background:var(--sakura-soft);color:var(--beni);border-radius:6px;padding:0 6px}
+.tree .tg{background:var(--kin-soft);color:#9a6d16;border-radius:6px;padding:0 6px}
+
+/* box model */
+.zonas{display:flex;justify-content:center;padding:10px}
+.z-b{background:var(--ai);border-radius:20px;padding:16px 20px;color:#fff;width:100%;max-width:520px}
+.z-p{background:var(--momo);border-radius:14px;padding:16px 20px;margin-top:8px}
+.z-c{background:#fff;color:var(--ink);border-radius:10px;padding:18px 20px;margin-top:8px;text-align:center}
+.z-lbl{font-family:var(--mono);font-size:13px;font-weight:600;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.z-lbl em{font-style:normal;opacity:.85;font-family:var(--maru);font-weight:500}
+
+/* origin / clip lab */
+.oc-box{height:230px;padding:26px;border:22px dashed rgba(44,50,112,.55);border-radius:16px;font-family:var(--maru);font-weight:900;color:var(--ai);display:flex;align-items:center;justify-content:center;text-align:center}
+.oc-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;margin-top:10px;color:var(--ink-soft)}
+.oc-legend span{display:inline-flex;align-items:center;gap:6px}
+.oc-legend i{width:18px;height:12px;border-radius:4px;display:inline-block}
+
+/* clip text builder */
+.ct-steps{display:flex;flex-direction:column;gap:8px}
+.ct-step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:.15s}
+.ct-step:hover{border-color:var(--fuji)}
+.ct-step input{width:20px;height:20px;accent-color:var(--beni)}
+.ct-step code{font-size:13.5px}
+.ct-step small{display:block;color:var(--ink-soft);font-size:14px;line-height:1.45;margin-top:2px}
+.ct-step.on{border-color:var(--momo);background:var(--sakura-soft)}
+.ct-prev{display:flex;align-items:center;justify-content:center;height:100%;min-height:220px;border-radius:18px;background:#fff;border:1.5px dashed var(--fuji-mid)}
+.ct-prev h1{font-family:var(--deco);font-weight:700;font-size:clamp(54px,9vw,92px);margin:0;line-height:1.1;color:var(--ink)}
+.ct-msg{margin-top:10px;padding:10px 14px;border-radius:12px;background:var(--fuji-soft);font-size:15px;min-height:48px}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:14px;margin-top:10px}
+.case{border-radius:18px;border:1px solid var(--line);background:#fff;padding:12px;display:flex;flex-direction:column;gap:10px}
+.case .pv{height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--washi)}
+.case .pv .tx{font-family:var(--deco);font-weight:700;font-size:44px;line-height:1.1;margin:0}
+.case .hd{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;line-height:1.35}
+.case p{margin:0;font-size:14px;color:var(--ink-soft);line-height:1.5}
+
+/* attachment */
+.att{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.att-col{min-width:0}
+.att-col h4{margin:0 0 6px;font-family:var(--mono);font-size:16px;color:var(--ai)}
+.att-box{height:230px;overflow:auto;border-radius:16px;scrollbar-width:none;outline:2px solid var(--fuji-mid);outline-offset:-2px;
+  background-image:repeating-linear-gradient(45deg,rgba(234,127,160,.85) 0 18px,rgba(253,238,243,.9) 18px 36px)}
+.att-box::-webkit-scrollbar{display:none}
+.att-box .in{padding:14px 18px;font-weight:900;color:var(--ai);line-height:2.3}
+.att-box .in span{background:#fff;border-radius:8px;padding:2px 10px;box-shadow:0 2px 8px rgba(44,50,112,.15)}
+.att-ctl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:16px 0 4px;padding:12px 16px;border-radius:14px;background:var(--fuji-soft)}
+.att-ctl input[type=range]{flex:1;min-width:160px;accent-color:var(--beni)}
+.parallax{height:300px;border-radius:22px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;margin:12px 0}
+.parallax b{font-family:var(--deco);font-size:clamp(28px,5vw,46px);text-shadow:0 4px 20px rgba(0,0,0,.45)}
+
+/* shorthand */
+.sh-line{font-family:var(--mono);font-size:clamp(14px,2vw,17px);line-height:2.3;padding:16px 18px;border-radius:16px;background:var(--yoru);color:#fff;overflow-wrap:anywhere}
+.sh-line .pc{border-radius:7px;padding:2px 7px;margin:0 2px;cursor:help}
+.sh-key{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sh-key span{font-size:13.5px;font-weight:700;border-radius:999px;padding:3px 12px}
+
+/* multi layers */
+.ml{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.ml-stack{position:relative;margin:6px 0 10px}
+.st-row{position:absolute;left:0;right:0;height:130px;display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:12px;align-items:center;transition:top .35s}
+.st-card{height:130px;border-radius:16px;transform:perspective(700px) rotateX(58deg);box-shadow:0 26px 28px -18px rgba(27,29,58,.6);outline:2px solid rgba(255,255,255,.95);outline-offset:-2px;position:relative;transition:opacity .3s}
+.st-lbl{justify-self:start;background:#fff;border-radius:10px;padding:4px 11px;font-size:13px;font-weight:900;color:var(--ai);box-shadow:0 4px 12px rgba(44,50,112,.18);position:relative}
+.st-lbl::before{content:"";position:absolute;right:100%;top:50%;width:14px;border-top:2px dotted var(--fuji)}
+.st-row.off .st-card{opacity:.12}.st-row.off .st-lbl{opacity:.45}
+.ml-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ml-row{display:grid;grid-template-columns:auto auto 1fr auto;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 10px}
+.ml-row .sw{width:44px;height:32px;border-radius:8px;border:1px solid var(--line)}
+.ml-row .n{font-family:var(--mono);font-weight:700;color:var(--momo);font-size:13px}
+.ml-row b{font-size:14.5px}
+.ml-row .act{display:flex;gap:4px}
+.ml-row button{border:none;background:var(--fuji-soft);color:var(--ai);border-radius:8px;width:30px;height:30px;cursor:pointer;font-weight:900}
+.ml-row button:hover{background:var(--fuji-mid)}
+.ml-row.off{opacity:.45}
+.ml-res{height:220px;border-radius:16px}
+
+/* gradients theory */
+.dial-demo{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center}
+.compass{width:200px;height:200px}
+.gtype{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:10px 0 6px}
+.gtype>div{border-radius:18px;border:1px solid var(--line);background:#fff;padding:12px;text-align:center}
+.gtype .sw{height:110px;border-radius:12px;margin-bottom:8px}
+.gtype b{font-family:var(--mono);font-size:14px;color:var(--ai)}
+.gtype p{margin:4px 0 0;font-size:14.5px;color:var(--ink-soft);line-height:1.45}
+.anat{font-family:var(--mono);font-size:clamp(14px,2vw,17px);padding:16px 18px;border-radius:16px;background:#fff;border:1.5px solid var(--line);line-height:2.4;overflow-wrap:anywhere}
+.anat .a1,.anat .a2,.anat .a3{border-radius:8px;padding:3px 8px}
+.anat .a1{background:#e9e5fb;color:var(--ai)}.anat .a2{background:#fde0ea;color:var(--beni)}.anat .a3{background:#fbefd2;color:#8d6311}
+
+/* ================= CREATOR ================= */
+.creator{background:linear-gradient(160deg,#ffffff, #faf7ff);}
+.cr{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:24px}
+.cr-prev{position:relative;border-radius:20px;overflow:hidden;height:360px;background:var(--chk);border:1px solid var(--line)}
+.cr-target{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.cr-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.seg{display:inline-flex;background:var(--fuji-soft);border-radius:999px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{border:none;background:transparent;border-radius:999px;padding:7px 14px;font-family:var(--maru);font-weight:700;font-size:14px;color:var(--ink-soft);cursor:pointer}
+.seg button.on{background:#fff;color:var(--ai);box-shadow:0 2px 8px rgba(44,50,112,.18)}
+.cr-panel{display:flex;flex-direction:column;gap:16px}
+.cr-group{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.cr-group>h4{margin:0 0 10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.stopbar-wrap{position:relative;padding:0 11px}
+.stopbar{position:relative;height:44px;border-radius:12px;cursor:copy;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.stop-h{position:absolute;top:50%;width:22px;height:54px;margin-left:-11px;transform:translateY(-50%);border-radius:10px;border:3px solid #fff;box-shadow:0 2px 8px rgba(27,29,58,.45);cursor:grab;touch-action:none}
+.stop-h.sel{border-color:var(--ai);box-shadow:0 0 0 3px #fff,0 4px 12px rgba(27,29,58,.5);z-index:2}
+.stop-h::after{content:"";position:absolute;left:50%;bottom:-11px;margin-left:-5px;border:5px solid transparent;border-top-color:#fff}
+.stop-ed{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:16px}
+.stop-ed input[type=color]{width:52px;height:44px;border:none;border-radius:12px;padding:0;background:none;cursor:pointer}
+.stop-ed input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.stop-ed input[type=color]::-webkit-color-swatch{border:2px solid var(--line);border-radius:12px}
+.rng{display:grid;grid-template-columns:86px 1fr 52px;gap:8px;align-items:center;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.rng input{width:100%;accent-color:var(--beni)}
+.rng output{font-family:var(--mono);font-size:13px;color:var(--ai);text-align:right}
+.mini-btns{display:flex;gap:6px;flex-wrap:wrap}
+.ib{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:5px 10px;font-family:var(--maru);font-weight:700;font-size:13px;color:var(--ai);cursor:pointer}
+.ib:hover{border-color:var(--fuji);background:var(--fuji-soft)}
+.ib.on{background:var(--ai);border-color:var(--ai);color:#fff}
+.ib.del{color:var(--beni)}
+.dir-grid{display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(3,38px);gap:5px}
+.dir-grid button{border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;font-size:17px;color:var(--ai);font-weight:700}
+.dir-grid button.on{background:var(--ai);color:#fff;border-color:var(--ai)}
+.dir-grid .mid{border:none;background:var(--fuji-soft);font-family:var(--mono);font-size:11px;cursor:default}
+.dial-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.dial{width:124px;height:124px;border-radius:50%;position:relative;cursor:grab;touch-action:none;
+  background:radial-gradient(circle,#fff 0 56%,transparent 57%),conic-gradient(var(--fuji-mid),var(--fuji-soft),var(--fuji-mid));box-shadow:0 6px 16px -8px rgba(44,50,112,.5)}
+.dial .needle{position:absolute;left:50%;top:50%;width:4px;height:52px;margin-left:-2px;background:var(--beni);border-radius:4px;transform-origin:50% 0}
+.dial .needle::after{content:"";position:absolute;bottom:-6px;left:50%;margin-left:-7px;width:14px;height:14px;border-radius:50%;background:var(--beni);box-shadow:0 0 0 3px #fff}
+.dial .val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--ai);font-size:15px;pointer-events:none}
+.dial .tick{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--ink-soft);font-weight:700}
+.pad{width:124px;height:124px;border-radius:14px;position:relative;cursor:crosshair;touch-action:none;background:
+  linear-gradient(var(--fuji-mid) 1px,transparent 1px) 0 0/31px 31px,linear-gradient(90deg,var(--fuji-mid) 1px,transparent 1px) 0 0/31px 31px,#fff;box-shadow:inset 0 0 0 1.5px var(--fuji-mid)}
+.pad .dot{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--beni);box-shadow:0 0 0 3px #fff,0 2px 8px rgba(27,29,58,.4)}
+.sw-row{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:700;cursor:pointer}
+.sw-row input{position:absolute;opacity:0;pointer-events:none}
+.sw-row .tg{width:44px;height:26px;border-radius:13px;background:var(--fuji-mid);position:relative;transition:.2s;flex:0 0 auto}
+.sw-row .tg::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.sw-row input:checked+.tg{background:var(--beni)}
+.sw-row input:checked+.tg::after{left:21px}
+.sw-row input:focus-visible+.tg{box-shadow:0 0 0 3px var(--sakura)}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.preset{border:none;padding:0;background:none;cursor:pointer;font-family:var(--maru);font-size:11.5px;font-weight:700;color:var(--ink-soft);text-align:center}
+.preset i{display:block;height:52px;border-radius:12px;margin-bottom:4px;box-shadow:0 0 0 1px rgba(0,0,0,.06);transition:transform .15s}
+.preset:hover i{transform:scale(1.06)}
+.saved{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;min-height:20px}
+.saved .empty{grid-column:1/-1}
+.saved .it{position:relative;height:50px;border-radius:12px;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.saved .it button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:12px;line-height:1;cursor:pointer}
+.empty{font-size:14px;color:var(--ink-soft)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.how>div{border-radius:16px;background:var(--washi);padding:14px;border:1px solid var(--line);font-size:15px;line-height:1.5}
+.how b.n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ai);color:#fff;font-family:var(--deco);margin-right:6px}
+
+/* targets inside preview */
+.t-page{position:absolute;inset:16px;border-radius:14px;overflow:hidden;box-shadow:0 14px 30px -12px rgba(27,29,58,.5);display:flex;flex-direction:column;background:#fff}
+.t-page .chrome{height:26px;background:#eceaf6;display:flex;align-items:center;gap:6px;padding:0 10px;flex:0 0 auto}
+.t-page .chrome i{width:9px;height:9px;border-radius:50%;background:#d4d0e8}
+.t-page .chrome span{margin-left:10px;height:12px;flex:1;max-width:220px;border-radius:6px;background:#fff}
+.t-page .body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+.t-page .body .ttl{font-family:var(--deco);font-size:30px;font-weight:700;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+.t-page .body .cards{display:flex;gap:10px}
+.t-page .body .cards i{width:70px;height:54px;border-radius:12px;background:rgba(255,255,255,.88);box-shadow:0 6px 14px -8px rgba(0,0,0,.4)}
+.t-btn{width:240px;height:70px;border-radius:35px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:21px;box-shadow:0 16px 30px -14px rgba(27,29,58,.6);text-shadow:0 1px 6px rgba(0,0,0,.25)}
+.t-title{font-family:var(--deco);font-weight:700;font-size:clamp(56px,8vw,96px);line-height:1.1;margin:0;-webkit-background-clip:text;background-clip:text;color:transparent}
+.t-circle{width:230px;height:230px;border-radius:50%;box-shadow:0 18px 34px -16px rgba(27,29,58,.6)}
+.t-box{position:absolute;inset:0}
+.cr-prev.light{background:#fff}
+
+/* ================= EFFECTS ================= */
+.fx-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.fx{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:24px;align-items:start}
+.fx-css{margin-top:6px}
+.fx-win{border-radius:18px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(27,29,58,.6);border:1px solid var(--line);background:#fff}
+.fx-win .chrome{height:30px;background:#eceaf6;display:flex;align-items:center;gap:6px;padding:0 12px}
+.fx-win .chrome i{width:10px;height:10px;border-radius:50%;background:#f28fae}
+.fx-win .chrome i:nth-child(2){background:#e9b85c}.fx-win .chrome i:nth-child(3){background:#7cc6a2}
+.fx-win .chrome span{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.fx-stage{height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:6px;position:relative}
+.fx-stage .h{font-family:var(--deco);font-weight:700;font-size:36px;line-height:1.15;margin:0}
+.fx-stage .s{font-size:15px;font-weight:700;opacity:.9}
+.fx-stage h1.cl{font-family:var(--deco);font-weight:700;font-size:clamp(56px,8vw,92px);line-height:1.1;margin:0;-webkit-background-clip:text;background-clip:text;color:transparent}
+.xray{margin-top:14px}
+.xray h4{margin:0 0 8px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.xray-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.xray-row .ly{width:78px;text-align:center;font-size:11.5px;font-weight:700;color:var(--ink-soft);line-height:1.3}
+.xray-row .ly i{display:block;height:56px;border-radius:10px;margin-bottom:4px;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.xray-row .op{font-family:var(--deco);font-weight:700;color:var(--momo);font-size:22px}
+.fx-meta{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.fx-meta span{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;background:var(--fuji-soft);color:var(--ai)}
+.fx-meta span.w{background:var(--sakura-soft);color:var(--beni)}
+.fx-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.fx-head .jp{font-family:var(--deco);font-size:22px;color:var(--momo)}
+.fx-num{font-family:var(--mono);font-weight:700;font-size:13px;color:#fff;background:var(--ai);border-radius:8px;padding:2px 8px}
+
+/* quiz */
+.q{border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.q .qt{display:flex;gap:12px;font-weight:700;margin-bottom:8px;line-height:1.5}
+.q .qt .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--fuji-soft);color:var(--ai);display:grid;place-items:center;font-family:var(--deco)}
+.q label{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;cursor:pointer;border:1.5px solid transparent;font-size:16px}
+.q label:hover{background:var(--washi)}
+.q input{accent-color:var(--beni);width:17px;height:17px;flex:0 0 auto}
+.q label.right{border-color:#9fd3b8;background:var(--wakaba-soft)}
+.q label.wrong{border-color:#f6b8c9;background:#fff0f3}
+.q .exp{display:none;margin-top:8px;padding:10px 14px;border-radius:12px;background:var(--washi);font-size:15px}
+.q .exp.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 20px;border-radius:18px;background:var(--yoru);color:#fff}
+.score b{font-family:var(--deco);font-size:30px;color:var(--sakura)}
+
+/* chuleta */
+.sheet{width:100%;border-collapse:separate;border-spacing:0;font-size:15px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.sheet th{background:var(--ai);color:#fff;text-align:left;padding:12px;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase}
+.sheet td{padding:12px;border-top:1px solid var(--line);vertical-align:top;background:#fff;line-height:1.5}
+.sheet tr:nth-child(2n) td{background:var(--washi)}
+.sheet td:first-child{font-family:var(--mono);font-weight:600;color:var(--beni);white-space:nowrap}
+.sheet-wrap{overflow-x:auto;border-radius:18px}
+
+/* footer */
+footer{margin-top:60px;color:#e5e1fb;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 15% 30%, rgba(234,127,160,.35), transparent 40%),radial-gradient(circle at 85% 70%, rgba(169,155,224,.35), transparent 45%),var(--yoru)}
+footer .wrap{padding:44px 16px 50px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .ft{font-family:var(--deco);font-size:26px;font-weight:700;color:#fff}
+footer p{margin:4px 0 0;font-size:15px;color:#bdb8e6}
+
+/* daruma */
+.daruma{position:fixed;right:18px;bottom:16px;z-index:60;width:78px;height:86px;cursor:pointer;border:none;background:none;padding:0}
+.daruma svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px rgba(27,29,58,.3))}
+.daruma .body{transform-origin:50px 100px;animation:okiagari 8s ease-in-out infinite}
+.daruma.hop .body{animation:hop .9s ease-out}
+@keyframes okiagari{0%,82%,100%{transform:rotate(0)}85%{transform:rotate(-11deg)}88%{transform:rotate(8deg)}91%{transform:rotate(-5deg)}94%{transform:rotate(3deg)}97%{transform:rotate(-1deg)}}
+@keyframes hop{0%{transform:translateY(0) rotate(0)}25%{transform:translateY(-22px) rotate(-14deg)}50%{transform:translateY(0) rotate(12deg)}70%{transform:rotate(-7deg)}85%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+.daruma .blink{transform-origin:center;animation:blink 6s infinite}
+@keyframes blink{0%,96%,100%{transform:scaleY(1)}98%{transform:scaleY(.1)}}
+.d-bubble{position:fixed;right:104px;bottom:40px;z-index:60;max-width:290px;background:#fff;border-radius:18px;padding:14px 16px 14px;box-shadow:0 18px 40px -14px rgba(27,29,58,.5);border:1px solid var(--line);font-size:15px;line-height:1.5;opacity:0;transform:translateY(8px);pointer-events:none;transition:.25s}
+.d-bubble.show{opacity:1;transform:none;pointer-events:auto}
+.d-bubble::after{content:"";position:absolute;right:-9px;bottom:22px;border:9px solid transparent;border-left-color:#fff;border-right:0}
+.d-bubble b{display:block;font-family:var(--deco);color:var(--beni);font-size:14px;margin-bottom:2px}
+.d-bubble .x{position:absolute;top:6px;right:8px;border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:16px}
+.d-bubble .hide{display:block;margin-top:8px;border:none;background:none;padding:0;color:var(--ink-soft);font-size:12.5px;text-decoration:underline;cursor:pointer;font-family:var(--maru)}
+.d-show{position:fixed;right:14px;bottom:14px;z-index:60;border:none;border-radius:999px;background:var(--beni);color:#fff;font-family:var(--deco);font-weight:700;padding:6px 12px;cursor:pointer;box-shadow:0 6px 14px rgba(214,69,111,.45)}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:920px){
+  .pc-grid{grid-template-columns:1fr!important}
+  .hero-grid,.g2,.ml,.cr,.fx,.dial-demo{grid-template-columns:1fr}
+  .hero-art{min-height:0;max-width:440px;margin:0 auto;width:100%}
+  .g3,.gtype,.att,.how{grid-template-columns:1fr}
+  .ikasle{grid-template-columns:1fr 1fr}
+  .timer{grid-column:1/-1;justify-content:space-between}
+  .ficha{grid-template-columns:1fr}
+  .compass{margin:0 auto}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .card{padding:20px 16px}
+  .ikasle{grid-template-columns:1fr}
+  .sec-head{grid-template-columns:54px 1fr;gap:12px}
+  .sec-head .lan{width:54px;height:68px}
+  .sec-head .wm{font-size:90px;top:-20px}
+  .nav .brand span{display:none}
+  .timer .t{font-size:18px;min-width:88px}
+  .daruma{width:58px;height:64px}
+  .d-bubble{right:16px;bottom:92px;max-width:calc(100vw - 32px)}
+  .d-bubble::after{right:26px;bottom:-9px;border:9px solid transparent;border-top-color:#fff;border-bottom:0}
+  .lab-exp{grid-template-columns:1fr}
+  .lab-exp code{white-space:normal}
+  .st-row{grid-template-columns:minmax(0,1fr) 112px}
+  .st-lbl{font-size:11.5px;padding:3px 8px}
+  .rng{grid-template-columns:76px 1fr 46px}
+  .cr-prev{height:300px}
+  .t-btn{width:200px}
+}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .daruma .body,.lan-sway,.daruma .blink{animation:none}
+  html{scroll-behavior:auto}
+}
+@media print{#petals,.nav,.daruma,.d-bubble,.d-show{display:none}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="hero" id="inicio">
+  <canvas id="petals" aria-hidden="true"></canvas>
+  <div class="lanterns" aria-hidden="true" id="lanterns"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="tag">CSS · Unidad de fondos</span>
+        <h1>Backgrounds</h1>
+        <p class="jp">背景 · haikei</p>
+        <p class="lead">Todo lo que se puede pintar detrás de tu contenido: colores, imágenes, degradados, capas y mezclas. Explicado paso a paso, con demos que puedes tocar y código listo para copiar en tu archivo.</p>
+        <div class="hero-btns">
+          <a class="btn pri" href="#que">Empezar desde cero</a>
+          <a class="btn sec" href="#creador">Ir al creador de degradados</a>
+        </div>
+      </div>
+      <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+    </div>
+    <div class="ikasle">
+      <label>Nombre<input type="text" placeholder="Tu nombre" autocomplete="off"></label>
+      <label>Apellidos<input type="text" placeholder="Tus apellidos" autocomplete="off"></label>
+      <label>Curso / grupo<input type="text" placeholder="Ej. 1º A" autocomplete="off"></label>
+      <div class="timer"><span class="t" id="tT">00:00:00</span><button class="t-go" id="tGo">Iniciar</button><button class="t-stop" id="tSt">Parar</button><button class="t-rs" id="tRs" title="Reiniciar">0</button></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><svg viewBox="0 0 40 50" aria-hidden="true"><use href="#i-lantern"/></svg><span>Yozakura CSS</span></a>
+    <button class="nav-arrow" id="navL" aria-label="Anterior">‹</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" aria-label="Siguiente">›</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ 01 QUÉ ES ============ -->
+<section class="sec" id="que" data-n="01" data-nav="Qué es un fondo">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Primeros pasos</span><h2>¿Qué es un fondo?</h2><p class="frase">Es lo que se pinta <b>detrás</b> del contenido de un elemento, como el papel sobre el que escribes.</p></div><span class="wm">背</span></div>
+
+  <div class="g2">
+    <div class="card reveal">
+      <h3>Piensa en un farolillo</h3>
+      <p>Imagina una linterna de papel japonesa. El <b>papel</b> es el fondo y lo que está <b>escrito</b> encima es el contenido. En CSS pasa lo mismo: cada elemento (un <code>div</code>, un <code>h1</code>, el <code>body</code>...) tiene un "papel" que podemos pintar.</p>
+      <p>Ese papel puede tener:</p>
+      <ul>
+        <li><b>un color liso</b> (<code>background-color</code>)</li>
+        <li><b>una imagen</b> (<code>background-image</code>) que podemos repetir, mover y cambiar de tamaño</li>
+        <li><b>un degradado</b>: una imagen que dibuja el propio CSS</li>
+        <li><b>varias capas</b> a la vez, una encima de otra</li>
+      </ul>
+      <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">Lo más importante</b><p>El fondo <b>siempre va detrás</b> del texto y de los hijos del elemento. Nunca los tapa.</p></div></div>
+    </div>
+    <div class="card reveal">
+      <h3>El orden de las capas</h3>
+      <p>Cuando un elemento tiene color, imagen y texto, el navegador los pinta en este orden (de abajo a arriba):</p>
+      <div class="ml-stack" id="introStack" style="height:280px"></div>
+      <p style="margin:0">1) primero el <b>color</b>, 2) encima la <b>imagen o degradado</b>, 3) encima de todo el <b>contenido</b> (texto, botones, imágenes del HTML).</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>¿Dónde escribo el CSS de los fondos?</h3>
+    <p>Igual que el resto de CSS: dentro de la <b>regla</b> del elemento que quieres pintar. Si quieres pintar la página entera, lo pones en <code>body</code>. Si quieres pintar una caja, en la clase de esa caja.</p>
+    <div class="g2">
+      <div data-code="html" data-title="index.html">&lt;body&gt;
+  &lt;div class="caja"&gt;
+    &lt;h1&gt;Hanami&lt;/h1&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</div>
+      <div data-code="css" data-title="estilos.css">body {
+  /* fondo de TODA la página */
+  background-color: #f8f5fc;
+}
+.caja {
+  width: 400px;   /* tamaño */
+  height: 250px;
+  /* fondo SOLO de la caja */
+  background-color: #f6bfd0;
+}</div>
+    </div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">El error número 1</b><p>Un <code>div</code> <b>vacío</b> mide 0 px de alto. Aunque le pongas un fondo precioso, <b>no se verá nada</b>. Siempre que un fondo "no funcione", lo primero es comprobar que el elemento tiene contenido o un <code>height</code>.</p></div></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>El mapa de esta unidad</h3>
+    <p>Estas son todas las propiedades de fondo. Toca cualquiera para ir a su explicación.</p>
+    <div class="lab-top" id="mapa"></div>
+  </div>
+</section>
+
+<!-- ============ 02 COLOR ============ -->
+<section class="sec" id="color" data-n="02" data-nav="Color">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 1</span><h2><code>background-color</code> Color de fondo</h2><p class="frase">Pinta todo el fondo del elemento con un color liso.</p></div><span class="wm">色</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="Cualquier elemento: body, div, h1, p, a, button...|Que el elemento tenga tamaño: contenido dentro o width y height.|transparent (sin color: se ve lo que hay detrás)"></div>
+    <div data-code="css">.caja {
+  background-color: #ea7fa0; /* rosa */
+}</div>
+    <h4>Las 7 formas de escribir un color</h4>
+    <p>Todas hacen lo mismo: decir qué color quieres. Los cuadritos grises que ves detrás de algunos indican <b>transparencia</b>: si los ves, es que el color deja ver lo de abajo.</p>
+    <div class="tiles" id="colorTiles"></div>
+    <div class="note idea"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">¿Cuál uso?</b><p><b>hex</b> (<code>#ea7fa0</code>) es el más habitual: lo copias de cualquier selector de color. <b>rgba</b> o <b>hex de 8 cifras</b> cuando quieres transparencia. <b>hsl</b> es el más fácil de "ajustar a mano".</p></div></div>
+  </div>
+  <div class="card reveal">
+    <h3>Mezclador de color</h3>
+    <p>Mueve los controles y mira cómo cambia el código. Al final, copia la línea y pégala en tu CSS.</p>
+    <div id="mix"></div>
+  </div>
+</section>
+
+<!-- ============ 03 IMAGEN ============ -->
+<section class="sec" id="imagen" data-n="03" data-nav="Imagen">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 2</span><h2><code>background-image</code> Imagen de fondo</h2><p class="frase">Pone una imagen (o un degradado) encima del color de fondo.</p></div><span class="wm">絵</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="Cualquier elemento con tamaño: body, div, section, header...|La ruta correcta a la imagen dentro de url(&quot; &quot;) y que la caja tenga altura.|none (sin imagen). Si pones una, se repite desde arriba a la izquierda."></div>
+    <div data-code="css">.portada {
+  height: 300px;                                 /* la caja necesita altura */
+  background-color: #2c3270;                     /* color de reserva */
+  background-image: url("../img/paisaje.jpg");   /* la imagen */
+}</div>
+    <h4>Cómo funciona la ruta de <code>url()</code></h4>
+    <p>La ruta se escribe <b>desde donde está el archivo que tiene el CSS</b>. Este es el caso más típico en clase:</p>
+    <div class="g2">
+      <div class="tree">
+        <div class="d">mi-web/</div>
+        <div>├── <span class="f">index.html</span></div>
+        <div>├── <span class="d">css/</span></div>
+        <div>│&nbsp;&nbsp;&nbsp;└── <span class="me">estilos.css</span> ← el CSS está aquí</div>
+        <div>└── <span class="d">img/</span></div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="tg">paisaje.jpg</span> ← quiero esta</div>
+      </div>
+      <div>
+        <p style="margin-top:0">Desde <code>css/estilos.css</code> hay que <b>salir</b> de la carpeta css (<code>../</code>) y <b>entrar</b> en img:</p>
+        <p><code>url("../img/paisaje.jpg")</code></p>
+        <p>Si el CSS está dentro del HTML (en una etiqueta <code>&lt;style&gt;</code>), la ruta se cuenta desde el <code>index.html</code>:</p>
+        <p style="margin:0"><code>url("img/paisaje.jpg")</code></p>
+      </div>
+    </div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">Si no ves tu imagen, revisa en este orden</b><p>1) ¿La caja tiene <code>height</code>? 2) ¿La ruta es correcta (carpetas, <code>../</code>)? 3) ¿El nombre está escrito igual, con mayúsculas y extensión (<code>.jpg</code> no es <code>.png</code>)? 4) ¿Has cerrado comillas y paréntesis?</p></div></div>
+  </div>
+  <div class="card reveal">
+    <h3>Pruébalo: la caja sin altura</h3>
+    <p>Esta caja tiene una imagen de fondo, pero <b>empieza sin altura</b>. Mueve el deslizador para darle <code>height</code> y mira qué pasa.</p>
+    <div id="hDemo"></div>
+  </div>
+  <div class="card reveal">
+    <h3>Lo que hace la imagen si no le dices nada más</h3>
+    <div class="g2">
+      <div><div class="lab-box" id="defImg" style="height:240px"></div></div>
+      <div>
+        <p style="margin-top:0">Con solo <code>background-image</code> el navegador:</p>
+        <ol>
+          <li>la coloca en la <b>esquina de arriba a la izquierda</b>,</li>
+          <li>a su <b>tamaño real</b>,</li>
+          <li>y la <b>repite</b> (como baldosas) hasta llenar la caja.</li>
+        </ol>
+        <p>Para cambiar cada una de esas tres cosas tienes una propiedad: <a href="#position"><code>background-position</code></a>, <a href="#size"><code>background-size</code></a> y <a href="#repeat"><code>background-repeat</code></a>.</p>
+      </div>
+    </div>
+    <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">Fondo o etiqueta img</b><p>Usa <code>background-image</code> para lo <b>decorativo</b> (texturas, portadas, patrones). Si la imagen es <b>contenido</b> importante (la foto de un producto, un retrato), va en el HTML con <code>&lt;img&gt;</code>.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 04 REPEAT ============ -->
+<section class="sec" id="repeat" data-n="04" data-nav="Repeat">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 3</span><h2><code>background-repeat</code> Repetición</h2><p class="frase">Decide si la imagen se copia como baldosas para llenar la caja o aparece una sola vez.</p></div><span class="wm">繰</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El mismo elemento que tiene la background-image.|Que haya una imagen de fondo (sin imagen no hay nada que repetir).|repeat (se repite en horizontal y en vertical)"></div>
+    <div data-lab="repeat"></div>
+    <table class="vals" id="repTable"></table>
+    <div class="note idea"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">Para qué se usa cada uno</b><p><code>no-repeat</code>: fotos y logos (casi siempre). <code>repeat</code>: texturas y patrones pequeños. <code>repeat-x</code>: una cenefa o franja horizontal. <code>space</code> y <code>round</code>: patrones donde no quieres ver copias cortadas.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 05 POSITION ============ -->
+<section class="sec" id="position" data-n="05" data-nav="Position">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 4</span><h2><code>background-position</code> Posición</h2><p class="frase">Mueve la imagen dentro de la caja: arriba, abajo, centro, esquinas...</p></div><span class="wm">位</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El mismo elemento que tiene la background-image.|Para verla bien, suele ir con background-repeat: no-repeat.|0% 0% (esquina de arriba a la izquierda)"></div>
+    <p>Se escriben <b>dos valores</b>: primero el <b>horizontal</b> (izquierda ↔ derecha) y después el <b>vertical</b> (arriba ↕ abajo).</p>
+    <div class="anat">background-position: <span class="a1">horizontal</span> <span class="a2">vertical</span>;</div>
+    <table class="vals" style="margin-top:12px">
+      <tr><th>Tipo</th><th>Ejemplo</th><th>Qué significa</th></tr>
+      <tr><td><b>Palabras</b></td><td><code>right bottom</code></td><td>Horizontal: <code>left</code>, <code>center</code>, <code>right</code>. Vertical: <code>top</code>, <code>center</code>, <code>bottom</code>. Si solo escribes una (<code>center</code>), la otra será <code>center</code>.</td></tr>
+      <tr><td><b>Píxeles</b></td><td><code>40px 20px</code></td><td>40 px desde la izquierda y 20 px desde arriba. Muy preciso.</td></tr>
+      <tr><td><b>Porcentajes</b></td><td><code>25% 75%</code></td><td>El punto 25%/75% de la imagen se coloca en el punto 25%/75% de la caja. <code>0% 0%</code> = arriba izquierda, <code>50% 50%</code> = centro, <code>100% 100%</code> = abajo derecha.</td></tr>
+    </table>
+  </div>
+  <div class="card reveal">
+    <h3>Pruébalo: toca una casilla o mueve los deslizadores</h3>
+    <div id="posLab"></div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">Si la imagen se repite...</b><p>...no notarás que se mueve, porque las copias rellenan todo. Por eso <code>background-position</code> casi siempre va con <code>background-repeat: no-repeat</code>.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 06 SIZE ============ -->
+<section class="sec" id="size" data-n="06" data-nav="Size">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 5</span><h2><code>background-size</code> Tamaño</h2><p class="frase">Cambia el tamaño de la imagen de fondo: más grande, más pequeña o adaptada a la caja.</p></div><span class="wm">寸</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El mismo elemento que tiene la background-image.|Una imagen de fondo. Con fotos, normalmente también no-repeat y center.|auto (el tamaño real de la imagen)"></div>
+    <div class="g2">
+      <div class="note bien" style="margin:0"><div class="ic"><span class="mb o">○</span></div><div><b class="t">cover = cubrir</b><p>La imagen <b>llena toda la caja</b> sin dejar huecos. Si la forma no coincide, <b>recorta</b> lo que sobra. Es la que usarás en portadas y fondos de foto.</p></div></div>
+      <div class="note clave" style="margin:0"><div class="ic"><span class="mb o" style="background:#fff;color:var(--ai2);box-shadow:inset 0 0 0 2px var(--fuji)">○</span></div><div><b class="t">contain = contener</b><p>La imagen se ve <b>entera</b>, sin recortar. Si la forma no coincide, <b>quedan huecos</b>. Útil para logos o ilustraciones que no se pueden cortar.</p></div></div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>Pruébalo: cambia el valor y la forma de la caja</h3>
+    <p>Fíjate sobre todo en <code>cover</code> y <code>contain</code> con la caja <b>ancha</b> y con la caja <b>alta</b>.</p>
+    <div id="sizeLab"></div>
+  </div>
+</section>
+
+<!-- ============ 07 ZONAS ============ -->
+<section class="sec" id="zonas" data-n="07" data-nav="Zonas de la caja">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Antes de origin y clip</span><h2>Las 3 zonas de una caja</h2><p class="frase">Para entender las dos propiedades siguientes necesitas saber que una caja tiene capas por dentro.</p></div><span class="wm">箱</span></div>
+  <div class="card reveal">
+    <div class="note ojo" style="margin-top:0"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">Aviso</b><p>Aún no hemos trabajado <code>padding</code> ni <code>border</code> en clase. Aquí solo los usamos para <b>ver</b> las zonas; los estudiaremos a fondo más adelante.</p></div></div>
+    <div class="g2">
+      <div class="zonas">
+        <div class="z-b">
+          <div class="z-lbl"><span>border-box</span><em>zona del borde</em></div>
+          <div class="z-p">
+            <div class="z-lbl"><span>padding-box</span><em>zona del relleno</em></div>
+            <div class="z-c"><div class="z-lbl" style="justify-content:center"><span>content-box</span><em>&nbsp;zona del contenido</em></div><div style="font-family:var(--deco);font-size:24px;font-weight:700;margin-top:6px">Texto</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li><b>content-box</b> (blanco): donde está el texto o los hijos.</li>
+          <li><b>padding-box</b> (rosa): el contenido + el <b>relleno</b> (<code>padding</code>), el "aire" que separa el texto del borde.</li>
+          <li><b>border-box</b> (azul): todo lo anterior + el <b>borde</b> (<code>border</code>), la línea que rodea la caja.</li>
+        </ul>
+        <p>Son como cajas de bento metidas una dentro de otra. Las propiedades <code>background-origin</code> y <code>background-clip</code> te dejan elegir con cuál de las tres trabaja el fondo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 ORIGIN ============ -->
+<section class="sec" id="origin" data-n="08" data-nav="Origin">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 6</span><h2><code>background-origin</code> Punto de partida</h2><p class="frase">Decide desde qué zona se empieza a <b>colocar</b> la imagen (dónde está su "0 0").</p></div><span class="wm">始</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El mismo elemento que tiene la background-image.|Que la caja tenga padding y/o border (si no, las 3 zonas son iguales y no notarás nada).|padding-box"></div>
+    <p>En la demo, la flor está colocada en <code>0 0</code> (arriba a la izquierda) y sin repetir. Cambia el origen y mira <b>desde dónde</b> empieza:</p>
+    <div class="oc-legend" style="margin:0 0 4px"><span><i style="background:rgba(44,50,112,.55)"></i>borde (border)</span><span><i style="background:#fde4ec"></i>relleno (padding)</span><span><i style="background:#fff;box-shadow:inset 0 0 0 1px var(--line)"></i>contenido</span></div>
+    <div data-lab="origin"></div>
+    <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">Ojo: origin no recorta</b><p><code>origin</code> solo cambia <b>dónde se coloca</b> la imagen. Si quieres que el fondo <b>no se vea</b> en alguna zona, necesitas <code>background-clip</code>, la siguiente.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 09 CLIP ============ -->
+<section class="sec" id="clip" data-n="09" data-nav="Clip">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 7</span><h2><code>background-clip</code> Recorte</h2><p class="frase">Decide <b>hasta dónde se ve</b> el fondo. Lo que queda fuera, se recorta como con unas tijeras.</p></div><span class="wm">切</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El elemento que tiene el fondo que quieres recortar.|Para border-box / padding-box / content-box: que la caja tenga padding o border. Para text: ver las 3 reglas de abajo.|border-box (el fondo llega hasta el borde exterior)"></div>
+    <div class="anat"><b>origin</b> = desde dónde se <span class="a1">coloca</span> · <b>clip</b> = hasta dónde se <span class="a2">ve</span></div>
+    <p style="margin-top:14px">El borde de la demo es semitransparente para que veas si el fondo pasa por debajo o no:</p>
+    <div data-lab="clip"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>El efecto estrella: <code>background-clip: text</code></h3>
+    <p>Con el valor <code>text</code> el fondo <b>solo se ve dentro de las letras</b>. Así se hacen los títulos con degradado o con una foto dentro. Es el efecto que más vas a usar, pero tiene <b>reglas muy estrictas</b>.</p>
+    <div class="g2" style="margin-top:14px">
+      <div>
+        <h4 style="margin-top:0">Constrúyelo paso a paso</h4>
+        <p style="font-size:15px">Activa las líneas en orden y lee lo que pasa en cada paso.</p>
+        <div class="ct-steps" id="ctSteps"></div>
+      </div>
+      <div>
+        <div class="ct-prev"><h1 id="ctH1">Sakura</h1></div>
+        <div class="ct-msg" id="ctMsg"></div>
+      </div>
+    </div>
+    <div id="ctCode"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>¿Quién lleva el clip: el h1 o la caja?</h3>
+    <p>Esta es la duda más habitual. La regla es sencilla:</p>
+    <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">Regla de oro</b><p>Las 3 líneas (<code>background</code>, <code>background-clip: text</code> y <code>color: transparent</code>) van <b>todas juntas en el elemento que tiene el texto escrito dentro</b>: el <code>h1</code>, el <code>p</code> o el <code>span</code>.</p><p>Si además quieres un fondo para la tarjeta que hay detrás, ese fondo va en el <b>padre</b> (el <code>div</code>), en otra regla distinta.</p></div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:16px" class="pc-grid">
+      <div data-code="html">&lt;!-- PADRE: lleva el fondo normal --&gt;
+&lt;div class="tarjeta"&gt;
+  &lt;!-- HIJO: tiene el texto, lleva el clip --&gt;
+  &lt;h1 class="titulo"&gt;Sakura&lt;/h1&gt;
+&lt;/div&gt;</div>
+      <div data-code="css">/* PADRE: fondo oscuro de la tarjeta */
+.tarjeta {
+  background-color: #1b1d3a;
+}
+/* HIJO: las 3 líneas, juntas */
+.titulo {
+  background: linear-gradient(90deg, #f6bfd0, #e9b85c);
+  -webkit-background-clip: text; /* Chrome, Edge, Safari */
+  background-clip: text;
+  color: transparent;
+}</div>
+    </div>
+    <h4>5 casos: cuál funciona y por qué</h4>
+    <div class="cases" id="cases"></div>
+    <div class="note idea"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">Para que luzca</b><p>Usa letras <b>grandes</b> y <b>gruesas</b> (<code>font-size</code> alto y <code>font-weight: 700</code> o más). Con letra fina, el degradado apenas se aprecia.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 10 ATTACHMENT ============ -->
+<section class="sec" id="attachment" data-n="10" data-nav="Attachment">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 8</span><h2><code>background-attachment</code> Fondo quieto o móvil</h2><p class="frase">Decide si el fondo se mueve o se queda quieto cuando se hace scroll.</p></div><span class="wm">留</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El elemento que tiene el fondo (muchas veces el body o una portada).|Que haya scroll: la página o la caja deben tener más contenido del que cabe.|scroll"></div>
+    <p>Las tres cajas tienen el mismo fondo de rayas y el mismo texto. Pulsa <b>Reproducir</b> (o mueve el deslizador) para desplazar el contenido de las tres a la vez y fíjate en las <b>rayas</b>:</p>
+    <div class="att" id="att"></div>
+    <div class="att-ctl"><button class="btn pri sm" id="attPlay">Reproducir</button><input type="range" id="attRange" min="0" max="100" value="0" aria-label="Desplazar contenido"><span style="font-size:14px;font-weight:700;color:var(--ink-soft)">desplazar contenido</span></div>
+    <table class="vals">
+      <tr><th>Valor</th><th>Qué hace</th></tr>
+      <tr><td><code>scroll</code></td><td>El fondo está pegado a la <b>caja</b>. Si el contenido de dentro se desplaza, el fondo <b>no se mueve</b> con él.</td></tr>
+      <tr><td><code>local</code></td><td>El fondo está pegado al <b>contenido</b>: se desplaza junto con el texto, como si estuviera impreso en el mismo papel.</td></tr>
+      <tr><td><code>fixed</code></td><td>El fondo está pegado a la <b>ventana del navegador</b>: aunque hagas scroll en toda la página, se queda quieto. Es el efecto <b>parallax</b>.</td></tr>
+    </table>
+  </div>
+  <div class="card reveal">
+    <h3>El efecto parallax con <code>fixed</code></h3>
+    <p>Haz scroll en la página despacio mientras miras esta franja: la imagen se queda quieta y la caja "pasa por encima" como una ventana.</p>
+    <div class="parallax" id="parallax"><b>Fondo fijo</b><span style="font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,.4)">background-attachment: fixed</span></div>
+    <div data-code="css">.portada {
+  height: 300px;
+  background-image: url("../img/paisaje.jpg");
+  background-size: cover;            /* la imagen cubre todo */
+  background-attachment: fixed;      /* queda quieta al hacer scroll */
+}</div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">En el móvil</b><p>Muchos navegadores de móvil ignoran <code>fixed</code> y lo tratan como <code>scroll</code>. Tu web seguirá viéndose bien, solo que sin el efecto.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 11 SHORTHAND ============ -->
+<section class="sec" id="atajo" data-n="11" data-nav="Atajo background">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Escribir menos</span><h2><code>background</code> El atajo</h2><p class="frase">Una sola propiedad para escribir color, imagen, posición, tamaño y repetición en una línea.</p></div><span class="wm">略</span></div>
+  <div class="card reveal">
+    <p>En vez de escribir cinco líneas, puedes escribir una. Pasa el ratón por cada trozo de color:</p>
+    <div class="sh-line" id="shLine"></div>
+    <div class="sh-key" id="shKey"></div>
+    <h4>Traductor: de atajo a propiedades sueltas</h4>
+    <p>Elige un ejemplo y mira cómo se traduce. Las dos formas dan <b>exactamente</b> el mismo resultado.</p>
+    <div id="shx"></div>
+    <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">Dos reglas del atajo</b><p>1) La <b>posición va antes que el tamaño</b>, separados por una barra: <code>center / cover</code>.</p><p>2) El resto puede ir en cualquier orden.</p></div></div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">La trampa del atajo</b><p>El atajo <b>borra</b> todo lo que no escribes. Si pones <code>background-size: cover;</code> y en la línea siguiente <code>background: url("foto.jpg");</code>, el <code>cover</code> desaparece. Solución: escribe primero el atajo y después las propiedades sueltas.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 12 CAPAS ============ -->
+<section class="sec" id="capas" data-n="12" data-nav="Varias capas">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Superpoderes</span><h2>Varios fondos a la vez</h2><p class="frase">Un mismo elemento puede tener muchas capas de fondo, una encima de otra, separadas por comas.</p></div><span class="wm">層</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="Un solo elemento (no hace falta crear más divs para cada capa).|Separar las capas con comas. El color de fondo, si va en el atajo, solo en la ÚLTIMA capa.|Una sola capa"></div>
+    <div class="note clave"><div class="ic"><svg viewBox="0 0 40 50"><use href="#i-lantern"/></svg></div><div><b class="t">El orden es al revés de lo que parece</b><p>La <b>primera</b> capa que escribes queda <b>arriba</b> (delante). La <b>última</b> queda <b>abajo</b> (detrás). Como una pila de papeles: el primero que nombras es el que ves.</p></div></div>
+    <div class="ml" id="ml"></div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">Si una capa "desaparece"</b><p>Seguramente hay otra capa <b>opaca</b> encima tapándola. Las capas de arriba deben tener zonas <b>transparentes</b> (<code>transparent</code> o colores con alfa) para dejar ver las de abajo.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 13 DEGRADADOS ============ -->
+<section class="sec" id="degradados" data-n="13" data-nav="Degradados">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Imágenes hechas con CSS</span><h2>Degradados (gradients)</h2><p class="frase">Un degradado es una <b>imagen</b> que dibuja el propio CSS: una transición suave (o brusca) entre colores.</p></div><span class="wm">虹</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="En background o background-image del elemento que quieres pintar (o del texto, con clip).|Al menos 2 colores. Como es una imagen, la caja necesita altura para verse.|No hay: si no lo escribes, no hay degradado."></div>
+    <h3>Los 3 tipos</h3>
+    <div class="gtype" id="gtypes"></div>
+    <div class="note ojo"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-ojo"/></svg></div><div><b class="t">Error típico</b><p><code>background-color: linear-gradient(...)</code> <b>no funciona</b>: un degradado es una imagen, no un color. Escríbelo en <code>background</code> o en <code>background-image</code>.</p></div></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>1 · <code>linear-gradient</code> en línea recta</h3>
+    <div class="anat">linear-gradient( <span class="a1">dirección</span>, <span class="a2">color 1</span>, <span class="a2">color 2</span>, <span class="a3">...más colores</span> )</div>
+    <h4>La dirección</h4>
+    <p>Se escribe con palabras (<code>to right</code>, <code>to bottom left</code>...) o con un ángulo en grados (<code>deg</code>). Si no pones dirección, va <b>de arriba abajo</b>. Mueve el ángulo y mira la brújula:</p>
+    <div class="dial-demo"><div id="compass"></div><div id="compassPrev"></div></div>
+    <h4>Las paradas de color</h4>
+    <p>Detrás de cada color puedes escribir <b>dónde</b> empieza (en <code>%</code> o <code>px</code>). Si pones dos colores en la <b>misma posición</b>, no hay mezcla: sale un <b>corte duro</b>, perfecto para franjas.</p>
+    <p style="font-size:15px;color:var(--ink-soft)">Toca cualquier muestra para copiar su código.</p>
+    <div class="tiles" data-tiles="lin"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>2 · <code>radial-gradient</code> desde un centro</h3>
+    <div class="anat">radial-gradient( <span class="a1">forma tamaño at posición</span>, <span class="a2">color 1</span>, <span class="a2">color 2</span> )</div>
+    <ul style="margin-top:12px">
+      <li><b>Forma</b>: <code>circle</code> (círculo) o <code>ellipse</code> (óvalo que se adapta a la caja; es lo que sale si no pones nada).</li>
+      <li><b>Tamaño</b>: hasta dónde llega. Puede ser una medida (<code>circle 60px</code>) o <code>closest-side</code> (hasta el lado más cercano).</li>
+      <li><b>at</b>: dónde está el centro. Igual que <code>background-position</code>: <code>at top left</code>, <code>at 30% 40%</code>...</li>
+    </ul>
+    <div class="tiles" data-tiles="rad"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>3 · <code>conic-gradient</code> girando alrededor de un punto</h3>
+    <div class="anat">conic-gradient( <span class="a1">from ángulo at posición</span>, <span class="a2">color 1</span>, <span class="a2">color 2</span> )</div>
+    <ul style="margin-top:12px">
+      <li>Los colores se reparten <b>girando</b> como las agujas del reloj, empezando arriba.</li>
+      <li>Las posiciones pueden ser grados (<code>90deg</code> = un cuarto de vuelta) o porcentajes (<code>25%</code> = un cuarto).</li>
+      <li><code>from</code> gira el punto de partida y <code>at</code> mueve el centro.</li>
+      <li>Con cortes duros y una caja redonda (<code>border-radius</code>) haces <b>gráficos de quesitos</b>.</li>
+    </ul>
+    <div class="tiles" data-tiles="con"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>4 · <code>repeating-</code> patrones que se repiten</h3>
+    <p>Los tres tipos tienen versión repetida: <code>repeating-linear-gradient</code>, <code>repeating-radial-gradient</code> y <code>repeating-conic-gradient</code>. Defines un <b>tramo</b> pequeño y el CSS lo repite hasta llenar la caja. La <b>última posición</b> marca lo que mide el tramo.</p>
+    <div class="tiles" data-tiles="rep"></div>
+    <div class="note idea"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">Truco de patrones</b><p>Un degradado pequeño + <code>background-size</code> + la repetición por defecto = <b>patrón de baldosas</b>. Así se hacen cuadros, lunares y olas japonesas. Los verás en la sección de <a href="#efectos">efectos</a>.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 14 CREADOR ============ -->
+<section class="sec" id="creador" data-n="14" data-nav="Creador">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Tu taller</span><h2>Creador de degradados</h2><p class="frase">Diseña tu degradado, míralo aplicado en una página, un botón o un título, y llévatelo a tu archivo.</p></div><span class="wm">創</span></div>
+  <div class="card creator reveal">
+    <div class="how">
+      <div><b class="n">1</b><b>Diseña.</b> Elige tipo, arrastra los puntos de color de la barra y cambia la dirección.</div>
+      <div><b class="n">2</b><b>Pruébalo.</b> Cambia la vista previa: caja, página, botón, título o círculo.</div>
+      <div><b class="n">3</b><b>Cópialo.</b> Copia el código y pégalo dentro de la regla de tu elemento en tu CSS.</div>
+    </div>
+    <div class="cr" style="margin-top:20px" id="creatorRoot"></div>
+  </div>
+</section>
+
+<!-- ============ 15 BLEND ============ -->
+<section class="sec" id="blend" data-n="15" data-nav="Blend mode">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Propiedad 9</span><h2><code>background-blend-mode</code> Mezclar capas</h2><p class="frase">Mezcla las capas de fondo entre sí, como los filtros de una app de fotos.</p></div><span class="wm">混</span></div>
+  <div class="card reveal">
+    <div class="ficha" data-ficha="El mismo elemento que tiene las capas de fondo.|Al menos DOS capas: por ejemplo una imagen + un background-color, o dos degradados.|normal (no mezcla: la capa de arriba tapa a la de abajo)"></div>
+    <div data-code="css">.foto {
+  height: 300px;
+  background-image: url("../img/paisaje.jpg");  /* capa de arriba */
+  background-size: cover;
+  background-color: #ea7fa0;                    /* capa de abajo */
+  background-blend-mode: multiply;              /* cómo se mezclan */
+}</div>
+    <p style="margin-top:14px">Solo mezcla las capas <b>de ese elemento</b>, no lo que haya detrás de la caja. Elige un modo y un color:</p>
+    <div id="blendLab"></div>
+    <h4>Los modos más útiles, de un vistazo</h4>
+    <div class="tiles" id="blendTiles"></div>
+    <div class="note idea"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">Para empezar, quédate con 4</b><p><code>multiply</code> tiñe y oscurece · <code>screen</code> aclara (efecto luz) · <code>overlay</code> da contraste · <code>luminosity</code> convierte la foto en "duotono" con el color de fondo.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 16 EFECTOS ============ -->
+<section class="sec" id="efectos" data-n="16" data-nav="Efectos">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Para tu web</span><h2>Efectos de fondo para tu página</h2><p class="frase">12 efectos listos para usar. Cada uno con su resultado, su radiografía capa por capa y el código comentado.</p></div><span class="wm">技</span></div>
+  <div class="card reveal" style="padding-bottom:18px">
+    <p style="margin:0">Cómo usarlos: elige uno, mira la <b>radiografía</b> para entender qué capas lo forman, copia el CSS y pégalo en la regla de tu elemento (<code>body</code>, una <code>section</code>, un <code>div</code> con <code>height</code>, o un <code>h1</code> en los efectos de texto).</p>
+  </div>
+  <div class="fx-filter" id="fxFilter"></div>
+  <div id="fxList"></div>
+</section>
+
+<!-- ============ 17 TEST ============ -->
+<section class="sec" id="test" data-n="17" data-nav="Test">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Comprueba lo que sabes</span><h2>Test de fondos</h2><p class="frase">10 preguntas. Cada respuesta te explica el porqué.</p></div><span class="wm">試</span></div>
+  <div class="card reveal">
+    <div id="quiz"></div>
+    <div class="score"><span>Puntuación:</span><b id="qScore">0 / 10</b><button class="btn pri sm" id="qAll" style="margin-left:auto">Corregir todo</button><button class="btn sec sm" id="qReset">Empezar de nuevo</button></div>
+  </div>
+</section>
+
+<!-- ============ 18 CHULETA ============ -->
+<section class="sec" id="chuleta" data-n="18" data-nav="Chuleta">
+  <div class="sec-head reveal"><div class="lan"></div><div><span class="kicker">Resumen</span><h2>Chuleta de fondos</h2><p class="frase">Todo en una tabla, para repasar antes de ponerte a trabajar en tu página.</p></div><span class="wm">表</span></div>
+  <div class="sheet-wrap reveal">
+    <table class="sheet">
+      <tr><th>Propiedad</th><th>Para qué sirve</th><th>Necesita</th><th>Valores clave</th><th>Por defecto</th></tr>
+      <tr><td>background-color</td><td>Color liso de fondo</td><td>Que la caja tenga tamaño</td><td>nombre, #hex, rgb(), rgba(), hsl(), transparent</td><td>transparent</td></tr>
+      <tr><td>background-image</td><td>Imagen o degradado de fondo</td><td>Ruta correcta en url() y altura</td><td>url("ruta"), linear-gradient(), radial-gradient(), conic-gradient(), none</td><td>none</td></tr>
+      <tr><td>background-repeat</td><td>Repetir o no la imagen</td><td>Una imagen</td><td>repeat, no-repeat, repeat-x, repeat-y, space, round</td><td>repeat</td></tr>
+      <tr><td>background-position</td><td>Mover la imagen</td><td>Una imagen (mejor con no-repeat)</td><td>left/center/right + top/center/bottom, px, %</td><td>0% 0%</td></tr>
+      <tr><td>background-size</td><td>Tamaño de la imagen</td><td>Una imagen</td><td>auto, cover, contain, px, %</td><td>auto</td></tr>
+      <tr><td>background-origin</td><td>Desde qué zona se coloca</td><td>padding o border en la caja</td><td>padding-box, border-box, content-box</td><td>padding-box</td></tr>
+      <tr><td>background-clip</td><td>Hasta qué zona se ve</td><td>Para text: color transparent en el mismo elemento</td><td>border-box, padding-box, content-box, text</td><td>border-box</td></tr>
+      <tr><td>background-attachment</td><td>Fondo quieto o móvil al hacer scroll</td><td>Que haya scroll</td><td>scroll, local, fixed</td><td>scroll</td></tr>
+      <tr><td>background-blend-mode</td><td>Mezclar capas entre sí</td><td>Al menos 2 capas</td><td>normal, multiply, screen, overlay, luminosity...</td><td>normal</td></tr>
+      <tr><td>background</td><td>Atajo: todo en una línea</td><td>posición / tamaño juntos</td><td>color imagen posición / tamaño repetición</td><td>—</td></tr>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><div class="ft">Backgrounds · 背景</div><p>Primero el color, encima la imagen, delante el contenido.</p></div>
+    <a class="btn pri sm" href="#inicio">Volver arriba</a>
+  </div>
+</footer>
+
+<button class="daruma" id="daruma" aria-label="Daruma: pulsa para recibir un consejo"></button>
+<div class="d-bubble" id="dBubble" role="status"><button class="x" id="dX" aria-label="Cerrar">×</button><b>Daruma dice</b><span id="dTxt"></span><button class="hide" id="dHide">Esconder a Daruma</button></div>
+<button class="d-show" id="dShow" hidden>達磨</button>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-lantern" viewBox="0 0 40 50">
+      <rect x="15" y="1" width="10" height="5" rx="1.5" fill="#2c3270"/>
+      <rect x="12" y="5" width="16" height="4" rx="1.5" fill="#e9b85c"/>
+      <ellipse cx="20" cy="26" rx="17" ry="18" fill="#d6456f"/>
+      <ellipse cx="20" cy="26" rx="11" ry="18" fill="none" stroke="#b5335a" stroke-width="1.2"/>
+      <ellipse cx="20" cy="26" rx="4.5" ry="18" fill="none" stroke="#b5335a" stroke-width="1.2"/>
+      <path d="M4 18h32M3 26h34M4 34h32" stroke="#b5335a" stroke-width="1.2"/>
+      <ellipse cx="14" cy="20" rx="4" ry="7" fill="#fff" opacity=".25"/>
+      <rect x="12" y="42" width="16" height="4" rx="1.5" fill="#e9b85c"/>
+      <path d="M20 46v4" stroke="#e9b85c" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-sensu" viewBox="0 0 40 40">
+      <path d="M20 36 L3 14 A22 22 0 0 1 37 14 Z" fill="#e9b85c"/>
+      <path d="M20 36 L3 14 A22 22 0 0 1 37 14 Z" fill="none" stroke="#9a6d16" stroke-width="1.4" stroke-linejoin="round"/>
+      <g stroke="#9a6d16" stroke-width="1"><path d="M20 36 L8 9"/><path d="M20 36 L14 6"/><path d="M20 36 L20 5"/><path d="M20 36 L26 6"/><path d="M20 36 L32 9"/></g>
+      <path d="M8 17 A17 17 0 0 1 32 17" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/>
+      <circle cx="20" cy="15" r="4" fill="#d6456f"/>
+      <circle cx="20" cy="35" r="2.4" fill="#2c3270"/>
+    </symbol>
+    <symbol id="i-ojo" viewBox="0 0 40 40">
+      <rect x="3" y="3" width="34" height="34" rx="9" fill="#d6456f"/>
+      <text x="20" y="28" text-anchor="middle" font-family="Kaisei Decol, serif" font-size="22" font-weight="700" fill="#fff">注</text>
+    </symbol>
+    <symbol id="i-flor" viewBox="-32 -32 64 64">
+      <g fill="currentColor">
+        <path id="fp" d="M0,-4 C-10,-10 -12,-24 -4,-29 L0,-25 L4,-29 C12,-24 10,-10 0,-4Z"/>
+        <use href="#fp" transform="rotate(72)"/><use href="#fp" transform="rotate(144)"/><use href="#fp" transform="rotate(216)"/><use href="#fp" transform="rotate(288)"/>
+      </g>
+      <circle r="6" fill="#ffd36e"/><circle r="2.5" fill="#d6456f"/>
+    </symbol>
+  </defs>
+</svg>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- assets ---------- */
+const FLOR_SVG="<svg xmlns='http://www.w3.org/2000/svg' viewBox='-32 -32 64 64' width='64' height='64'><g fill='#ea7fa0'>"+[0,72,144,216,288].map(a=>`<path transform='rotate(${a})' d='M0,-4 C-10,-10 -12,-24 -4,-29 L0,-25 L4,-29 C12,-24 10,-10 0,-4Z'/>`).join('')+"</g><g fill='#f6bfd0'>"+[0,72,144,216,288].map(a=>`<path transform='rotate(${a}) scale(.55)' d='M0,-4 C-10,-10 -12,-24 -4,-29 L0,-25 L4,-29 C12,-24 10,-10 0,-4Z'/>`).join('')+"</g><circle r='6' fill='#ffd36e'/><circle r='2.4' fill='#d6456f'/></svg>";
+const PAIS_SVG="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 300' width='480' height='300'><defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#1f2459'/><stop offset='.55' stop-color='#8d7fd0'/><stop offset='1' stop-color='#f6bfd0'/></linearGradient></defs><rect width='480' height='300' fill='url(#s)'/><circle cx='368' cy='78' r='34' fill='#fff6e2'/><circle cx='368' cy='78' r='52' fill='#fff6e2' opacity='.18'/><path d='M-10 300 L150 124 Q172 104 194 124 L360 300Z' fill='#4b4f99'/><path d='M150 124 Q172 104 194 124 L207 138 L190 146 L176 134 L162 147 L140 136Z' fill='#ffffff'/><path d='M190 300 L330 176 Q346 163 362 176 L500 300Z' fill='#6a63ad'/><rect y='252' width='480' height='48' fill='#252a63'/><path d='M0 258 Q60 252 120 258 T240 258 T360 258 T480 258' stroke='#f6bfd0' stroke-width='2' fill='none' opacity='.6'/><g fill='#d6456f'><rect x='388' y='196' width='7' height='58'/><rect x='428' y='196' width='7' height='58'/><rect x='376' y='192' width='72' height='8' rx='2'/><rect x='382' y='206' width='60' height='5'/></g><path d='M-6 40 C60 50 110 30 160 50' stroke='#2a2030' stroke-width='7' fill='none' stroke-linecap='round'/><path d='M60 46 C70 70 90 80 110 84' stroke='#2a2030' stroke-width='4' fill='none'/><g fill='#f6bfd0'><circle cx='30' cy='36' r='9'/><circle cx='52' cy='52' r='8'/><circle cx='88' cy='40' r='10'/><circle cx='110' cy='84' r='8'/><circle cx='132' cy='46' r='9'/><circle cx='80' cy='72' r='7'/><circle cx='154' cy='52' r='7'/></g><g fill='#ffffff'><circle cx='40' cy='44' r='5'/><circle cx='98' cy='48' r='5'/><circle cx='124' cy='40' r='4'/></g></svg>";
+const u=s=>'url("data:image/svg+xml,'+encodeURIComponent(s)+'")';
+const IMG_F=u(FLOR_SVG), IMG_P=u(PAIS_SVG);
+const CHK='conic-gradient(#e7e3f2 25%,#fff 0 50%,#e7e3f2 0 75%,#fff 0) 0 0/16px 16px';
+const fx=s=>s.split('§F').join(IMG_F).split('§P').join(IMG_P).split('§C').join(CHK);
+const sx=s=>s.split('§F').join('url("../img/flor.png")').split('§P').join('url("../img/paisaje.jpg")').split(', §C').join('').split(',§C').join('');
+
+/* ---------- highlight & copy ---------- */
+function hlDecl(d){return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+esc(v)+'</span>'+sc);}
+function hlCss(css){
+  let inBlock=false;
+  return css.split('\n').map(line=>{
+    let code=line,com='';const i=line.indexOf('/*');
+    if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+    let out;
+    if(/\{/.test(code)){const j=code.indexOf('{');out='<span class="s">'+esc(code.slice(0,j))+'</span>'+esc(code.slice(j));inBlock=true;}
+    else if(/^\s*\}/.test(code)){out=esc(code);inBlock=false;}
+    else if(/^\s*[\w-]+\s*:/.test(code)){out=hlDecl(code);}
+    else out='<span class="v">'+esc(code)+'</span>';
+    return out+(com?'<span class="c">'+esc(com)+'</span>':'');
+  }).join('\n');
+}
+function hlHtml(h){
+  return esc(h)
+   .replace(/class="([^"]*)"/g,'<span class="p">class</span>=<span class="v">"$1"</span>')
+   .replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>')
+   .replace(/&lt;!--(.*?)--&gt;/g,'<span class="c">&lt;!--$1--&gt;</span>');
+}
+function copyText(txt,btn){
+  const done=()=>{if(!btn)return;const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1400);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fb);}else fb();
+}
+function codeBox(lang,src,title){
+  const w=el('div','code');
+  w.innerHTML=`<div class="bar"><span class="dots"><i></i><i></i><i></i><span>${esc(title||lang)}</span></span><button class="copy">Copiar</button></div><pre></pre>`;
+  const pre=$('pre',w);
+  w.set=(s)=>{w.src=s;pre.innerHTML=lang==='html'?hlHtml(s):hlCss(s);};
+  w.set(src);
+  $('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);
+  return w;
+}
+$$('[data-code]').forEach(d=>{const src=d.textContent.replace(/^\n/,'');const b=codeBox(d.dataset.code,src,d.dataset.title);d.replaceWith(b);});
+
+/* ---------- lanterns (sections) ---------- */
+$$('section.sec').forEach(s=>{
+  const n=s.dataset.n, l=$('.lan',s);
+  if(l)l.innerHTML=`<svg viewBox="0 0 40 50"><use href="#i-lantern"/><text x="20" y="31" text-anchor="middle" font-family="Kaisei Decol, Georgia, serif" font-size="12" font-weight="700" fill="#fff">${n}</text></svg>`;
+});
+
+/* ---------- fichas ---------- */
+$$('[data-ficha]').forEach(f=>{
+  const [a,b,c]=f.dataset.ficha.split('|');
+  f.className='ficha';
+  f.innerHTML=`<div><div class="k"><i>所</i>Se pone en</div><div class="v">${a}</div></div><div><div class="k"><i>要</i>Necesita</div><div class="v">${b}</div></div><div><div class="k"><i>初</i>Por defecto</div><div class="v">${c}</div></div>`;
+});
+
+/* ---------- nav ---------- */
+const ul=$('#navUl');
+const secs=$$('section.sec');
+secs.forEach(s=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${s.dataset.n}</span>${s.dataset.nav}</a>`;ul.appendChild(li);});
+const links=$$('a',ul);
+$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});
+$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+let lastActive=-1;
+function onScroll(){
+  const dh=document.documentElement.scrollHeight-innerHeight;
+  $('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';
+  let cur=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<140)cur=i;});
+  if(cur!==lastActive){lastActive=cur;links.forEach((a,i)=>a.classList.toggle('on',i===cur));
+    if(cur>=0){const a=links[cur];const left=a.offsetLeft-ul.clientWidth/2+a.clientWidth/2;ul.scrollTo({left,behavior:'smooth'});}}
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- mapa ---------- */
+[['color','background-color'],['imagen','background-image'],['repeat','background-repeat'],['position','background-position'],['size','background-size'],['origin','background-origin'],['clip','background-clip'],['attachment','background-attachment'],['blend','background-blend-mode'],['atajo','background'],['degradados','degradados'],['creador','creador'],['efectos','efectos']].forEach(([id,t])=>{
+  const a=el('a','chip',t);a.href='#'+id;a.style.textDecoration='none';$('#mapa').appendChild(a);
+});
+
+/* ---------- timer ---------- */
+{let t0=null,acc=0,iv=null;const T=$('#tT');
+ const f=ms=>{const s=Math.floor(ms/1000);return[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');};
+ const up=()=>T.textContent=f(acc+(t0?Date.now()-t0:0));
+ $('#tGo').onclick=()=>{if(t0)return;t0=Date.now();iv=setInterval(up,500);};
+ $('#tSt').onclick=()=>{if(!t0)return;acc+=Date.now()-t0;t0=null;clearInterval(iv);up();};
+ $('#tRs').onclick=()=>{if(!confirm('¿Poner el cronómetro a cero?'))return;t0=null;acc=0;clearInterval(iv);up();};}
+
+/* ---------- reveal ---------- */
+if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.06});$$('.reveal').forEach(x=>io.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+
+/* ---------- hero art ---------- */
+{
+ let pag='';const base=400;
+ for(let i=0;i<5;i++){const w=96-i*15,y=base-i*34,x=118;
+   pag+=`<rect x="${x-w/2+16}" y="${y-22}" width="${w-32}" height="22" fill="#141633"/>`+
+        `<path d="M${x-w/2-6} ${y-20} Q${x} ${y-34} ${x+w/2+6} ${y-20} L${x+w/2-6} ${y-30} Q${x} ${y-40} ${x-w/2+6} ${y-30}Z" fill="#141633"/>`;}
+ pag+=`<rect x="116" y="${base-5*34-36}" width="4" height="34" fill="#141633"/>`;
+ const fl=[[318,96,1.05,'#ffffff'],[290,118,.8,'#f6bfd0'],[340,132,.9,'#f6bfd0'],[262,150,1,'#ffffff'],[300,170,.75,'#ea7fa0'],[236,178,.85,'#f6bfd0'],[372,104,.7,'#ffffff'],[210,206,.9,'#ffffff'],[352,168,.65,'#f6bfd0'],[328,66,.7,'#f6bfd0'],[188,238,.7,'#f6bfd0'],[274,92,.6,'#ea7fa0']];
+ const fls=fl.map(([x,y,s,c])=>`<use href="#i-flor" x="${x-26*s}" y="${y-26*s}" width="${52*s}" height="${52*s}" style="color:${c}"/>`).join('');
+ $('#heroArt').innerHTML=`<svg viewBox="0 0 440 440">
+ <defs>
+  <linearGradient id="hw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#191c45"/><stop offset=".55" stop-color="#4c3f8a"/><stop offset="1" stop-color="#d6849f"/></linearGradient>
+  <radialGradient id="hm"><stop offset="0" stop-color="#fffaf0"/><stop offset=".6" stop-color="#ffefd8"/><stop offset="1" stop-color="#ffe6c4"/></radialGradient>
+  <clipPath id="hc"><circle cx="220" cy="220" r="178"/></clipPath>
+ </defs>
+ <circle cx="220" cy="220" r="210" fill="rgba(255,240,215,.08)"/>
+ <circle cx="220" cy="220" r="200" fill="#3d2a2f"/>
+ <circle cx="220" cy="220" r="190" fill="#5c4038"/>
+ <circle cx="220" cy="220" r="178" fill="url(#hw)"/>
+ <g clip-path="url(#hc)">
+  <circle cx="270" cy="150" r="70" fill="#fff3dc" opacity=".14"/>
+  <circle cx="270" cy="150" r="46" fill="url(#hm)"/>
+  <path d="M30 400 Q120 330 220 360 T420 340 L420 420 L30 420Z" fill="#2a2c6a"/>
+  <path d="M0 420 Q110 360 220 390 T440 380 L440 440 L0 440Z" fill="#1b1d3a"/>
+  ${pag}
+  <path d="M440 70 C380 80 330 110 290 140 C250 170 220 200 180 250" stroke="#2a1f27" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M330 110 C340 90 360 76 384 70" stroke="#2a1f27" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M262 160 C250 140 236 128 214 122" stroke="#2a1f27" stroke-width="4" fill="none" stroke-linecap="round"/>
+  ${fls}
+ </g>
+ <g stroke="#7a5446" stroke-width="2.5" opacity=".9"><path d="M42 300 H398"/><path d="M60 330 H380"/></g>
+ <g fill="#5c4038"><rect x="40" y="296" width="360" height="6" rx="3"/></g>
+ </svg>`;
+}
+/* ---------- lantern garland ---------- */
+{
+ const xs=[90,250,420,600,780,950,1110];
+ let h=`<svg viewBox="0 0 1200 120" preserveAspectRatio="xMidYMin slice"><path d="M-10 8 Q300 46 600 18 T1210 10" stroke="#0e0f26" stroke-width="2.5" fill="none"/>`;
+ xs.forEach((x,i)=>{const y=[22,32,30,22,20,24,14][i];
+   h+=`<g class="lan-sway" style="transform-origin:${x}px ${y}px"><path d="M${x} ${y}v14" stroke="#0e0f26" stroke-width="2"/><use href="#i-lantern" x="${x-20}" y="${y+12}" width="40" height="50"/><circle cx="${x}" cy="${y+38}" r="30" fill="#ffb347" opacity=".12"/></g>`;});
+ h+='</svg>';$('#lanterns').innerHTML=h;
+}
+/* ---------- petals (hero only) ---------- */
+{
+ const hero=$('#inicio'),cv=$('#petals'),ctx=cv.getContext('2d');
+ let W,H,P=[],on=!reduce,vis=true;const dpr=Math.min(devicePixelRatio||1,2);
+ const size=()=>{W=hero.clientWidth;H=hero.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);};
+ size();addEventListener('resize',size);
+ const mk=init=>({x:Math.random()*W,y:init?Math.random()*H:-15,s:5+Math.random()*6,vy:.35+Math.random()*.7,vx:.2+Math.random()*.5,a:Math.random()*6.28,va:-.02+Math.random()*.04,ph:Math.random()*6.28,c:Math.random()<.5?'#f6bfd0':'#ffffff'});
+ for(let i=0;i<(W<600?14:28);i++)P.push(mk(true));
+ function draw(p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.scale(1,Math.abs(Math.cos(p.ph))*.55+.45);ctx.globalAlpha=.85;ctx.fillStyle=p.c;
+  const s=p.s;ctx.beginPath();ctx.moveTo(0,s);ctx.bezierCurveTo(-s,s*.2,-s*.7,-s*.8,-s*.15,-s);ctx.lineTo(0,-s*.7);ctx.lineTo(s*.15,-s);ctx.bezierCurveTo(s*.7,-s*.8,s,s*.2,0,s);ctx.fill();ctx.restore();}
+ function tick(){if(!on||!vis)return;ctx.clearRect(0,0,W,H);P.forEach((p,i)=>{p.ph+=.02;p.y+=p.vy;p.x+=p.vx+Math.sin(p.ph)*.5;p.a+=p.va;if(p.y>H+15||p.x>W+20)P[i]=mk(false);draw(p);});requestAnimationFrame(tick);}
+ if('IntersectionObserver' in window){new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis&&on)tick();}).observe(hero);}
+ if(on)tick();
+}
+
+/* ======================================================
+   SECTION 01: intro stack
+   ====================================================== */
+function stack(host,layers){
+  host.innerHTML='';const n=layers.length,gap=58;host.style.height=((n-1)*gap+130)+'px';
+  layers.forEach((L,i)=>{const r=el('div','st-row'+(L.off?' off':''));r.style.top=(i*gap)+'px';r.style.zIndex=String(n-i);
+   r.innerHTML=`<div class="st-card"></div><span class="st-lbl">${L.label}</span>`;$('.st-card',r).style.background=fx(L.bg);if(L.html)$('.st-card',r).innerHTML=L.html;host.appendChild(r);});
+}
+stack($('#introStack'),[
+ {label:'3 · Contenido',bg:'rgba(255,255,255,.35)',html:'<div style="height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--deco);font-size:40px;font-weight:700;color:#1b1d3a">Hanami</div>'},
+ {label:'2 · Imagen',bg:'§F center/56px, §C'},
+ {label:'1 · Color',bg:'#ea7fa0'}
+]);
+
+
+/* ======================================================
+   SECTION 02: colors
+   ====================================================== */
+{
+ const C=[['pink','Nombre','Hay unos 140 nombres en inglés: pink, navy, gold...'],['#ea7fa0','Hexadecimal','# + 6 cifras: rojo, verde y azul. El más usado.'],['#ea7fa080','Hex con transparencia','2 cifras más al final: 80 ≈ 50% visible.'],['rgb(234, 127, 160)','rgb()','Rojo, verde y azul de 0 a 255.'],['rgba(234, 127, 160, 0.4)','rgba()','rgb + alfa: 0 invisible, 1 opaco.'],['hsl(340, 72%, 71%)','hsl()','Tono (0-360), saturación y luz.'],['transparent','transparent','Sin color: se ve lo de detrás.']];
+ const g=$('#colorTiles');
+ C.forEach(([v,t,d])=>{const b=el('button','tile');b.innerHTML=`<div class="sw" style="background:linear-gradient(${v},${v}),${CHK}"></div><b>${t}</b><small>background-color: ${esc(v)};</small><small style="font-family:var(--maru);font-size:13px;margin-top:4px">${d}</small><span class="cp">Copiar</span>`;b.onclick=()=>{copyText(`background-color: ${v};`,$('.cp',b));};g.appendChild(b);});
+}
+/* mixer */
+{
+ const host=$('#mix');
+ host.innerHTML=`<div class="g2" style="align-items:center"><div style="display:flex;flex-direction:column;gap:12px" id="mixC"></div><div><div id="mixSw" style="height:180px;border-radius:18px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)"></div></div></div><div id="mixCode"></div>`;
+ const S=[['Tono',0,360,340,'°'],['Saturación',0,100,72,'%'],['Luz',0,100,71,'%'],['Opacidad',0,100,100,'%']];
+ const ins=S.map(([n,mn,mx,v,un])=>{const r=el('label','rng');r.innerHTML=`<span>${n}</span><input type="range" min="${mn}" max="${mx}" value="${v}"><output>${v}${un}</output>`;$('#mixC').appendChild(r);return r;});
+ const cb=codeBox('css','','CSS');$('#mixCode').appendChild(cb);
+ function hsl2rgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return[f(0),f(8),f(4)].map(x=>Math.round(x*255));}
+ function up(){
+  const [h,s,l,o]=ins.map(r=>+$('input',r).value);
+  ins.forEach((r,i)=>$('output',r).textContent=$('input',r).value+S[i][4]);
+  const [R,G,B]=hsl2rgb(h,s,l);const hex='#'+[R,G,B].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const a=o/100;const col=a<1?`rgba(${R}, ${G}, ${B}, ${a})`:hex;
+  $('#mixSw').style.background=`linear-gradient(${col},${col}),${CHK}`;
+  $('input',ins[0]).style.background='';
+  cb.set(`.caja {\n  background-color: ${col};${a<1?'':'  /* en hex */'}\n  /* mismo color en hsl: hsl(${h}, ${s}%, ${l}%${a<1?', '+a:''}) */\n}`);
+ }
+ ins.forEach(r=>$('input',r).addEventListener('input',up));up();
+}
+
+/* ======================================================
+   SECTION 03: image demos
+   ====================================================== */
+{
+ const host=$('#hDemo');
+ host.innerHTML=`<div class="rng" style="grid-template-columns:70px 1fr 96px;max-width:560px"><span>height</span><input type="range" min="0" max="260" value="0" id="hR"><output id="hO">sin height</output></div><div class="stage" style="margin-top:12px;min-height:60px"><div id="hBox" style="border-radius:14px;outline:2px dashed rgba(44,50,112,.35);outline-offset:-1px"></div><p id="hMsg" style="margin:10px 0 0;font-weight:700"></p></div><div id="hCode"></div>`;
+ const cb=codeBox('css','','CSS');$('#hCode').appendChild(cb);
+ const b=$('#hBox');b.style.background=fx('#fdeef3 §P center / cover no-repeat');
+ function up(){const v=+$('#hR').value;b.style.height=v+'px';$('#hO').textContent=v?v+'px':'sin height';
+  $('#hMsg').innerHTML=v===0?'<span style="color:var(--beni)">La caja mide 0 px de alto: el fondo existe, pero no hay sitio donde pintarlo (solo ves la línea discontinua).</span>':v<80?'Ya se empieza a ver... la caja es muy bajita.':'<span style="color:#2f7a57">Ahora sí: la caja tiene altura y el fondo se ve.</span>';
+  cb.set(`.portada {\n${v?`  height: ${v}px;\n`:'  /* sin height: el div vacío mide 0 px */\n'}  background-image: url("../img/paisaje.jpg");\n  background-size: cover;\n}`);}
+ $('#hR').addEventListener('input',up);up();
+ $('#defImg').style.background=fx('#fdeef3 §F');
+}
+
+/* ======================================================
+   GENERIC LAB
+   ====================================================== */
+function lab(host,cfg){
+  host.className='lab';
+  host.innerHTML=`<div class="lab-top"></div><div class="stage"><div class="lab-box ${cfg.boxClass||''}">${cfg.text||''}</div></div><div class="lab-exp"><code></code><span></span></div><div class="lab-code"></div>`;
+  const top=$('.lab-top',host),box=$('.lab-box',host),cd=$('.lab-exp code',host),tx=$('.lab-exp span',host);
+  const cb=codeBox('css','','CSS');$('.lab-code',host).appendChild(cb);
+  if(cfg.h)box.style.height=cfg.h+'px';
+  cfg.values.forEach(([v,t])=>{const b=el('button','chip',v);b.onclick=()=>pick(v,t,b);top.appendChild(b);});
+  function pick(v,t,b){$$('.chip',top).forEach(x=>x.classList.toggle('on',x===b));
+    box.style.cssText=(cfg.h?'height:'+cfg.h+'px;':'')+fx(cfg.base)+';'+(cfg.extra&&cfg.extra[v]||'');
+    box.style.setProperty(cfg.prop,v);if(cfg.prop==='background-clip')box.style.setProperty('-webkit-background-clip',v);
+    cd.textContent=cfg.prop+': '+v+';';tx.innerHTML=t;
+    cb.set(cfg.code(v));}
+  const first=$$('.chip',top)[0];pick(cfg.values[0][0],cfg.values[0][1],first);
+}
+const LABS={
+ repeat:{prop:'background-repeat',h:240,base:'background:#fdeef3 §F 0 0/80px',values:[
+  ['repeat','<b>Por defecto.</b> La imagen se copia en horizontal y en vertical, como baldosas, hasta llenar la caja. Fíjate: las copias del borde se cortan.'],
+  ['no-repeat','Aparece <b>una sola vez</b>. Es lo que quieres casi siempre con fotos y logos.'],
+  ['repeat-x','Se repite solo en <b>horizontal</b> (eje X): una fila de copias.'],
+  ['repeat-y','Se repite solo en <b>vertical</b> (eje Y): una columna de copias.'],
+  ['space','Repite solo las copias que caben <b>enteras</b> y reparte el hueco sobrante entre ellas.'],
+  ['round','Repite y <b>estira o encoge</b> un poco las copias para que quepan justas, sin cortes.']],
+  code:v=>`.caja {\n  height: 240px;\n  background-image: url("../img/flor.png");\n  background-size: 80px;\n  background-repeat: ${v};\n}`},
+ origin:{prop:'background-origin',boxClass:'oc-box',text:'contenido',base:'background:§F 0 0/60px no-repeat, linear-gradient(#fff,#fff) content-box, #fde4ec',values:[
+  ['padding-box','<b>Por defecto.</b> El 0 0 está en la esquina del <b>relleno</b>: la flor empieza justo dentro del borde.'],
+  ['border-box','El 0 0 está en la esquina <b>exterior</b>: la flor empieza debajo del borde.'],
+  ['content-box','El 0 0 está donde empieza el <b>contenido</b>: la flor se mete hasta la zona blanca.']],
+  code:v=>`.caja {\n  padding: 26px;                       /* relleno (zona rosa) */\n  border: 22px dashed rgba(44, 50, 112, 0.55); /* borde */\n  background-image: url("../img/flor.png");\n  background-repeat: no-repeat;\n  background-position: 0 0;            /* arriba a la izquierda... */\n  background-origin: ${v};  /* ...pero ¿de qué zona? */\n}`},
+ clip:{prop:'background-clip',boxClass:'oc-box',text:'<span style="font-family:var(--deco);font-size:clamp(46px,8vw,78px);line-height:1">Sakura</span>',base:'background:linear-gradient(135deg,#ea7fa0,#a99be0 55%,#e9b85c)',
+  extra:{text:'color:transparent'},values:[
+  ['border-box','<b>Por defecto.</b> El fondo llega hasta el borde exterior: se ve debajo de las rayas del borde.'],
+  ['padding-box','El fondo llega hasta el <b>borde interior</b>: debajo del borde ya no hay fondo.'],
+  ['content-box','El fondo solo se ve en la zona del <b>contenido</b>.'],
+  ['text','El fondo solo se ve <b>dentro de las letras</b>. Además hace falta <code>color: transparent</code> (mira el código).']],
+  code:v=>`.caja {\n  padding: 26px;\n  border: 22px dashed rgba(44, 50, 112, 0.55);\n  background: linear-gradient(135deg, #ea7fa0, #a99be0 55%, #e9b85c);\n${v==='text'?'  -webkit-background-clip: text;       /* Chrome, Edge, Safari */\n':''}  background-clip: ${v};\n${v==='text'?'  color: transparent;                  /* imprescindible con text */\n':''}}`}
+};
+$$('[data-lab]').forEach(h=>lab(h,LABS[h.dataset.lab]));
+
+/* repeat table */
+{
+ const R=[['repeat','En las dos direcciones'],['no-repeat','Una sola vez'],['repeat-x','Solo en horizontal'],['repeat-y','Solo en vertical'],['space','Copias enteras con hueco entre ellas'],['round','Copias ajustadas sin cortes']];
+ $('#repTable').innerHTML='<tr><th>Valor</th><th>Mini</th><th>Resultado</th></tr>'+R.map(([v,t])=>`<tr><td><code>${v}</code></td><td><div class="mini" style="background:${fx('#fdeef3 §F 0 0/18px '+v).replace(/"/g,'&quot;')}"></div></td><td>${t}</td></tr>`).join('');
+}
+
+/* position lab */
+{
+ const host=$('#posLab');
+ host.innerHTML=`<div class="g2" style="grid-template-columns:auto 1fr;align-items:start"><div><div class="dir-grid" id="posPad" style="grid-template-columns:repeat(3,62px);grid-template-rows:repeat(3,44px)"></div>
+ <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;min-width:240px"><label class="rng"><span>horizontal</span><input type="range" id="pX" min="0" max="100" value="0"><output id="pXo">0%</output></label><label class="rng"><span>vertical</span><input type="range" id="pY" min="0" max="100" value="0"><output id="pYo">0%</output></label></div></div>
+ <div><div class="stage" style="padding:12px"><div id="posBox" style="height:260px;border-radius:14px;position:relative;outline:2px dashed rgba(44,50,112,.3);outline-offset:-2px"><i id="gx" style="position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed var(--beni)"></i><i id="gy" style="position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--beni)"></i></div></div><div class="lab-exp"><code id="posC"></code><span id="posT"></span></div></div></div><div id="posCode"></div>`;
+ const cb=codeBox('css','','CSS');$('#posCode').appendChild(cb);
+ const KW=[['left top',0,0],['center top',50,0],['right top',100,0],['left center',0,50],['center',50,50],['right center',100,50],['left bottom',0,100],['center bottom',50,100],['right bottom',100,100]];
+ const box=$('#posBox');box.style.background=fx('#fdeef3 §F 0 0 / 90px no-repeat');
+ KW.forEach(([k,x,y])=>{const b=el('button','',k.replace(' ','<br>'));b.style.fontSize='11px';b.style.lineHeight='1.15';b.style.fontFamily='var(--mono)';b.onclick=()=>set(x,y,k);$('#posPad').appendChild(b);});
+ function set(x,y,kw){$('#pX').value=x;$('#pY').value=y;draw(kw);}
+ function draw(kw){const x=+$('#pX').value,y=+$('#pY').value;$('#pXo').textContent=x+'%';$('#pYo').textContent=y+'%';
+  const v=kw||`${x}% ${y}%`;box.style.backgroundPosition=`${x}% ${y}%`;
+  $('#gx').style.left=x+'%';$('#gy').style.top=y+'%';
+  $$('#posPad button').forEach((b,i)=>b.classList.toggle('on',KW[i][1]===x&&KW[i][2]===y));
+  $('#posC').textContent='background-position: '+v+';';
+  $('#posT').innerHTML=`El punto <b>${x}% ${y}%</b> de la flor se coloca sobre el punto <b>${x}% ${y}%</b> de la caja (las líneas rojas).`;
+  cb.set(`.caja {\n  height: 260px;\n  background-image: url("../img/flor.png");\n  background-size: 90px;\n  background-repeat: no-repeat;   /* para ver bien la posición */\n  background-position: ${v};\n}`);}
+ $('#pX').addEventListener('input',()=>draw());$('#pY').addEventListener('input',()=>draw());draw('left top');
+}
+
+/* size lab */
+{
+ const host=$('#sizeLab');
+ host.innerHTML=`<div class="lab-top" id="szV"></div><div class="lab-top"><span style="font-weight:700;font-size:14px;color:var(--ink-soft);align-self:center">Forma de la caja:</span><div class="seg" id="szS"><button class="on" data-s="ancha">Ancha</button><button data-s="alta">Alta</button><button data-s="cuadrada">Cuadrada</button></div></div>
+ <div class="stage" style="display:flex;justify-content:center;align-items:center;min-height:360px"><div id="szBox" style="border-radius:14px;outline:2px dashed rgba(44,50,112,.35);outline-offset:-2px;max-width:100%"></div></div><div class="lab-exp"><code id="szC"></code><span id="szT"></span></div><div id="szCode"></div>`;
+ const cb=codeBox('css','','CSS');$('#szCode').appendChild(cb);
+ const V=[['auto','<b>Por defecto.</b> La imagen a su tamaño real (480 × 300 px). Si la caja es más pequeña, se corta.'],['cover','<b>Cubre</b> toda la caja sin huecos. Recorta lo que sobra (mira los bordes al cambiar la forma).'],['contain','Se ve <b>entera</b>. Quedan huecos (el color lila de fondo) donde no llega.'],['200px','Un solo valor = el <b>ancho</b>. El alto se calcula solo para no deformar.'],['200px 200px','Ancho y alto. Si no respetas la proporción, la imagen se <b>deforma</b>.'],['50%','El 50% del ancho de la caja.'],['100% 100%','Estira la imagen para llenar todo: siempre se ve entera pero <b>deformada</b>.']];
+ const box=$('#szBox');let cur='cover',shape='ancha';
+ const SH={ancha:[560,240],alta:[230,330],cuadrada:[300,300]};
+ V.forEach(([v,t])=>{const b=el('button','chip',v);b.onclick=()=>{cur=v;draw();};$('#szV').appendChild(b);});
+ $$('#szS button').forEach(b=>b.onclick=()=>{shape=b.dataset.s;$$('#szS button').forEach(x=>x.classList.toggle('on',x===b));draw();});
+ function draw(){const [w,h]=SH[shape];box.style.width=w+'px';box.style.height=h+'px';
+  box.style.background=fx('#d9d1f6 §P center no-repeat');box.style.backgroundSize=cur;
+  $$('#szV .chip').forEach(c=>c.classList.toggle('on',c.textContent===cur));
+  $('#szC').textContent='background-size: '+cur+';';$('#szT').innerHTML=V.find(x=>x[0]===cur)[1];
+  cb.set(`.caja {\n  width: ${w}px;\n  height: ${h}px;\n  background-color: #d9d1f6;        /* se ve en los huecos */\n  background-image: url("../img/paisaje.jpg");\n  background-repeat: no-repeat;\n  background-position: center;\n  background-size: ${cur};\n}`);}
+ draw();
+}
+
+/* ======================================================
+   SECTION 09: clip text builder + cases
+   ====================================================== */
+{
+ const GR='linear-gradient(90deg, #ea7fa0, #e9b85c 50%, #a99be0)';
+ const ST=[
+  ['bg','background: linear-gradient(...);','Pinta el fondo del h1 con el degradado.'],
+  ['clip','background-clip: text;','Recorta ese fondo con la forma de las letras (y su gemela <code>-webkit-background-clip: text</code>).'],
+  ['col','color: transparent;','Hace invisibles las letras para que se vea el fondo que hay "dentro".']];
+ const on={bg:false,clip:false,col:false};
+ const host=$('#ctSteps');
+ ST.forEach(([k,c,d],i)=>{const l=el('label','ct-step');l.innerHTML=`<input type="checkbox"><div><code>${esc(c)}</code><small>Paso ${i+1}: ${d}</small></div>`;
+  $('input',l).onchange=e=>{on[k]=e.target.checked;l.classList.toggle('on',on[k]);draw();};host.appendChild(l);});
+ const cb=codeBox('css','','CSS del h1');$('#ctCode').appendChild(cb);
+ function draw(){
+  const h=$('#ctH1');h.style.background=on.bg?GR:'none';
+  h.style.webkitBackgroundClip=on.clip?'text':'border-box';h.style.backgroundClip=on.clip?'text':'border-box';
+  h.style.color=on.col?'transparent':'';
+  let m;
+  if(!on.bg&&!on.clip&&!on.col)m='Un <b>h1</b> normal. Activa el <b>paso 1</b>.';
+  else if(on.bg&&!on.clip&&!on.col)m='El degradado pinta <b>todo el rectángulo</b> del h1 (el h1 ocupa todo el ancho). Ahora activa el <b>paso 2</b>.';
+  else if(on.bg&&on.clip&&!on.col)m='El fondo ya está recortado con la forma de las letras... pero <b>no lo ves</b> porque el color del texto está pintado encima. Activa el <b>paso 3</b>.';
+  else if(on.bg&&on.clip&&on.col)m='<b style="color:#2f7a57">¡Conseguido!</b> Letras transparentes + fondo recortado = título con degradado.';
+  else if(on.bg&&!on.clip&&on.col)m='<b style="color:var(--beni)">Mal:</b> las letras son transparentes, pero el fondo no está recortado. Solo ves un rectángulo de colores.';
+  else if(!on.bg&&on.clip&&on.col)m='<b style="color:var(--beni)">Mal:</b> no hay fondo que recortar y las letras son transparentes: <b>el título desaparece</b>.';
+  else if(!on.bg&&on.col)m='<b style="color:var(--beni)">Mal:</b> letras transparentes sin fondo: el título desaparece.';
+  else m='Sin fondo, recortar no hace nada. Activa el <b>paso 1</b>.';
+  $('#ctMsg').innerHTML=m;
+  let c='h1 {\n';if(on.bg)c+='  background: linear-gradient(90deg, #ea7fa0, #e9b85c 50%, #a99be0);\n';
+  if(on.clip)c+='  -webkit-background-clip: text;  /* Chrome, Edge, Safari */\n  background-clip: text;\n';
+  if(on.col)c+='  color: transparent;\n';if(!on.bg&&!on.clip&&!on.col)c+='  /* activa los pasos */\n';c+='}';cb.set(c);
+ }
+ draw();
+ const G2='linear-gradient(90deg,#ea7fa0,#e9b85c 50%,#a99be0)';
+ const CL=`background:${G2};-webkit-background-clip:text;background-clip:text`;
+ const CASES=[
+  ['o','Las 3 líneas en el h1',`<p class="tx" style="${CL};color:transparent">Sakura</p>`,'El fondo, el recorte y el color transparente están en el mismo elemento que tiene el texto.'],
+  ['x','Falta color: transparent',`<p class="tx" style="${CL};color:#262744">Sakura</p>`,'El fondo está recortado, pero las letras se pintan encima con su color y lo tapan.'],
+  ['x','El clip está en el padre, y el hijo tiene color propio',`<div style="${CL};color:transparent"><span class="tx" style="color:#262744;display:block">Sakura</span></div>`,'El span hijo tiene su propio <code>color</code>, que tapa el efecto. Pon las 3 líneas directamente en el elemento del texto.'],
+  ['x','Clip en una caja sin texto',`<div style="${CL};color:transparent;width:160px;height:60px;outline:1.5px dashed #a99be0;border-radius:8px"></div>`,'Sin letras no hay nada que recortar: el fondo desaparece entero.'],
+  ['o','Tarjeta con fondo (padre) + título con clip (hijo)',`<div style="background:#1b1d3a;border-radius:12px;width:200px;height:96px;display:flex;align-items:center;justify-content:center"><p class="tx" style="${CL};color:transparent">Sakura</p></div>`,'Cada fondo en su sitio: el fondo oscuro en la tarjeta y el degradado recortado en el h1.']
+ ];
+ CASES.forEach(([ok,t,html,d])=>{const c=el('div','case');c.innerHTML=`<div class="pv">${html}</div><div class="hd"><span class="mb ${ok}">${ok==='o'?'○':'×'}</span>${t}</div><p>${d}</p>`;$('#cases').appendChild(c);});
+}
+
+/* ======================================================
+   SECTION 10: attachment
+   ====================================================== */
+{
+ const A=[['scroll','Las rayas se quedan quietas: el texto pasa por encima.'],['local','Las rayas suben con el texto, como si estuvieran impresas en él.'],['fixed','Dentro de la caja parece scroll. La diferencia está al mover toda la página: mira la franja parallax de abajo.']];
+ const lines=Array.from({length:16},(_,i)=>`<span>Línea ${i+1}</span>`).join('<br>');
+ A.forEach(([v,t])=>{const c=el('div','att-col');c.innerHTML=`<h4>${v}</h4><div class="att-box" style="background-attachment:${v}"><div class="in">${lines}</div></div><p style="font-size:14.5px;margin:8px 2px 0;line-height:1.5">${t}</p><div class="code" style="margin-top:8px"><pre style="padding:8px 12px;font-size:13px"><span class="p">background-attachment</span>: <span class="v">${v}</span>;</pre></div>`;$('#att').appendChild(c);});
+ const boxes=$$('.att-box'),rng=$('#attRange');let playing=false,dir=1,raf=0;
+ const setP=p=>boxes.forEach(b=>b.scrollTop=(b.scrollHeight-b.clientHeight)*p/100);
+ rng.addEventListener('input',()=>{stop();setP(+rng.value);});
+ function step(){let v=+rng.value+dir*.35;if(v>=100){v=100;dir=-1;}if(v<=0){v=0;dir=1;}rng.value=v;setP(v);raf=requestAnimationFrame(step);}
+ function stop(){playing=false;cancelAnimationFrame(raf);$('#attPlay').textContent='Reproducir';}
+ $('#attPlay').onclick=()=>{if(playing)return stop();playing=true;$('#attPlay').textContent='Pausa';step();};
+ $('#parallax').style.background=fx('linear-gradient(rgba(27,29,58,.25),rgba(27,29,58,.25)), §P center / cover fixed');
+}
+
+/* ======================================================
+   SECTION 11: shorthand
+   ====================================================== */
+{
+ const P=[['#2c3270','color','#a99be0'],['url("../img/flor.png")','imagen','#f6bfd0'],['center','posición','#e9b85c'],['/',null,null],['80px','tamaño','#7cc6a2'],['no-repeat','repetición','#9fd8ff']];
+ $('#shLine').innerHTML='background: '+P.map(([t,n,c])=>n?`<span class="pc" title="${n}" style="background:${c}33;box-shadow:inset 0 0 0 1.5px ${c};color:#fff">${esc(t)}</span>`:`<span style="color:#fff;font-weight:700">${t}</span>`).join(' ')+';';
+ $('#shKey').innerHTML=P.filter(p=>p[1]).map(([t,n,c])=>`<span style="background:${c}33;color:var(--ink);box-shadow:inset 0 0 0 1.5px ${c}">${n}</span>`).join('');
+ const EX=[
+  ['Flor centrada','§F center / 80px no-repeat, #2c3270','#2c3270 url("../img/flor.png") center / 80px no-repeat',[['background-color','#2c3270'],['background-image','url("../img/flor.png")'],['background-position','center'],['background-size','80px'],['background-repeat','no-repeat']]],
+  ['Foto de portada','§P center / cover no-repeat','url("../img/paisaje.jpg") center / cover no-repeat',[['background-image','url("../img/paisaje.jpg")'],['background-position','center'],['background-size','cover'],['background-repeat','no-repeat']]],
+  ['Cenefa inferior','§F left bottom / 50px repeat-x, #fdeef3','#fdeef3 url("../img/flor.png") left bottom / 50px repeat-x',[['background-color','#fdeef3'],['background-image','url("../img/flor.png")'],['background-position','left bottom'],['background-size','50px'],['background-repeat','repeat-x']]],
+  ['Solo degradado','linear-gradient(#f6bfd0, #ea7fa0)','linear-gradient(#f6bfd0, #ea7fa0)',[['background-image','linear-gradient(#f6bfd0, #ea7fa0)']]]];
+ const host=$('#shx');
+ host.innerHTML=`<div class="lab-top" id="shxB"></div><div class="g2"><div><div class="lab-box" id="shxBox" style="height:200px"></div></div><div id="shxA"></div></div><div id="shxL"></div>`;
+ const ca=codeBox('css','','Con el atajo'),cl=codeBox('css','','Con propiedades sueltas');$('#shxA').appendChild(ca);$('#shxL').appendChild(cl);
+ EX.forEach((e,i)=>{const b=el('button','chip',e[0]);b.onclick=()=>pick(i);$('#shxB').appendChild(b);});
+ function pick(i){const [n,prev,sh,lh]=EX[i];$$('#shxB .chip').forEach((b,j)=>b.classList.toggle('on',i===j));
+  $('#shxBox').style.background=fx(prev);
+  ca.set(`.caja {\n  height: 200px;\n  background: ${sh};\n}`);
+  cl.set(`.caja {\n  height: 200px;\n${lh.map(([p,v])=>`  ${p}: ${v};`).join('\n')}\n}`);}
+ pick(0);
+}
+
+/* ======================================================
+   SECTION 12: multi layers
+   ====================================================== */
+{
+ const L=[
+  {id:'f',label:'Flores',css:'§F 22% 40% / 80px no-repeat',on:true},
+  {id:'l',label:'Luna',css:'radial-gradient(circle at 75% 30%, #fff8e6 0 30px, rgba(255,248,230,0.3) 32px, transparent 60px)',on:true},
+  {id:'r',label:'Rayas',css:'repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 10px, transparent 10px 20px)',on:true},
+  {id:'c',label:'Cielo',css:'linear-gradient(#1b1d3a, #a99be0)',on:true}];
+ const host=$('#ml');
+ host.innerHTML=`<div><div class="ml-stack" id="mlStack"></div><div class="ml-list" id="mlList"></div></div><div><div class="ml-res" id="mlRes"></div><div id="mlCode"></div></div>`;
+ const cb=codeBox('css','','CSS');$('#mlCode').appendChild(cb);
+ function draw(){
+  const list=$('#mlList');list.innerHTML='';
+  L.forEach((x,i)=>{const r=el('div','ml-row'+(x.on?'':' off'));
+   r.innerHTML=`<span class="n">${i+1}</span><span class="sw" style="background:${fx(x.css).replace(/"/g,'&quot;')},${CHK}"></span><b>${x.label}${i===0?' <small style="color:var(--momo)">(arriba)</small>':i===L.length-1?' <small style="color:var(--ink-soft)">(abajo)</small>':''}</b><span class="act"><button title="Subir">↑</button><button title="Bajar">↓</button><button title="Mostrar u ocultar">${x.on?'◉':'○'}</button></span>`;
+   const [up,dn,tg]=$$('button',r);
+   up.onclick=()=>{if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];draw();}};
+   dn.onclick=()=>{if(i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];draw();}};
+   tg.onclick=()=>{x.on=!x.on;draw();};list.appendChild(r);});
+  stack($('#mlStack'),L.map((x,i)=>({label:`${i+1} · ${x.label}`,bg:x.css+', §C',off:!x.on})));
+  const act=L.filter(x=>x.on);
+  $('#mlRes').style.background=act.length?fx(act.map(x=>x.css).join(', ')):'none';
+  $('#mlRes').style.outline=act.length?'none':'2px dashed var(--fuji-mid)';
+  cb.set(act.length?`.cielo {\n  height: 220px;\n  background:\n${act.map((x,i)=>`    /* capa ${i+1}: ${x.label.toLowerCase()}${i===0?' (arriba)':i===act.length-1?' (abajo)':''} */\n    ${sx(x.css)}${i<act.length-1?',':';'}`).join('\n')}\n}`:'.cielo {\n  /* sin capas: no hay fondo */\n}');
+ }
+ draw();
+}
+
+/* ======================================================
+   SECTION 13: gradients
+   ====================================================== */
+{
+ const T=[['linear','linear-gradient(135deg, #f6bfd0, #2c3270)','Los colores cambian <b>en línea recta</b>, en la dirección que elijas.'],['radial','radial-gradient(circle, #fff8e6, #ea7fa0 60%, #2c3270)','Los colores salen <b>desde un centro</b> hacia fuera, como una onda en el agua.'],['conic','conic-gradient(#f6bfd0, #a99be0, #e9b85c, #f6bfd0)','Los colores <b>giran</b> alrededor de un punto, como las agujas de un reloj.']];
+ T.forEach(([n,g,d])=>{const c=el('div');c.innerHTML=`<div class="sw" style="background:${g}"></div><b>${n}-gradient</b><p>${d}</p>`;$('#gtypes').appendChild(c);});
+}
+/* compass */
+{
+ const host=$('#compass');
+ host.innerHTML=`<svg class="compass" viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" fill="#fff" stroke="#d9d1f6" stroke-width="2"/><circle cx="100" cy="100" r="66" fill="#efebfc"/>
+ <g font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#5d5f86" text-anchor="middle"><text x="100" y="24">0deg</text><text x="181" y="104">90deg</text><text x="100" y="190">180deg</text><text x="21" y="104">270deg</text></g>
+ <g id="cmpN" style="transform-origin:100px 100px;transition:transform .25s"><path d="M100 100 L100 40" stroke="#d6456f" stroke-width="5" stroke-linecap="round"/><path d="M90 46 L100 30 L110 46Z" fill="#d6456f"/></g><circle cx="100" cy="100" r="7" fill="#2c3270"/></svg>`;
+ const pv=$('#compassPrev');
+ pv.innerHTML=`<div class="rng" style="grid-template-columns:70px 1fr 64px"><span>ángulo</span><input type="range" id="cmpR" min="0" max="360" step="5" value="90"><output id="cmpO">90deg</output></div>
+ <div class="lab-top" style="margin-top:8px" id="cmpB"></div><div id="cmpBox" style="height:120px;border-radius:14px"></div><p id="cmpT" style="margin:10px 0 0;font-size:15.5px"></p><div id="cmpC"></div>`;
+ const cb=codeBox('css','','CSS');$('#cmpC').appendChild(cb);
+ const W={0:'to top',45:'to top right',90:'to right',135:'to bottom right',180:'to bottom',225:'to bottom left',270:'to left',315:'to top left',360:'to top'};
+ const NAME={0:'hacia arriba',45:'hacia arriba a la derecha',90:'hacia la derecha',135:'hacia abajo a la derecha',180:'hacia abajo',225:'hacia abajo a la izquierda',270:'hacia la izquierda',315:'hacia arriba a la izquierda',360:'hacia arriba'};
+ [0,45,90,135,180,225,270,315].forEach(a=>{const b=el('button','chip',a+'deg');b.onclick=()=>{$('#cmpR').value=a;up();};$('#cmpB').appendChild(b);});
+ function up(){const a=+$('#cmpR').value;$('#cmpO').textContent=a+'deg';$('#cmpN').style.transform=`rotate(${a}deg)`;
+  $('#cmpBox').style.background=`linear-gradient(${a}deg, #f6bfd0, #2c3270)`;
+  $$('#cmpB .chip').forEach(c=>c.classList.toggle('on',c.textContent===a+'deg'));
+  $('#cmpT').innerHTML=`La flecha señala <b>hacia dónde va</b> el degradado: empieza con el rosa en el lado contrario y termina con el azul ${NAME[a]?'<b>'+NAME[a]+'</b>':'en la dirección de la flecha'}.${W[a]?` Equivale a escribir <code>${W[a]}</code>.`:''}`;
+  cb.set(`.caja {\n  background: linear-gradient(${a}deg, #f6bfd0, #2c3270);${W[a]?`\n  /* igual que: linear-gradient(${W[a]}, #f6bfd0, #2c3270) */`:''}\n}`);}
+ $('#cmpR').addEventListener('input',up);up();
+}
+/* tiles */
+{
+ const S='#f6bfd0',M='#ea7fa0',A='#2c3270',F='#a99be0',K='#e9b85c',W='#fdeef3';
+ const TL={
+  lin:[[`linear-gradient(${S}, ${A})`,'Sin dirección','Por defecto va de arriba abajo.'],[`linear-gradient(to right, ${S}, ${A})`,'to right','Hacia la derecha.'],[`linear-gradient(to bottom right, ${S}, ${A})`,'to bottom right','Hacia la esquina de abajo a la derecha.'],[`linear-gradient(45deg, ${S}, ${A})`,'45deg','Ángulo exacto en grados.'],[`linear-gradient(90deg, ${S}, ${M}, ${A})`,'Tres colores','Se reparten solos a partes iguales.'],[`linear-gradient(90deg, ${S} 0%, ${M} 70%, ${A} 100%)`,'Con posiciones','El rosa fuerte llega al 70%.'],[`linear-gradient(90deg, ${S} 50%, ${A} 50%)`,'Corte duro','Dos colores en el mismo punto: sin mezcla.'],[`linear-gradient(90deg, ${A} 0 33%, ${W} 33% 66%, ${M} 66%)`,'Tres franjas','Como una bandera.'],[`linear-gradient(90deg, ${M}, transparent)`,'Hacia transparente','Se desvanece y deja ver lo de detrás.',1]],
+  rad:[[`radial-gradient(${S}, ${A})`,'Por defecto','Óvalo (ellipse) que se adapta a la caja.'],[`radial-gradient(circle, ${S}, ${A})`,'circle','Círculo perfecto.'],[`radial-gradient(circle at top left, ${S}, ${A})`,'at top left','El centro en la esquina.'],[`radial-gradient(circle 60px, ${M}, ${A})`,'circle 60px','Radio fijo de 60 px.'],[`radial-gradient(circle, ${M} 0 40%, ${W} 40%)`,'Corte duro','Un círculo de borde nítido.'],[`radial-gradient(circle at 35% 35%, #ffffff, ${M} 45%, ${A})`,'Esfera con luz','El brillo descentrado da volumen.']],
+  con:[[`conic-gradient(${S}, ${A})`,'Por defecto','Gira desde arriba en sentido horario.'],[`conic-gradient(from 90deg, ${S}, ${A})`,'from 90deg','Empieza a girar desde la derecha.'],[`conic-gradient(${M} 0 25%, ${F} 0 50%, ${K} 0 75%, ${S} 0)`,'Cuatro cuartos','Cortes duros cada 25%.'],[`conic-gradient(${M} 0 40%, ${F} 0 70%, ${K} 0)`,'Gráfico de quesitos','40% + 30% + 30%.',0,'border-radius:60px;width:120px;margin:0 auto'],[`conic-gradient(${M}, ${K}, ${F}, ${M})`,'Ciclo sin salto','Repite el primer color al final.']],
+  rep:[[`repeating-linear-gradient(45deg, ${S} 0 12px, ${W} 12px 24px)`,'Rayas diagonales','Tramo de 24 px que se repite.'],[`repeating-linear-gradient(90deg, ${A} 0 3px, ${W} 3px 18px)`,'Líneas finas','3 px de línea, 15 px de hueco.'],[`repeating-radial-gradient(circle, ${M} 0 8px, ${W} 8px 16px)`,'Anillos','Círculos concéntricos.'],[`repeating-conic-gradient(${S} 0 10deg, ${W} 10deg 20deg)`,'Rayos de sol','Tramo de 20 grados.']]};
+ $$('[data-tiles]').forEach(h=>{h.className='tiles';TL[h.dataset.tiles].forEach(([g,t,d,chk,xs])=>{const b=el('button','tile');
+   b.innerHTML=`<div class="sw" style="background:${g}${chk?','+CHK:''};${xs||''}"></div><b>${t}</b><small>${esc(g)}</small><small style="font-family:var(--maru);font-size:13px;margin-top:4px">${d}</small><span class="cp">Copiar</span>`;
+   b.onclick=()=>copyText(`background: ${g};`,$('.cp',b));h.appendChild(b);});});
+}
+
+/* ======================================================
+   SECTION 14: CREATOR
+   ====================================================== */
+{
+ const root=$('#creatorRoot');
+ root.innerHTML=`
+ <div>
+  <div class="cr-prev" id="crPrev"></div>
+  <div class="cr-tabs"><div class="seg" id="crTarget">
+   <button class="on" data-t="caja">Caja</button><button data-t="pagina">Página</button><button data-t="boton">Botón</button><button data-t="titulo">Título</button><button data-t="circulo">Círculo</button></div></div>
+  <div id="crCode"></div>
+  <div class="mini-btns" style="margin-top:10px"><button class="ib" id="crCopyG">Copiar solo el degradado</button><button class="ib" id="crSave">Guardar en mi colección</button></div>
+  <div class="cr-group" style="margin-top:16px"><h4>Mi colección <span class="empty" style="text-transform:none;letter-spacing:0;font-weight:500">se guarda en este navegador</span></h4><div class="saved" id="crSaved"></div></div>
+ </div>
+ <div class="cr-panel">
+  <div class="cr-group"><h4>1 · Tipo</h4>
+   <div class="seg" id="crType"><button data-v="linear" class="on">Lineal</button><button data-v="radial">Radial</button><button data-v="conic">Cónico</button></div>
+   <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px">
+    <label class="sw-row"><input type="checkbox" id="crRep"><span class="tg"></span>Repetir (repeating)</label>
+    <label class="sw-row"><input type="checkbox" id="crHard"><span class="tg"></span>Bordes duros</label>
+   </div>
+  </div>
+  <div class="cr-group"><h4>2 · Colores <span class="mini-btns"><button class="ib" id="crRev" title="Invertir orden">Invertir</button><button class="ib" id="crEven" title="Repartir a la misma distancia">Repartir</button></span></h4>
+   <div class="stopbar-wrap"><div class="stopbar" id="crBar"></div></div>
+   <p style="font-size:13.5px;color:var(--ink-soft);margin:16px 0 0;line-height:1.45" id="crBarHelp">Arrastra los puntos. Pulsa en la barra para añadir un color.</p>
+   <div class="stop-ed"><input type="color" id="crCol" aria-label="Color"><div style="display:flex;flex-direction:column;gap:6px"><label class="rng"><span>Posición</span><input type="range" id="crPos" min="0" max="100"><output id="crPosO"></output></label><label class="rng"><span>Opacidad</span><input type="range" id="crAl" min="0" max="100"><output id="crAlO"></output></label></div><button class="ib del" id="crDel" title="Quitar este color">Quitar</button></div>
+  </div>
+  <div class="cr-group" id="crDirG"><h4>3 · Dirección</h4><div id="crDir"></div></div>
+  <div class="cr-group"><h4>4 · Inspiración <button class="ib" id="crRnd">Al azar</button></h4><div class="presets" id="crPre"></div></div>
+ </div>`;
+
+ const g={type:'linear',rep:false,hard:false,angle:135,shape:'circle',size:'farthest-corner',x:50,y:50,from:0,target:'caja',
+  stops:[{c:'#f6bfd0',a:100,p:0},{c:'#ea7fa0',a:100,p:50},{c:'#2c3270',a:100,p:100}]};
+ let sel=g.stops[1];
+ const hex2rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+ const colStr=s=>s.a>=100?s.c:`rgba(${hex2rgb(s.c).join(', ')}, ${+(s.a/100).toFixed(2)})`;
+ const sorted=()=>[...g.stops].sort((a,b)=>a.p-b.p);
+ function stopList(){const s=sorted();
+  if(g.hard)return s.map((o,i)=>`${colStr(o)} ${i?s[i-1].p:0}% ${o.p}%`);
+  return s.map(o=>`${colStr(o)} ${o.p}%`);}
+ function head(){
+  if(g.type==='linear')return g.angle+'deg';
+  if(g.type==='radial'){let h=g.shape;if(g.size!=='farthest-corner')h+=' '+g.size;if(g.x!==50||g.y!==50)h+=` at ${g.x}% ${g.y}%`;return h;}
+  let h='';if(g.from)h+=`from ${g.from}deg`;if(g.x!==50||g.y!==50)h+=(h?' ':'')+`at ${g.x}% ${g.y}%`;return h;}
+ const fn=()=>(g.rep?'repeating-':'')+g.type+'-gradient';
+ const oneLine=()=>{const h=head();return `${fn()}(${h?h+', ':''}${stopList().join(', ')})`;};
+ const multi=(ind)=>{const h=head();const parts=(h?[h]:[]).concat(stopList());return `${fn()}(\n${parts.map(p=>ind+'  '+p).join(',\n')}\n${ind})`;};
+
+ /* targets */
+ const TG={
+  caja:{html:'<div class="t-box" id="tgEl"></div>',light:false,code:G=>`.caja {\n  height: 250px;              /* la caja necesita altura */\n  background: ${G};\n}`},
+  pagina:{html:'<div class="t-page"><div class="chrome"><i></i><i></i><i></i><span></span></div><div class="body" id="tgEl"><div class="ttl">Mi página</div><div class="cards"><i></i><i></i><i></i></div></div></div>',light:true,code:G=>`body {\n  background: ${G};\n  background-attachment: fixed; /* ocupa toda la ventana y no se repite */\n}`},
+  boton:{html:'<div class="t-btn" id="tgEl">Reservar</div>',light:true,code:G=>`.boton {\n  width: 240px;\n  height: 70px;\n  border-radius: 35px;\n  background: ${G};\n}`},
+  titulo:{html:'<h1 class="t-title" id="tgEl">Hanami</h1>',light:true,code:G=>`h1 {\n  background: ${G};\n  -webkit-background-clip: text; /* Chrome, Edge, Safari */\n  background-clip: text;\n  color: transparent;            /* las 3 líneas, en el h1 */\n}`},
+  circulo:{html:'<div class="t-circle" id="tgEl"></div>',light:true,code:G=>`.circulo {\n  width: 230px;\n  height: 230px;\n  border-radius: 115px;\n  background: ${G};\n}`}};
+ const cb=codeBox('css','','CSS para tu archivo');$('#crCode').appendChild(cb);
+ function renderTarget(){const t=TG[g.target];$('#crPrev').innerHTML=`<div class="cr-target">${t.html}</div>`;$('#crPrev').classList.toggle('light',t.light);$$('#crTarget button').forEach(b=>b.classList.toggle('on',b.dataset.t===g.target));}
+
+ /* stop bar */
+ function barBg(){const s=sorted();const parts=g.hard?s.map((o,i)=>`${colStr(o)} ${i?s[i-1].p:0}% ${o.p}%`):s.map(o=>`${colStr(o)} ${o.p}%`);return `linear-gradient(90deg, ${parts.join(', ')}), ${CHK}`;}
+ function renderStops(){
+  const bar=$('#crBar');bar.innerHTML='';bar.style.background=barBg();
+  g.stops.forEach(s=>{const h=el('div','stop-h'+(s===sel?' sel':''));h.style.left=s.p+'%';h.style.background=`linear-gradient(${colStr(s)},${colStr(s)}),${CHK}`;h.tabIndex=0;h.setAttribute('aria-label','Color '+s.c+' en '+s.p+'%');
+   h.addEventListener('pointerdown',e=>{e.stopPropagation();sel=s;h.setPointerCapture(e.pointerId);syncEd();renderStops();
+    const r=bar.getBoundingClientRect();const mv=ev=>{s.p=Math.round(Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100)));draw();};
+    const upF=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',upF);};addEventListener('pointermove',mv);addEventListener('pointerup',upF);});
+   h.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){sel=s;s.p=Math.max(0,Math.min(100,s.p+(e.key==='ArrowLeft'?-1:1)));e.preventDefault();draw();}});
+   bar.appendChild(h);});
+  $('#crBarHelp').innerHTML=g.hard?'<b>Bordes duros:</b> cada punto marca dónde <b>termina</b> su color. Pulsa en la barra para añadir otro.':'Arrastra los puntos. Pulsa en la barra para añadir un color.';
+ }
+ $('#crBar').addEventListener('pointerdown',e=>{if(e.target!==e.currentTarget)return;const r=e.currentTarget.getBoundingClientRect();const p=Math.round((e.clientX-r.left)/r.width*100);
+  const s=sorted();let a=s[0],b=s[s.length-1];for(let i=0;i<s.length-1;i++){if(s[i].p<=p&&s[i+1].p>=p){a=s[i];b=s[i+1];break;}}
+  const t=b.p===a.p?0:(p-a.p)/(b.p-a.p);const ca=hex2rgb(a.c),cc=hex2rgb(b.c);const c='#'+ca.map((v,i)=>Math.round(v+(cc[i]-v)*t).toString(16).padStart(2,'0')).join('');
+  const n={c,a:Math.round(a.a+(b.a-a.a)*t),p};g.stops.push(n);sel=n;syncEd();draw();});
+ function syncEd(){$('#crCol').value=sel.c;$('#crPos').value=sel.p;$('#crPosO').textContent=sel.p+'%';$('#crAl').value=sel.a;$('#crAlO').textContent=sel.a+'%';$('#crDel').disabled=g.stops.length<=2;$('#crDel').style.opacity=g.stops.length<=2?.4:1;}
+ $('#crCol').addEventListener('input',e=>{sel.c=e.target.value;draw();});
+ $('#crPos').addEventListener('input',e=>{sel.p=+e.target.value;draw();});
+ $('#crAl').addEventListener('input',e=>{sel.a=+e.target.value;draw();});
+ $('#crDel').onclick=()=>{if(g.stops.length<=2)return;g.stops.splice(g.stops.indexOf(sel),1);sel=g.stops[0];syncEd();draw();};
+ $('#crRev').onclick=()=>{g.stops.forEach(s=>s.p=100-s.p);syncEd();draw();};
+ $('#crEven').onclick=()=>{const s=sorted();const n=s.length;s.forEach((o,i)=>o.p=g.hard?Math.round((i+1)*100/n):Math.round(i*100/(n-1)));syncEd();draw();};
+
+ /* direction panel */
+ function dial(label,key){
+  const w=el('div','dial-row');
+  w.innerHTML=`<div><div class="dial" tabindex="0" aria-label="${label}"><span class="tick" style="left:50%;top:4px;transform:translateX(-50%)">0</span><span class="tick" style="right:5px;top:50%;transform:translateY(-50%)">90</span><span class="tick" style="left:50%;bottom:4px;transform:translateX(-50%)">180</span><span class="tick" style="left:5px;top:50%;transform:translateY(-50%)">270</span><div class="needle"></div><div class="val"></div></div></div>`;
+  const d=$('.dial',w);
+  const set=e=>{const r=d.getBoundingClientRect();let a=Math.atan2(e.clientX-(r.left+r.width/2),-(e.clientY-(r.top+r.height/2)))*180/Math.PI;a=(a+360)%360;let rd=Math.round(a);const near=Math.round(rd/45)*45;if(Math.abs(near-rd)<=4)rd=near%360;g[key]=rd;draw();};
+  d.addEventListener('pointerdown',e=>{d.setPointerCapture(e.pointerId);set(e);const mv=ev=>set(ev);const upF=()=>{d.removeEventListener('pointermove',mv);d.removeEventListener('pointerup',upF);};d.addEventListener('pointermove',mv);d.addEventListener('pointerup',upF);});
+  d.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){g[key]=(g[key]+(e.key==='ArrowLeft'?-5:5)+360)%360;e.preventDefault();draw();}});
+  return w;}
+ function pad(){const w=el('div');w.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:6px">Centro: <span class="cxy"></span></div><div class="pad" aria-label="Centro"><div class="dot"></div></div>`;
+  const p=$('.pad',w);const set=e=>{const r=p.getBoundingClientRect();g.x=Math.round(Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100))/5)*5;g.y=Math.round(Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100))/5)*5;draw();};
+  p.addEventListener('pointerdown',e=>{p.setPointerCapture(e.pointerId);set(e);const mv=ev=>set(ev);const upF=()=>{p.removeEventListener('pointermove',mv);p.removeEventListener('pointerup',upF);};p.addEventListener('pointermove',mv);p.addEventListener('pointerup',upF);});
+  return w;}
+ function renderDir(){
+  const h=$('#crDir');h.innerHTML='';
+  if(g.type==='linear'){
+   const row=dial('Ángulo','angle');
+   const grid=el('div','dir-grid');
+   [[315,'↖'],[0,'↑'],[45,'↗'],[270,'←'],[null,''],[90,'→'],[225,'↙'],[180,'↓'],[135,'↘']].forEach(([a,t])=>{const b=el('button',a===null?'mid':'',a===null?'':t);if(a===null){b.innerHTML='deg';b.disabled=true;}else{b.title=a+'deg';b.onclick=()=>{g.angle=a;draw();};b.dataset.a=a;}grid.appendChild(b);});
+   row.appendChild(grid);h.appendChild(row);
+   h.appendChild(el('p','',`<span style="font-size:13.5px;color:var(--ink-soft)">Gira la rueda o usa las flechas. La aguja indica <b>hacia dónde</b> va el degradado.</span>`));
+  }else if(g.type==='radial'){
+   const top=el('div');top.innerHTML=`<div class="seg" id="crShape"><button data-v="circle">Círculo</button><button data-v="ellipse">Óvalo</button></div>
+   <label style="display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--ink-soft);margin:12px 0"><span>Hasta dónde llega (tamaño)</span><select id="crSize" style="font:inherit;font-weight:500;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);color:var(--ink)"><option value="farthest-corner">farthest-corner · hasta la esquina más lejana (defecto)</option><option value="closest-corner">closest-corner · hasta la esquina más cercana</option><option value="farthest-side">farthest-side · hasta el lado más lejano</option><option value="closest-side">closest-side · hasta el lado más cercano</option></select></label>`;
+   h.appendChild(top);h.appendChild(pad());
+   $$('#crShape button').forEach(b=>b.onclick=()=>{g.shape=b.dataset.v;draw();});
+   $('#crSize').value=g.size;$('#crSize').onchange=e=>{g.size=e.target.value;draw();};
+  }else{
+   const row=dial('Ángulo de inicio (from)','from');row.appendChild(pad());h.appendChild(row);
+   h.appendChild(el('p','',`<span style="font-size:13.5px;color:var(--ink-soft)">La rueda gira el punto de partida (<code>from</code>) y el cuadro mueve el centro (<code>at</code>).</span>`));
+  }
+  syncDir();
+ }
+ function syncDir(){
+  $$('#crDir .dial').forEach((d,i)=>{const v=g.type==='linear'?g.angle:g.from;$('.needle',d).style.transform=`rotate(${v+180}deg)`;$('.val',d).textContent=v+'°';});
+  $$('#crDir .dir-grid button[data-a]').forEach(b=>b.classList.toggle('on',+b.dataset.a===g.angle));
+  $$('#crDir .pad').forEach(p=>{const d=$('.dot',p);d.style.left=g.x+'%';d.style.top=g.y+'%';});
+  $$('#crDir .cxy').forEach(s=>s.textContent=`${g.x}% ${g.y}%`);
+  $$('#crShape button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.shape));
+ }
+
+ function draw(){
+  const G=oneLine();
+  const t=$('#tgEl');
+  if(g.target==='titulo'){t.style.backgroundImage=G;}
+  else t.style.background=G;
+  cb.set(TG[g.target].code(multi('  ')));
+  renderStops();syncDir();
+  $$('#crType button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.type));
+  $('#crRep').checked=g.rep;$('#crHard').checked=g.hard;
+  $('#crPosO').textContent=sel.p+'%';$('#crPos').value=sel.p;
+ }
+ $$('#crType button').forEach(b=>b.onclick=()=>{g.type=b.dataset.v;renderDir();draw();});
+ $('#crRep').onchange=e=>{g.rep=e.target.checked;draw();};
+ $('#crHard').onchange=e=>{g.hard=e.target.checked;draw();};
+ $$('#crTarget button').forEach(b=>b.onclick=()=>{g.target=b.dataset.t;renderTarget();draw();});
+ $('#crCopyG').onclick=e=>copyText(oneLine(),e.currentTarget);
+
+ /* presets */
+ const S=(c,p,a)=>({c,p,a:a==null?100:a});
+ const PR=[
+  ['Yozakura',{type:'linear',angle:180,stops:[S('#1b1d3a',0),S('#2c3270',40),S('#a99be0',78),S('#f6bfd0',100)]}],
+  ['Amanecer',{type:'linear',angle:0,stops:[S('#2c3270',0),S('#ea7fa0',55),S('#e9b85c',100)]}],
+  ['Mochi',{type:'radial',shape:'circle',x:30,y:30,stops:[S('#ffffff',0),S('#fdeef3',40),S('#f6bfd0',100)]}],
+  ['Matcha',{type:'linear',angle:135,stops:[S('#eef7e9',0),S('#a7d3a0',50),S('#4f8f6b',100)]}],
+  ['Farolillo',{type:'radial',shape:'circle',stops:[S('#fff2c4',0),S('#e9b85c',28),S('#d6456f',62),S('#1b1d3a',100)]}],
+  ['Glicinia',{type:'linear',angle:180,stops:[S('#efebfc',0),S('#a99be0',60),S('#5b4ba8',100)]}],
+  ['Arcoíris',{type:'linear',angle:90,stops:[S('#ea7fa0',0),S('#e9b85c',25),S('#7cc6a2',50),S('#7aa8e0',75),S('#a99be0',100)]}],
+  ['Desvanecer',{type:'linear',angle:90,stops:[S('#d6456f',0,100),S('#d6456f',100,0)]}],
+  ['Kimono',{type:'linear',angle:45,rep:true,hard:true,stops:[S('#2c3270',6),S('#f6bfd0',8),S('#2c3270',14),S('#e9b85c',16)]}],
+  ['Rayos',{type:'conic',rep:true,hard:true,stops:[S('#f6bfd0',3),S('#fdeef3',6)]}],
+  ['Anillos',{type:'radial',shape:'circle',rep:true,hard:true,stops:[S('#ea7fa0',4),S('#fdeef3',8)]}],
+  ['Sol rojo',{type:'radial',shape:'circle',hard:true,stops:[S('#d6456f',32),S('#fdeef3',100)]}],
+  ['Quesitos',{type:'conic',hard:true,stops:[S('#ea7fa0',40),S('#a99be0',70),S('#e9b85c',100)]}],
+  ['Rueda',{type:'conic',stops:[S('#ea7fa0',0),S('#e9b85c',25),S('#7cc6a2',50),S('#a99be0',75),S('#ea7fa0',100)]}]];
+ const DEF={type:'linear',rep:false,hard:false,angle:135,shape:'circle',size:'farthest-corner',x:50,y:50,from:0};
+ function apply(p){Object.assign(g,DEF,JSON.parse(JSON.stringify(p)));sel=g.stops[0];renderDir();syncEd();draw();}
+ {const save=JSON.stringify(g);
+  PR.forEach(([n,p])=>{Object.assign(g,DEF,JSON.parse(JSON.stringify(p)));const b=el('button','preset');b.innerHTML=`<i style="background:${oneLine()},${CHK}"></i>${n}`;b.onclick=()=>apply(p);$('#crPre').appendChild(b);});
+  Object.assign(g,JSON.parse(save));sel=g.stops[1];}
+ $('#crRnd').onclick=()=>{const n=2+Math.floor(Math.random()*3);const hue=Math.random()*360;
+  const hs=(h,s,l)=>{s/=100;l/=100;const k=x=>(x+h/30)%12,a=s*Math.min(l,1-l),f=x=>l-a*Math.max(-1,Math.min(k(x)-3,Math.min(9-k(x),1)));return '#'+[f(0),f(8),f(4)].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');};
+  const st=Array.from({length:n},(_,i)=>S(hs((hue+i*(40+Math.random()*60))%360,55+Math.random()*35,45+Math.random()*35),Math.round(i*100/(n-1))));
+  apply({type:['linear','linear','radial','conic'][Math.floor(Math.random()*4)],angle:Math.round(Math.random()*8)*45,stops:st});};
+
+ /* saved collection */
+ const KEY='yozakura-degradados';
+ const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}};
+ const store=a=>{try{localStorage.setItem(KEY,JSON.stringify(a));return true;}catch(e){return false;}};
+ function renderSaved(){const a=load();const h=$('#crSaved');h.innerHTML='';
+  if(!a.length){h.innerHTML='<span class="empty">Aún no has guardado ninguno. Pulsa «Guardar en mi colección».</span>';return;}
+  a.forEach((it,i)=>{const d=el('div','it');d.style.background=it.css+','+CHK;d.title='Cargar';d.onclick=()=>apply(it.state);const x=el('button','','×');x.title='Borrar';x.onclick=e=>{e.stopPropagation();const b=load();b.splice(i,1);store(b);renderSaved();};d.appendChild(x);h.appendChild(d);});}
+ $('#crSave').onclick=e=>{const a=load();const st=JSON.parse(JSON.stringify(g));delete st.target;a.unshift({css:oneLine(),state:st});const ok=store(a.slice(0,18));renderSaved();
+  const b=e.currentTarget;b.textContent=ok?'Guardado':'Este navegador no deja guardar';setTimeout(()=>b.textContent='Guardar en mi colección',1500);};
+
+ renderTarget();renderDir();syncEd();draw();renderSaved();
+}
+
+/* ======================================================
+   SECTION 15: BLEND
+   ====================================================== */
+{
+ const M=[['normal','No mezcla: la foto tapa el color.'],['multiply','Multiplica: <b>oscurece y tiñe</b>. Como dos acetatos de color uno encima de otro.'],['screen','Lo contrario: <b>aclara</b>. Como dos proyectores apuntando al mismo sitio.'],['overlay','Más <b>contraste</b>: oscurece lo oscuro y aclara lo claro.'],['darken','En cada punto se queda con el color <b>más oscuro</b> de los dos.'],['lighten','Se queda con el color <b>más claro</b>.'],['color-dodge','Aclara muchísimo: efecto quemado de luz.'],['color-burn','Oscurece y satura mucho.'],['hard-light','Como overlay pero más fuerte.'],['soft-light','Overlay suave: tinte delicado.'],['difference','Resta los colores: efecto <b>negativo</b> psicodélico.'],['exclusion','Como difference, más suave.'],['hue','Toma el <b>tono</b> de la foto.'],['saturation','Toma la <b>saturación</b> de la foto.'],['color','Toma tono y saturación de la foto.'],['luminosity','Toma solo la <b>luz</b> de la foto y el color del fondo: efecto <b>duotono</b>.']];
+ const host=$('#blendLab');
+ host.innerHTML=`<div class="lab-top" id="blB"></div><div class="g2"><div class="stage" style="padding:12px;align-self:start"><div id="blBox" style="height:260px;border-radius:14px"></div></div><div><label class="rng" style="grid-template-columns:120px auto 1fr"><span>background-color</span><input type="color" id="blC" value="#ea7fa0" style="width:52px;height:40px;border:none;background:none;padding:0;cursor:pointer"><output id="blCo" style="text-align:left">#ea7fa0</output></label><div class="lab-exp" style="margin-top:12px"><code id="blCd"></code><span id="blT"></span></div><div id="blCode"></div></div></div>`;
+ const cb=codeBox('css','','CSS');$('#blCode').appendChild(cb);let cur='multiply';
+ M.forEach(([m])=>{const b=el('button','chip',m);b.onclick=()=>{cur=m;up();};$('#blB').appendChild(b);});
+ function up(){const c=$('#blC').value;$('#blCo').textContent=c;const b=$('#blBox');b.style.background=fx('§P center / cover');b.style.backgroundColor=c;b.style.backgroundBlendMode=cur;
+  $$('#blB .chip').forEach(x=>x.classList.toggle('on',x.textContent===cur));$('#blCd').textContent='background-blend-mode: '+cur+';';$('#blT').innerHTML=M.find(x=>x[0]===cur)[1];
+  cb.set(`.foto {\n  height: 260px;\n  background-image: url("../img/paisaje.jpg");\n  background-size: cover;\n  background-color: ${c};\n  background-blend-mode: ${cur};\n}`);}
+ $('#blC').addEventListener('input',up);up();
+ ['normal','multiply','screen','overlay','soft-light','difference','color','luminosity'].forEach(m=>{const b=el('button','tile');
+  b.innerHTML=`<div class="sw" style="background:${fx('§P center / cover').replace(/"/g,'&quot;')};background-color:#ea7fa0;background-blend-mode:${m}"></div><b>${m}</b><small>background-blend-mode: ${m};</small><span class="cp">Copiar</span>`;
+  b.onclick=()=>copyText(`background-blend-mode: ${m};`,$('.cp',b));$('#blendTiles').appendChild(b);});
+}
+
+/* ======================================================
+   SECTION 16: EFFECTS
+   ====================================================== */
+{
+ const FX=[
+ {cat:'Cielos',name:'Noche de luna',jp:'月夜',sel:'.cielo',tag:'section',desc:'Un cielo nocturno con luna y dos capas de estrellas. Ideal para la portada o el fondo de toda la página.',
+  layers:[['radial-gradient(circle at 78% 30%, #fff8e6 0 36px, rgba(255, 240, 215, 0.35) 38px, transparent 90px)','luna con halo'],['radial-gradient(#ffffff 1px, transparent 2px) 0 0 / 38px 38px','estrellas cercanas'],['radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 2px) 19px 19px / 57px 57px','estrellas lejanas'],['linear-gradient(#0f1130, #2c3270 60%, #8a5b8f)','cielo']],
+  txt:['Noche de hanami','Sábado · Parque Maruyama','#fff'],tip:'Cambia <code>78% 30%</code> para mover la luna, o los <code>38px</code> para tener más o menos estrellas.'},
+ {cat:'Cielos',name:'Aurora',jp:'極光',sel:'.aurora',tag:'section',desc:'Manchas de luz de colores que se funden sobre un fondo oscuro. Muy moderno para cabeceras.',
+  layers:[['radial-gradient(circle at 20% 30%, rgba(95, 174, 138, 0.85), transparent 45%)','luz verde'],['radial-gradient(circle at 80% 25%, rgba(169, 155, 224, 0.9), transparent 45%)','luz lila'],['radial-gradient(circle at 55% 95%, rgba(234, 127, 160, 0.85), transparent 50%)','luz rosa']],color:['#1b1d3a','noche'],
+  txt:['Luces del norte','Tres radiales transparentes','#fff'],tip:'El truco está en <code>transparent 45%</code>: cada luz se desvanece y deja ver las demás. Prueba a añadir una cuarta.'},
+ {cat:'Cielos',name:'Sol naciente',jp:'日の出',sel:'.amanecer',tag:'section',desc:'Un sol rojo saliendo por el horizonte con rayos de luz. Muy japonés y muy llamativo.',
+  layers:[['radial-gradient(circle at 50% 100%, #d6456f 0 70px, transparent 72px)','sol'],['repeating-conic-gradient(from 0deg at 50% 100%, rgba(255, 255, 255, 0.45) 0 6deg, transparent 6deg 12deg)','rayos'],['linear-gradient(#fdeef3, #f6bfd0)','cielo']],
+  txt:['','','#262744'],tip:'Cambia <code>70px</code> para hacer el sol más grande y <code>6deg 12deg</code> para rayos más anchos.'},
+ {cat:'Patrones',name:'Olas Seigaiha',jp:'青海波',sel:'.olas',tag:'section',desc:'El patrón tradicional de olas del mar. Se hace con un radial de cortes duros repetido como baldosa.',
+  layers:[['radial-gradient(circle at 50% 100%, #f6bfd0 0 3px, #2c3270 3px 7px, #f6bfd0 7px 9px, #2c3270 9px 14px, #f6bfd0 14px 16px, #2c3270 16px 21px, #f6bfd0 21px 23px, #2c3270 23px 28px, #f6bfd0 28px 30px, transparent 30px) 30px 15px / 60px 30px','fila desplazada'],['radial-gradient(circle at 50% 100%, #f6bfd0 0 3px, #2c3270 3px 7px, #f6bfd0 7px 9px, #2c3270 9px 14px, #f6bfd0 14px 16px, #2c3270 16px 21px, #f6bfd0 21px 23px, #2c3270 23px 28px, #f6bfd0 28px 30px, transparent 30px) 0 0 / 60px 30px','fila base']],color:['#2c3270','fondo'],
+  txt:['','',''],tip:'Las dos capas son iguales; la primera está desplazada <code>30px 15px</code> (media baldosa) para que las olas se encajen.'},
+ {cat:'Patrones',name:'Cuadros Ichimatsu',jp:'市松',sel:'.cuadros',tag:'section',desc:'El tablero de cuadros alternos de los kimonos. Un cónico con 4 cortes duros, hecho baldosa.',
+  layers:[['conic-gradient(#2c3270 25%, #a99be0 0 50%, #2c3270 0 75%, #a99be0 0) 0 0 / 50px 50px','cuadros']],
+  txt:['','',''],tip:'Cambia <code>50px 50px</code> para cuadros más grandes o más pequeños.'},
+ {cat:'Patrones',name:'Lunares Mizutama',jp:'水玉',sel:'.lunares',tag:'section',desc:'Lunares al tresbolillo (alternados). Dos capas iguales, una desplazada media baldosa.',
+  layers:[['radial-gradient(#ffffff 22%, transparent 24%) 0 0 / 40px 40px','lunares'],['radial-gradient(#ffffff 22%, transparent 24%) 20px 20px / 40px 40px','lunares desplazados']],color:['#ea7fa0','fondo'],
+  txt:['','',''],tip:'Sube el <code>22%</code> para lunares más gordos. El <code>24%</code> debe ser un poco mayor para que el borde quede suave.'},
+ {cat:'Patrones',name:'Rayas de kimono',jp:'縞',sel:'.rayas',tag:'section',desc:'Rayas diagonales de varios grosores y colores, como una tela tradicional.',
+  layers:[['repeating-linear-gradient(135deg, #2c3270 0 14px, #f6bfd0 14px 18px, #2c3270 18px 32px, #e9b85c 32px 36px)','rayas']],
+  txt:['','',''],tip:'El tramo mide <code>36px</code> (la última posición). Cambia <code>135deg</code> para girar las rayas.'},
+ {cat:'Patrones',name:'Hoja de cuaderno',jp:'帳',sel:'.cuaderno',tag:'section',desc:'Líneas horizontales y margen rojo, como una libreta. Perfecto para una sección de apuntes o un blog.',
+  layers:[['linear-gradient(90deg, transparent 0 56px, #ea7fa0 56px 58px, transparent 58px)','margen'],['repeating-linear-gradient(#ffffff 0 31px, #c9c0ee 31px 32px)','líneas']],
+  txt:['Mis apuntes','Una línea cada 32 px','#2c3270'],tip:'Cambia <code>31px 32px</code> para separar más o menos las líneas.'},
+ {cat:'Texto',name:'Título con degradado',jp:'虹文字',sel:'h1',text:true,parent:['.tarjeta','#1b1d3a'],desc:'Las letras se rellenan con un degradado. El fondo oscuro va en la tarjeta (padre) y el degradado en el h1 (hijo).',
+  layers:[['linear-gradient(90deg, #f6bfd0, #e9b85c 50%, #a99be0)','degradado de las letras']],txt:['Hanami'],tip:'Funciona con cualquier degradado del <a href="#creador">creador</a>: elige la vista «Título» y copia.'},
+ {cat:'Texto',name:'Título con foto dentro',jp:'写真文字',sel:'h1',text:true,parent:['.tarjeta','#fdeef3'],desc:'Las letras se rellenan con una foto. Usa una palabra corta y letra muy gruesa.',
+  layers:[['§P center / cover','foto que rellena las letras']],txt:['Kioto'],tip:'Prueba con tu propia foto. Cuanto más gruesa y grande sea la letra, más foto se ve.'},
+ {cat:'Fotos',name:'Portada legible',jp:'表紙',sel:'.portada',tag:'header',desc:'Una foto con una capa oscura semitransparente encima: el texto blanco se lee perfecto. El truco más útil para portadas.',
+  layers:[['linear-gradient(rgba(27, 29, 58, 0.8), rgba(27, 29, 58, 0.15))','capa oscura'],['§P center / cover','foto']],
+  txt:['Bienvenidos a Kioto','El texto blanco se lee siempre','#fff'],tip:'Cambia el <code>0.8</code> (arriba) y el <code>0.15</code> (abajo) para oscurecer más o menos.'},
+ {cat:'Fotos',name:'Duotono',jp:'二色',sel:'.duotono',tag:'section',desc:'La foto se convierte en una imagen de un solo color, como los carteles modernos. Se consigue mezclando la foto con el color de fondo.',
+  layers:[['§P center / cover','foto']],color:['#ea7fa0','color del tinte'],extra:[['background-blend-mode','luminosity','luz de la foto + color de fondo']],
+  txt:['Edición rosa','Cambia el color y cambia el tono','#fff'],tip:'Cambia el <code>background-color</code> por cualquier otro color: azul, verde, dorado...'}];
+
+ const cats=['Todos',...new Set(FX.map(f=>f.cat))];
+ cats.forEach((c,i)=>{const b=el('button','chip'+(i?'':' on'),c);b.onclick=()=>{$$('#fxFilter .chip').forEach(x=>x.classList.toggle('on',x===b));$$('#fxList .fx-card').forEach(card=>card.hidden=!(c==='Todos'||card.dataset.cat===c));};$('#fxFilter').appendChild(b);});
+
+ const pad=(s,n)=>s.length<n?s+' '.repeat(n-s.length):s+' ';
+ function cssOf(f){
+  const L=f.layers;let o='';
+  if(f.text){
+   o+=`${f.parent[0]} {                /* PADRE: la caja que hay detrás */\n  background-color: ${f.parent[1]};\n}\n${f.sel} {                      /* HIJO: el elemento con el texto */\n  background: ${sx(L[0][0])};\n  -webkit-background-clip: text; /* Chrome, Edge, Safari */\n  background-clip: text;\n  color: transparent;            /* imprescindible */\n}`;
+   return o;}
+  o+=`${f.sel} {\n  height: 300px;                 /* necesita altura para verse */\n`;
+  if(L.length===1)o+=`  background: ${sx(L[0][0])};   /* ${L[0][1]} */\n`;
+  else{o+='  background:\n';L.forEach(([c,l],i)=>{o+=`    /* capa ${i+1}${i===0?' (arriba)':i===L.length-1?' (abajo)':''}: ${l} */\n    ${sx(c)}${i<L.length-1?',':';'}\n`;});}
+  if(f.color)o+=`  background-color: ${f.color[0]};   /* ${f.color[1]}: debajo de todas las capas */\n`;
+  (f.extra||[]).forEach(([p,v,c])=>o+=`  ${p}: ${v};   /* ${c} */\n`);
+  return o+'}';}
+ function htmlOf(f){
+  if(f.text)return `<div class="tarjeta">\n  <h1>${f.txt[0]}</h1>\n</div>`;
+  const t=f.txt[0]?`\n  <h2>${f.txt[0]}</h2>\n`:'\n';
+  return `<${f.tag} class="${f.sel.slice(1)}">${t}</${f.tag}>`;}
+
+ FX.forEach((f,i)=>{
+  const card=el('article','card fx-card');card.dataset.cat=f.cat;card.id='fx-'+(i+1);
+  const where=f.text?'el h1 (o p, span) que tiene el texto':`un ${f.tag} o div con height`;
+  card.innerHTML=`<div class="fx"><div>
+    <div class="fx-win"><div class="chrome"><i></i><i></i><i></i><span>mi-web/index.html</span></div><div class="fx-stage"></div></div>
+    <div class="xray"><h4>Radiografía: así se construye</h4><div class="xray-row"></div></div>
+   </div><div>
+    <div class="fx-head"><span class="fx-num">${String(i+1).padStart(2,'0')}</span><h3 style="margin:0">${f.name}</h3><span class="jp">${f.jp}</span></div>
+    <div class="fx-meta"><span>${f.cat}</span><span class="w">Se pone en: ${where}</span><span>${f.layers.length+(f.color?1:0)} ${f.layers.length+(f.color?1:0)===1?'capa':'capas'}</span></div>
+    <p>${f.desc}</p><div class="fx-code"></div>
+    <div class="note idea" style="margin-bottom:0"><div class="ic"><svg viewBox="0 0 40 40"><use href="#i-sensu"/></svg></div><div><b class="t">Personalízalo</b><p>${f.tip}</p></div></div>
+   </div></div><div class="fx-css"></div>`;
+  $('#fxList').appendChild(card);
+  const st=$('.fx-stage',card);
+  const bg=f.layers.map(l=>l[0]).join(', ');
+  if(f.text){st.style.background=f.parent[1];st.innerHTML=`<h1 class="cl">${f.txt[0]}</h1>`;const h=$('h1',st);h.style.backgroundImage='none';h.style.background=fx(bg);h.style.webkitBackgroundClip='text';h.style.backgroundClip='text';h.style.color='transparent';if(f.name.includes('foto')){h.style.fontWeight='700';h.style.fontSize='clamp(70px,11vw,120px)';}}
+  else{st.style.background=fx(bg);if(f.color)st.style.backgroundColor=f.color[0];(f.extra||[]).forEach(([p,v])=>st.style.setProperty(p,v));
+   if(f.txt[0])st.innerHTML=`<p class="h" style="color:${f.txt[2]};${f.txt[2]==='#fff'?'text-shadow:0 2px 16px rgba(0,0,0,.35)':''}">${f.txt[0]}</p><p class="s" style="color:${f.txt[2]};margin:0">${f.txt[1]}</p>`;}
+  const xr=$('.xray-row',card);
+  const parts=f.layers.map(([c,l],k)=>`<div class="ly"><i style="background:${fx(c).replace(/ fixed/,'').replace(/"/g,'&quot;')}, ${CHK}"></i>${f.layers.length>1?'capa '+(k+1)+'<br>':''}${l}</div>`);
+  if(f.color)parts.push(`<div class="ly"><i style="background:${f.color[0]}"></i>background-color<br>${f.color[1]}</div>`);
+  if(f.text)parts.push(`<div class="ly"><i style="background:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--deco);font-weight:700;font-size:20px;color:var(--ink)">Aa</i>clip: text +<br>color transparent</div>`);
+  if(f.extra)parts.push(`<div class="ly"><i style="background:var(--fuji-soft);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ai)">blend</i>${f.extra[0][1]}</div>`);
+  const res=st.style.cssText;
+  xr.innerHTML=parts.join('<span class="op">+</span>')+`<span class="op">=</span><div class="ly"><i class="res"></i>resultado</div>`;
+  const ri=$('.res',xr);
+  if(f.text){ri.style.background=f.parent[1];ri.innerHTML=`<span style="display:flex;align-items:center;justify-content:center;height:100%;font-family:var(--deco);font-weight:700;font-size:24px;background:${fx(bg).replace(/"/g,"'")};-webkit-background-clip:text;background-clip:text;color:transparent">${f.txt[0].slice(0,3)}</span>`;}
+  else{ri.style.cssText=res.replace(/height:[^;]+;?/,'');ri.style.display='block';}
+  const c1=codeBox('html',htmlOf(f),'HTML'),c2=codeBox('css',cssOf(f),'CSS');
+  $('.fx-code',card).append(c1);$('.fx-css',card).append(c2);
+ });
+}
+
+/* ======================================================
+   SECTION 17: QUIZ
+   ====================================================== */
+{
+ const Q=[
+  ['Tengo <code>&lt;div class="caja"&gt;&lt;/div&gt;</code> vacío con un fondo rosa y no se ve nada. ¿Por qué?',['El color está mal escrito','El div está vacío y mide 0 px de alto','Falta background-repeat','Los div no pueden tener fondo'],1,'Un div vacío mide 0 px de alto. Dale un <code>height</code> (o contenido) y el fondo aparecerá.'],
+  ['Quiero que una foto llene toda la portada sin dejar huecos, aunque se recorte un poco. ¿Qué valor uso?',['background-size: contain','background-size: auto','background-size: cover','background-repeat: round'],2,'<code>cover</code> cubre toda la caja y recorta lo que sobra. <code>contain</code> la muestra entera pero deja huecos.'],
+  ['En <code>background: url(flor.png), linear-gradient(...);</code> ¿qué capa queda arriba?',['La flor, porque es la primera','El degradado, porque es el último','Las dos se mezclan a partes iguales','Depende del navegador'],0,'La <b>primera</b> capa que escribes queda <b>arriba</b>. La última, abajo.'],
+  ['He puesto un degradado y <code>background-clip: text</code> en mi h1, pero veo las letras negras de siempre. ¿Qué falta?',['background-size: cover','color: transparent','background-repeat: no-repeat','Poner el clip en el body'],1,'Sin <code>color: transparent</code> las letras se pintan encima del fondo recortado y lo tapan.'],
+  ['¿En qué elemento se escriben las líneas de <code>background-clip: text</code>?',['En el body','En el div padre, siempre','En el elemento que tiene el texto (h1, p, span...)','En cualquier elemento, da igual'],2,'Las 3 líneas van juntas en el elemento que tiene el texto. El fondo de la tarjeta, si lo hay, va en el padre.'],
+  ['En <code>background-position: right top;</code> ¿qué indica <code>right</code>?',['La posición vertical','La posición horizontal','El tamaño','La repetición'],1,'El primer valor es el <b>horizontal</b> y el segundo el <b>vertical</b>.'],
+  ['¿Hacia dónde va <code>linear-gradient(90deg, rosa, azul)</code>?',['Hacia arriba','Hacia abajo','Hacia la derecha','Hacia la izquierda'],2,'0deg = arriba, <b>90deg = derecha</b>, 180deg = abajo, 270deg = izquierda. El rosa empieza a la izquierda.'],
+  ['Escribo <code>background-size: cover;</code> y en la línea de abajo <code>background: url(foto.jpg);</code>. ¿Qué pasa con el cover?',['Se mantiene','Se pierde, porque el atajo reinicia lo que no escribes','Se duplica','Da un error y no se ve la foto'],1,'El atajo <code>background</code> borra todo lo que no escribes. Pon el atajo primero y las propiedades sueltas después.'],
+  ['¿Por qué no funciona <code>background-color: linear-gradient(red, blue);</code>?',['Porque falta la dirección','Porque un degradado es una imagen, no un color','Porque red y blue no existen','Sí funciona'],1,'Los degradados son <b>imágenes</b>: van en <code>background</code> o <code>background-image</code>.'],
+  ['¿Qué necesita <code>background-blend-mode</code> para hacer algo?',['Una caja con height mayor de 500px','Al menos dos capas de fondo (por ejemplo, imagen + color)','Que el fondo sea fixed','Un h1 dentro'],1,'Mezcla capas entre sí: con una sola capa no hay nada que mezclar.']];
+ const host=$('#quiz');
+ function render(){host.innerHTML=Q.map((q,i)=>`<div class="q" data-i="${i}"><div class="qt"><span class="n">${i+1}</span><span>${q[0]}</span></div>${q[1].map((o,j)=>`<label><input type="radio" name="bq${i}" value="${j}"><span>${esc(o)}</span></label>`).join('')}<div class="exp"></div></div>`).join('');
+  $$('.q',host).forEach(d=>d.addEventListener('change',()=>check(d)));score();}
+ function check(d){const i=+d.dataset.i,s=$('input:checked',d);if(!s||d.dataset.done)return;d.dataset.done='1';
+  $$('label',d).forEach((l,j)=>{if(j===Q[i][2])l.classList.add('right');});const ok=+s.value===Q[i][2];if(!ok)s.closest('label').classList.add('wrong');
+  $$('input',d).forEach(x=>x.disabled=true);d.dataset.ok=ok?'1':'0';const e=$('.exp',d);e.innerHTML=(ok?'<b style="color:#2f7a57">Correcto.</b> ':'<b style="color:var(--beni)">No es correcto.</b> ')+Q[i][3];e.classList.add('show');score();}
+ function score(){const n=$$('.q[data-ok="1"]',host).length,done=$$('.q[data-done]',host).length;$('#qScore').textContent=n+' / '+Q.length;
+  if(done===Q.length)window.dispatchEvent(new CustomEvent('quizdone',{detail:n}));}
+ $('#qAll').onclick=()=>$$('.q',host).forEach(check);$('#qReset').onclick=render;render();
+}
+
+/* ======================================================
+   DARUMA
+   ====================================================== */
+{
+ const d=$('#daruma');
+ d.innerHTML=`<svg viewBox="0 0 100 110" aria-hidden="true"><ellipse cx="50" cy="106" rx="30" ry="4" fill="rgba(27,29,58,.18)"/><g class="body">
+  <path d="M50 6 C80 6 95 34 95 62 C95 92 76 104 50 104 C24 104 5 92 5 62 C5 34 20 6 50 6Z" fill="#d6456f"/>
+  <path d="M50 6 C80 6 95 34 95 62 C95 92 76 104 50 104" fill="none" stroke="#b5335a" stroke-width="3" opacity=".6"/>
+  <ellipse cx="32" cy="34" rx="10" ry="16" fill="#fff" opacity=".18" transform="rotate(25 32 34)"/>
+  <ellipse cx="50" cy="50" rx="28" ry="24" fill="#fdf6ee"/>
+  <path d="M28 37 q9 -9 18 0" stroke="#1b1d3a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <path d="M54 37 q9 -9 18 0" stroke="#1b1d3a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <circle cx="38" cy="49" r="7.5" fill="#fff" stroke="#1b1d3a" stroke-width="1.5"/>
+  <circle class="blink" cx="38" cy="49" r="4.6" fill="#1b1d3a" style="transform-origin:38px 49px"/>
+  <circle cx="62" cy="49" r="7.5" fill="#fff" stroke="#1b1d3a" stroke-width="1.5"/>
+  <circle id="eye2" cx="62" cy="49" r="4.6" fill="none" stroke="#1b1d3a" stroke-width="1" stroke-dasharray="2 2" style="transform-origin:62px 49px"/>
+  <path d="M47 57 q3 3 6 0" stroke="#1b1d3a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M36 63 q14 9 28 0" stroke="#1b1d3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M40 68 q10 6 20 0" stroke="#e9b85c" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M30 86 q20 10 40 0" stroke="#e9b85c" stroke-width="3" fill="none"/>
+  <text x="50" y="96" text-anchor="middle" font-family="Kaisei Decol, serif" font-size="13" font-weight="700" fill="#fcf3de">学</text>
+  <path d="M12 60 q6 -8 12 0 M76 60 q6 -8 12 0" stroke="#e9b85c" stroke-width="2.2" fill="none"/>
+ </g></svg>`;
+ const TIPS=['Si tu fondo no aparece, comprueba primero que la caja tiene <b>height</b> o contenido.','La <b>primera</b> capa que escribes queda <b>arriba</b>. La última, abajo.','Título con degradado: <code>background</code> + <code>background-clip: text</code> + <code>color: transparent</code>, las 3 en el <b>h1</b>.','<code>cover</code> llena sin huecos. <code>contain</code> se ve entera.','Pon siempre un <code>background-color</code> de reserva por si la imagen no carga.','En el atajo, la <b>posición va antes que el tamaño</b>: <code>center / cover</code>.','Un degradado es una <b>imagen</b>: nunca va en <code>background-color</code>.','¿Patrones? Degradado pequeño + <code>background-size</code> = baldosas.','Termina el test con 8 o más y me pintarás el <b>segundo ojo</b>.','Texto blanco sobre foto: pon una capa oscura semitransparente encima de la foto.'];
+ let k=0;const bub=$('#dBubble');
+ d.onclick=()=>{d.classList.remove('hop');void d.offsetWidth;d.classList.add('hop');$('#dTxt').innerHTML=TIPS[k%TIPS.length];k++;bub.classList.add('show');};
+ $('#dX').onclick=()=>bub.classList.remove('show');
+ $('#dHide').onclick=()=>{bub.classList.remove('show');d.hidden=true;$('#dShow').hidden=false;};
+ $('#dShow').onclick=()=>{d.hidden=false;$('#dShow').hidden=true;};
+ addEventListener('quizdone',e=>{if(e.detail>=8){const eye=$('#eye2');eye.setAttribute('fill','#1b1d3a');eye.setAttribute('stroke','none');eye.classList.add('blink');
+  d.hidden=false;$('#dShow').hidden=true;d.classList.remove('hop');void d.offsetWidth;d.classList.add('hop');$('#dTxt').innerHTML=`<b style="display:inline;color:var(--wakaba)">${e.detail}/10.</b> ¡Me has pintado el segundo ojo! Según la tradición, el daruma recibe su segundo ojo cuando se cumple un objetivo.`;bub.classList.add('show');}
+  else{$('#dTxt').innerHTML=`${e.detail}/10. Repasa las explicaciones de las preguntas falladas y vuelve a intentarlo: con 8 me pintas el segundo ojo.`;bub.classList.add('show');}});
+}
+})();
+</script>
+</body></html>
