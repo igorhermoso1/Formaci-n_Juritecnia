@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transform · Invernadero solar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..600&family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --hierro:#1c2528; --hierro2:#263236; --pizarra:#34434a; --gris:#7d8a8f; --gris2:#b9c3c4; --hormigon:#e4e9e4;
+  --perla:#f3f5ef; --blanco:#ffffff;
+  --musgo:#2e7d55; --bosque:#1f5a3e; --hoja:#4fa36c; --brote:#a6d98a; --helecho:#dff0d0;
+  --laton:#c9962e; --laton2:#a87a1c; --sol:#f6c94f; --miel:#fde7a6; --ambar:#ee9a3a;
+  --cielo:#b9e2f1; --azul:#4a9bc6; --agua:#86d0df;
+  --tinta:#1d2a28; --tinta2:#4c5c58;
+  --deco:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Sora',system-ui,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --vidrio:conic-gradient(from 210deg at 50% 100%,var(--sol) 0 30deg,var(--hoja) 0 60deg,var(--agua) 0 90deg,var(--ambar) 0 120deg,var(--brote) 0 150deg,var(--cielo) 0 180deg,transparent 0);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:80px;overflow-x:clip}
+body{margin:0;color:var(--tinta);font-family:var(--body);font-weight:400;font-size:17px;line-height:1.72;overflow-x:clip;background:var(--perla)}
+::selection{background:var(--sol);color:var(--hierro)}
+*{scrollbar-width:thin;scrollbar-color:#c3d2c4 transparent}
+a{color:var(--musgo)}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.84em;background:rgba(255,255,255,.8);color:var(--bosque);padding:1px 7px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(46,125,85,.22);overflow-wrap:anywhere}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
+
+/* ===== luz ambiental: manchas de color que pasan por las vidrieras ===== */
+.caustics{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.caustics i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:drift 28s ease-in-out infinite alternate}
+.caustics i:nth-child(1){width:46vw;height:46vw;left:-12vw;top:10vh;background:radial-gradient(circle,rgba(246,201,79,.55),transparent 65%)}
+.caustics i:nth-child(2){width:40vw;height:40vw;right:-10vw;top:40vh;background:radial-gradient(circle,rgba(134,208,223,.55),transparent 65%);animation-duration:34s}
+.caustics i:nth-child(3){width:38vw;height:38vw;left:30vw;top:70vh;background:radial-gradient(circle,rgba(166,217,138,.55),transparent 65%);animation-duration:40s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(8vw,-10vh) scale(1.2)}}
+.lattice{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background:
+   linear-gradient(90deg,rgba(28,37,40,.05) 1px,transparent 1px) 0 0/120px 100%,
+   radial-gradient(60px 60px at 60px 0,transparent 58px,rgba(28,37,40,.05) 59px 60px,transparent 61px) 0 0/120px 160px;}
+#glow{position:fixed;left:0;top:0;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(246,201,79,.18),transparent 60%);transition:opacity .4s;opacity:0}
+
+/* ===== HERO: invernadero al amanecer ===== */
+.hero{position:relative;z-index:3;min-height:min(92vh,860px);min-height:min(92svh,860px);display:flex;align-items:flex-end;overflow:hidden;background:#1c2528;color:#fff}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .wrap{position:relative;z-index:2;width:100%;padding-bottom:64px;padding-top:120px}
+.hero-card{max-width:660px;padding:30px 34px 32px;border-radius:30px 30px 30px 6px;
+  background:linear-gradient(140deg,rgba(255,255,255,.16),rgba(255,255,255,.05));backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 40px 80px -40px rgba(0,0,0,.7)}
+.hero .kick{font-family:var(--deco);font-style:italic;font-size:19px;color:var(--miel);margin:0}
+.title{display:flex;margin:4px 0 6px;font-family:var(--deco);font-weight:600;font-size:clamp(52px,9vw,118px);line-height:.95;letter-spacing:-.02em;font-variation-settings:"opsz" 144,"SOFT" 100}
+.title span{display:inline-block;background:linear-gradient(180deg,#fffbe9 20%,var(--sol) 75%,var(--ambar));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 6px 24px rgba(246,201,79,.35));transition:transform .5s cubic-bezier(.34,1.56,.64,1);cursor:default}
+.title span:nth-child(1):hover{transform:rotate(-18deg)}.title span:nth-child(2):hover{transform:translateY(-26px)}.title span:nth-child(3):hover{transform:scale(1.45)}
+.title span:nth-child(4):hover{transform:skewX(-24deg)}.title span:nth-child(5):hover{transform:rotate(360deg)}.title span:nth-child(6):hover{transform:scaleX(-1)}
+.title span:nth-child(7):hover{transform:translateY(18px) rotate(14deg)}.title span:nth-child(8):hover{transform:scale(.6)}.title span:nth-child(9):hover{transform:perspective(200px) rotateX(180deg)}
+.lead{font-size:18px;line-height:1.65;max-width:560px;margin:4px 0 22px;color:#e7efe9}
+.hint{font-size:14px;color:var(--brote);margin:14px 0 0}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;font:600 15px var(--body);text-decoration:none;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background-color .3s}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:scale(.95)}
+.btn.oro{background:linear-gradient(180deg,#ffe08a,var(--sol) 45%,var(--laton));color:var(--hierro);box-shadow:0 10px 24px -10px rgba(201,150,46,.9),inset 0 1px 0 rgba(255,255,255,.7)}
+.btn.verde{background:linear-gradient(180deg,var(--hoja),var(--musgo));color:#fff;box-shadow:0 10px 24px -10px rgba(46,125,85,.9),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.vidrio{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.btn.claro{background:#fff;color:var(--musgo);box-shadow:inset 0 0 0 1.5px rgba(46,125,85,.35)}
+.btn.sm{padding:8px 16px;font-size:13.5px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px}
+.scroll-cue{position:absolute;right:24px;bottom:24px;z-index:2;font:italic 15px var(--deco);color:rgba(255,255,255,.7)}
+
+/* party mode */
+.party .card,.party .sec-head,.party .fx{transition:transform .8s cubic-bezier(.34,1.56,.64,1)!important}
+.party .card:nth-of-type(odd){transform:rotate(-3deg) scale(.97)}
+.party .card:nth-of-type(even){transform:rotate(2.5deg) translateX(16px)}
+.party .sec-head{transform:skewX(-10deg)}
+.party .fx:nth-child(3n){transform:rotate(6deg)}.party .fx:nth-child(3n+1){transform:scale(.92) rotate(-5deg)}.party .fx:nth-child(3n+2){transform:translateY(18px) skewY(3deg)}
+.party .title span{animation:wob 1.2s ease-in-out infinite}.party .title span:nth-child(odd){animation-delay:-.6s}
+@keyframes wob{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(8deg) translateY(-12px)}}
+.party .medal{animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== nav ===== */
+.nav{position:sticky;top:0;z-index:40;background:rgba(28,37,40,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(201,150,46,.5)}
+.nav .wrap{display:flex;align-items:center;gap:10px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 20px var(--deco);color:#fff;white-space:nowrap}
+.brand i{display:block;width:26px;height:32px;border-radius:13px 13px 3px 3px;background:var(--vidrio),linear-gradient(var(--hoja),var(--azul));box-shadow:inset 0 0 0 2.5px var(--laton);transition:transform .6s cubic-bezier(.34,1.56,.64,1)}
+.brand:hover i{transform:rotateY(180deg)}
+.nav-links{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 16px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:6px 12px;border-radius:999px;color:#c9d4d1;text-decoration:none;font-size:13.5px;transition:background-color .3s,color .3s}
+.nav-links a span{font-family:var(--deco);font-style:italic;color:var(--sol);margin-right:5px}
+.nav-links a:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-links a.on{background:linear-gradient(180deg,var(--hoja),var(--musgo));color:#fff}
+.nav-arrow{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1px solid rgba(201,150,46,.6);background:transparent;color:var(--sol);cursor:pointer}
+.prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--hoja),var(--sol),var(--agua))}
+
+/* ===== secciones ===== */
+main{position:relative;z-index:2;padding-bottom:40px}
+section.sec{padding:84px 0 8px;position:relative}
+.sec-head{position:relative;display:grid;grid-template-columns:96px 1fr;gap:26px;align-items:center;margin-bottom:30px}
+.medal{position:relative;width:96px;height:124px;border-radius:48px 48px 8px 8px;padding:5px;cursor:pointer;
+  background:linear-gradient(160deg,#f3d27a,var(--laton) 45%,#7a5813);box-shadow:0 18px 36px -16px rgba(28,37,40,.6),0 0 46px rgba(246,201,79,.35);transition:transform .7s cubic-bezier(.34,1.56,.64,1)}
+.medal:hover{transform:rotate(-8deg) scale(1.06)}
+.medal>div{position:relative;width:100%;height:100%;border-radius:43px 43px 5px 5px;background:var(--hierro);padding:3px;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1.3fr 1fr 1fr 1fr;gap:3px;overflow:hidden}
+.medal i{display:block;border-radius:2px;background:linear-gradient(150deg,rgba(255,255,255,.5),transparent 55%),var(--c);animation:glint 5s ease-in-out infinite;animation-delay:var(--d)}
+.medal i:nth-child(1){border-radius:38px 0 2px 2px}.medal i:nth-child(3){border-radius:0 38px 2px 2px}
+@keyframes glint{0%,100%{filter:brightness(.9)}50%{filter:brightness(1.25) saturate(1.2)}}
+.medal b{position:absolute;inset:0;z-index:2;display:grid;place-items:center;font:700 40px var(--deco);color:#fff;-webkit-text-stroke:1.5px var(--hierro);paint-order:stroke fill;text-shadow:0 0 10px rgba(0,0,0,.85),0 0 22px rgba(0,0,0,.6)}
+.shaft{position:absolute;left:28px;top:96px;width:300px;height:420px;pointer-events:none;z-index:-1;filter:blur(18px);opacity:.55;
+  background:linear-gradient(180deg,rgba(246,201,79,.7),rgba(166,217,138,.35) 45%,rgba(134,208,223,.25) 70%,transparent);
+  transform:skewX(-28deg);transform-origin:0 0;clip-path:polygon(0 0,30% 0,100% 100%,0 100%)}
+.sec-head .kick{font:italic 400 18px var(--deco);color:var(--laton2);margin:0}
+.sec-head h2{font:600 clamp(34px,5vw,58px)/1.04 var(--deco);letter-spacing:-.015em;margin:4px 0 8px;color:var(--bosque);font-variation-settings:"opsz" 144,"SOFT" 50}
+.sec-head h2 code{font-size:.72em;padding:0 12px;border-radius:12px;background:linear-gradient(135deg,var(--miel),#fff);box-shadow:inset 0 0 0 1px rgba(201,150,46,.5);color:var(--bosque);vertical-align:.08em}
+.sec-head p{margin:0;font-size:18px;color:var(--tinta2);max-width:760px}
+
+/* tarjetas de cristal */
+.card{position:relative;margin-bottom:28px;padding:34px;border-radius:28px;
+  background:linear-gradient(150deg,rgba(255,255,255,.88),rgba(255,255,255,.7));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 0 0 1px rgba(201,150,46,.28),0 40px 70px -46px rgba(31,90,62,.55)}
+.card::before{content:"";position:absolute;left:18px;top:18px;width:46px;height:46px;border-top:2px solid var(--laton);border-left:2px solid var(--laton);border-radius:22px 0 0 0;opacity:.6;pointer-events:none}
+.card::after{content:"";position:absolute;right:18px;bottom:18px;width:46px;height:46px;border-bottom:2px solid var(--laton);border-right:2px solid var(--laton);border-radius:0 0 22px 0;opacity:.6;pointer-events:none}
+.card h3{font:600 30px/1.18 var(--deco);margin:0 0 12px;color:var(--bosque);font-variation-settings:"opsz" 96}
+.card h4{font:600 17px var(--body);margin:24px 0 6px;color:var(--musgo)}
+.card p{margin:0 0 13px}
+.card ul,.card ol{margin:0 0 13px;padding-left:22px}
+.card li{margin-bottom:7px}
+.card li::marker{color:var(--laton)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g2>*,.g3>*,.g4>*{min-width:0}
+.sub-h{font:600 24px var(--deco)!important;color:var(--bosque)!important;margin:30px 0 10px!important}
+
+/* notas */
+.note{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;padding:14px 18px;border-radius:18px;margin:16px 0;font-size:16px;background:rgba(255,255,255,.6);box-shadow:inset 3px 0 0 var(--g)}
+.note p{margin:0}.note p+p{margin-top:6px}
+.note .ic{width:36px;height:46px;border-radius:18px 18px 4px 4px;padding:3px;background:linear-gradient(160deg,#f3d27a,var(--laton))}
+.note .ic i{display:block;width:100%;height:100%;border-radius:15px 15px 2px 2px;background:var(--vidrio),var(--g)}
+.note b.t{display:block;font:600 18px var(--deco);margin-bottom:2px}
+.note.sol{--g:var(--sol);background:rgba(253,231,166,.5)}.note.sol b.t{color:var(--laton2)}
+.note.hoja{--g:var(--hoja);background:rgba(223,240,208,.6)}.note.hoja b.t{color:var(--bosque)}
+.note.cielo{--g:var(--azul);background:rgba(185,226,241,.45)}.note.cielo b.t{color:#2c6f93}
+.note.ojo{--g:var(--ambar);background:rgba(250,214,180,.45)}.note.ojo b.t{color:#a2561a}
+
+/* destello solar */
+.dest{position:relative;display:grid;grid-template-columns:64px 1fr;gap:20px;align-items:center;margin:6px 0 10px;padding:22px 26px;border-radius:24px;overflow:hidden;
+  background:linear-gradient(110deg,rgba(253,231,166,.85),rgba(223,240,208,.8) 55%,rgba(185,226,241,.8));box-shadow:0 0 0 1px rgba(201,150,46,.4),0 24px 40px -30px rgba(201,150,46,.9)}
+.dest::after{content:"";position:absolute;top:-50%;left:-30%;width:30%;height:200%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);transform:rotate(20deg) translateX(-200%);animation:shine 7s ease-in-out infinite}
+@keyframes shine{0%,62%{transform:rotate(20deg) translateX(-200%)}100%{transform:rotate(20deg) translateX(600%)}}
+.dest .sw{width:64px;height:80px;border-radius:32px 32px 6px 6px;padding:4px;background:linear-gradient(160deg,#f3d27a,var(--laton));animation:sway 5s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes sway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.dest .sw i{display:block;width:100%;height:100%;border-radius:28px 28px 3px 3px;background:var(--vidrio),linear-gradient(var(--hoja),var(--azul))}
+.dest .lb{display:block;font:italic 16px var(--deco);color:var(--laton2);margin-bottom:2px}
+.dest p{margin:0;font:500 21px/1.42 var(--deco);color:var(--bosque)}
+
+/* código */
+.code{position:relative;margin:14px 0 8px;border-radius:18px;background:#172024;color:#e6eee8;overflow:hidden;box-shadow:0 0 0 1px rgba(201,150,46,.35),0 18px 34px -24px rgba(0,0,0,.7)}
+.code .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px 7px 16px;background:linear-gradient(90deg,#222e33,#1c262a);box-shadow:inset 0 -1px 0 rgba(201,150,46,.35)}
+.code .bar span{font:italic 14px var(--deco);color:var(--miel)}
+.copy{border:none;border-radius:999px;padding:4px 12px;background:var(--sol);color:var(--hierro);font:600 12px var(--body);cursor:pointer;transition:transform .2s}
+.copy:hover{transform:scale(1.08)}.copy.ok{background:var(--brote)}
+.code pre{margin:0;padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.72;white-space:pre-wrap;word-break:break-word}
+.code .s{color:#8fd0e6}.code .p{color:#ffbf8f}.code .v{color:#f8d779}.code .c{color:#8faa98;font-style:italic}.code .t{color:#b6e6a0}.code .ps{color:#f3a6cf}.code .fn{color:#b6e6a0}
+.code .new{display:inline-block;width:100%;background:rgba(246,201,79,.12);box-shadow:inset 3px 0 0 var(--sol)}
+.code .soon{display:inline-block;width:100%;opacity:.5}
+.pair{display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:14px;align-items:start}
+.pair>.code{margin-top:6px}
+
+/* controles */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.chip{border:none;background:#fff;color:var(--bosque);border-radius:999px;padding:6px 13px;font:600 12.5px var(--mono);cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(46,125,85,.28);transition:transform .2s,background-color .2s,color .2s}
+.chip:hover{transform:translateY(-2px);background:var(--helecho)}
+.chip.on{background:var(--musgo);color:#fff;box-shadow:none}
+.rng{display:grid;grid-template-columns:128px 1fr 96px;gap:10px;align-items:center;font:600 12.5px var(--mono);color:var(--tinta2);margin:7px 0}
+.rng input{width:100%;accent-color:var(--musgo)}
+.rng output{color:var(--bosque);text-align:right}
+.rng .r{border:none;background:var(--helecho);color:var(--bosque);border-radius:7px;font:700 11px var(--body);padding:2px 6px;cursor:pointer;margin-left:4px}
+.exp{padding:12px 16px;border-radius:16px;background:rgba(223,240,208,.7);font-size:15.5px;margin-top:10px;box-shadow:inset 0 0 0 1px rgba(46,125,85,.15)}
+.exp p{margin:0}
+.form{background:rgba(255,255,255,.75);border-radius:16px;padding:12px 14px;box-shadow:inset 0 0 0 1.5px rgba(46,125,85,.18);cursor:pointer;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;font:inherit;text-align:left;color:inherit;border:none}
+.form:hover{transform:translateY(-4px)}
+.form code{display:inline-block;margin-bottom:6px;font-weight:600}
+.form span{display:block;font-size:14px;line-height:1.5;color:var(--tinta2)}
+.form.on{box-shadow:inset 0 0 0 2px var(--laton),0 12px 24px -14px rgba(201,150,46,.9);background:#fffaea}
+
+/* escenario oscuro de invernadero */
+.stage,.plane,.p3,.cube-wrap,.ws-stage,.persp-view{position:relative;border-radius:22px;overflow:hidden;
+  background:
+   radial-gradient(circle at 25% 15%,rgba(246,201,79,.22),transparent 45%),
+   radial-gradient(circle at 85% 85%,rgba(134,208,223,.2),transparent 45%),
+   radial-gradient(circle at 70% 20%,rgba(166,217,138,.14),transparent 40%),
+   linear-gradient(rgba(201,150,46,.13) 1px,transparent 1px) 0 0/40px 40px,
+   linear-gradient(90deg,rgba(201,150,46,.13) 1px,transparent 1px) 0 0/40px 40px,
+   linear-gradient(180deg,#1f2a2e,#162024);box-shadow:inset 0 0 0 1px rgba(201,150,46,.35),inset 0 -40px 60px -30px rgba(166,217,138,.12)}
+.stage{margin:8px 0}
+.stage.tall{height:340px}
+.stage .ax-x,.stage .ax-y{position:absolute;pointer-events:none}
+.stage .ax-x{left:0;right:0;top:50%;border-top:1.5px dashed rgba(185,226,241,.4)}
+.stage .ax-y{top:0;bottom:0;left:50%;border-left:1.5px dashed rgba(166,217,138,.4)}
+.ghost,.obj{position:absolute;left:50%;top:50%;width:120px;height:120px;margin:-60px 0 0 -60px}
+.ghost{border:2px dashed rgba(255,255,255,.5);border-radius:16px;background:rgba(255,255,255,.04)}
+.ghost::after{content:"sitio original";position:absolute;left:50%;top:100%;transform:translateX(-50%);font:italic 13px var(--deco);color:rgba(255,255,255,.6);margin-top:3px;white-space:nowrap}
+.obj{border-radius:16px;transition:transform .5s cubic-bezier(.34,1.3,.64,1);display:flex;align-items:center;justify-content:center;flex-direction:column;font:700 18px var(--body);color:var(--hierro);
+  background:linear-gradient(140deg,rgba(255,255,255,.65),transparent 38%),conic-gradient(from 210deg at 35% 70%,var(--sol),var(--ambar),var(--brote),var(--agua),var(--sol));
+  box-shadow:inset 0 0 0 4px var(--hierro),inset 0 0 0 6px rgba(201,150,46,.9),0 0 34px rgba(246,201,79,.45)}
+.obj::after{content:"";position:absolute;inset:6px;border-radius:11px;pointer-events:none;
+  background:linear-gradient(90deg,transparent 49%,rgba(28,37,40,.55) 49% 51%,transparent 51%),linear-gradient(transparent 49%,rgba(28,37,40,.55) 49% 51%,transparent 51%)}
+.obj>*{position:relative;z-index:1}
+.obj .lbl{background:rgba(255,255,255,.85);border-radius:8px;padding:0 8px;line-height:1.5}
+.obj .arrow{font-size:24px;line-height:1;margin-bottom:2px;color:var(--hierro)}
+.obj .corner{position:absolute;left:12px;top:12px;width:16px;height:16px;border-radius:50%;background:var(--musgo);box-shadow:0 0 0 2px #fff}
+.obj .od{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#ff7a59;box-shadow:0 0 0 3px #fff,0 0 12px #ff7a59;z-index:3}
+.orig-dot{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#ff7a59;box-shadow:0 0 0 3px #fff,0 0 14px #ff7a59;z-index:4;pointer-events:none}
+.obj.verde{background:linear-gradient(140deg,rgba(255,255,255,.6),transparent 38%),conic-gradient(from 210deg at 35% 70%,var(--brote),var(--hoja),var(--agua),var(--brote))}
+.sweep{position:absolute;left:50%;top:50%;width:250px;height:250px;margin:-125px 0 0 -125px;border-radius:50%;pointer-events:none;box-shadow:inset 0 0 0 1.5px rgba(246,201,79,.4)}
+.sweep::after{content:"";position:absolute;left:50%;top:0;width:2px;height:50%;margin-left:-1px;background:var(--sol)}
+.tag{position:absolute;left:12px;top:12px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.92);font:600 12.5px var(--mono);color:var(--bosque)}
+.lax{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.lax::before{content:"";position:absolute;left:0;top:-1.5px;width:100px;border-top:3px solid var(--agua)}
+.lax::after{content:"";position:absolute;top:0;left:-1.5px;height:100px;border-left:3px solid #ff9a7a}
+.lax b{position:absolute;font:700 12px var(--mono)}
+.lax .lx{left:102px;top:-10px;color:var(--agua)}.lax .ly{top:100px;left:-5px;color:#ff9a7a}
+
+/* comparar flujo */
+.flow-row{display:flex;gap:10px;align-items:center;padding:14px;border-radius:18px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(46,125,85,.18);min-height:122px}
+.flow-row i{display:flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:14px;font-style:normal;font-weight:700;color:#fff;flex:0 0 auto;transition:transform .5s cubic-bezier(.34,1.3,.64,1),width .5s,height .5s}
+.flow-row i:nth-child(1){background:var(--hoja)}.flow-row i:nth-child(2){background:linear-gradient(135deg,var(--sol),var(--ambar));color:var(--hierro);box-shadow:0 0 20px rgba(246,201,79,.6)}.flow-row i:nth-child(3){background:var(--azul)}.flow-row i:nth-child(4){background:var(--pizarra)}
+.inline-demo{padding:18px;border-radius:16px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(46,125,85,.18);font-size:18px}
+.inline-demo span{background:var(--miel);color:var(--hierro);padding:2px 8px;border-radius:6px;font-weight:700}
+
+/* plano */
+.plane{height:360px;cursor:crosshair;touch-action:none}
+.plane .xa{position:absolute;left:0;right:0;top:50%;border-top:2.5px solid var(--agua)}
+.plane .ya{position:absolute;top:0;bottom:0;left:50%;border-left:2.5px solid var(--brote)}
+.plane .xa::after{content:"";position:absolute;right:0;top:-8px;border:7px solid transparent;border-left:13px solid var(--agua);border-right:0}
+.plane .ya::after{content:"";position:absolute;bottom:0;left:-8px;border:7px solid transparent;border-top:13px solid var(--brote);border-bottom:0}
+.plane .axl{position:absolute;font:600 13px var(--mono);pointer-events:none}
+.units{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.units div{padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px rgba(46,125,85,.18)}
+.units b{display:block;font:600 22px var(--deco);color:var(--bosque)}
+.units span{font-size:14px;color:var(--tinta2)}
+
+/* orden */
+.order{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.order .stage{height:290px}
+.order .obj{width:80px;height:80px;margin:-40px 0 0 -40px;font-size:22px}
+.order .ghost{width:80px;height:80px;margin:-40px 0 0 -40px}
+.order .step-btns{display:flex;gap:8px;flex-wrap:wrap}
+.order h4{margin:4px 0 8px!important}
+.order .cap{font-size:15px;min-height:50px;margin:8px 0 0}
+
+/* estados */
+.st-card{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:22px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px rgba(46,125,85,.18)}
+.st-card h4{margin:0!important}
+.st-zone{height:150px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:radial-gradient(circle at 50% 30%,#fff6d8,#e3f3f8 75%)}
+
+/* perspectiva */
+.persp-lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.persp-view{height:300px;display:flex;align-items:center;justify-content:center}
+.persp-view .pv{width:130px;height:130px;transition:transform .3s}
+.persp-side{width:100%;height:auto;aspect-ratio:760/600;border-radius:22px;background:#fbfbf6;box-shadow:inset 0 0 0 1px rgba(46,125,85,.2);display:block}
+.vp-dot{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#ff7a59;box-shadow:0 0 0 3px #fff;z-index:5;pointer-events:none}
+.floor{position:relative;width:200px;height:200px;transform-style:preserve-3d}
+.floor .tile{position:absolute;inset:0;border-radius:14px;background:linear-gradient(140deg,rgba(255,255,255,.45),transparent 40%),var(--vidrio),linear-gradient(var(--hoja),var(--azul));box-shadow:inset 0 0 0 4px var(--hierro),inset 0 0 0 6px var(--laton)}
+
+/* 3D */
+.p3{height:330px;display:flex;align-items:center;justify-content:center}
+.c3{width:160px;height:160px;transition:transform .3s}
+.flip{width:220px;height:280px;perspective:900px;cursor:pointer}
+.flip-in{display:grid;width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.34,1.3,.64,1)}
+.flip:hover .flip-in,.flip.on .flip-in{transform:rotateY(180deg)}
+.flip .face{grid-area:1/1;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:700;text-align:center;padding:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flip .front{background:linear-gradient(140deg,rgba(255,255,255,.4),transparent 40%),var(--vidrio),linear-gradient(var(--musgo),var(--azul));color:#fff;font:600 24px var(--deco);text-shadow:0 2px 10px rgba(0,0,0,.6);box-shadow:inset 0 0 0 6px var(--hierro),inset 0 0 0 9px var(--laton)}
+.flip .back{background:linear-gradient(160deg,var(--miel),var(--helecho));color:var(--bosque);transform:rotateY(180deg);box-shadow:inset 0 0 0 6px var(--laton);font-size:16px}
+.cube-wrap{height:300px;display:flex;align-items:center;justify-content:center;perspective:800px}
+.cube{display:grid;width:140px;height:140px;transform-style:preserve-3d;transition:transform .15s}
+.cube div{grid-area:1/1;border-radius:8px;display:flex;align-items:center;justify-content:center;font:600 14px var(--mono);color:#fff;opacity:.9;text-shadow:0 1px 4px rgba(0,0,0,.6);box-shadow:inset 0 0 0 4px var(--hierro),inset 0 0 0 6px var(--laton),0 0 24px rgba(246,201,79,.25)}
+.cube .f1{background:var(--hoja);transform:translateZ(70px)}.cube .f2{background:var(--laton);transform:rotateY(180deg) translateZ(70px)}
+.cube .f3{background:var(--azul);transform:rotateY(90deg) translateZ(70px)}.cube .f4{background:var(--ambar);transform:rotateY(-90deg) translateZ(70px)}
+.cube .f5{background:var(--musgo);transform:rotateX(90deg) translateZ(70px)}.cube .f6{background:var(--pizarra);transform:rotateX(-90deg) translateZ(70px)}
+.mini3{height:240px;display:flex;align-items:center;justify-content:center;perspective:700px;border-radius:20px;background:radial-gradient(circle at 50% 30%,#fff6d8,#e3f3f8 75%)}
+.nest{width:150px;height:150px;display:grid;place-items:center;border-radius:16px;background:rgba(74,155,198,.35);box-shadow:inset 0 0 0 2px var(--azul);transform:rotateY(55deg);transition:transform .4s}
+.nest .kid{width:90px;height:90px;border-radius:12px;display:grid;place-items:center;font:700 13px var(--mono);background:linear-gradient(135deg,var(--sol),var(--ambar));box-shadow:inset 0 0 0 3px var(--hierro);transform:rotateX(70deg) translateZ(30px)}
+.bfv{display:grid;width:150px;height:150px;transform:rotateY(150deg);transition:transform .5s}
+.bfv div{grid-area:1/1;border-radius:16px;display:grid;place-items:center;font:600 18px var(--deco);color:#fff;background:linear-gradient(140deg,rgba(255,255,255,.4),transparent 40%),var(--vidrio),linear-gradient(var(--musgo),var(--azul));box-shadow:inset 0 0 0 5px var(--hierro)}
+
+/* matrix */
+.mx{display:grid;grid-template-columns:320px minmax(0,1fr);gap:26px;align-items:start}
+.mx canvas{width:320px;height:320px;border-radius:22px;background:#162024;box-shadow:inset 0 0 0 1px rgba(201,150,46,.35)}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,92px));gap:6px;margin:10px 0;padding:10px;border-radius:16px;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px rgba(46,125,85,.18);width:max-content;position:relative}
+.mgrid::before,.mgrid::after{content:"";position:absolute;top:6px;bottom:6px;width:10px;border:2px solid var(--pizarra)}
+.mgrid::before{left:2px;border-right:none}.mgrid::after{right:2px;border-left:none}
+.mgrid div{text-align:center;padding:4px 2px}
+.mgrid b{display:block;font:600 19px var(--mono)}
+.mgrid small{font-size:11.5px;color:var(--tinta2)}
+.mgrid .ma b{color:var(--azul)}.mgrid .mb b{color:var(--ambar)}.mgrid .mt b{color:var(--musgo)}.mgrid .mz b{color:var(--gris)}
+.mcalc{font:13.5px/1.9 var(--mono);padding:12px 16px;border-radius:16px;background:#172024;color:#e6eee8;overflow-x:auto}
+.mcalc .ma{color:#8fd0e6}.mcalc .mb{color:#f8b979}.mcalc .mt{color:#b6e6a0}.mcalc em{color:var(--sol);font-style:normal}
+.rot-table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0}
+.rot-table th,.rot-table td{padding:8px 10px;text-align:center;border-bottom:1px solid rgba(46,125,85,.15)}
+.rot-table th{font:600 14px var(--body);color:var(--musgo)}
+.rot-table td:first-child{font-family:var(--mono);color:var(--bosque)}
+
+/* taller */
+.ws{display:grid;grid-template-columns:360px minmax(0,1fr);gap:24px;align-items:start}
+.ws-side{display:flex;flex-direction:column;gap:14px}
+.ws-box{background:rgba(255,255,255,.75);border-radius:20px;padding:14px 16px;box-shadow:inset 0 0 0 1px rgba(46,125,85,.2)}
+.ws-box h4{margin:0 0 8px!important;font:600 18px var(--deco)!important;color:var(--bosque)!important}
+.ws-box h4 small{font:400 13px var(--body);color:var(--tinta2)}
+.fnrow{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--perla);margin:6px 0}
+.fnrow .n{font:italic 600 16px var(--deco);color:var(--laton)}
+.fnrow .nm{font:600 13px var(--mono);color:var(--bosque)}
+.fnrow input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--musgo)}
+.fnrow .act{display:flex;gap:4px}
+.fnrow .act button{border:none;width:26px;height:26px;border-radius:8px;background:#fff;color:var(--bosque);font-weight:700;cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(46,125,85,.25)}
+.fnrow .act button.x{color:#c2552a}
+.addfn{display:flex;flex-wrap:wrap;gap:6px}
+.addfn button{border:none;border-radius:999px;padding:5px 10px;background:var(--helecho);color:var(--bosque);font:600 12px var(--mono);cursor:pointer;transition:transform .2s}
+.addfn button:hover{transform:scale(1.07)}
+.addfn button:disabled{opacity:.4;cursor:not-allowed}
+.pad{display:grid;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(3,38px);gap:5px}
+.pad button{border:none;border-radius:10px;background:var(--perla);cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(46,125,85,.25);position:relative}
+.pad button::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:#c3d2c4}
+.pad button.on{background:#ff7a59}.pad button.on::after{background:#fff}
+.ws-stage{height:440px}
+.ws-stage .ghost,.ws-stage .obj{width:140px;height:140px;margin:-70px 0 0 -70px}
+.ws-stage .obj.circle{border-radius:50%}.ws-stage .obj.circle::after{border-radius:50%}
+.ws-stage .obj.arch{border-radius:70px 70px 10px 10px}.ws-stage .obj.arch::after{border-radius:64px 64px 6px 6px}
+.ws-stage .obj.txt{background:none;box-shadow:none;font:600 70px var(--deco);color:var(--sol);text-shadow:0 0 24px rgba(246,201,79,.6)}.ws-stage .obj.txt::after{display:none}
+.ws-stage .obj .od{transition:left .3s,top .3s}
+
+/* efectos */
+.fx-grid{display:grid;grid-template-columns:1fr;gap:26px}
+.fx{display:grid;grid-template-columns:330px minmax(0,1fr);align-items:stretch;border-radius:26px;overflow:hidden;background:rgba(255,255,255,.85);box-shadow:0 0 0 1px rgba(201,150,46,.28),0 30px 60px -44px rgba(31,90,62,.6)}
+.fx .st{min-height:250px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 30% 20%,#fff3cc,transparent 50%),radial-gradient(circle at 80% 90%,#d4eef6,transparent 55%),#f6f8f1}
+.fx .bd{padding:22px 26px 10px;align-self:center}
+.fx .codes{grid-column:1/-1;padding:0 22px 18px;margin-top:-4px}
+.fx h3{font:600 25px var(--deco);margin:0 0 6px;color:var(--bosque)}
+.fx .tg{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+.fx .tg span{font:600 11.5px var(--mono);padding:2px 9px;border-radius:999px;background:var(--helecho);color:var(--bosque)}
+.fx p{margin:0 0 10px;font-size:15px}
+details.cd summary{cursor:pointer;font:italic 600 16px var(--deco);color:var(--musgo);list-style:none}
+details.cd summary::-webkit-details-marker{display:none}
+details.cd summary::before{content:"▸ ";color:var(--laton)}
+details.cd[open] summary::before{content:"▾ "}
+.fxs{display:flex;align-items:center;justify-content:center}
+
+/* errores / test */
+.fix{border-radius:20px;padding:16px 18px;margin-bottom:14px;background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px rgba(46,125,85,.2)}
+.fix .hd{display:flex;gap:12px;align-items:baseline;font-weight:600;margin-bottom:6px}
+.fix .hd .n{flex:0 0 32px;height:38px;border-radius:16px 16px 4px 4px;display:grid;place-items:center;background:var(--vidrio),var(--musgo);color:#fff;font:600 17px var(--deco);text-shadow:0 1px 4px rgba(0,0,0,.7)}
+.fix .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.fix label{display:flex;gap:10px;align-items:center;padding:7px 12px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-size:15.5px;transition:transform .2s}
+.fix label:hover{background:var(--perla);transform:translateX(4px)}
+.fix input{accent-color:var(--musgo);width:17px;height:17px;flex:0 0 auto}
+.fix label.right{border-color:var(--hoja);background:var(--helecho)}.fix label.wrong{border-color:var(--ambar);background:#fde3cc}
+.fix .ex{display:none;margin-top:8px;padding:10px 14px;border-radius:12px;background:var(--perla);font-size:15px}.fix .ex.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 20px;border-radius:22px;background:linear-gradient(110deg,var(--miel),var(--helecho),var(--cielo));font-weight:600}
+.score b{font:600 34px var(--deco);color:var(--bosque)}
+
+.sheet{width:100%;border-collapse:separate;border-spacing:0;border-radius:20px;overflow:hidden;font-size:14.5px;background:rgba(255,255,255,.85);box-shadow:0 0 0 1px rgba(201,150,46,.35)}
+.sheet th{background:linear-gradient(90deg,var(--hierro),var(--pizarra));color:var(--miel);text-align:left;padding:12px;font:italic 600 16px var(--deco)}
+.sheet td{padding:10px 12px;border-top:1px solid rgba(46,125,85,.12);vertical-align:top;line-height:1.5}
+.sheet td:first-child{font:600 13.5px var(--mono);color:var(--bosque);white-space:nowrap}
+.sheet tr.grp td{background:rgba(223,240,208,.7);font:600 16px var(--deco);color:var(--bosque)}
+.sheet-wrap{overflow-x:auto;border-radius:20px}
+
+footer{position:relative;z-index:2;margin-top:70px;background:linear-gradient(180deg,var(--hierro2),var(--hierro));color:#dfe8e3;box-shadow:inset 0 1px 0 rgba(201,150,46,.6)}
+footer .wrap{padding:44px 20px 54px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .ft{font:600 32px var(--deco);color:var(--sol)}
+footer p{margin:4px 0 0;color:#b9c6c1}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .g2,.order,.ws,.fx,.mx,.pair,.persp-lab{grid-template-columns:1fr}
+  .g3,.g4,.units{grid-template-columns:1fr 1fr}
+  .shaft{width:200px}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .card{padding:24px 16px}
+  .card::before,.card::after{display:none}
+  .g3,.g4{grid-template-columns:1fr}
+  .sec-head{grid-template-columns:64px 1fr;gap:16px}
+  .medal{width:64px;height:84px}.medal b{font-size:26px}
+  .rng{grid-template-columns:92px 1fr 82px}
+  .dest{grid-template-columns:44px 1fr;padding:16px}.dest .sw{width:44px;height:56px}.dest p{font-size:18px}
+  .brand span{display:none}
+  .hero-card{padding:22px 20px}
+  .hero .wrap{padding-top:44vh;padding-bottom:28px}
+  .mx canvas{width:100%;height:auto;aspect-ratio:1}
+  .flow-row{gap:6px;padding:10px}.flow-row i{width:56px;height:56px}
+  .mgrid{grid-template-columns:repeat(3,minmax(0,78px))}
+  .scroll-cue{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .caustics i,.medal i,.dest::after,.dest .sw{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="caustics" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="lattice" aria-hidden="true"></div>
+<div id="glow" aria-hidden="true"></div>
+
+<header class="hero" id="inicio">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-card">
+      <p class="kick">CSS · bloque Transform</p>
+      <h1 class="title" id="title" aria-label="Transform"></h1>
+      <p class="lead">Mover, girar, escalar, inclinar y voltear en 3D cualquier elemento sin romper la página. Desde cero hasta <code style="background:rgba(255,255,255,.15);color:#fff;box-shadow:none">matrix()</code>, con cada concepto explicado, dibujado y listo para tocar.</p>
+      <div class="hero-btns"><a class="btn oro" href="#que">Empezar desde cero</a><a class="btn verde" href="#taller">Ir al taller</a><button class="btn vidrio" id="party" type="button">Transformar esta página</button></div>
+      <p class="hint">Pasa el ratón por cada letra del título: cada una usa un transform distinto.</p>
+    </div>
+  </div>
+  <span class="scroll-cue">baja al invernadero ↓</span>
+</header>
+
+<nav class="nav" aria-label="Secciones"><div class="wrap">
+  <a class="brand" href="#inicio"><i></i><span>Transform</span></a>
+  <button class="nav-arrow" id="navL" aria-label="Secciones anteriores">‹</button>
+  <div class="nav-links"><ul id="navUl"></ul></div>
+  <button class="nav-arrow" id="navR" aria-label="Secciones siguientes">›</button>
+  <div class="prog" id="prog"></div>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section class="sec" id="que" data-nav="Qué es">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Primeros pasos</p><h2>¿Qué es transform?</h2><p>Una propiedad que cambia cómo se <b>ve</b> un elemento (dónde está, cuánto gira, qué tamaño tiene, cuánto se inclina) sin cambiar el sitio que <b>ocupa</b> en la página.</p></div></div>
+  <div class="card reveal">
+    <h3>Una propiedad, muchas funciones</h3>
+    <p><code>transform</code> es <b>una sola propiedad</b>. Su valor no es un número suelto, sino una o varias <b>funciones</b>: palabras seguidas de paréntesis con un valor dentro.</p>
+    <div id="queAnat"></div>
+    <div class="g4" style="margin:16px 0 6px">
+      <div class="form" style="cursor:default"><code>translate()</code><span><b>Mover</b> el elemento hacia un lado.</span></div>
+      <div class="form" style="cursor:default"><code>rotate()</code><span><b>Girar</b> el elemento.</span></div>
+      <div class="form" style="cursor:default"><code>scale()</code><span><b>Agrandar o encoger</b>.</span></div>
+      <div class="form" style="cursor:default"><code>skew()</code><span><b>Inclinar</b> (deformar en rombo).</span></div>
+    </div>
+    <p>Además hay versiones <b>3D</b> (rotateX, rotateY, translateZ…) y una función que lo resume todo en números: <code>matrix()</code>. Las verás todas en orden. El valor por defecto es <code>transform: none</code> (sin transformación).</p>
+
+    <h4 class="sub-h">El truco del fantasma</h4>
+    <p>Cada elemento tiene un <b>hueco reservado</b> en la página: su sitio. Con <code>transform</code> el elemento se mueve, gira o crece… pero su hueco <b>se queda donde estaba</b>, como un fantasma. Por eso los vecinos <b>no se mueven</b>. Compara: la caja dorada crece de dos maneras distintas.</p>
+    <div class="g2">
+      <div><h4>Con width y height</h4><div class="flow-row" id="flowA"><i>1</i><i>2</i><i>3</i><i>4</i></div><p style="font-size:15px;margin-top:8px">Ocupa más sitio <b>de verdad</b> y empuja a las demás.</p></div>
+      <div><h4>Con transform: scale()</h4><div class="flow-row" id="flowB"><i>1</i><i>2</i><i>3</i><i>4</i></div><p style="font-size:15px;margin-top:8px">Se <b>ve</b> más grande, pero su hueco no cambia: se monta encima de las vecinas.</p></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px"><button class="btn oro sm" id="flowGo" type="button">Hacer crecer</button><button class="btn claro sm" id="flowBack" type="button">Volver</button></div>
+    <div class="pair" id="queCode"></div>
+
+    <h4 class="sub-h">¿A qué elementos se les puede aplicar?</h4>
+    <p>A casi todos: cajas (<code>div</code>, <code>section</code>, <code>img</code>…), elementos con <code>display: block</code>, <code>inline-block</code>, <code>flex</code> o <code>grid</code>, y también a los hijos de un flex o de un grid. <b>Excepción importante:</b> los elementos <b>en línea</b> (<code>span</code>, <code>a</code>, <code>strong</code>, <code>em</code>…) <b>ignoran transform</b> mientras sean <code>display: inline</code>.</p>
+    <div class="g2">
+      <div class="inline-demo">Este texto tiene un <span id="inl1">span girado</span> que no gira.</div>
+      <div class="inline-demo">Este texto tiene un <span id="inl2" style="display:inline-block">span girado</span> que sí gira.</div>
+    </div>
+    <div class="pair" id="inlCode"></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="ejes" data-nav="Ejes y unidades">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">El mapa</p><h2>Ejes y unidades</h2><p>Antes de mover nada hay que saber hacia dónde es "más", hacia dónde es "menos" y en qué se mide cada cosa.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <h3>Tres ejes</h3>
+        <ul>
+          <li><b style="color:#2c6f93">Eje X</b>: horizontal. <b>Positivo → derecha</b>, negativo ← izquierda.</li>
+          <li><b style="color:var(--musgo)">Eje Y</b>: vertical. <b>Positivo ↓ abajo</b>, negativo ↑ arriba.</li>
+          <li><b style="color:var(--laton2)">Eje Z</b>: profundidad. <b>Positivo hacia ti</b> (sale de la pantalla), negativo hacia el fondo. Se usa en 3D.</li>
+        </ul>
+        <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">La sorpresa del eje Y</b><p>En matemáticas el eje Y sube. <b>En la web baja</b>, porque la página empieza arriba y crece hacia abajo. Por eso <code>translateY(50px)</code> mueve <b>hacia abajo</b> y para subir hay que escribir un número negativo.</p></div></div>
+        <p>Haz clic o arrastra sobre el plano: la pieza irá allí y verás los números.</p>
+        <div class="exp" id="planeExp"></div>
+      </div>
+      <div><div class="plane" id="plane"><div class="xa"></div><div class="ya"></div><div class="obj" id="planeObj" style="width:64px;height:64px;margin:-32px 0 0 -32px"></div></div></div>
+    </div>
+    <h4 class="sub-h">Las unidades de transform</h4>
+    <div class="units">
+      <div><b>px</b><span>Distancias fijas. En translate y transform-origin.</span></div>
+      <div><b>%</b><span>Porcentaje del <b>propio elemento</b> (no de la página). En translate.</span></div>
+      <div><b>deg</b><span>Grados. Una vuelta = 360deg. En rotate y skew.</span></div>
+      <div><b>turn</b><span>Vueltas. 1turn = 360deg, 0.25turn = 90deg.</span></div>
+      <div><b>rad</b><span>Radianes (matemáticas). 1turn ≈ 6.2832rad.</span></div>
+      <div><b>grad</b><span>Gradianes. Una vuelta = 400grad. Casi no se usa.</span></div>
+      <div><b>sin unidad</b><span>Solo en <b>scale</b>: es un multiplicador (2 = el doble).</span></div>
+      <div><b>0</b><span>El único número que puede ir sin unidad en todas: <code>rotate(0)</code>.</span></div>
+    </div>
+    <div class="note sol"><div class="ic"><i></i></div><div><b class="t">Regla de oro de las unidades</b><p>Distancias con <b>px o %</b>, ángulos con <b>deg o turn</b>, escalas <b>sin unidad</b>. Si te equivocas de unidad, el navegador ignora la línea entera.</p></div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="translate" data-nav="translate">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Función 1 · mover</p><h2><code>translate()</code></h2><p>Desplaza el elemento desde su posición original, sin empujar a nadie.</p></div></div>
+  <div class="card reveal">
+    <p>Elige una forma de escribirla o mueve los deslizadores. La línea discontinua es el sitio original.</p>
+    <div class="g4" id="trForms"></div>
+    <div id="labTr"></div>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">px o %</b><p>Con <b>px</b> mueves una distancia fija. Con <b>%</b> mueves un porcentaje del <b>propio elemento</b>: si la caja mide 120px, <code>translateX(50%)</code> la mueve 60px y <code>translateX(100%)</code> la mueve exactamente su ancho.</p></div></div>
+    <div class="note hoja"><div class="ic"><i></i></div><div><b class="t">translate frente a margin</b><p>Con <code>margin</code> el elemento se mueve <b>y empuja</b> a los demás. Con <code>translate</code> se mueve <b>sin empujar</b>, porque su hueco se queda donde estaba. Por eso translate es ideal para efectos (botones que suben, menús que entran…).</p></div></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="rotate" data-nav="rotate">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Función 2 · girar</p><h2><code>rotate()</code></h2><p>Gira el elemento alrededor de su centro (salvo que cambies el punto de giro con transform-origin).</p></div></div>
+  <div class="card reveal">
+    <div class="g4" id="rotForms"></div>
+    <div id="labRot"></div>
+    <div class="note sol"><div class="ic"><i></i></div><div><b class="t">Cómo leer los grados</b><p>Sigue la flecha ↑ de la pieza y el arco dorado. <b>Positivo = como las agujas del reloj ↻</b>; negativo = al revés ↺. 90deg es un cuarto de vuelta, 180deg media vuelta (boca abajo) y 360deg una vuelta entera (queda igual que al principio, pero ha girado).</p></div></div>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">¿Para qué sirve girar más de 360deg?</b><p>El resultado final de <code>rotate(720deg)</code> parece igual que <code>rotate(0)</code>, pero cuando el giro es animado (con transition, en el próximo bloque) el elemento da <b>dos vueltas</b> completas.</p></div></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="scale" data-nav="scale">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Función 3 · tamaño</p><h2><code>scale()</code></h2><p>Agranda o encoge el elemento multiplicando su tamaño. No lleva unidades.</p></div></div>
+  <div class="card reveal">
+    <div class="g4" id="scForms"></div>
+    <div id="labSc"></div>
+    <div class="g3" style="margin-top:12px">
+      <div class="note hoja" style="margin:0"><div class="ic"><i></i></div><div><b class="t">1 = igual</b><p><code>scale(1)</code> no cambia nada. 2 = el doble, 0.5 = la mitad.</p></div></div>
+      <div class="note sol" style="margin:0"><div class="ic"><i></i></div><div><b class="t">0 = desaparece</b><p><code>scale(0)</code> lo encoge hasta un punto invisible.</p></div></div>
+      <div class="note cielo" style="margin:0"><div class="ic"><i></i></div><div><b class="t">Negativo = espejo</b><p><code>scaleX(-1)</code> lo voltea como un espejo sin cambiar el tamaño.</p></div></div>
+    </div>
+    <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">scale lo escala TODO</b><p>No solo cambia el tamaño de la caja: también se escalan el <b>texto</b>, los <b>bordes</b>, el <b>border-radius</b> y las <b>sombras</b> de dentro. Si quieres una caja más grande con el texto del mismo tamaño, usa width y height; si quieres que todo crezca como una foto, usa scale.</p></div></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="skew" data-nav="skew">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Función 4 · inclinar</p><h2><code>skew()</code></h2><p>Inclina el elemento como si empujaras una caja de cartón por arriba: el cuadrado se convierte en rombo.</p></div></div>
+  <div class="card reveal">
+    <div class="g4" id="skForms"></div>
+    <div id="labSk"></div>
+    <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">skew no es rotate</b><p><code>rotate</code> gira el elemento entero <b>sin deformarlo</b>: los ángulos siguen siendo rectos. <code>skew</code> <b>deforma</b>: los lados dejan de ser perpendiculares. Cuanto más te acercas a 90deg, más se estira (en 90deg exacto desaparece).</p></div></div>
+    <div class="note hoja"><div class="ic"><i></i></div><div><b class="t">El truco del contra-skew</b><p>Si inclinas una caja con <code>skewX(-15deg)</code>, el texto de dentro también se inclina. Para dejar el texto recto, aplica a un hijo la inclinación contraria: <code>skewX(15deg)</code>. Lo verás en los efectos.</p></div></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="origin" data-nav="transform-origin">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">El punto de anclaje</p><h2><code>transform-origin</code></h2><p>El punto que se queda quieto: alrededor de él se gira, y desde él se escala y se inclina. Por defecto es el centro.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <p>Piensa en una <b>puerta</b>: gira desde las bisagras, no desde el centro. Con <code>transform-origin</code> eliges dónde están las bisagras del elemento.</p>
+        <p>1. Elige el punto (el círculo coral). 2. Elige la transformación. 3. Pulsa <b>Aplicar</b>.</p>
+        <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div class="pad" id="orPad"></div><div id="orFn"></div></div>
+        <div class="exp" id="orExp"></div>
+      </div>
+      <div><div class="stage tall" id="orStage"><div class="ax-x"></div><div class="ax-y"></div><div class="ghost"></div><div class="obj" id="orObj"><span class="corner"></span><span class="arrow">↑</span><span class="lbl">SOL</span></div><div class="orig-dot" id="orDot"></div></div><div style="display:flex;gap:10px"><button class="btn oro sm" id="orPlay" type="button">Aplicar</button><button class="btn claro sm" id="orReset" type="button">Volver</button></div></div>
+    </div>
+    <div class="pair" id="orCode"></div>
+    <h4 class="sub-h">Cómo se escribe</h4>
+    <ul>
+      <li><b>Palabras</b>: primero horizontal (<code>left</code>, <code>center</code>, <code>right</code>) y luego vertical (<code>top</code>, <code>center</code>, <code>bottom</code>). Ejemplo: <code>transform-origin: left top;</code></li>
+      <li><b>Porcentajes</b>: <code>0% 0%</code> es la esquina de arriba a la izquierda y <code>100% 100%</code> la de abajo a la derecha. El centro es <code>50% 50%</code>.</li>
+      <li><b>Píxeles</b>: medidos desde la esquina de arriba a la izquierda del elemento: <code>20px 40px</code>.</li>
+      <li><b>Un tercer valor</b> (solo px) para la profundidad Z en 3D: <code>transform-origin: center center -50px;</code></li>
+      <li>Con <b>un solo valor</b> (<code>left</code>), el otro se queda en center.</li>
+    </ul>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">translate no tiene punto de anclaje</b><p>transform-origin solo afecta a rotate, scale y skew. Mover es mover: da igual desde dónde lo mires.</p></div></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="combinar" data-nav="Combinar y orden">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Varias a la vez</p><h2>Combinar funciones</h2><p>Puedes encadenar todas las funciones que quieras en una sola línea. Pero el orden importa, y mucho.</p></div></div>
+  <div class="card reveal">
+    <h3>Se escriben separadas por espacios</h3>
+    <div id="cbCode1"></div>
+    <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">Error número 1: dos líneas transform</b><p>Si escribes <code>transform</code> dos veces, la segunda <b>borra</b> la primera, como pasa con cualquier propiedad CSS repetida. Todas las funciones van en <b>la misma línea</b>, separadas por espacios (sin comas entre funciones).</p></div></div>
+    <h4 class="sub-h">El orden cambia el resultado</h4>
+    <p>Cada elemento tiene sus <b>propios ejes</b> (la flecha azul es su x y la coral su y). Las funciones se leen <b>de izquierda a derecha</b> y <b>cada una mueve esos ejes</b> para las siguientes. Si primero giras, sus ejes giran con él: después, "derecha" para el elemento ya no es derecha en la pantalla. Pulsa los pasos:</p>
+    <div class="order" id="order"></div>
+    <div class="note sol"><div class="ic"><i></i></div><div><b class="t">Regla práctica</b><p>Casi siempre quieres <b>primero translate</b> (llevarlo a su sitio) y <b>después rotate y scale</b> (girarlo y escalarlo allí). Si algo sale volando en diagonal o más lejos de lo que esperabas, revisa el orden.</p></div></div>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">scale también afecta a lo que viene detrás</b><p><code>scale(2) translateX(50px)</code> mueve <b>100px</b>, no 50px: después de escalar, cada píxel del elemento vale el doble. En cambio, <code>translateX(50px) scale(2)</code> mueve 50px y luego escala.</p></div></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="individuales" data-nav="translate · rotate · scale sueltas">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">La forma moderna</p><h2>Propiedades individuales</h2><p>Además de la propiedad <code>transform</code>, existen tres propiedades sueltas: <code>translate</code>, <code>rotate</code> y <code>scale</code>.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <p>Hacen lo mismo que las funciones, pero cada una es <b>su propia propiedad</b>. Ojo con la diferencia de escritura:</p>
+        <ul>
+          <li>Función: <code>transform: translate(20px, 10px);</code> (con paréntesis y coma)</li>
+          <li>Propiedad: <code>translate: 20px 10px;</code> (sin paréntesis, valores separados por espacio)</li>
+          <li><code>rotate: 45deg;</code> · <code>scale: 1.5;</code> · <code>scale: 2 0.5;</code></li>
+        </ul>
+        <h4>¿Por qué existen?</h4>
+        <p>Porque así puedes cambiar <b>una sola</b> sin repetir las demás. Con <code>transform</code>, un <code>:hover</code> que solo quiere escalar tiene que repetir también el giro. Con las propiedades sueltas, no.</p>
+        <h4>Su orden es fijo</h4>
+        <p>El navegador las aplica siempre así: <b>translate → rotate → scale → transform</b>, da igual el orden en que las escribas.</p>
+      </div>
+      <div>
+        <div class="stage tall" id="indStage"><div class="ax-x"></div><div class="ax-y"></div><div class="ghost"></div><div class="obj" id="indObj"><span class="corner"></span><span class="arrow">↑</span><span class="lbl">SOL</span></div></div>
+        <div id="indCtl"></div>
+      </div>
+    </div>
+    <div class="pair" id="indCode"></div>
+    <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">No las mezcles sin saberlo</b><p>Si un elemento tiene <code>rotate: 45deg</code> y además <code>transform: rotate(45deg)</code>, <b>se suman</b>: girará 90deg. Elige una forma y sé coherente. En este bloque usaremos sobre todo <code>transform</code>, que es la que más vas a encontrar.</p></div></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="estados" data-nav=":hover y compañía">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Repaso</p><h2>transform con :hover, :focus y :active</h2><p>Los transform cobran vida cuando cambian con la interacción. Repasamos los tres estados que ya conoces.</p></div></div>
+  <div class="card reveal">
+    <div class="g3" id="states"></div>
+    <div class="note ojo"><div class="ic"><i></i></div><div><b class="t">El transform del :hover sustituye, no suma</b><p>Si el estado normal tiene <code>transform: rotate(-5deg)</code> y en <code>:hover</code> pones <code>transform: scale(1.2)</code>, el giro <b>desaparece</b>. Para conservarlo: <code>transform: rotate(-5deg) scale(1.2);</code></p></div></div>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">¿Por qué se mueve suave?</b><p>En el código verás una línea <code>transition</code> en gris: es lo que hace que el cambio sea suave en lugar de instantáneo. La aprenderás en el <b>próximo bloque</b>. Sin ella el transform funciona igual, pero de golpe.</p></div></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="sec" id="perspective" data-nav="perspective">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Antes del 3D</p><h2><code>perspective</code></h2><p>Lo que convierte un giro plano en profundidad real. Aquí ves qué calcula exactamente el navegador.</p></div></div>
+  <div class="card reveal">
+    <h3>Qué es la perspectiva</h3>
+    <p>La pantalla es plana. Para que algo parezca 3D, el navegador imagina que <b>tu ojo está a cierta distancia de la pantalla</b>. Esa distancia es <code>perspective</code>. Con ella aplica la regla que usan los pintores:</p>
+    <ul>
+      <li>Lo que se <b>acerca</b> a ti (Z positivo) se ve <b>más grande</b>.</li>
+      <li>Lo que se <b>aleja</b> (Z negativo) se ve <b>más pequeño</b>.</li>
+      <li>Si el ojo está <b>muy cerca</b> (perspective pequeña, 200px), el efecto es exagerado, como un gran angular. Si está <b>lejos</b> (1500px), el efecto es suave.</li>
+      <li><b>Sin perspective</b> no hay distancia: todo se ve plano, aunque lo gires en 3D.</li>
+    </ul>
+    <div class="note sol"><div class="ic"><i></i></div><div><b class="t">La fórmula (para entenderlo, no para memorizar)</b><p>tamaño aparente = <b>perspective ÷ (perspective − Z)</b>. Con <code>perspective: 500px</code> y <code>translateZ(100px)</code>: 500 ÷ 400 = <b>1.25</b> → se ve un 25% más grande. Con Z = −500px: 500 ÷ 1000 = 0.5 → la mitad.</p></div></div>
+    <p>A la izquierda ves el resultado. A la derecha, el mismo escenario <b>visto de lado</b>: el ojo, la pantalla y el elemento. Las líneas que salen del ojo marcan el tamaño que llega a la pantalla.</p>
+    <div class="persp-lab"><div class="persp-view" id="pView"><div class="obj pv" id="pObj" style="position:relative;left:auto;top:auto;margin:0"><span class="lbl">Z</span></div></div><canvas class="persp-side" id="pSide" width="760" height="600"></canvas></div>
+    <div id="pCtl"></div>
+    <div class="exp" id="pExp"></div>
+    <div class="pair" id="pCode"></div>
+
+    <h4 class="sub-h">perspective-origin: dónde está tu ojo</h4>
+    <p>Por defecto el ojo mira justo al <b>centro</b> del padre. Con <code>perspective-origin</code> lo mueves (se escribe igual que transform-origin). El punto coral es el <b>punto de fuga</b>: hacia donde convergen las líneas. Este suelo está tumbado con <code>rotateX(60deg)</code>:</p>
+    <div class="g2">
+      <div class="persp-view" id="poView" style="perspective:500px"><div class="floor" id="poFloor" style="transform:rotateX(60deg)"><div class="tile"></div></div><div class="vp-dot" id="poDot"></div></div>
+      <div><div id="poChips"></div><div class="pair" id="poCode" style="grid-template-columns:1fr"></div></div>
+    </div>
+
+    <h4 class="sub-h">Dos formas de escribirla</h4>
+    <div class="g2">
+      <div>
+        <p><b>Propiedad en el padre</b>: <code>perspective: 300px;</code> Todos los hijos comparten <b>un mismo ojo</b>, como objetos en una misma escena: cada uno se ve distinto según dónde esté.</p>
+        <div class="mini3" id="rowA" style="gap:44px;perspective:300px"></div>
+      </div>
+      <div>
+        <p><b>Función en cada hijo</b>: <code>transform: perspective(300px) rotateY(50deg);</code> Cada hijo tiene <b>su propio ojo</b>: todos se ven iguales. La función <b>debe ir la primera</b> dentro de transform.</p>
+        <div class="mini3" id="rowB" style="gap:44px;perspective:none"></div>
+      </div>
+    </div>
+    <div class="pair" id="rowCode"></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="sec" id="tresd" data-nav="3D">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Una dimensión más</p><h2>Transform en 3D</h2><p>Girar hacia el fondo, voltear tarjetas, construir cubos. Todo con las mismas ideas de antes y el eje Z.</p></div></div>
+  <div class="card reveal">
+    <h3>Las funciones 3D</h3>
+    <div class="g2">
+      <ul>
+        <li><code>rotateX(a)</code>: gira como una <b>persiana</b> (sobre el eje horizontal).</li>
+        <li><code>rotateY(a)</code>: gira como una <b>puerta</b> (sobre el eje vertical).</li>
+        <li><code>rotateZ(a)</code>: gira en el plano, igual que <code>rotate()</code>.</li>
+        <li><code>translateZ(z)</code>: acerca (positivo) o aleja (negativo). Solo se nota con perspective.</li>
+      </ul>
+      <ul>
+        <li><code>translate3d(x, y, z)</code>: los tres movimientos en una función.</li>
+        <li><code>scale3d(x, y, z)</code> y <code>scaleZ(z)</code>: escala también la profundidad (solo se nota en elementos con hijos en 3D).</li>
+        <li><code>rotate3d(x, y, z, a)</code>: gira <b>a</b> grados alrededor de un eje inclinado. <code>rotate3d(1, 1, 0, 45deg)</code> gira sobre la diagonal.</li>
+        <li><code>matrix3d()</code>: 16 números. Lo genera el navegador; no se escribe a mano.</li>
+      </ul>
+    </div>
+    <div class="g2" style="margin-top:8px">
+      <div id="lab3dCtl"></div>
+      <div><div class="p3" id="p3"><div class="obj c3" id="c3" style="position:relative;left:auto;top:auto;margin:0"><span class="corner"></span><span class="arrow">↑</span><span class="lbl">3D</span></div></div></div>
+    </div>
+    <div class="pair" id="lab3dCode"></div>
+
+    <h4 class="sub-h">transform-style: preserve-3d</h4>
+    <p>Por defecto, un elemento <b>aplana</b> a sus hijos: aunque el hijo esté girado en 3D, se dibuja pegado al padre como una pegatina (<code>flat</code>). Con <code>transform-style: preserve-3d</code> en el padre, los hijos <b>conservan su profundidad</b> dentro del espacio 3D del padre. Es imprescindible para tarjetas que se voltean y cubos.</p>
+    <div class="g2">
+      <div><div class="mini3"><div class="nest" id="nest"><div class="kid">hijo</div></div></div><div id="nestChips"></div></div>
+      <div class="pair" id="nestCode" style="grid-template-columns:1fr"></div>
+    </div>
+
+    <h4 class="sub-h">backface-visibility: la espalda</h4>
+    <p>Cuando un elemento gira más de 90deg en Y o en X, ves su <b>espalda</b> (el contenido aparece al revés, como un cristal visto desde detrás). Con <code>backface-visibility: hidden</code> la espalda <b>no se dibuja</b>: el elemento desaparece mientras está de espaldas.</p>
+    <div class="g2">
+      <div><div class="mini3"><div class="bfv" id="bfv"><div>Hola</div></div></div><div id="bfvCtl"></div></div>
+      <div class="pair" id="bfvCode" style="grid-template-columns:1fr"></div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>Receta: la tarjeta que se voltea</h3>
+    <div class="g2">
+      <div>
+        <p>Junta las tres ideas:</p>
+        <ol>
+          <li><code>perspective</code> en el <b>padre</b> (.tarjeta), para ver profundidad.</li>
+          <li><code>transform-style: preserve-3d</code> en el elemento que gira (.tarjeta-in), para que sus caras vivan en 3D.</li>
+          <li><code>backface-visibility: hidden</code> en <b>cada cara</b>, para que la que está de espaldas no se vea.</li>
+          <li>La cara de atrás empieza girada <code>rotateY(180deg)</code>. Al voltear la tarjeta otros 180deg, queda de frente.</li>
+        </ol>
+        <p>Las dos caras se colocan una encima de otra con grid (<code>grid-area: 1 / 1</code>), que ya conoces.</p>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;min-height:320px"><div class="flip" id="flip"><div class="flip-in"><div class="face front">Pasa el ratón<small style="font:600 13px var(--body)">(o toca)</small></div><div class="face back">¡Esta es la cara de atrás!<small>rotateY(180deg)</small></div></div></div></div>
+    </div>
+    <div class="pair" id="flipCode"></div>
+    <h3 style="margin-top:30px">Receta: un cubo de vidriera</h3>
+    <p>Seis caras en la misma celda de grid. Cada una se <b>gira hacia su lado</b> y después se <b>empuja hacia fuera</b> la mitad del tamaño del cubo con <code>translateZ(70px)</code>. El orden importa: primero girar, luego empujar (así cada cara sale hacia su propio lado).</p>
+    <div class="g2"><div class="cube-wrap"><div class="cube" id="cube"><div class="f1">delante</div><div class="f2">detrás</div><div class="f3">derecha</div><div class="f4">izquierda</div><div class="f5">arriba</div><div class="f6">abajo</div></div></div><div id="cubeCtl"></div></div>
+    <div class="pair" id="cubeCode"></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="sec" id="matrix" data-nav="matrix">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Bajo el capó</p><h2><code>matrix()</code></h2><p>El idioma interno del navegador: cualquier transformación 2D, por complicada que sea, se resume en 6 números.</p></div></div>
+  <div class="card reveal">
+    <h3>¿Por qué existe?</h3>
+    <p>Cuando escribes <code>translate(40px, 0) rotate(30deg) scale(1.5)</code>, el navegador no guarda tres operaciones: las <b>combina en una sola</b>, la matriz. Si abres el inspector (F12 → pestaña <i>Computed</i>) y buscas transform, verás siempre <code>matrix(a, b, c, d, e, f)</code>. Entenderla te permite leer ese valor y saber qué está pasando.</p>
+    <h4 class="sub-h">Los 6 números y su sitio</h4>
+    <div class="g2">
+      <div>
+        <p>Se escriben en este orden: <code>matrix(a, b, c, d, e, f)</code>, pero se colocan en una tabla de 3 × 3 (la última fila siempre es 0 0 1):</p>
+        <div class="mgrid" style="grid-template-columns:repeat(3,64px)"><div class="ma"><b>a</b></div><div class="mb"><b>c</b></div><div class="mt"><b>e</b></div><div class="mb"><b>b</b></div><div class="ma"><b>d</b></div><div class="mt"><b>f</b></div><div class="mz"><b>0</b></div><div class="mz"><b>0</b></div><div class="mz"><b>1</b></div></div>
+      </div>
+      <div>
+        <ul>
+          <li><b style="color:var(--azul)">a y d</b>: escala horizontal y vertical. Sin cambios valen <b>1</b>.</li>
+          <li><b style="color:var(--ambar)">b y c</b>: inclinación y giro. Sin cambios valen <b>0</b>.</li>
+          <li><b style="color:var(--musgo)">e y f</b>: desplazamiento en X y en Y, en px. Sin cambios valen <b>0</b>.</li>
+        </ul>
+        <p>Por eso <code>matrix(1, 0, 0, 1, 0, 0)</code> significa "no hacer nada".</p>
+      </div>
+    </div>
+    <h4 class="sub-h">Qué hace con cada punto</h4>
+    <p>Cada punto del elemento (x, y), medido desde su transform-origin, se lleva a una posición nueva con estas dos fórmulas:</p>
+    <div class="mcalc">x' = <span class="ma">a</span>·x + <span class="mb">c</span>·y + <span class="mt">e</span><br>y' = <span class="mb">b</span>·x + <span class="ma">d</span>·y + <span class="mt">f</span></div>
+    <p style="margin-top:12px">Léelo así: la columna <b>(a, b)</b> dice adónde va "un paso a la derecha" del elemento (la flecha azul del dibujo); la columna <b>(c, d)</b>, adónde va "un paso hacia abajo" (la flecha naranja); y <b>(e, f)</b> cuánto se desplaza todo.</p>
+
+    <h4 class="sub-h">Pruébalo: dos maneras</h4>
+    <div id="mxMode"></div>
+    <div class="mx"><canvas id="mxC" width="640" height="640"></canvas><div><div id="mxCtl"></div><div class="mgrid" id="mxGrid"></div><p style="font-size:14.5px;margin:6px 0">Sigue la esquina de abajo a la derecha del cristal, el punto (60, 60):</p><div class="mcalc" id="mxCalc"></div><div id="mxCode"></div></div></div>
+
+    <h4 class="sub-h">Las recetas: cada función en forma de matrix</h4>
+    <div class="sheet-wrap"><table class="sheet">
+      <tr><th>Función</th><th>Equivale a</th><th>Por qué</th></tr>
+      <tr><td>translate(tx, ty)</td><td><code>matrix(1, 0, 0, 1, tx, ty)</code></td><td>Escala 1, sin giro; solo e y f.</td></tr>
+      <tr><td>scale(sx, sy)</td><td><code>matrix(sx, 0, 0, sy, 0, 0)</code></td><td>Solo a y d cambian.</td></tr>
+      <tr><td>rotate(θ)</td><td><code>matrix(cos θ, sin θ, −sin θ, cos θ, 0, 0)</code></td><td>Las flechas giran juntas; seno y coseno dicen hacia dónde.</td></tr>
+      <tr><td>skewX(θ)</td><td><code>matrix(1, 0, tan θ, 1, 0, 0)</code></td><td>Solo la flecha de abajo (c) se inclina.</td></tr>
+      <tr><td>skewY(θ)</td><td><code>matrix(1, tan θ, 0, 1, 0, 0)</code></td><td>Solo la flecha de la derecha (b) se inclina.</td></tr>
+    </table></div>
+    <p style="margin-top:14px">Para no tener que calcular senos, aquí tienes los giros más comunes:</p>
+    <div class="sheet-wrap"><table class="rot-table" id="rotTable"></table></div>
+    <div class="note cielo"><div class="ic"><i></i></div><div><b class="t">¿Y si combino varias?</b><p>El navegador <b>multiplica</b> las matrices de cada función en orden. No necesitas hacerlo a mano: escribe las funciones y mira el resultado en el inspector o en el laboratorio de arriba. Lo importante es saber <b>leer</b> los 6 números.</p></div></div>
+    <div class="note sol"><div class="ic"><i></i></div><div><b class="t">¿Cuándo escribirías matrix a mano?</b><p>Casi nunca. Sirve para <b>leer</b> lo que calcula el navegador, para copiar un transform desde el inspector o para herramientas que generan transformaciones. En 3D existe <code>matrix3d()</code>, con 16 números.</p></div></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="sec" id="taller" data-nav="Taller">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Tu propio invernadero</p><h2>Prepara tus propios transform</h2><p>Añade funciones, cámbiales el orden, mueve el punto de anclaje y llévate el HTML y el CSS comentados.</p></div></div>
+  <div class="card reveal"><div class="ws" id="ws"></div></div>
+</section>
+
+<!-- 15 -->
+<section class="sec" id="efectos" data-nav="Efectos">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Para tu web</p><h2>10 efectos con transform</h2><p>Pasa el ratón (o toca) cada demo. Debajo tienes el HTML y el CSS completos y comentados línea a línea.</p></div></div>
+  <div class="fx-grid" id="fxGrid"></div>
+</section>
+
+<!-- 16 -->
+<section class="sec" id="errores" data-nav="Arregla el código">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Detective</p><h2>Arregla el código</h2><p>Siete transform que no hacen lo que deberían. Encuentra el fallo.</p></div></div>
+  <div class="card reveal"><div id="fixes"></div></div>
+</section>
+
+<!-- 17 -->
+<section class="sec" id="test" data-nav="Test">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Comprueba lo que sabes</p><h2>Test final</h2><p>Doce preguntas con explicación.</p></div></div>
+  <div class="card reveal"><div id="quiz"></div><div class="score"><span>Puntuación:</span><b id="qScore">0 / 12</b><button class="btn verde sm" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn claro sm" id="qReset" type="button">Empezar de nuevo</button></div></div>
+</section>
+
+<!-- 18 -->
+<section class="sec" id="chuleta" data-nav="Chuleta">
+  <div class="sec-head reveal"><div class="medal"></div><div><p class="kick">Resumen</p><h2>Chuleta</h2><p>Todo transform en una tabla.</p></div></div>
+  <div class="sheet-wrap reveal"><table class="sheet">
+    <tr><th>Función / propiedad</th><th>Qué hace</th><th>Ejemplo</th><th>Recuerda</th></tr>
+    <tr class="grp"><td colspan="4">Mover</td></tr>
+    <tr><td>translate(x, y)</td><td>Mueve en X e Y</td><td>translate(40px, -20px)</td><td>Coma entre valores. Y positivo = abajo</td></tr>
+    <tr><td>translateX() · translateY()</td><td>Mueve en un eje</td><td>translateY(-10px)</td><td>% = del propio elemento</td></tr>
+    <tr><td>translateZ() · translate3d()</td><td>Acerca o aleja</td><td>translate3d(0, 0, 50px)</td><td>Solo se nota con perspective</td></tr>
+    <tr class="grp"><td colspan="4">Girar</td></tr>
+    <tr><td>rotate() · rotateZ()</td><td>Gira en el plano</td><td>rotate(45deg)</td><td>Positivo = reloj. 360deg = 1turn</td></tr>
+    <tr><td>rotateX() · rotateY()</td><td>Persiana · puerta</td><td>rotateY(180deg)</td><td>Necesita perspective</td></tr>
+    <tr><td>rotate3d(x, y, z, a)</td><td>Gira sobre un eje libre</td><td>rotate3d(1, 1, 0, 45deg)</td><td>x, y, z = dirección del eje</td></tr>
+    <tr class="grp"><td colspan="4">Escalar e inclinar</td></tr>
+    <tr><td>scale(x, y)</td><td>Cambia el tamaño</td><td>scale(1.2)</td><td>Sin unidades. Negativo = espejo</td></tr>
+    <tr><td>scaleX() · scaleY() · scale3d()</td><td>Escala por ejes</td><td>scaleX(-1)</td><td>Escala también texto y sombras</td></tr>
+    <tr><td>skew(x, y) · skewX() · skewY()</td><td>Inclina y deforma</td><td>skewX(-15deg)</td><td>Deforma; rotate no</td></tr>
+    <tr class="grp"><td colspan="4">Control</td></tr>
+    <tr><td>transform-origin</td><td>Punto de anclaje</td><td>left top · 0% 100%</td><td>Por defecto center. No afecta a translate</td></tr>
+    <tr><td>translate · rotate · scale (propiedades)</td><td>Versiones sueltas</td><td>rotate: 10deg;</td><td>Orden fijo: translate → rotate → scale</td></tr>
+    <tr><td>transform: none</td><td>Sin transformación</td><td>transform: none;</td><td>Valor por defecto</td></tr>
+    <tr class="grp"><td colspan="4">3D</td></tr>
+    <tr><td>perspective (propiedad)</td><td>Distancia del ojo, en el padre</td><td>perspective: 800px;</td><td>Pequeño = 3D exagerado</td></tr>
+    <tr><td>perspective() (función)</td><td>Distancia del ojo, en el propio elemento</td><td>perspective(600px) rotateY(30deg)</td><td>Siempre la primera función</td></tr>
+    <tr><td>perspective-origin</td><td>Dónde está el ojo</td><td>left top</td><td>Mueve el punto de fuga</td></tr>
+    <tr><td>transform-style</td><td>Hijos en 3D</td><td>preserve-3d</td><td>Por defecto flat (aplana)</td></tr>
+    <tr><td>backface-visibility</td><td>Ocultar la espalda</td><td>hidden</td><td>Para las caras de una tarjeta</td></tr>
+    <tr class="grp"><td colspan="4">Matriz</td></tr>
+    <tr><td>matrix(a, b, c, d, e, f)</td><td>Todo en 6 números</td><td>matrix(1, 0, 0, 1, 0, 0)</td><td>a, d escala · b, c giro/inclinación · e, f mover</td></tr>
+    <tr><td>matrix3d(…)</td><td>Todo en 3D, 16 números</td><td>la genera el navegador</td><td>Solo para leer</td></tr>
+  </table></div>
+</section>
+
+</main>
+
+<footer><div class="wrap"><div><div class="ft">Transform</div><p>El elemento cambia; su sitio en la página, no.</p></div><a class="btn oro sm" href="#inicio">Volver arriba</a></div></footer>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dyn=el('style');document.head.appendChild(dyn);const rules={};
+const setRule=(k,css)=>{rules[k]=css;dyn.textContent=Object.values(rules).join('\n');};
+const fmt=n=>{const r=Math.round(n*1000)/1000;return Object.is(r,-0)?'0':String(r);};
+const pad=(s,n)=>s+' '.repeat(Math.max(1,n-s.length));
+
+/* ---------- resaltado de código ---------- */
+function hlVal(v){return esc(v).replace(/([a-zA-Z][\w-]*)\(/g,'<span class="fn">$1</span>(');}
+function hlDecl(d){return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+hlVal(v)+'</span>'+sc);}
+function hlSel(s){return esc(s).replace(/(:[\w-]+(\([^)]*\))?)/g,'<span class="ps">$1</span>');}
+function hlCssLine(line){let code=line,com='';const i=line.indexOf('/*');if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+ let out;
+ if(code.indexOf('{')>=0){const j=code.indexOf('{');const rest=code.slice(j+1);const cl=rest.match(/\}(\s*)$/);const inner=cl?rest.slice(0,rest.length-cl[0].length):rest;out='<span class="s">'+hlSel(code.slice(0,j))+'</span>{'+(inner.indexOf(':')>=0?hlDecl(inner):esc(inner))+(cl?'}'+cl[1]:'');}
+ else if(/^\s*\}/.test(code))out=esc(code);
+ else if(/^\s*[\w-]+\s*:/.test(code))out=hlDecl(code);
+ else out=code.trim()?'<span class="v">'+hlVal(code)+'</span>':esc(code);
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+function hlHtmlLine(h){let code=h,com='';const i=h.indexOf('<!--');if(i>=0){code=h.slice(0,i);com=h.slice(i);}
+ const out=esc(code).replace(/(class|style)="([^"]*)"/g,'<span class="p">$1</span>=<span class="v">"$2"</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+/* » = línea destacada · ~ = línea del próximo bloque (transition) */
+function render(lang,src){return src.split('\n').map(l=>{const n=l.startsWith('»'),s0=l.startsWith('~');const s=(n||s0)?l.slice(1):l;const h=lang==='html'?hlHtmlLine(s):hlCssLine(s);return n?'<span class="new">'+(h||' ')+'</span>':s0?'<span class="soon">'+h+'</span>':h;}).join('\n');}
+function copyText(txt,btn){const done=()=>{if(!btn)return;const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+ const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+function codeBox(lang,src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang.toUpperCase())}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+ w.set=s=>{w.src=s.split('\n').map(l=>/^[»~]/.test(l)?l.slice(1):l).join('\n');$('pre',w).innerHTML=render(lang,s);};w.set(src||'');$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+/* pareja HTML + CSS */
+function pair(sel,html,css,th,tc){const h=typeof sel==='string'?$(sel):sel;const a=codeBox('html',html,th||'HTML'),b=codeBox('css',css,tc||'CSS');h.append(a,b);return{h:a,c:b};}
+const put=(sel,...b)=>{const h=$(sel);if(h)h.append(...b);};
+const SOON='~  transition: transform .5s;  /* suaviza (próximo bloque) */';
+
+function rng(label,min,max,step,val,unit,onIn){const w=el('label','rng');w.innerHTML=`<span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${val}"><output></output>`;
+ const i=$('input',w),o=$('output',w);const show=()=>{o.innerHTML=fmt(+i.value)+(unit||'')+'<button class="r" type="button" title="Volver al valor inicial">↺</button>';$('.r',o).onclick=e=>{e.preventDefault();i.value=val;show();onIn();};};
+ i.addEventListener('input',()=>{show();onIn();});show();w.inp=i;w.get=()=>+i.value;w.setV=v=>{i.value=v;show();};return w;}
+function chips(list,onPick,first){const c=el('div','chips');list.forEach((t,k)=>{const b=el('button','chip',esc(t.label||t));b.type='button';b.onclick=()=>{$$('.chip',c).forEach(x=>x.classList.remove('on'));b.classList.add('on');onPick(t,k);};c.appendChild(b);});
+ if(first!=null&&c.children[first])c.children[first].classList.add('on');c.pick=k=>c.children[k]&&c.children[k].click();return c;}
+
+/* ---------- navegación ---------- */
+{const ul=$('#navUl'),secs=$$('section.sec');secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${i+1}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<150)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollTo({left:a.offsetLeft-ul.clientWidth/2+a.clientWidth/2,behavior:'smooth'});}}};
+ addEventListener('scroll',on,{passive:true});on();}
+
+/* ---------- vidrieras de sección + haz de luz ---------- */
+const GLASS=['#f6c94f','#4fa36c','#86d0df','#ee9a3a','#a6d98a','#4a9bc6','#fde7a6','#b9e2f1','#2e7d55'];
+$$('section.sec').forEach((s,i)=>{const m=$('.medal',s);if(!m)return;const pick=k=>GLASS[(i*4+k)%GLASS.length];
+ m.innerHTML=`<div>${Array.from({length:12},(_,k)=>`<i style="--c:${pick(k)};--d:${(-(k*.43+i*.7)%5).toFixed(2)}s"></i>`).join('')}<b>${i+1}</b></div>`;
+ m.onclick=()=>m.animate([{transform:'rotateY(0)'},{transform:'rotateY(360deg)'}],{duration:900,easing:'cubic-bezier(.34,1.3,.64,1)'});
+ const h=$('.sec-head',s);const sh=el('div','shaft');sh.style.background=`linear-gradient(180deg,${pick(0)}cc,${pick(2)}66 45%,${pick(4)}44 70%,transparent)`;h.prepend(sh);});
+
+/* ---------- luz que sigue al ratón ---------- */
+{const g=$('#glow');if(!reduce&&matchMedia('(pointer:fine)').matches){addEventListener('pointermove',e=>{g.style.opacity='1';g.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;},{passive:true});document.addEventListener('pointerleave',()=>g.style.opacity='0');}}
+
+/* ---------- HERO: invernadero solarpunk al amanecer (canvas) ---------- */
+{const t=$('#title');'Transform'.split('').forEach(ch=>{const s=el('span',null,ch);s.setAttribute('aria-hidden','true');t.appendChild(s);});
+ const pb=$('#party');pb.onclick=()=>{const on=document.body.classList.toggle('party');pb.textContent=on?'Volver a la normalidad':'Transformar esta página';};
+ const cv=$('#sky'),ctx=cv.getContext('2d'),hero=$('.hero');
+ let W=0,H=0,DPR=1,L={},mx=0,my=0,tmx=0,tmy=0,parts=[],running=false,T0=performance.now();
+ let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+ const off=(w,h)=>{const c=document.createElement('canvas');c.width=Math.ceil(w*DPR);c.height=Math.ceil(h*DPR);const x=c.getContext('2d');x.scale(DPR,DPR);return[c,x];};
+ const M=60; // margen para el paralaje
+ function layout(){const r=hero.getBoundingClientRect();W=r.width;H=r.height;DPR=Math.min(2,devicePixelRatio||1);cv.width=Math.ceil(W*DPR);cv.height=Math.ceil(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);
+  const wide=W>760;L.hz=wide?H*.8:H*.4;L.sx=wide?W*.74:W*.5;L.sy=wide?H*.6:H*.22;L.R=Math.min(wide?W*.19:W*.34,280);L.dx=L.sx;L.dy=L.hz+L.R*.06;
+  seed=7;buildSky();buildCity();buildDome();buildFront();
+  parts=Array.from({length:W>760?70:36},()=>({x:rnd()*W,y:rnd()*H,r:.6+rnd()*2.2,v:.15+rnd()*.5,p:rnd()*6.28,c:rnd()<.6?'255,226,140':rnd()<.5?'190,240,170':'200,236,246'}));}
+ function buildSky(){const[c,x]=off(W,H);const g=x.createLinearGradient(0,0,0,L.hz);
+  g.addColorStop(0,'#16222a');g.addColorStop(.3,'#253c45');g.addColorStop(.55,'#4f7a7c');g.addColorStop(.78,'#c8b878');g.addColorStop(.92,'#f3d48a');g.addColorStop(1,'#fbe6a8');
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  // nubes altas iluminadas desde abajo
+  for(let k=0;k<7;k++){const cx=rnd()*W,cy=H*(.12+rnd()*.35),rw=120+rnd()*260;const cg=x.createRadialGradient(cx,cy,0,cx,cy,rw);cg.addColorStop(0,'rgba(246,201,79,.09)');cg.addColorStop(1,'rgba(246,201,79,0)');x.fillStyle=cg;x.beginPath();x.ellipse(cx,cy,rw,rw*.22,0,0,7);x.fill();}
+  L.sky=c;}
+ function tower(x,c,bx,by,w,h,col,green,win){c.fillStyle=col;c.beginPath();
+  const kind=rnd();
+  if(kind<.3){c.moveTo(bx,by);c.lineTo(bx,by-h+w/2);c.arc(bx+w/2,by-h+w/2,w/2,Math.PI,0);c.lineTo(bx+w,by);}            // torre con cúpula
+  else if(kind<.55){c.moveTo(bx,by);c.lineTo(bx+w*.18,by-h);c.lineTo(bx+w*.82,by-h);c.lineTo(bx+w,by);}                 // torre afilada
+  else{c.moveTo(bx,by);c.lineTo(bx,by-h);c.quadraticCurveTo(bx+w/2,by-h-w*.35,bx+w,by-h);c.lineTo(bx+w,by);}          // tejado curvo
+  c.closePath();c.fill();
+  // terrazas con jardín
+  const ter=1+Math.floor(rnd()*3);for(let k=0;k<ter;k++){const ty=by-h*(.25+k*.25+rnd()*.1);c.fillStyle=col;c.fillRect(bx-w*.15,ty,w*1.3,3);c.fillStyle=green;for(let j=0;j<6;j++){c.beginPath();c.arc(bx-w*.1+rnd()*w*1.2,ty-2,2+rnd()*w*.12,0,7);c.fill();}
+   c.strokeStyle=green;c.lineWidth=1.2;for(let j=0;j<3;j++){const vx=bx+rnd()*w;c.beginPath();c.moveTo(vx,ty);c.lineTo(vx+rnd()*2,ty+8+rnd()*22);c.stroke();}}
+  c.fillStyle=green;for(let j=0;j<5;j++){c.beginPath();c.arc(bx+rnd()*w,by-h+rnd()*6,2+rnd()*w*.14,0,7);c.fill();}
+  if(win){for(let j=0;j<h/14;j++){if(rnd()<.45){c.fillStyle=`rgba(255,214,120,${.35+rnd()*.5})`;c.fillRect(bx+3+rnd()*(w-8),by-h*.85+j*12,2.5,3.5);}}}
+ }
+ function buildCity(){const[c,x]=off(W+M*2,H);
+  // capa lejana, con bruma dorada
+  for(let bx=-20;bx<W+M*2;){const w=18+rnd()*40,h=H*(.12+rnd()*.3);tower(null,x,bx,L.hz,w,h,'rgba(98,128,126,.55)','rgba(98,140,110,.55)',false);bx+=w+rnd()*30;}
+  // turbinas lejanas (postes)
+  L.turb=[];for(let k=0;k<4;k++){L.turb.push({x:(W+M*2)*(.08+k*.27+rnd()*.06),y:L.hz-H*(.18+rnd()*.12),r:16+rnd()*10,s:.6+rnd()*.8});}
+  // capa media, más oscura
+  for(let bx=-10;bx<W+M*2;){const w=26+rnd()*54,h=H*(.08+rnd()*.26);if(Math.abs(bx-(L.dx+M))>L.R*1.15)tower(null,x,bx,L.hz+4,w,h,'rgba(34,52,56,.92)','rgba(46,110,74,.9)',true);bx+=w+12+rnd()*50;}
+  L.city=c;}
+ function buildDome(){const R=L.R,pad=40;const[c,x]=off(R*2+pad*2,R*1.5+pad*2);const cx=R+pad,by=R*1.12+pad,k=.95;
+  const P=(th,ph)=>[cx+R*Math.cos(ph)*Math.sin(th),by-R*k*Math.sin(ph)];
+  // interior: luz y vegetación
+  x.save();x.beginPath();x.moveTo(cx-R,by);for(let a=0;a<=60;a++){const t=Math.PI-a/60*Math.PI;x.lineTo(cx+R*Math.cos(t),by-R*k*Math.sin(t));}x.closePath();x.clip();
+  let g=x.createRadialGradient(cx,by-R*.5,0,cx,by-R*.4,R*1.1);g.addColorStop(0,'rgba(255,240,190,.95)');g.addColorStop(.5,'rgba(190,220,160,.75)');g.addColorStop(1,'rgba(60,110,90,.85)');x.fillStyle=g;x.fillRect(cx-R,by-R*1.2,R*2,R*1.3);
+  const palm=(px,py,h,s)=>{x.strokeStyle='rgba(60,70,50,.9)';x.lineWidth=3*s;x.beginPath();x.moveTo(px,py);x.quadraticCurveTo(px+h*.15,py-h*.5,px+h*.05,py-h);x.stroke();const tx=px+h*.05,ty=py-h;
+   for(let f=0;f<8;f++){const a=-Math.PI/2+(f-3.5)*.42,l=h*(.38+rnd()*.12);x.fillStyle=f%2?'rgba(40,112,70,.95)':'rgba(64,140,84,.95)';x.beginPath();x.moveTo(tx,ty);
+    const ex=tx+Math.cos(a)*l,ey=ty+Math.sin(a)*l+l*.35;x.quadraticCurveTo(tx+Math.cos(a-.25)*l*.6,ty+Math.sin(a-.25)*l*.6-6*s,ex,ey);x.quadraticCurveTo(tx+Math.cos(a+.25)*l*.6,ty+Math.sin(a+.25)*l*.6,tx,ty);x.fill();}};
+  for(let j=0;j<14;j++){x.fillStyle=`rgba(${40+rnd()*30},${110+rnd()*50},${70+rnd()*30},.9)`;x.beginPath();x.arc(cx-R+rnd()*R*2,by-rnd()*R*.25,R*(.08+rnd()*.12),0,7);x.fill();}
+  palm(cx-R*.35,by,R*.75,R/200);palm(cx+R*.3,by,R*.62,R/220);palm(cx+R*.02,by,R*.9,R/180);
+  x.restore();
+  // paneles: cristal claro abajo, vidriera de colores arriba
+  const NT=12,NP=6,cols=['246,201,79','79,163,108','134,208,223','238,154,58','166,217,138','74,155,198'];
+  for(let i=0;i<NT;i++)for(let j=0;j<NP;j++){const t0=-Math.PI/2+i/NT*Math.PI,t1=-Math.PI/2+(i+1)/NT*Math.PI,p0=j/NP*Math.PI/2,p1=(j+1)/NP*Math.PI/2;
+   x.beginPath();for(let s=0;s<=4;s++){const[a,b]=P(t0+(t1-t0)*s/4,p0);s?x.lineTo(a,b):x.moveTo(a,b);}for(let s=0;s<=4;s++){const[a,b]=P(t1,p0+(p1-p0)*s/4);x.lineTo(a,b);}for(let s=4;s>=0;s--){const[a,b]=P(t0+(t1-t0)*s/4,p1);x.lineTo(a,b);}x.closePath();
+   if(j>=3){x.fillStyle=`rgba(${cols[(i*2+j)%cols.length]},${.62+(j-3)*.1})`;}else{x.fillStyle=`rgba(225,245,250,${.06+j*.03})`;}x.fill();
+   if(j<3&&rnd()<.25){x.fillStyle='rgba(255,255,255,.18)';x.fill();}}
+  // estructura de hierro
+  x.strokeStyle='#1c2528';x.lineCap='round';
+  for(let i=0;i<=NT;i++){const th=-Math.PI/2+i/NT*Math.PI;x.lineWidth=i%3?1.6:3;x.beginPath();for(let s=0;s<=30;s++){const[a,b]=P(th,s/30*Math.PI/2);s?x.lineTo(a,b):x.moveTo(a,b);}x.stroke();}
+  for(let j=1;j<=NP;j++){const ph=j/NP*Math.PI/2;x.lineWidth=j===3?3:1.6;x.beginPath();for(let s=0;s<=40;s++){const[a,b]=P(-Math.PI/2+s/40*Math.PI,ph);s?x.lineTo(a,b):x.moveTo(a,b);}x.stroke();}
+  // borde de latón y base
+  x.lineWidth=4;x.strokeStyle='#c9962e';x.beginPath();for(let s=0;s<=60;s++){const t=Math.PI-s/60*Math.PI;const a=cx+R*Math.cos(t),b=by-R*k*Math.sin(t);s?x.lineTo(a,b):x.moveTo(a,b);}x.stroke();
+  x.fillStyle='#1c2528';x.fillRect(cx-R-12,by,R*2+24,R*.07);x.fillStyle='#c9962e';x.fillRect(cx-R-12,by,R*2+24,3);
+  // linterna superior con rosetón
+  const ty=by-R*k;x.fillStyle='#1c2528';x.fillRect(cx-3,ty-R*.22,6,R*.22);
+  const rr=R*.13,ry=ty-R*.22;for(let s=0;s<12;s++){x.fillStyle=`rgb(${cols[s%cols.length]})`;x.beginPath();x.moveTo(cx,ry);x.arc(cx,ry,rr,s/12*6.283,(s+1)/12*6.283);x.closePath();x.fill();}
+  x.lineWidth=3;x.strokeStyle='#c9962e';x.beginPath();x.arc(cx,ry,rr,0,7);x.stroke();x.fillStyle='#fff6d6';x.beginPath();x.arc(cx,ry,rr*.28,0,7);x.fill();
+  L.dome=c;L.dpad=pad;L.dW=R*2+pad*2;L.dH=R*1.5+pad*2;L.dby=by;L.ry=ry;}
+ function fern(x,ox,oy,len,ang,s,col){x.strokeStyle=col;x.fillStyle=col;x.lineWidth=2.4*s;const pts=[];for(let k=0;k<=24;k++){const t=k/24,a=ang+t*.9;pts.push([ox+Math.cos(ang)*len*t+Math.cos(a)*len*t*t*.3,oy+Math.sin(ang)*len*t+Math.sin(a)*len*t*t*.3]);}
+  x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.stroke();
+  for(let k=2;k<24;k++){const[p0,p1]=[pts[k],pts[k+1]];const d=Math.atan2(p1[1]-p0[1],p1[0]-p0[0]);const l=len*.16*(1-k/26);for(const sd of[-1,1]){const a=d+sd*1.1;x.beginPath();x.ellipse(p0[0]+Math.cos(a)*l/2,p0[1]+Math.sin(a)*l/2,l/2,l*.16,a,0,7);x.fill();}}}
+ function buildFront(){const[c,x]=off(W+M*2,H);
+  // terrazas en primer plano
+  x.fillStyle='#1b3a2c';x.beginPath();x.moveTo(0,H);x.lineTo(0,L.hz+20);for(let s=0;s<=12;s++){x.quadraticCurveTo((W+M*2)*(s+.5)/12,L.hz+6+rnd()*26,(W+M*2)*(s+1)/12,L.hz+18+rnd()*20);}x.lineTo(W+M*2,H);x.fill();
+  x.fillStyle='#14281f';x.beginPath();x.moveTo(0,H);x.lineTo(0,H*.9);x.bezierCurveTo((W+M*2)*.3,H*.84,(W+M*2)*.6,H*.97,W+M*2,H*.88);x.lineTo(W+M*2,H);x.fill();
+  // filas de placas solares
+  for(let k=0;k<5;k++){const px=(W+M*2)*(.04+k*.07),py=L.hz+26+k*3;x.save();x.translate(px,py);x.transform(1,0,-.5,1,0,0);const g=x.createLinearGradient(0,0,30,8);g.addColorStop(0,'#2f6f9a');g.addColorStop(1,'#9ad6ee');x.fillStyle=g;x.fillRect(0,0,34,9);x.strokeStyle='#c9962e';x.lineWidth=1;x.strokeRect(0,0,34,9);x.restore();}
+  // helechos en las esquinas
+  for(let k=0;k<7;k++)fern(x,-10+k*14,H+10,H*(.24+rnd()*.12),-Math.PI/2+.25+k*.12,1,k%2?'#1e4a33':'#2a5e40');
+  for(let k=0;k<7;k++)fern(x,W+M*2+10-k*14,H+10,H*(.22+rnd()*.12),-Math.PI/2-.25-k*.12,1,k%2?'#1e4a33':'#2a5e40');
+  L.front=c;}
+ function frame(now){const t=(now-T0)/1000;mx+=(tmx-mx)*.06;my+=(tmy-my)*.06;
+  ctx.clearRect(0,0,W,H);ctx.drawImage(L.sky,0,0,W,H);
+  // sol y rayos
+  const pul=1+Math.sin(t*1.2)*.03,sr=Math.max(W,H)*.42*pul;let g=ctx.createRadialGradient(L.sx,L.sy,0,L.sx,L.sy,sr);g.addColorStop(0,'rgba(255,250,225,1)');g.addColorStop(.08,'rgba(255,236,170,.95)');g.addColorStop(.3,'rgba(246,201,79,.35)');g.addColorStop(1,'rgba(246,201,79,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.globalCompositeOperation='lighter';ctx.translate(L.sx,L.sy);ctx.rotate(t*.025);for(let k=0;k<18;k++){ctx.rotate(Math.PI*2/18);ctx.fillStyle=`rgba(255,225,150,${k%2?.035:.06})`;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.max(W,H),-40);ctx.lineTo(Math.max(W,H),40);ctx.closePath();ctx.fill();}ctx.restore();
+  // ciudad
+  ctx.drawImage(L.city,-M+mx*8,my*3,W+M*2,H);
+  // turbinas
+  L.turb.forEach(o=>{const x=o.x-M+mx*8,y=o.y+my*3;ctx.strokeStyle='rgba(235,240,232,.85)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,L.hz+my*3);ctx.stroke();
+   for(let b=0;b<3;b++){const a=t*o.s*2+b*2.094;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a)*o.r*1.6,y+Math.sin(a)*o.r*1.6);ctx.stroke();}ctx.fillStyle='#c9962e';ctx.beginPath();ctx.arc(x,y,2.6,0,7);ctx.fill();});
+  // haces de colores que salen de la vidriera
+  const dx=L.dx+mx*14-L.dW/2,dy=L.dy+my*6-L.dby;
+  ctx.save();ctx.globalCompositeOperation='lighter';const bc=['246,201,79','79,163,108','134,208,223','238,154,58','166,217,138'];
+  bc.forEach((c,k)=>{const a=.05+.03*Math.sin(t*.8+k);const x0=L.dx+mx*14+(k-2)*L.R*.22;const y0=L.dy-L.R*.75+my*6;ctx.fillStyle=`rgba(${c},${a})`;ctx.beginPath();ctx.moveTo(x0-L.R*.08,y0);ctx.lineTo(x0+L.R*.08,y0);ctx.lineTo(x0-L.R*.9+(k-2)*L.R*.35,H);ctx.lineTo(x0-L.R*1.3+(k-2)*L.R*.35,H);ctx.closePath();ctx.fill();});ctx.restore();
+  // invernadero
+  ctx.save();ctx.shadowColor='rgba(255,220,140,.55)';ctx.shadowBlur=40;ctx.drawImage(L.dome,dx,dy,L.dW,L.dH);ctx.restore();
+  // rosetón brillante
+  const rx=dx+L.dW/2,ry=dy+L.ry;g=ctx.createRadialGradient(rx,ry,0,rx,ry,L.R*.5);g.addColorStop(0,`rgba(255,240,190,${.5+.2*Math.sin(t*2)})`);g.addColorStop(1,'rgba(255,240,190,0)');ctx.fillStyle=g;ctx.fillRect(rx-L.R*.5,ry-L.R*.5,L.R,L.R);
+  // primer plano
+  ctx.drawImage(L.front,-M+mx*22,my*8,W+M*2,H);
+  // polen y semillas luminosas
+  parts.forEach(p=>{p.y-=p.v;p.x+=Math.sin(t+p.p)*.3;if(p.y<-10){p.y=H+10;p.x=Math.random()*W;}const a=.35+.35*Math.sin(t*2+p.p);ctx.fillStyle=`rgba(${p.c},${a})`;ctx.beginPath();ctx.arc(p.x+mx*30*p.r/3,p.y,p.r,0,7);ctx.fill();});
+  // viñeta para que el texto se lea
+  g=ctx.createLinearGradient(0,0,W*.6,0);g.addColorStop(0,'rgba(22,34,42,.55)');g.addColorStop(1,'rgba(22,34,42,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W*.6,H);
+  if(running)requestAnimationFrame(frame);}
+ const start=()=>{if(!running){running=true;requestAnimationFrame(frame);}};
+ layout();if(reduce){running=false;frame(performance.now());}else{new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)start();else running=false;});}).observe(hero);start();}
+ let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{layout();if(reduce)frame(performance.now());},150);});
+ hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tmx=(e.clientX-r.left)/r.width-.5;tmy=(e.clientY-r.top)/r.height-.5;});
+ hero.addEventListener('pointerleave',()=>{tmx=0;tmy=0;});}
+
+/* ---------- comentarios alineados ---------- */
+/* rows: 'línea' o ['línea','comentario'] · la línea puede empezar por » o ~ */
+function CM(rows){const body=r=>{const c=r[0];return /^[»~]/.test(c)?c.slice(1):c;};const w=rows.filter(r=>typeof r!=='string'&&r[1]).map(r=>body(r).length);const col=Math.min(Math.max(...w,10)+3,50);return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;const pre=/^[»~]/.test(c)?c[0]:'';const b=pre?c.slice(1):c;return pre+(m?pad(b,col)+'/* '+m+' */':b);}).join('\n');}
+function HM(rows){return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;if(!m)return c;const ind=c.match(/^\s*/)[0];return ind+'<!-- '+m+' -->\n'+c;}).join('\n');}
+const HTML_HOJA=HM([['<div class="escena">','el padre: el escenario oscuro'],['  <div class="hoja">SOL</div>','el elemento que transformamos'],['</div>']]);
+
+/* ---------- 1. qué es ---------- */
+{put('#queAnat',codeBox('css',CM([['.hoja{','el elemento que vamos a transformar'],['»  transform: rotate(45deg);','propiedad: transform · función: rotate · valor: 45deg'],['}'],'',['.hoja{','varias funciones en la misma línea'],['»  transform: translateX(40px) rotate(45deg);','separadas por espacios, sin comas'],['}']],46),'CSS · anatomía de transform'));
+ const A=$$('#flowA i')[1],B=$$('#flowB i')[1];
+ pair('#queCode',HM([['<div class="fila">','contenedor flex: las cajas en fila'],['  <div class="caja">1</div>'],['  <div class="caja grande">2</div>','la caja que crece'],['  <div class="caja">3</div>'],['  <div class="caja">4</div>'],['</div>']]),
+  CM([['.fila{'],['  display: flex;','pone las cajas en fila'],['  gap: 10px;','separación entre cajas'],['}'],['.caja{'],['  width: 80px;','tamaño real de cada caja'],['  height: 80px;'],['}'],'/* Opción A: cambia el tamaño REAL (empuja) */',['.grande{'],['  width: 120px;','ocupa más sitio en la fila'],['  height: 120px;'],['}'],'/* Opción B: solo cambia cómo SE VE (no empuja) */',['».grande{'],['»  transform: scale(1.5);','×1.5 a la vista; su hueco sigue siendo 80px'],['}']]));
+ $('#flowGo').onclick=()=>{A.style.width=A.style.height='120px';B.style.transform='scale(1.5)';};
+ $('#flowBack').onclick=()=>{A.style.width=A.style.height='';B.style.transform='';};
+ $('#inl1').style.transform='rotate(-8deg)';$('#inl2').style.transform='rotate(-8deg)';
+ pair('#inlCode',HM([['<p>','un párrafo normal'],['  Texto con un <span class="giro">span</span>','span = elemento en línea'],['</p>']]),
+  CM([['.giro{'],['  transform: rotate(-8deg);','NO hace nada: un span es inline'],['}'],'',['.giro{'],['»  display: inline-block;','lo convertimos en una caja en línea'],['  transform: rotate(-8deg);','ahora sí gira'],['}']]));}
+
+/* ---------- 2. ejes ---------- */
+{const p=$('#plane'),o=$('#planeObj'),ex=$('#planeExp');let drag=false;
+ const lbl=(t,css,c)=>{const s=el('span','axl',t);s.style.cssText=css+';color:'+c;p.appendChild(s);};
+ lbl('X +','right:10px;top:calc(50% + 8px)','var(--agua)');lbl('X −','left:10px;top:calc(50% + 8px)','var(--agua)');lbl('Y + (abajo)','left:calc(50% + 10px);bottom:8px','var(--brote)');lbl('Y − (arriba)','left:calc(50% + 10px);top:8px','var(--brote)');
+ const set=(x,y)=>{o.style.transform=`translate(${x}px, ${y}px)`;
+  const dx=x===0?'no se mueve en horizontal':x>0?`<b>${x}px a la derecha</b>`:`<b>${-x}px a la izquierda</b>`;const dy=y===0?'no se mueve en vertical':y>0?`<b>${y}px hacia abajo</b>`:`<b>${-y}px hacia arriba</b>`;
+  ex.innerHTML=`<p><code>transform: translate(${x}px, ${y}px);</code></p><p style="margin-top:6px">X = ${x}: ${dx}. Y = ${y}: ${dy}.</p>`;};
+ const at=e=>{const r=p.getBoundingClientRect();set(Math.round((e.clientX-r.left-r.width/2)/10)*10,Math.round((e.clientY-r.top-r.height/2)/10)*10);};
+ p.addEventListener('pointerdown',e=>{drag=true;p.setPointerCapture(e.pointerId);at(e);});p.addEventListener('pointermove',e=>{if(drag)at(e);});p.addEventListener('pointerup',()=>drag=false);
+ set(80,-60);}
+
+/* ---------- laboratorios 2D ---------- */
+function forms(host,list,onPick){const h=$(host);const btns=list.map(f=>{const b=el('button','form',`<code>${esc(f.c)}</code><span>${f.t}</span>`);b.type='button';b.onclick=()=>{btns.forEach(x=>x.classList.remove('on'));b.classList.add('on');onPick(f);};h.appendChild(b);return b;});return btns;}
+function makeLab(host,cfg){
+ const w=el('div','lab');const g=el('div','g2');const Lc=el('div'),R=el('div');
+ const st=el('div','stage tall',`<div class="ax-x"></div><div class="ax-y"></div>${cfg.sweep?'<div class="sweep"></div>':''}<div class="ghost"></div><div class="obj ${cfg.objCls||''}"><span class="corner"></span><span class="arrow">↑</span><span class="lbl">SOL</span></div>${cfg.tag?'<span class="tag"></span>':''}`);
+ R.appendChild(st);const obj=$('.obj',st);
+ const ctl={};let codes;
+ const upd=()=>{const s=cfg.build(ctl);obj.style.transform=s.tf;exp.innerHTML='<p>'+s.say+'</p>';
+  codes.c.set(CM([['.hoja{','el elemento'],['  width: 120px;','tamaño real: no cambia'],['  height: 120px;'],['»  transform: '+s.tf+';',s.cm],SOON,['}']],40));if(cfg.after)cfg.after(ctl,st,s);};
+ if(cfg.top)cfg.top(Lc,ctl,()=>upd());
+ cfg.ranges.forEach(r=>{ctl[r.k]=rng(r.l,r.min,r.max,r.step,r.v,r.u,()=>upd());Lc.appendChild(ctl[r.k]);});
+ if(cfg.extra)cfg.extra(Lc,ctl,()=>upd());
+ const exp=el('div','exp');Lc.appendChild(exp);
+ if(cfg.presets){Lc.appendChild(el('h4',null,'Prueba estos valores'));Lc.appendChild(chips(cfg.presets.map(p=>({label:p.label,p})),t=>{if(t.p.fx)t.p.fx(ctl);Object.entries(t.p.v).forEach(([k,v])=>ctl[k].setV(v));upd();}));}
+ g.append(Lc,R);w.appendChild(g);const pr=el('div','pair');w.appendChild(pr);codes=pair(pr,HTML_HOJA,'');$(host).appendChild(w);upd();
+ w.apply=v=>{if(cfg.onApply)cfg.onApply(ctl,v);Object.entries(v).forEach(([k,x])=>ctl[k]&&ctl[k].setV(x));upd();};return w;}
+
+/* translate */
+{let unit='px',uc;
+ const lab=makeLab('#labTr',{ranges:[{k:'x',l:'X (horizontal)',min:-150,max:150,step:10,v:60,u:''},{k:'y',l:'Y (vertical)',min:-120,max:120,step:10,v:-40,u:''}],
+  top:(Lc,ctl,upd)=>{uc=chips(['px','%'],t=>{unit=t;upd();},0);Lc.append(el('h4',null,'Unidad'),uc);},
+  build:c=>{const x=c.x.get(),y=c.y.get();let tf;if(y===0&&x!==0)tf=`translateX(${x}${unit})`;else if(x===0&&y!==0)tf=`translateY(${y}${unit})`;else tf=`translate(${x}${unit}, ${y}${unit})`;
+   const px=v=>unit==='%'?Math.round(v*1.2):v;const X=px(x),Y=px(y);
+   const sx=X===0?'':(X>0?`${X}px a la derecha`:`${-X}px a la izquierda`),sy=Y===0?'':(Y>0?`${Y}px hacia abajo`:`${-Y}px hacia arriba`);
+   let say=(sx||sy)?'Se mueve <b>'+[sx,sy].filter(Boolean).join(' y ')+'</b>.':'No se mueve: está en su sitio original.';if(unit==='%')say+=` La caja mide 120px, así que ${x}% = ${X}px${y!==0?` y ${y}% = ${Y}px`:''}.`;
+   say+=' Su sitio original (línea discontinua) no se mueve.';
+   const cm=(x===0&&y===0)?'sin movimiento':[X?(X>0?'→ ':'← ')+Math.abs(X)+'px':'',Y?(Y>0?'↓ ':'↑ ')+Math.abs(Y)+'px':''].filter(Boolean).join(', ')+(unit==='%'?' (% del propio elemento)':'');return{tf,say,cm};},
+  onApply:(c,v)=>{if(v.u&&v.u!==unit)uc.pick(v.u==='px'?0:1);},
+  presets:[{label:'derecha 100px',v:{x:100,y:0},fx:()=>{if(unit!=='px')uc.pick(0);}},{label:'subir 80px',v:{x:0,y:-80},fx:()=>{if(unit!=='px')uc.pick(0);}},{label:'diagonal',v:{x:-100,y:80},fx:()=>{if(unit!=='px')uc.pick(0);}},{label:'100% de su ancho',v:{x:100,y:0},fx:()=>{if(unit!=='%')uc.pick(1);}},{label:'volver a 0',v:{x:0,y:0}}]});
+ forms('#trForms',[{c:'translate(x, y)',t:'Mueve en los dos ejes. Separa con coma.',v:{x:60,y:-40,u:'px'}},{c:'translateX(x)',t:'Solo horizontal. Positivo = derecha.',v:{x:100,y:0,u:'px'}},{c:'translateY(y)',t:'Solo vertical. Positivo = abajo.',v:{x:0,y:80,u:'px'}},{c:'translate(50%)',t:'Con un valor solo mueve en X. % = del propio elemento.',v:{x:50,y:0,u:'%'}}],f=>lab.apply(f.v));}
+
+/* rotate */
+{let rotU='deg';
+ const lab=makeLab('#labRot',{sweep:true,ranges:[{k:'a',l:'Ángulo',min:-360,max:360,step:5,v:45,u:'deg'}],
+  top:(Lc,ctl,upd)=>{const c=chips(['deg','turn','rad'],t=>{rotU=t;upd();},0);Lc.append(el('h4',null,'Escribir el ángulo en'),c);},
+  build:c=>{const a=c.a.get();const tf=rotU==='turn'?`rotate(${fmt(a/360)}turn)`:rotU==='rad'?`rotate(${fmt(a*Math.PI/180)}rad)`:`rotate(${a}deg)`;
+   const frac={0:'nada',45:'1/8 de vuelta',90:'un cuarto de vuelta',135:'3/8 de vuelta',180:'media vuelta (boca abajo)',270:'tres cuartos de vuelta',360:'una vuelta entera'}[Math.abs(a)];
+   const say=a===0?'Sin giro.':`Gira ${Math.abs(a)}deg ${a>0?'<b>como las agujas del reloj ↻</b>':'<b>al revés que las agujas del reloj ↺</b>'}${frac?' = '+frac:''}. Sigue la flecha ↑ y la bolita verde.${rotU!=='deg'?` En ${rotU} se escribe distinto, pero es el mismo giro.`:''}`;
+   const cm=a===0?'sin giro':`${Math.abs(a)}deg ${a>0?'↻ horario':'↺ antihorario'}${rotU!=='deg'?' (= '+a+'deg)':''}`;return{tf,say,cm};},
+  after:(c,st)=>{const a=c.a.get();$('.sweep',st).style.background=a>=0?`conic-gradient(rgba(246,201,79,.4) 0 ${a}deg,transparent 0)`:`conic-gradient(from ${a}deg,rgba(134,208,223,.45) 0 ${-a}deg,transparent 0)`;},
+  presets:[{label:'90deg',v:{a:90}},{label:'-90deg',v:{a:-90}},{label:'180deg',v:{a:180}},{label:'360deg',v:{a:360}},{label:'-30deg',v:{a:-30}}]});
+ forms('#rotForms',[{c:'rotate(45deg)',t:'Grados. Lo más habitual.',v:{a:45}},{c:'rotate(-45deg)',t:'Negativo: gira al revés.',v:{a:-45}},{c:'rotate(0.5turn)',t:'En vueltas: 0.5turn = 180deg.',v:{a:180}},{c:'rotate(360deg)',t:'Vuelta completa: acaba como empezó.',v:{a:360}}],f=>lab.apply(f.v));}
+
+/* scale */
+{let link=true,mc;
+ const lab=makeLab('#labSc',{tag:true,ranges:[{k:'x',l:'X (ancho)',min:-2,max:2.5,step:.1,v:1.5,u:''},{k:'y',l:'Y (alto)',min:-2,max:2.5,step:.1,v:1.5,u:''}],
+  top:(Lc,ctl,upd)=>{mc=chips(['Proporcional (X = Y)','X e Y por separado'],(t,k)=>{link=k===0;if(link)ctl.y.setV(ctl.x.get());upd();},0);Lc.append(el('h4',null,'Modo'),mc);},
+  extra:(Lc,ctl,upd)=>{ctl.x.inp.addEventListener('input',()=>{if(link){ctl.y.setV(ctl.x.get());upd();}});ctl.y.inp.addEventListener('input',()=>{if(link){ctl.x.setV(ctl.y.get());upd();}});},
+  build:c=>{const x=+fmt(c.x.get()),y=+fmt(c.y.get());const tf=x===y?`scale(${x})`:(y===1?`scaleX(${x})`:x===1?`scaleY(${y})`:`scale(${x}, ${y})`);
+   const d=(v,n)=>v===1?`${n} igual`:v===0?`${n} × 0 (aplastado)`:`${n} ×${Math.abs(v)}${Math.abs(v)>1?' (más grande)':Math.abs(v)<1?' (más pequeño)':''}${v<0?' <b>y en espejo</b>':''}`;
+   const say=`${d(x,'ancho')}, ${d(y,'alto')}. Se ve de ${Math.round(Math.abs(120*x))} × ${Math.round(Math.abs(120*y))}px, pero sigue ocupando 120 × 120px. Fíjate en que la flecha, el texto y el borde también se escalan.`;
+   const cm=`se ve ${Math.round(Math.abs(120*x))}×${Math.round(Math.abs(120*y))}px${x<0||y<0?', en espejo':''}`;return{tf,say,cm};},
+  after:(c,st)=>{$('.tag',st).textContent=`se ve: ${Math.round(Math.abs(120*c.x.get()))} × ${Math.round(Math.abs(120*c.y.get()))}px`;},
+  onApply:(c,v)=>{if(v.x!==v.y&&link)mc.pick(1);if(v.x===v.y&&!link)mc.pick(0);},
+  presets:[{label:'el doble (2)',v:{x:2,y:2},fx:()=>{if(!link)mc.pick(0);}},{label:'la mitad (0.5)',v:{x:.5,y:.5},fx:()=>{if(!link)mc.pick(0);}},{label:'desaparece (0)',v:{x:0,y:0},fx:()=>{if(!link)mc.pick(0);}},{label:'espejo (-1, 1)',v:{x:-1,y:1},fx:()=>{if(link)mc.pick(1);}}]});
+ forms('#scForms',[{c:'scale(1.5)',t:'Un valor: ancho y alto a la vez.',v:{x:1.5,y:1.5}},{c:'scale(2, 0.5)',t:'Dos valores: ancho, alto (con coma).',v:{x:2,y:.5}},{c:'scaleX(-1)',t:'Solo el ancho. -1 = espejo horizontal.',v:{x:-1,y:1}},{c:'scaleY(0.5)',t:'Solo el alto: la mitad.',v:{x:1,y:.5}}],f=>lab.apply(f.v));}
+
+/* skew */
+{const lab=makeLab('#labSk',{objCls:'verde',ranges:[{k:'x',l:'skewX',min:-60,max:60,step:5,v:20,u:'deg'},{k:'y',l:'skewY',min:-60,max:60,step:5,v:0,u:'deg'}],
+  build:c=>{const x=c.x.get(),y=c.y.get();const tf=y===0?`skewX(${x}deg)`:x===0?`skewY(${y}deg)`:`skew(${x}deg, ${y}deg)`;
+   const s=[];if(x)s.push(`skewX(${x}deg): los lados <b>verticales</b> se tumban; arriba y abajo se desplazan en horizontal en sentidos opuestos`);if(y)s.push(`skewY(${y}deg): los lados <b>horizontales</b> se tumban; izquierda y derecha se desplazan en vertical`);
+   return{tf,say:s.length?s.join('. ')+'. Los ángulos ya no miden 90°.':'Sin inclinación: sigue siendo un cuadrado.',cm:s.length?'inclina '+(x?'los lados verticales ':'')+(x&&y?'y ':'')+(y?'los horizontales':''):'sin inclinación'};},
+  presets:[{label:'skewX(30deg)',v:{x:30,y:0}},{label:'skewX(-30deg)',v:{x:-30,y:0}},{label:'skewY(20deg)',v:{x:0,y:20}},{label:'rombo',v:{x:20,y:20}},{label:'casi 90',v:{x:60,y:0}}]});
+ forms('#skForms',[{c:'skewX(20deg)',t:'Inclina en horizontal. El más usado.',v:{x:20,y:0}},{c:'skewY(20deg)',t:'Inclina en vertical.',v:{x:0,y:20}},{c:'skew(20deg, 10deg)',t:'Los dos a la vez: X, Y.',v:{x:20,y:10}},{c:'skew(-15deg)',t:'Un valor = solo X.',v:{x:-15,y:0}}],f=>lab.apply(f.v));}
+
+/* ---------- 7. transform-origin ---------- */
+{const P=[['left top',0,0],['center top',.5,0],['right top',1,0],['left center',0,.5],['center',.5,.5],['right center',1,.5],['left bottom',0,1],['center bottom',.5,1],['right bottom',1,1]];
+ const F=['rotate(45deg)','rotate(-90deg)','scale(1.5)','scale(0.5)','skewX(30deg)'];let po=4,fn=0,applied=false;
+ const padE=$('#orPad'),obj=$('#orObj'),dot=$('#orDot'),ex=$('#orExp');const cd=pair('#orCode',HTML_HOJA,'');
+ P.forEach((p,k)=>{const b=el('button');b.type='button';b.title=p[0];b.setAttribute('aria-label',p[0]);b.onclick=()=>{po=k;draw();};padE.appendChild(b);});
+ const fc=chips(F,(t,k)=>{fn=k;applied=true;draw();},0);$('#orFn').appendChild(fc);
+ function draw(){const p=P[po];$$('button',padE).forEach((b,k)=>b.classList.toggle('on',k===po));obj.style.transformOrigin=p[0];
+  dot.style.left=`calc(50% + ${(p[1]-.5)*120}px)`;dot.style.top=`calc(50% + ${(p[2]-.5)*120}px)`;obj.style.transform=applied?F[fn]:'none';
+  const verb=F[fn].startsWith('rotate')?'gira':F[fn].startsWith('scale')?'crece o encoge':'se inclina';
+  ex.innerHTML=`<p><code>transform-origin: ${p[0]};</code> = <code>${p[1]*100}% ${p[2]*100}%</code></p><p style="margin-top:6px">El punto coral <b>no se mueve</b>: todo ${verb} alrededor de él.</p>`;
+  cd.c.set(CM([['.hoja{'],['  width: 120px;'],['  height: 120px;'],['»  transform-origin: '+p[0]+';','la bisagra: '+p[1]*100+'% '+p[2]*100+'%'],['  transform: '+F[fn]+';',verb+' desde ese punto'],SOON,['}']],40));}
+ $('#orPlay').onclick=()=>{applied=true;draw();};$('#orReset').onclick=()=>{applied=false;draw();};draw();}
+
+/* ---------- 8. combinar ---------- */
+{put('#cbCode1',codeBox('css',CM(['/* MAL: la segunda línea borra la primera */',['.hoja{'],['  transform: translateX(100px);','esta línea se pierde…'],['  transform: rotate(45deg);','…porque solo cuenta la última'],['}'],'','/* BIEN: todas las funciones en la misma línea */',['.hoja{'],['»  transform: translateX(100px) rotate(45deg) scale(1.2);','1º mueve, 2º gira, 3º escala'],['}']],58),'CSS · cómo se combinan'));
+ const host=$('#order');
+ const mk=(title,f1,f2,cap)=>{const d=el('div');d.innerHTML=`<h4>${title}</h4><div class="stage"><div class="ax-x"></div><div class="ax-y"></div><div class="ghost"></div><div class="obj"><span class="lax"><b class="lx">x</b><b class="ly">y</b></span></div></div><div class="step-btns"></div><p class="cap"></p>`;
+  const o=$('.obj',d),b=$('.step-btns',d),c=$('.cap',d);d.appendChild(codeBox('css',CM([['.hoja{'],['  transform: '+f1+' '+f2+';',cap[2]],['}']],46),'CSS'));
+  const steps=[['Inicio','none',`Los ejes propios del elemento: <b style="color:#2c8fa6">x</b> hacia la derecha y <b style="color:#d0603c">y</b> hacia abajo.`],['1 · '+f1,f1,cap[0]],['2 · + '+f2,f1+' '+f2,cap[1]]];
+  steps.forEach((s,k)=>{const bt=el('button','btn '+(k?'oro':'claro')+' sm',esc(s[0]));bt.type='button';bt.onclick=()=>{o.style.transform=s[1];c.innerHTML=s[2];};b.appendChild(bt);});o.style.transform='none';c.innerHTML=steps[0][2];return d;};
+ host.append(
+  mk('A · primero mover, luego girar','translateX(90px)','rotate(45deg)',['Se mueve 90px a la derecha. Sus ejes viajan con él.','Gira <b>en su nuevo sitio</b>. Resultado: a la derecha y girado. Lo normal.','mueve y después gira allí']),
+  mk('B · primero girar, luego mover','rotate(45deg)','translateX(90px)',['Gira 45deg. <b>Sus ejes también giran</b>: ahora su x apunta en diagonal.','translateX lo mueve por <b>su x girada</b>: sale en diagonal hacia abajo.','gira y después avanza en diagonal']));}
+
+/* ---------- 9. propiedades individuales ---------- */
+{const o=$('#indObj'),C=$('#indCtl');const R={};const cd=pair('#indCode',HTML_HOJA,'');
+ const upd=()=>{const tx=R.tx.get(),ty=R.ty.get(),r=R.r.get(),s=R.s.get();o.style.translate=`${tx}px ${ty}px`;o.style.rotate=r+'deg';o.style.scale=String(s);o.style.transform='none';
+  setRule('ind',`#indObj:hover{scale:${fmt(s*1.25)}!important}`);
+  cd.c.set(CM([['.hoja{'],['»  translate: '+tx+'px '+ty+'px;','mover: X Y, sin paréntesis ni comas'],['»  rotate: '+r+'deg;','girar'],['»  scale: '+fmt(s)+';','escalar'],['~  transition: scale .3s;','suaviza (próximo bloque)'],['}'],['.hoja:hover{','al pasar el ratón por la pieza…'],['»  scale: '+fmt(s*1.25)+';','…solo cambia la escala; el giro y el movimiento se quedan'],['}']],40));};
+ R.tx=rng('translate X',-120,120,10,40,'px',upd);R.ty=rng('translate Y',-100,100,10,-20,'px',upd);R.r=rng('rotate',-180,180,5,-15,'deg',upd);R.s=rng('scale',.3,1.8,.1,1,'',upd);
+ C.append(R.tx,R.ty,R.r,R.s,el('p',null,'<span style="font-size:14.5px">Pasa el ratón por la pieza: solo cambia la escala.</span>'));o.style.transition='scale .3s';upd();}
+
+/* ---------- 10. estados ---------- */
+{const S=[
+ {t:':hover · al pasar el ratón',h:'<button class="st-demo st1">Pasa por aquí</button>',html:HM([['<button class="boton">','un botón normal'],['  Pasa por aquí'],['</button>']]),css:CM([['.boton{'],['  transform: translateY(0);','posición de partida'],['~  transition: transform .3s;','próximo bloque'],['}'],['.boton:hover{','con el ratón encima…'],['»  transform: translateY(-8px) scale(1.08);','sube 8px y crece un 8%'],['}']],44),rule:'.st1{padding:14px 26px;border:none;border-radius:999px;font:600 15px var(--body);cursor:pointer;background:linear-gradient(180deg,#ffe08a,var(--sol));box-shadow:0 10px 20px -10px rgba(201,150,46,.9);transition:transform .3s}.st1:hover{transform:translateY(-8px) scale(1.08)}',p:'Sube y crece un poco: invita a hacer clic.'},
+ {t:':focus · al entrar con clic o Tab',h:'<input class="st-demo st2" placeholder="Haz clic aquí" aria-label="Campo de prueba">',html:HM([['<input class="campo">','un campo de texto']]),css:CM([['.campo{'],['~  transition: transform .3s;','próximo bloque'],['}'],['.campo:focus{','cuando estás escribiendo en él…'],['»  transform: scale(1.1) rotate(-2deg);','crece y se inclina un poco'],['  outline: 3px solid gold;','y se marca el borde'],['}']],42),rule:'.st2{width:180px;padding:12px 14px;border-radius:14px;border:1.5px solid #c3d2c4;font:500 15px var(--body);transition:transform .3s}.st2:focus{transform:scale(1.1) rotate(-2deg);outline:3px solid var(--sol)}',p:'El campo activo destaca: sabes dónde escribes.'},
+ {t:':active · mientras mantienes pulsado',h:'<button class="st-demo st3">Mantén pulsado</button>',html:HM([['<button class="boton">','un botón normal'],['  Mantén pulsado'],['</button>']]),css:CM([['.boton{'],['~  transition: transform .1s;','próximo bloque'],['}'],['.boton:active{','mientras está pulsado…'],['»  transform: scale(0.9);','se encoge: parece que se hunde'],['}']],36),rule:'.st3{padding:14px 26px;border:none;border-radius:999px;font:600 15px var(--body);cursor:pointer;background:linear-gradient(180deg,var(--hoja),var(--musgo));color:#fff;transition:transform .1s}.st3:active{transform:scale(.9)}',p:'Se hunde al pulsar, como un botón físico.'}];
+ S.forEach((s,k)=>{setRule('st'+k,s.rule);const c=el('div','st-card',`<h4>${s.t}</h4><div class="st-zone">${s.h}</div><p style="margin:0;font-size:15px">${s.p}</p>`);c.append(codeBox('html',s.html,'HTML'),codeBox('css',s.css,'CSS'));$('#states').appendChild(c);});}
+
+/* ---------- 11. perspective ---------- */
+{const view=$('#pView'),obj=$('#pObj'),cv=$('#pSide'),c=cv.getContext('2d'),ex=$('#pExp');const R={};const cd=pair('#pCode','','');
+ const H0=130;
+ function side(d,z){const W=760,Hc=600,yc=Hc/2;c.clearRect(0,0,W,Hc);
+  c.fillStyle='#fbfbf6';c.fillRect(0,0,W,Hc);
+  const dd=d||1500,k=(W-90)/(dd+700),xe=45,xs=xe+dd*k,xz=xs-z*k;
+  // eje Z
+  c.strokeStyle='#b9c3c4';c.setLineDash([8,8]);c.lineWidth=2;c.beginPath();c.moveTo(20,yc);c.lineTo(W-10,yc);c.stroke();c.setLineDash([]);
+  c.font='600 22px Sora, sans-serif';c.fillStyle='#4c5c58';c.textAlign='left';c.fillText('Z + (hacia ti)  ←',24,Hc-24);c.textAlign='right';c.fillText('→  Z − (al fondo)',W-16,Hc-24);
+  // pantalla
+  c.strokeStyle='#4a9bc6';c.lineWidth=5;c.beginPath();c.moveTo(xs,60);c.lineTo(xs,Hc-80);c.stroke();c.fillStyle='#2c6f93';c.textAlign='center';c.fillText('pantalla (z = 0)',xs,44);
+  if(d){
+   // ojo
+   c.fillStyle='#1c2528';c.beginPath();c.ellipse(xe,yc,22,14,0,0,7);c.fill();c.fillStyle='#f6c94f';c.beginPath();c.arc(xe+6,yc,7,0,7);c.fill();c.fillStyle='#1c2528';c.fillText('ojo',xe+4,yc-28);
+   // distancia
+   c.strokeStyle='#c9962e';c.lineWidth=2;c.beginPath();c.moveTo(xe,yc+70);c.lineTo(xs,yc+70);c.stroke();c.fillStyle='#a87a1c';c.fillText('perspective = '+d+'px',(xe+xs)/2,yc+98);
+   if(z<d){const h=H0*k*2.2/2;const f=d/(d-z),hp=h*f;
+    // rayos
+    c.strokeStyle='rgba(201,150,46,.55)';c.lineWidth=2;[-1,1].forEach(s=>{c.beginPath();c.moveTo(xe,yc);c.lineTo(xs,yc+s*hp);c.stroke();});
+    c.beginPath();c.moveTo(xe,yc);c.lineTo(xz,yc-h);c.moveTo(xe,yc);c.lineTo(xz,yc+h);c.stroke();
+    // proyección en la pantalla
+    c.strokeStyle='#ee9a3a';c.lineWidth=9;c.lineCap='round';c.beginPath();c.moveTo(xs,yc-hp);c.lineTo(xs,yc+hp);c.stroke();
+    // elemento
+    c.strokeStyle='#2e7d55';c.lineWidth=12;c.beginPath();c.moveTo(xz,yc-h);c.lineTo(xz,yc+h);c.stroke();c.lineCap='butt';
+    {const lx=Math.min(Math.max(xz,130),W-130),ly=yc-Math.max(h,hp)-22,tw=c.measureText('elemento (z = '+z+'px)').width;c.fillStyle='rgba(251,251,246,.95)';c.fillRect(lx-tw/2-8,ly-22,tw+16,30);c.fillStyle='#1f5a3e';c.fillText('elemento (z = '+z+'px)',lx,ly);}
+    c.fillStyle='#a2561a';c.fillText('se ve ×'+fmt(Math.round(f*100)/100),xs,Hc-62);}
+   else{c.fillStyle='#a2561a';c.fillText('el elemento queda detrás del ojo: no se dibuja',W/2,yc-140);}
+  } else {const h=H0*.9;c.strokeStyle='#2e7d55';c.lineWidth=12;c.beginPath();c.moveTo(xz,yc-h);c.lineTo(xz,yc+h);c.stroke();c.fillStyle='#a2561a';c.fillText('sin perspective: no hay ojo; todo se ve a tamaño real',W/2,80);}}
+ function upd(){const d=R.d.get(),z=R.z.get();view.style.perspective=d?d+'px':'none';obj.style.transform=`translateZ(${z}px)`;side(d,z);
+  const f=d?d/(d-z):1;
+  ex.innerHTML=d?(z<d?`<p>Tamaño aparente = ${d} ÷ (${d} − ${z<0?'('+z+')':z}) = <b>${fmt(Math.round(f*1000)/1000)}</b> → el cristal de 130px se ve de <b>${Math.round(130*f)}px</b>. ${z>0?'Está más cerca de ti que la pantalla.':z<0?'Está detrás de la pantalla, más lejos.':'Está justo en la pantalla: tamaño real.'}</p>`:`<p>Z (${z}px) es mayor o igual que perspective (${d}px): el elemento estaría <b>detrás de tu ojo</b> y el navegador no lo dibuja.</p>`):`<p><b>Sin perspective</b>: translateZ no cambia nada, porque no hay ojo que vea la distancia.</p>`;
+  cd.h.set(HM([['<div class="escena">','el padre: aquí va la perspectiva'],['  <div class="cristal">Z</div>','el elemento que se acerca o se aleja'],['</div>']]));
+  cd.c.set(CM([['.escena{'],['»  perspective: '+(d?d+'px':'none')+';',d?'tu ojo está a '+d+'px de la pantalla':'sin ojo: todo plano'],['}'],['.cristal{'],['  width: 130px;'],['  height: 130px;'],['»  transform: translateZ('+z+'px);',z>0?z+'px hacia ti':z<0?Math.abs(z)+'px hacia el fondo':'en la pantalla'],['}']],40));}
+ R.d=rng('perspective',0,1500,50,500,'px',upd);R.z=rng('translateZ',-600,400,20,100,'px',upd);
+ const ch=chips([{label:'cerca del ojo (200px)',v:{d:200,z:100}},{label:'lejos (1500px)',v:{d:1500,z:100}},{label:'al fondo (Z −400)',v:{d:500,z:-400}},{label:'sin perspective',v:{d:0,z:100}}],t=>{Object.entries(t.v).forEach(([k,v])=>R[k].setV(v));upd();});
+ $('#pCtl').append(R.d,R.z,ch);upd();
+
+ /* perspective-origin */
+ const pv=$('#poView'),dot=$('#poDot');const PO=[['center','50%','50%'],['left','0%','50%'],['right','100%','50%'],['top','50%','0%'],['bottom','50%','100%'],['left top','0%','0%'],['right bottom','100%','100%']];
+ const pc=pair('#poCode',HM([['<div class="escena">','el padre con la perspectiva'],['  <div class="suelo"></div>','un suelo tumbado'],['</div>']]),'');
+ const sp=k=>{const p=PO[k];pv.style.perspectiveOrigin=p[0];dot.style.left=p[1];dot.style.top=p[2];
+  pc.c.set(CM([['.escena{'],['  perspective: 500px;','distancia del ojo'],['»  perspective-origin: '+p[0]+';','dónde está el ojo ('+p[1]+' '+p[2]+')'],['}'],['.suelo{'],['  width: 200px;'],['  height: 200px;'],['  transform: rotateX(60deg);','tumbado como un suelo'],['}']],40));};
+ $('#poChips').appendChild(chips(PO.map(p=>p[0]),(t,k)=>sp(k),0));sp(0);
+
+ /* propiedad frente a función */
+ const mk=(host,fn)=>{for(let k=0;k<3;k++){const o=el('div','obj',`<span class="lbl">${k+1}</span>`);o.style.cssText=`position:relative;left:auto;top:auto;margin:0;width:84px;height:116px;transform:${fn?'perspective(300px) ':''}rotateY(50deg)`;$(host).appendChild(o);}};
+ mk('#rowA',false);mk('#rowB',true);
+ pair('#rowCode',HM([['<div class="fila">','el padre'],['  <div class="carta">1</div>'],['  <div class="carta">2</div>'],['  <div class="carta">3</div>'],['</div>']]),
+  CM(['/* A · propiedad en el padre: un solo ojo para todos */',['.fila{'],['»  perspective: 300px;','el ojo mira al centro de la fila'],['}'],['.fila .carta{'],['  transform: rotateY(50deg);','cada carta se ve distinta según su sitio'],['}'],'','/* B · función en cada hijo: un ojo para cada uno */',['.carta{'],['»  transform: perspective(300px) rotateY(50deg);','perspective() siempre la primera'],['}']],48));}
+
+/* ---------- 12. 3D ---------- */
+{const c3=$('#c3'),p3=$('#p3');const R={};const cd=pair('#lab3dCode',HM([['<div class="escena">','el padre: aporta la perspectiva'],['  <div class="hoja">3D</div>','el elemento que gira en 3D'],['</div>']]),'');
+ const upd=()=>{const x=R.x.get(),y=R.y.get(),z=R.z.get(),tz=R.tz.get(),p=R.p.get();
+  const parts=[],cm=[];if(x){parts.push(`rotateX(${x}deg)`);cm.push('persiana '+x+'deg');}if(y){parts.push(`rotateY(${y}deg)`);cm.push('puerta '+y+'deg');}if(z){parts.push(`rotateZ(${z}deg)`);cm.push('plano '+z+'deg');}if(tz){parts.push(`translateZ(${tz}px)`);cm.push(tz>0?'acerca '+tz+'px':'aleja '+(-tz)+'px');}
+  const tf=parts.join(' ')||'none';c3.style.transform=tf;p3.style.perspective=p?p+'px':'none';
+  cd.c.set(CM([['.escena{'],['»  perspective: '+(p?p+'px':'none')+';',p?'distancia del ojo':'sin perspectiva: se ve plano'],['}'],['.hoja{'],['  width: 160px;'],['  height: 160px;'],['»  transform: '+tf+';',cm.join(', ')||'sin transformación'],['}']],44));};
+ R.x=rng('rotateX',-180,180,5,0,'deg',upd);R.y=rng('rotateY',-180,180,5,40,'deg',upd);R.z=rng('rotateZ',-180,180,5,0,'deg',upd);R.tz=rng('translateZ',-200,150,10,0,'px',upd);R.p=rng('perspective',0,1500,50,600,'px',upd);
+ const host=$('#lab3dCtl');host.append(R.x,R.y,R.z,R.tz,R.p);
+ host.appendChild(chips([{label:'persiana',v:{x:60,y:0,z:0,tz:0}},{label:'puerta',v:{x:0,y:-60,z:0,tz:0}},{label:'de espaldas',v:{x:0,y:180,z:0,tz:0}},{label:'acercar',v:{x:0,y:0,z:0,tz:120}},{label:'alejar',v:{x:0,y:0,z:0,tz:-200}},{label:'perspective 200px',v:{p:200,y:50}},{label:'sin perspective',v:{p:0,y:50}}],t=>{Object.entries(t.v).forEach(([k,v])=>R[k].setV(v));upd();}));
+ upd();
+
+ /* preserve-3d */
+ const nest=$('#nest');const nc=pair('#nestCode',HM([['<div class="padre">','el panel azul'],['  <div class="hijo">hijo</div>','el cristal dorado'],['</div>']]),'');
+ const sn=v=>{nest.style.transformStyle=v;nc.c.set(CM([['.padre{'],['  transform: rotateY(55deg);','el padre gira como una puerta'],['»  transform-style: '+v+';',v==='flat'?'aplana a sus hijos (por defecto)':'los hijos conservan su 3D'],['}'],['.hijo{'],['  transform: rotateX(70deg) translateZ(30px);','el hijo se tumba y sale hacia fuera'],['}']],46));};
+ $('#nestChips').appendChild(chips(['flat','preserve-3d'],t=>sn(t),0));sn('flat');
+
+ /* backface-visibility */
+ const bf=$('#bfv'),bfd=$('div',bf);const bc=pair('#bfvCode',HM([['<div class="cristal">Hola</div>','un elemento con texto']]),'');let vis='visible';
+ const sb=()=>{const a=BR.get();bf.style.transform=`rotateY(${a}deg)`;bfd.style.backfaceVisibility=vis;bfd.style.webkitBackfaceVisibility=vis;
+  bc.c.set(CM([['.cristal{'],['  transform: rotateY('+a+'deg);',a>90&&a<270?'está de espaldas':'está de frente'],['»  backface-visibility: '+vis+';',vis==='hidden'?'la espalda no se dibuja':'la espalda se ve (por defecto)'],['}']],40));};
+ const BR=rng('rotateY',0,180,5,150,'deg',sb);$('#bfvCtl').append(BR,chips(['visible','hidden'],t=>{vis=t;sb();},0));
+ $('#bfv').parentNode.style.perspective='700px';sb();
+
+ /* tarjeta */
+ const flip=$('#flip');flip.onclick=()=>flip.classList.toggle('on');
+ pair('#flipCode',HM([['<div class="tarjeta">','1. el padre: aporta la perspectiva'],['  <div class="tarjeta-in">','2. lo que gira (lleva las dos caras)'],['    <div class="cara delante">','3a. cara visible al principio'],['      Pasa el ratón'],['    </div>'],['    <div class="cara atras">','3b. cara que empieza de espaldas'],['      ¡Esta es la cara de atrás!'],['    </div>'],['  </div>'],['</div>']],40),
+  CM([['.tarjeta{'],['  width: 220px;'],['  height: 280px;'],['»  perspective: 900px;','1. distancia del ojo, en el PADRE'],['}'],['.tarjeta-in{'],['  display: grid;','para apilar las caras'],['  height: 100%;','ocupa toda la tarjeta'],['»  transform-style: preserve-3d;','2. las caras viven en 3D'],['~  transition: transform .9s;','suaviza el giro (próximo bloque)'],['}'],['.cara{'],['  grid-area: 1 / 1;','las dos caras en la misma celda'],['  display: flex;'],['  justify-content: center;','texto centrado'],['  align-items: center;'],['  border-radius: 24px;'],['»  backface-visibility: hidden;','3. la espalda no se ve'],['}'],['.delante{ background: seagreen; color: white; }'],['.atras{'],['  background: gold;'],['»  transform: rotateY(180deg);','empieza de espaldas'],['}'],['.tarjeta:hover .tarjeta-in{','al pasar el ratón por la tarjeta…'],['»  transform: rotateY(180deg);','…gira media vuelta'],['}']],40));
+
+ /* cubo */
+ const cube=$('#cube'),cc=$('#cubeCtl');let auto=null;
+ const cu=()=>{cube.style.transform=`rotateX(${CX.get()}deg) rotateY(${CY.get()}deg)`;};
+ const CX=rng('rotateX',-180,180,5,-20,'deg',cu),CY=rng('rotateY',-180,180,5,30,'deg',cu);cc.append(CX,CY);
+ const ab=el('button','btn oro sm','Girar solo');ab.type='button';ab.style.marginTop='10px';cc.appendChild(ab);
+ ab.onclick=()=>{if(auto){clearInterval(auto);auto=null;ab.textContent='Girar solo';return;}ab.textContent='Parar';auto=setInterval(()=>{let y=CY.get()+5;if(y>180)y=-175;CY.setV(y);let x=CX.get()+2;if(x>180)x=-178;CX.setV(x);cu();},60);};
+ cu();
+ pair('#cubeCode',HM([['<div class="escena">','el padre con perspectiva'],['  <div class="cubo">','lo que gira entero'],['    <div class="cara c1">delante</div>'],['    <div class="cara c2">detrás</div>'],['    <div class="cara c3">derecha</div>'],['    <div class="cara c4">izquierda</div>'],['    <div class="cara c5">arriba</div>'],['    <div class="cara c6">abajo</div>'],['  </div>'],['</div>']],40),
+  CM([['.escena{'],['  perspective: 800px;','distancia del ojo'],['}'],['.cubo{'],['  display: grid;','para apilar las 6 caras'],['  width: 140px;'],['  height: 140px;'],['»  transform-style: preserve-3d;','las caras conservan su 3D'],['  transform: rotateX(-20deg) rotateY(30deg);','lo vemos un poco desde arriba'],['}'],['.cara{'],['  grid-area: 1 / 1;','las 6 en la misma celda'],['  opacity: .9;','un poco transparentes, como cristal'],['}'],'/* cada cara: primero GIRA hacia su lado, luego SE EMPUJA 70px (la mitad del cubo) */',['.c1{ transform: translateZ(70px); }','delante: solo empujar'],['.c2{ transform: rotateY(180deg) translateZ(70px); }','detrás: media vuelta'],['.c3{ transform: rotateY(90deg) translateZ(70px); }','derecha'],['.c4{ transform: rotateY(-90deg) translateZ(70px); }','izquierda'],['.c5{ transform: rotateX(90deg) translateZ(70px); }','arriba'],['.c6{ transform: rotateX(-90deg) translateZ(70px); }','abajo']],54));}
+
+/* ---------- 13. matrix ---------- */
+{const cv=$('#mxC'),cx=cv.getContext('2d'),S=640,K=2;const R={},N={};let mode=0;const box=codeBox('css','','CSS · lo que escribes y lo que guarda el navegador');put('#mxCode',box);
+ const tfStr=()=>{if(mode===1)return`matrix(${['a','b','c','d','e','f'].map(k=>fmt(+N[k].value||0)).join(', ')})`;const p=[];if(R.tx.get()||R.ty.get())p.push(`translate(${R.tx.get()}px, ${R.ty.get()}px)`);if(R.r.get())p.push(`rotate(${R.r.get()}deg)`);if(R.s.get()!==1)p.push(`scale(${fmt(R.s.get())})`);if(R.k.get())p.push(`skewX(${R.k.get()}deg)`);return p.join(' ')||'none';};
+ function arrow(x1,y1,x2,y2,col){cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=6;cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x2,y2);cx.stroke();const a=Math.atan2(y2-y1,x2-x1);cx.beginPath();cx.moveTo(x2,y2);cx.lineTo(x2-22*Math.cos(a-.4),y2-22*Math.sin(a-.4));cx.lineTo(x2-22*Math.cos(a+.4),y2-22*Math.sin(a+.4));cx.closePath();cx.fill();}
+ function draw(){const tf=tfStr();let m;try{m=new DOMMatrix(tf==='none'?undefined:tf);}catch(e){m=new DOMMatrix();}
+  cx.clearRect(0,0,S,S);cx.fillStyle='#162024';cx.fillRect(0,0,S,S);cx.save();cx.translate(S/2,S/2);
+  cx.strokeStyle='rgba(201,150,46,.16)';cx.lineWidth=2;for(let g=-320;g<=320;g+=40){cx.beginPath();cx.moveTo(g,-320);cx.lineTo(g,320);cx.stroke();cx.beginPath();cx.moveTo(-320,g);cx.lineTo(320,g);cx.stroke();}
+  cx.setLineDash([12,10]);cx.strokeStyle='rgba(255,255,255,.55)';cx.lineWidth=3;cx.strokeRect(-60*K,-60*K,120*K,120*K);cx.setLineDash([]);
+  cx.save();cx.setTransform(m.a,m.b,m.c,m.d,S/2+m.e*K,S/2+m.f*K);
+  const gr=cx.createLinearGradient(-60*K,-60*K,60*K,60*K);gr.addColorStop(0,'#fde7a6');gr.addColorStop(.5,'#f6c94f');gr.addColorStop(1,'#ee9a3a');cx.fillStyle=gr;cx.fillRect(-60*K,-60*K,120*K,120*K);
+  cx.strokeStyle='#1c2528';cx.lineWidth=6;cx.strokeRect(-60*K,-60*K,120*K,120*K);cx.lineWidth=3;cx.beginPath();cx.moveTo(0,-60*K);cx.lineTo(0,60*K);cx.moveTo(-60*K,0);cx.lineTo(60*K,0);cx.stroke();
+  cx.fillStyle='#2e7d55';cx.beginPath();cx.arc(-44*K,-44*K,9*K,0,7);cx.fill();cx.font=`700 ${44*K}px Sora, sans-serif`;cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle='#1c2528';cx.fillText('F',-28*K,-24*K);cx.restore();
+  const ox=m.e*K,oy=m.f*K,L=60*K;arrow(ox,oy,ox+m.a*L,oy+m.b*L,'#4a9bc6');arrow(ox,oy,ox+m.c*L,oy+m.d*L,'#ee9a3a');
+  // punto (60, 60)
+  const px=(m.a*60+m.c*60+m.e)*K,py=(m.b*60+m.d*60+m.f)*K;cx.fillStyle='rgba(255,255,255,.5)';cx.beginPath();cx.arc(60*K,60*K,8,0,7);cx.fill();cx.setLineDash([6,6]);cx.strokeStyle='rgba(255,122,89,.8)';cx.lineWidth=2;cx.beginPath();cx.moveTo(60*K,60*K);cx.lineTo(px,py);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle='#ff7a59';cx.beginPath();cx.arc(px,py,11,0,7);cx.fill();cx.strokeStyle='#fff';cx.lineWidth=3;cx.stroke();cx.restore();
+  const v=[m.a,m.b,m.c,m.d,m.e,m.f].map(fmt);
+  $('#mxGrid').innerHTML=[['a',v[0],'ma','escala X'],['c',v[2],'mb','inclina'],['e',v[4],'mt','mueve X'],['b',v[1],'mb','inclina'],['d',v[3],'ma','escala Y'],['f',v[5],'mt','mueve Y'],['',0,'mz',''],['',0,'mz',''],['',1,'mz','']].map(q=>`<div class="${q[2]}"><small>${q[0]}</small><b>${q[1]}</b><small>${q[3]}</small></div>`).join('');
+  const X=+v[0]*60+ +v[2]*60+ +v[4],Y=+v[1]*60+ +v[3]*60+ +v[5];
+  $('#mxCalc').innerHTML=`x' = <span class="ma">${v[0]}</span>·60 + <span class="mb">${v[2]}</span>·60 + <span class="mt">${v[4]}</span> = <em>${fmt(X)}</em><br>y' = <span class="mb">${v[1]}</span>·60 + <span class="ma">${v[3]}</span>·60 + <span class="mt">${v[5]}</span> = <em>${fmt(Y)}</em>`;
+  box.set(CM(['/* lo que tú escribes */',['.hoja{ transform: '+tf+'; }',mode===1?'los 6 números a mano':'funciones normales'],'','/* lo que calcula el navegador (F12 → Computed) */',['».hoja{ transform: matrix('+v.join(', ')+'); }','a, b, c, d, e, f']],56));}
+ R.tx=rng('translateX',-100,100,10,0,'px',draw);R.ty=rng('translateY',-100,100,10,0,'px',draw);R.r=rng('rotate',-180,180,15,0,'deg',draw);R.s=rng('scale',-1.5,2,.25,1,'',draw);R.k=rng('skewX',-45,45,5,0,'deg',draw);
+ const fbox=el('div');fbox.append(R.tx,R.ty,R.r,R.s,R.k,chips([{label:'nada',v:{tx:0,ty:0,r:0,s:1,k:0}},{label:'solo mover',v:{tx:50,ty:20,r:0,s:1,k:0}},{label:'solo escalar',v:{tx:0,ty:0,r:0,s:2,k:0}},{label:'girar 90deg',v:{tx:0,ty:0,r:90,s:1,k:0}},{label:'girar 45deg',v:{tx:0,ty:0,r:45,s:1,k:0}},{label:'espejo',v:{tx:0,ty:0,r:0,s:-1,k:0}},{label:'inclinar',v:{tx:0,ty:0,r:0,s:1,k:30}}],t=>{Object.entries(t.v).forEach(([k,v])=>R[k].setV(v));draw();}));
+ const nbox=el('div');nbox.hidden=true;const ng=el('div');ng.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,110px));gap:8px';
+ [['a',1],['c',0],['e',0],['b',0],['d',1],['f',0]].forEach(([k,v])=>{const l=el('label','rng');l.style.cssText='grid-template-columns:18px 1fr;margin:0';l.innerHTML=`<span>${k}</span><input type="number" step="${k>'d'?10:.1}" value="${v}" style="width:100%;padding:6px 8px;border-radius:10px;border:1.5px solid #c3d2c4;font:600 14px var(--mono)" aria-label="${k}">`;N[k]=$('input',l);N[k].addEventListener('input',draw);ng.appendChild(l);});
+ nbox.append(el('p',null,'<span style="font-size:14.5px">Escribe los números en su sitio de la tabla. Prueba <b>a = 2</b>, luego <b>c = 0.5</b>, luego <b>e = 50</b>.</span>'),ng,chips([{label:'nada',v:[1,0,0,1,0,0]},{label:'espejo X',v:[-1,0,0,1,0,0]},{label:'girar 90deg',v:[0,1,-1,0,0,0]},{label:'aplastar',v:[1.5,0,0,.5,0,0]},{label:'inclinar',v:[1,0,.6,1,0,0]}],t=>{['a','b','c','d','e','f'].forEach((k,i)=>N[k].value=t.v[i]);draw();}));
+ $('#mxCtl').append(fbox,nbox);
+ $('#mxMode').appendChild(chips(['Con funciones (rotate, scale…)','Escribiendo los 6 números'],(t,k)=>{mode=k;fbox.hidden=k===1;nbox.hidden=k===0;draw();},0));
+ draw();
+ const tb=$('#rotTable');tb.innerHTML='<tr><th>rotate()</th><th>a = cos</th><th>b = sin</th><th>c = −sin</th><th>d = cos</th><th>queda</th></tr>'+[[0,'igual'],[30,'un poco girado'],[45,'en diagonal'],[60,'casi de lado'],[90,'tumbado a la derecha'],[180,'boca abajo'],[-90,'tumbado a la izquierda']].map(([g,t])=>{const r=g*Math.PI/180;const f=v=>fmt(Math.round(v*1000)/1000);return`<tr><td>${g}deg</td><td>${f(Math.cos(r))}</td><td>${f(Math.sin(r))}</td><td>${f(-Math.sin(r))}</td><td>${f(Math.cos(r))}</td><td>${t}</td></tr>`;}).join('');}
+
+/* ---------- 14. taller ---------- */
+{const DEF={translateX:{min:-200,max:200,step:5,v:60,u:'px'},translateY:{min:-180,max:180,step:5,v:-40,u:'px'},rotate:{min:-360,max:360,step:5,v:30,u:'deg'},scale:{min:-2,max:2.5,step:.05,v:1.3,u:''},scaleX:{min:-2,max:2.5,step:.05,v:-1,u:''},scaleY:{min:-2,max:2.5,step:.05,v:.6,u:''},skewX:{min:-60,max:60,step:5,v:20,u:'deg'},skewY:{min:-60,max:60,step:5,v:15,u:'deg'},rotateX:{min:-180,max:180,step:5,v:50,u:'deg'},rotateY:{min:-180,max:180,step:5,v:50,u:'deg'},translateZ:{min:-200,max:150,step:10,v:80,u:'px'}};
+ const say=(f,v)=>{const n=Math.abs(v);switch(f){case'translateX':return v===0?'no se mueve':`mueve ${n}px ${v>0?'→':'←'}`;case'translateY':return v===0?'no se mueve':`mueve ${n}px ${v>0?'↓':'↑'}`;case'translateZ':return v>0?`acerca ${n}px`:`aleja ${n}px`;
+  case'rotate':return`gira ${n}deg ${v>=0?'↻':'↺'}`;case'rotateX':return`persiana ${v}deg`;case'rotateY':return`puerta ${v}deg`;case'scale':return v<0?`×${n} y espejo`:`×${fmt(v)} de tamaño`;case'scaleX':return v<0?`ancho ×${n}, espejo`:`ancho ×${fmt(v)}`;case'scaleY':return v<0?`alto ×${n}, espejo`:`alto ×${fmt(v)}`;
+  case'skewX':return`inclina ${v}deg en X`;case'skewY':return`inclina ${v}deg en Y`;}return'';};
+ const P=[['left top',0,0],['center top',.5,0],['right top',1,0],['left center',0,.5],['center',.5,.5],['right center',1,.5],['left bottom',0,1],['center bottom',.5,1],['right bottom',1,1]];
+ let list=[{f:'translateX',v:60},{f:'rotate',v:30}],po=4,shape=0,persp=800;
+ const ws=$('#ws');ws.innerHTML=`<div class="ws-side">
+  <div class="ws-box"><h4>1 · Tus funciones <small>se aplican de arriba abajo</small></h4><div id="wsList"></div><div class="addfn" id="wsAdd"></div></div>
+  <div class="ws-box"><h4>2 · transform-origin</h4><div style="display:flex;gap:16px;align-items:center"><div class="pad" id="wsPad"></div><code id="wsOr"></code></div></div>
+  <div class="ws-box"><h4>3 · Forma y perspectiva</h4><div id="wsShape"></div><div id="wsPer"></div></div>
+  <div class="ws-box"><h4>Ideas para empezar</h4><div id="wsPre"></div></div></div>
+  <div><div class="ws-stage" id="wsStage"><div class="ghost"></div><div class="obj" id="wsObj"></div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px"><button class="btn oro sm" id="wsRnd" type="button">Sorpréndeme</button><button class="btn claro sm" id="wsClr" type="button">Borrar todo</button></div><div id="wsCode"></div></div>`;
+ const cd=pair('#wsCode','','','HTML · tu elemento','CSS · tu transform');$('#wsCode').style.display='block';
+ const obj=$('#wsObj'),stage=$('#wsStage');
+ Object.keys(DEF).forEach(f=>{const b=el('button',null,'+ '+f);b.type='button';b.onclick=()=>{if(list.length>=6)return;list.push({f,v:DEF[f].v});rows();};$('#wsAdd').appendChild(b);});
+ P.forEach((p,k)=>{const b=el('button');b.type='button';b.title=p[0];b.setAttribute('aria-label',p[0]);b.onclick=()=>{po=k;draw();};$('#wsPad').appendChild(b);});
+ const SH=['Cuadrado','Círculo','Arco','Texto'];$('#wsShape').appendChild(chips(SH,(t,k)=>{shape=k;draw();},0));
+ const pr=rng('perspective',200,1600,50,800,'px',()=>{persp=pr.get();draw();});$('#wsPer').appendChild(pr);
+ const PRE=[{label:'Hoja al viento',l:[{f:'translateY',v:-60},{f:'rotate',v:-25},{f:'skewX',v:15}],o:7},{label:'Puerta que se abre',l:[{f:'rotateY',v:-70}],o:3},{label:'Espejo',l:[{f:'scaleX',v:-1}],o:4},{label:'Rombo',l:[{f:'rotate',v:45},{f:'scaleY',v:.6}],o:4},{label:'Péndulo',l:[{f:'rotate',v:35}],o:1},{label:'Despegue',l:[{f:'translateY',v:-150},{f:'scale',v:.5},{f:'rotate',v:-15}],o:4},{label:'Persiana',l:[{f:'rotateX',v:65}],o:1},{label:'Hacia ti',l:[{f:'rotateY',v:25},{f:'translateZ',v:120}],o:4}];
+ $('#wsPre').appendChild(chips(PRE,t=>{list=t.l.map(x=>({...x}));po=t.o;rows();}));
+ function rows(){const h=$('#wsList');h.innerHTML='';if(!list.length)h.innerHTML='<p style="font-size:14px;margin:4px 0 8px;color:var(--tinta2)">Sin funciones: <code>transform: none</code>. Añade una con los botones de abajo.</p>';
+  list.forEach((it,k)=>{const d=DEF[it.f];const r=el('div','fnrow',`<span class="n">${k+1}</span><span class="nm"></span><span class="act"><button type="button" title="Subir" aria-label="Subir">↑</button><button type="button" title="Bajar" aria-label="Bajar">↓</button><button type="button" class="x" title="Quitar" aria-label="Quitar">×</button></span><input type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${it.v}" aria-label="${it.f}">`);
+   const nm=$('.nm',r),inp=$('input',r);const lab=()=>nm.textContent=`${it.f}(${fmt(it.v)}${d.u})`;lab();
+   inp.addEventListener('input',()=>{it.v=+inp.value;lab();draw();});
+   const[up,dn,x]=$$('.act button',r);up.onclick=()=>{if(k>0){[list[k-1],list[k]]=[list[k],list[k-1]];rows();}};dn.onclick=()=>{if(k<list.length-1){[list[k+1],list[k]]=[list[k],list[k+1]];rows();}};x.onclick=()=>{list.splice(k,1);rows();};h.appendChild(r);});
+  $$('#wsAdd button').forEach(b=>b.disabled=list.length>=6);draw();}
+ function draw(){const fns=list.map(it=>`${it.f}(${fmt(it.v)}${DEF[it.f].u})`);const tf=fns.join(' ')||'none';const p=P[po];
+  obj.className='obj'+['',' circle',' arch',' txt'][shape];obj.innerHTML=(shape===3?'Hola':'<span class="corner"></span><span class="arrow">↑</span><span class="lbl">HOLA</span>')+`<span class="od" style="left:${p[1]*100}%;top:${p[2]*100}%" title="transform-origin"></span>`;
+  obj.style.transformOrigin=p[0];obj.style.transform=tf;stage.style.perspective=persp+'px';
+  $$('#wsPad button').forEach((b,k)=>b.classList.toggle('on',k===po));$('#wsOr').textContent=p[0];
+  const has3=list.some(it=>/rotate[XY]|translateZ/.test(it.f));
+  cd.h.set(HM([['<div class="escena">','el padre'+(has3?' (lleva la perspectiva)':'')],['  <div class="mi-elemento">Hola</div>','el elemento que transformas'],['</div>']]));
+  const rowsC=[];if(has3)rowsC.push(['.escena{'],['»  perspective: '+persp+'px;','distancia del ojo, para el 3D'],['}']);
+  rowsC.push(['.mi-elemento{'],['  width: 140px;','tamaño real: no cambia'],['  height: 140px;']);
+  if(po!==4)rowsC.push(['»  transform-origin: '+p[0]+';','la bisagra']);
+  if(!fns.length)rowsC.push(['»  transform: none;','sin transformación']);
+  else if(fns.length===1)rowsC.push(['»  transform: '+fns[0]+';',say(list[0].f,list[0].v)]);
+  else{rowsC.push(['»  transform:','varias funciones, una por línea:']);fns.forEach((f,i)=>rowsC.push(['»    '+f+(i===fns.length-1?';':''),(i+1)+'. '+say(list[i].f,list[i].v)]));}
+  rowsC.push(SOON,['}']);cd.c.set(CM(rowsC,40));}
+ $('#wsRnd').onclick=()=>{const ks=['translateX','translateY','rotate','scale','skewX','rotateY'];const n=1+Math.floor(Math.random()*3);list=[];
+  for(let i=0;i<n;i++){const f=ks[Math.floor(Math.random()*ks.length)];const d=DEF[f];const steps=Math.round((d.max-d.min)/d.step);let v=d.min+Math.round(Math.random()*steps)*d.step;if(f==='scale')v=+(0.5+Math.random()*1.2).toFixed(2);if(f.startsWith('translate'))v=Math.round(v/2/5)*5;list.push({f,v:+fmt(v)});}
+  po=Math.floor(Math.random()*9);rows();};
+ $('#wsClr').onclick=()=>{list=[];po=4;rows();};
+ rows();}
+
+/* ---------- 15. efectos ---------- */
+{const FX=[
+ {n:'Botón que levita',tg:['translateY','scale',':hover'],d:'Sube y crece un poco al pasar el ratón; la sombra crece a la vez y parece que se despega del suelo.',
+  html:'<a class="levita">Descubrir</a>',hc:'un enlace con forma de botón',
+  css:[['.levita{','el botón'],['  width: 180px;'],['  height: 54px;'],['  display: flex;','para centrar el texto'],['  justify-content: center;'],['  align-items: center;'],['  border-radius: 30px;','forma de píldora'],['  background-color: #f6c94f;','dorado'],['  font-weight: 700;'],['  box-shadow: 0 10px 20px -10px #c9962e;','sombra corta: pegado al suelo'],['~  transition: transform .3s, box-shadow .3s;','próximo bloque'],['}'],['.levita:hover{','con el ratón encima…'],['»  transform: translateY(-8px) scale(1.05);','sube 8px y crece un 5%'],['  box-shadow: 0 22px 30px -12px #c9962e;','sombra larga: está "flotando"'],['}']]},
+ {n:'Foto torcida que se endereza',tg:['rotate','scale'],d:'Empieza girada como una foto pegada en un corcho. Al pasar el ratón se pone recta y se acerca.',
+  html:'<div class="polaroid">\n  <div class="foto"></div>\n  <b>Invernadero</b>\n</div>',hc:'marco blanco con foto y pie',
+  css:[['.polaroid{','el marco blanco'],['  width: 160px;'],['  height: 190px;'],['  display: flex;'],['  flex-direction: column;','foto arriba, texto abajo'],['  align-items: center;'],['  justify-content: space-evenly;'],['  border-radius: 8px;'],['  background-color: white;'],['  box-shadow: 0 14px 26px -12px #34434a;'],['»  transform: rotate(-6deg);','empieza torcida 6deg ↺'],['~  transition: transform .4s;','próximo bloque'],['}'],['.foto{','el hueco de la foto'],['  width: 140px;'],['  height: 130px;'],['  background: linear-gradient(#86d0df, #a6d98a);','cielo y prado'],['}'],['.polaroid:hover{'],['»  transform: rotate(0deg) scale(1.1);','recta y un 10% más grande'],['}']]},
+ {n:'Icono que da una vuelta',tg:['rotate(1turn)'],d:'Una vuelta completa al pasar el ratón. Funciona con cualquier icono: un sol, un engranaje, una flor.',
+  html:'<div class="girasol"></div>',hc:'un círculo dibujado con fondos',
+  css:[['.girasol{'],['  width: 110px;'],['  height: 110px;'],['  border-radius: 50%;','círculo'],['  background: radial-gradient(circle, #fff9db 0 25%, #f6c94f 26% 50%, transparent 51%),','centro del sol'],['              repeating-conic-gradient(#c9962e 0 10deg, transparent 10deg 30deg);','rayos'],['~  transition: transform .8s;','próximo bloque'],['}'],['.girasol:hover{'],['»  transform: rotate(1turn);','una vuelta entera (= 360deg)'],['}']]},
+ {n:'Subrayado que crece',tg:['scaleX','transform-origin'],d:'La raya empieza con scaleX(0), invisible, y crece hasta 1 desde la izquierda gracias a transform-origin.',
+  html:'<a class="enlace">\n  Ver proyectos\n  <span class="raya"></span>\n</a>',hc:'texto y la raya debajo',
+  css:[['.enlace{'],['  display: flex;'],['  flex-direction: column;','texto arriba, raya debajo'],['  font-size: 26px;'],['  font-weight: 700;'],['  color: #1f5a3e;'],['}'],['.raya{'],['  height: 5px;','grosor de la raya'],['  border-radius: 5px;'],['  background-color: #4fa36c;'],['»  transform: scaleX(0);','ancho × 0: invisible'],['»  transform-origin: left;','crecerá desde la izquierda'],['~  transition: transform .4s;','próximo bloque'],['}'],['.enlace:hover .raya{','al pasar por el enlace, la raya…'],['»  transform: scaleX(1);','…recupera su ancho completo'],['}']]},
+ {n:'Etiqueta inclinada',tg:['skewX','contra-skew'],d:'La caja se inclina con skewX y el texto de dentro se inclina al revés para quedar recto.',
+  html:'<div class="etiqueta">\n  <span>¡NUEVO!</span>\n</div>',hc:'caja y texto dentro',
+  css:[['.etiqueta{'],['  width: 190px;'],['  height: 60px;'],['  display: flex;','centra el texto'],['  justify-content: center;'],['  align-items: center;'],['  background: linear-gradient(90deg, #4fa36c, #86d0df);'],['»  transform: skewX(-15deg);','la caja se inclina'],['~  transition: transform .3s;','próximo bloque'],['}'],['.etiqueta span{','el texto (un hijo flex: sí acepta transform)'],['  font-size: 24px;'],['  font-weight: 700;'],['  color: white;'],['»  transform: skewX(15deg);','lo contrario: el texto queda recto'],['}'],['.etiqueta:hover{'],['»  transform: skewX(-15deg) scale(1.1);','mantiene la inclinación y crece'],['}']]},
+ {n:'Puerta que se abre',tg:['rotateY','perspective','transform-origin'],d:'La puerta gira desde su bisagra izquierda y descubre lo que hay detrás. Las dos capas comparten celda de grid.',
+  html:'<div class="marco">\n  <div class="dentro">¡Hola!</div>\n  <div class="puerta">Empuja</div>\n</div>',hc:'marco con el interior y la puerta',
+  css:[['.marco{','el hueco de la puerta'],['  width: 130px;'],['  height: 180px;'],['  display: grid;','para apilar interior y puerta'],['  border-radius: 12px;'],['  background-color: #34434a;'],['»  perspective: 600px;','profundidad para el giro 3D'],['}'],['.dentro, .puerta{'],['  grid-area: 1 / 1;','una encima de otra'],['  display: flex;'],['  justify-content: center;'],['  align-items: center;'],['  border-radius: 12px;'],['  font-weight: 700;'],['}'],['.dentro{ color: #f6c94f; font-size: 26px; }','lo que hay detrás'],['.puerta{'],['  background: linear-gradient(#4fa36c, #4a9bc6);'],['  color: white;'],['»  transform-origin: left;','la bisagra a la izquierda'],['~  transition: transform .6s;','próximo bloque'],['}'],['.marco:hover .puerta{'],['»  transform: rotateY(-75deg);','se abre hacia ti'],['}']]},
+ {n:'Reflejo en el agua',tg:['scaleY(-1)','opacity'],d:'Una copia del texto con scaleY(-1) queda boca abajo como un reflejo. Con opacity parece agua.',
+  html:'<div class="lago">\n  <b>SOLAR</b>\n  <b class="reflejo">SOLAR</b>\n</div>',hc:'el texto y su copia',
+  css:[['.lago{'],['  display: flex;'],['  flex-direction: column;','una palabra encima de otra'],['  align-items: center;'],['  font-size: 54px;'],['  line-height: 1;'],['  color: #1f5a3e;'],['}'],['.reflejo{','la copia'],['»  transform: scaleY(-1);','espejo vertical: boca abajo'],['  opacity: .25;','casi transparente, como agua'],['~  transition: transform .4s, opacity .4s;','próximo bloque'],['}'],['.lago:hover .reflejo{'],['»  transform: scaleY(-1) skewX(-20deg);','sigue en espejo y se ondula'],['  opacity: .5;'],['}']]},
+ {n:'Abanico de cartas',tg:['rotate','transform-origin: bottom'],d:'Tres cartas en la misma celda de grid. Al pasar el ratón giran desde abajo y se abren como un abanico.',
+  html:'<div class="abanico">\n  <div class="carta k1">1</div>\n  <div class="carta k2">2</div>\n  <div class="carta k3">3</div>\n</div>',hc:'tres cartas apiladas',
+  css:[['.abanico{'],['  display: grid;','para apilar las cartas'],['}'],['.carta{'],['  grid-area: 1 / 1;','las tres en la misma celda'],['  width: 90px;'],['  height: 130px;'],['  display: flex;'],['  justify-content: center;'],['  align-items: center;'],['  border-radius: 12px;'],['  font-size: 30px;'],['  font-weight: 700;'],['  color: white;'],['  box-shadow: 0 8px 16px -8px #34434a;'],['»  transform-origin: bottom center;','giran desde abajo, como en la mano'],['~  transition: transform .4s;','próximo bloque'],['}'],['.k1{ background-color: #4fa36c; transform: rotate(-6deg); }','un poco abierta'],['.k2{ background-color: #c9962e; }'],['.k3{ background-color: #4a9bc6; transform: rotate(6deg); }'],['.abanico:hover .k1{ transform: rotate(-25deg); }','se abre a la izquierda'],['.abanico:hover .k3{ transform: rotate(25deg); }','y a la derecha']]},
+ {n:'Sello que late',tg:[':hover',':active','scale','rotate'],d:'Crece y se tuerce con :hover; se hunde con :active. Dos estados, dos transform diferentes.',
+  html:'<button class="sello">ECO</button>',hc:'un botón redondo',
+  css:[['.sello{'],['  width: 120px;'],['  height: 120px;'],['  border-radius: 50%;'],['  font-size: 26px;'],['  font-weight: 700;'],['  color: white;'],['  background: conic-gradient(#4fa36c, #f6c94f, #86d0df, #ee9a3a, #4fa36c);','vidriera circular'],['  box-shadow: inset 0 0 0 8px white;','aro blanco'],['~  transition: transform .25s;','próximo bloque'],['}'],['.sello:hover{'],['»  transform: scale(1.15) rotate(-12deg);','crece y se tuerce'],['}'],['.sello:active{'],['»  transform: scale(0.9) rotate(-12deg);','se hunde, manteniendo el giro'],['}']]},
+ {n:'Menú hamburguesa que se convierte en X',tg:['translateY','rotate','scaleX(0)','orden'],d:'Las barras de arriba y abajo van al centro (translate) y luego giran (rotate). La del medio desaparece con scaleX(0).',
+  html:'<div class="menu">\n  <span class="l1"></span>\n  <span class="l2"></span>\n  <span class="l3"></span>\n</div>',hc:'tres barras',
+  css:[['.menu{'],['  width: 64px;'],['  height: 46px;'],['  display: flex;'],['  flex-direction: column;','barras en columna'],['  justify-content: space-between;','una arriba, una en medio, una abajo'],['}'],['.menu span{','cada barra (hijo flex: acepta transform)'],['  height: 8px;'],['  border-radius: 4px;'],['  background-color: #1f5a3e;'],['~  transition: transform .35s;','próximo bloque'],['}'],['.menu:hover .l1{'],['»  transform: translateY(19px) rotate(45deg);','baja al centro y LUEGO gira'],['}'],['.menu:hover .l2{'],['»  transform: scaleX(0);','desaparece'],['}'],['.menu:hover .l3{'],['»  transform: translateY(-19px) rotate(-45deg);','sube al centro y LUEGO gira'],['}']]}];
+ const g=$('#fxGrid');
+ FX.forEach((f,i)=>{const css=CM(f.css,46);const plain=css.split('\n').map(l=>/^[»~]/.test(l)?l.slice(1):l).join('\n');setRule('fx'+i,plain.replace(/(^|\n)\./g,'$1.fxs .').replace(/, \.(?=[a-z])/g,', .fxs .'));
+  const c=el('article','fx reveal');c.innerHTML=`<div class="st"><div class="fxs">${f.html}</div></div><div class="bd"><h3>${i+1}. ${f.n}</h3><div class="tg">${f.tg.map(t=>`<span>${esc(t)}</span>`).join('')}</div><p>${f.d}</p></div><div class="codes pair"></div>`;
+  pair($('.codes',c),'<!-- '+f.hc+' -->\n'+f.html,css);g.appendChild(c);});
+ setRule('fxbase','.fxs a,.fxs button{cursor:pointer;border:none;font-family:inherit}');}
+
+/* ---------- motor de preguntas ---------- */
+function qBlock(host,items,withScore){const h=$(host);const cards=items.map((q,i)=>{const d=el('div','fix');d.innerHTML=`<div class="hd"><span class="n">${i+1}</span><span>${q.q}</span></div>`;
+  if(q.html||q.code){const pr=el('div','pair');if(q.html)pr.appendChild(codeBox('html',q.html,'HTML'));else pr.style.gridTemplateColumns='1fr';if(q.code)pr.appendChild(codeBox('css',q.code,'CSS'));d.appendChild(pr);}
+  const o=el('div','opts');q.o.forEach((t,k)=>{const l=el('label');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${t}</span>`;o.appendChild(l);});d.appendChild(o);
+  const ex=el('div','ex',q.e);d.appendChild(ex);
+  d.grade=()=>{const sel=$('input:checked',d);$$('label',d).forEach((l,k)=>{l.classList.remove('right','wrong');if(k===q.a&&sel)l.classList.add('right');});if(sel&&+sel.value!==q.a)sel.closest('label').classList.add('wrong');if(sel)ex.classList.add('show');return sel&&+sel.value===q.a;};
+  $$('input',d).forEach(inp=>inp.addEventListener('change',()=>{d.grade();if(withScore)score();}));h.appendChild(d);return d;});
+ function score(){const n=cards.filter((c,i)=>{const s=$('input:checked',c);return s&&+s.value===items[i].a;}).length;if(withScore)$('#qScore').textContent=n+' / '+items.length;return n;}
+ return{cards,score};}
+
+/* ---------- 16. errores ---------- */
+qBlock('#fixes',[
+ {q:'Quiero mover la caja a la derecha <b>y</b> girarla, pero solo gira.',html:'<div class="caja">Hola</div>',code:CM([['.caja{'],['  transform: translateX(100px);'],['  transform: rotate(20deg);'],['}']]),o:['Falta una coma entre las dos líneas','La segunda línea transform borra la primera: las dos funciones van en la misma línea','rotate no se puede combinar con translate'],a:1,e:'Es la misma propiedad repetida y gana la última. Solución: <code>transform: translateX(100px) rotate(20deg);</code>'},
+ {q:'No se mueve nada.',html:'<div class="caja">Hola</div>',code:CM([['.caja{'],['  transform: translate(50px 20px);'],['}']]),o:['Dentro de translate los dos valores van separados por coma','translate no acepta px','Hay que escribir translateXY'],a:0,e:'Dentro de las funciones translate, scale y skew, los dos valores se separan con <b>coma</b>: <code>translate(50px, 20px)</code>. Si la sintaxis es incorrecta, el navegador ignora toda la línea. (Ojo: en la <i>propiedad</i> suelta <code>translate: 50px 20px;</code> sí van sin coma.)'},
+ {q:'El icono no gira.',html:'<div class="icono"></div>',code:CM([['.icono:hover{'],['  transform: rotate(45);'],['}']]),o:['Falta la unidad: 45deg','rotate solo funciona con :focus','45 es demasiado poco'],a:0,e:'Los ángulos necesitan unidad: <code>deg</code>, <code>turn</code> o <code>rad</code>. <code>rotate(45)</code> es inválido y se ignora.'},
+ {q:'Quería que se viera el doble de grande.',html:'<img class="foto" src="sol.jpg">',code:CM([['.foto{'],['  transform: scale(2px);'],['}']]),o:['scale no lleva unidades: scale(2)','Hay que poner scale(200px)','scale solo funciona en div'],a:0,e:'scale es un <b>multiplicador</b>: <code>scale(2)</code> = el doble. Con px es inválido.'},
+ {q:'La palabra resaltada no gira.',html:'<p>Esto es <span class="ojo">importante</span></p>',code:CM([['.ojo{'],['  transform: rotate(-5deg);'],['}']]),o:['Un span es inline: necesita display: inline-block','Falta perspective','rotate no funciona con texto'],a:0,e:'Los elementos <b>en línea</b> (span, a, strong…) ignoran transform. Añade <code>display: inline-block;</code> y girará.'},
+ {q:'La tarjeta está torcida, pero al pasar el ratón se endereza de golpe en vez de solo crecer.',html:'<div class="tarjeta">…</div>',code:CM([['.tarjeta{'],['  transform: rotate(-5deg);'],['}'],['.tarjeta:hover{'],['  transform: scale(1.1);'],['}']]),o:['El transform del :hover sustituye al anterior: hay que repetir el rotate','Hay que poner !important','scale y rotate no se pueden usar en el mismo elemento'],a:0,e:'El transform de :hover <b>reemplaza</b> al normal. Para mantener la inclinación: <code>transform: rotate(-5deg) scale(1.1);</code> (o usar las propiedades sueltas <code>rotate</code> y <code>scale</code>).'},
+ {q:'La tarjeta gira con rotateY pero se ve plana, sin profundidad.',html:'<div class="escena">\n  <div class="tarjeta">…</div>\n</div>',code:CM([['.escena{'],['  width: 300px;'],['}'],['.tarjeta{'],['  transform: rotateY(50deg);'],['}']]),o:['Falta perspective en el padre (.escena)','rotateY solo funciona junto a rotateX','Hay que añadir translateZ(0)'],a:0,e:'Sin <code>perspective</code> no hay distancia del ojo: el navegador aplana el 3D y solo ves la tarjeta más estrecha. Añade <code>perspective: 800px;</code> a <code>.escena</code>.'},
+],false);
+
+/* ---------- 17. test ---------- */
+const Q=[
+ {q:'¿Qué les pasa a los elementos vecinos cuando aplicas <code>transform: scale(2)</code> a una caja?',o:['Se apartan para dejar sitio','No se mueven: transform no cambia el sitio que ocupa la caja','Desaparecen'],a:1,e:'transform solo cambia cómo se ve. El hueco original se mantiene, así que los vecinos no se enteran.'},
+ {q:'<code>translateY(40px)</code> mueve el elemento…',o:['40px hacia arriba','40px hacia abajo','40px a la derecha'],a:1,e:'En la web el eje Y crece hacia abajo. Para subir: <code>translateY(-40px)</code>.'},
+ {q:'Una caja mide 200px de ancho. ¿Cuánto se mueve con <code>translateX(50%)</code>?',o:['La mitad de la página','100px','50px'],a:1,e:'El % de translate se calcula sobre el <b>propio elemento</b>: 50% de 200px = 100px.'},
+ {q:'<code>rotate(0.25turn)</code> es lo mismo que…',o:['rotate(25deg)','rotate(90deg)','rotate(-90deg)'],a:1,e:'1turn = 360deg, así que 0.25turn = 90deg: un cuarto de vuelta en el sentido del reloj.'},
+ {q:'¿Qué hace <code>scaleX(-1)</code>?',o:['Lo hace invisible','Lo voltea como un espejo horizontal','Lo encoge a la mitad'],a:1,e:'Un valor negativo invierte el eje: espejo. -1 mantiene el tamaño.'},
+ {q:'¿Cuál es la diferencia entre <code>rotate</code> y <code>skew</code>?',o:['Ninguna','rotate gira sin deformar; skew inclina deformando (los ángulos dejan de ser rectos)','skew solo funciona en 3D'],a:1,e:'rotate mueve el elemento entero sin cambiar su forma; skew lo convierte en un romboide.'},
+ {q:'Quiero que un elemento gire como una puerta, desde su lado izquierdo. ¿Qué añado?',o:['transform-origin: left;','translate: left;','rotate-origin: left;'],a:0,e:'<code>transform-origin</code> fija el punto que no se mueve. Con <code>left</code>, la bisagra queda en el lado izquierdo.'},
+ {q:'¿Dan el mismo resultado <code>translateX(100px) rotate(45deg)</code> y <code>rotate(45deg) translateX(100px)</code>?',o:['Sí, el orden da igual','No: en el segundo, primero gira y luego avanza en diagonal por su eje x girado','No: el segundo es inválido'],a:1,e:'Las funciones se aplican en orden y cada una cambia los ejes de las siguientes.'},
+ {q:'Con <code>perspective: 400px</code> y <code>translateZ(200px)</code>, ¿de qué tamaño se ve un cuadrado de 100px?',o:['100px','200px','50px'],a:1,e:'tamaño aparente = 400 ÷ (400 − 200) = 2 → se ve el doble: 200px.'},
+ {q:'¿Para qué sirve <code>transform-style: preserve-3d</code>?',o:['Para que los hijos conserven su profundidad 3D dentro del padre','Para que el elemento no se pueda transformar','Para guardar el transform al recargar la página'],a:0,e:'Sin ella, el padre aplana a sus hijos (valor <code>flat</code>). Es imprescindible en tarjetas que se voltean y en cubos.'},
+ {q:'Un elemento tiene <code>rotate: 20deg;</code> y en <code>:hover</code> le pones <code>scale: 1.2;</code>. ¿Qué pasa al pasar el ratón?',o:['Pierde el giro y solo crece','Crece y mantiene el giro de 20deg','No pasa nada'],a:1,e:'Las propiedades sueltas son independientes: cambiar <code>scale</code> no toca <code>rotate</code>. Con <code>transform</code> sí habría que repetir el giro.'},
+ {q:'El navegador te muestra <code>matrix(1, 0, 0, 1, 30, -20)</code>. ¿Qué transform es?',o:['scale(30, -20)','translate(30px, -20px)','rotate(30deg)'],a:1,e:'a = 1 y d = 1: sin escala. b = 0 y c = 0: sin giro. e = 30, f = −20: se mueve 30px a la derecha y 20px hacia arriba.'}];
+{const qb=qBlock('#quiz',Q,true);$('#qAll').onclick=()=>{qb.cards.forEach((c,i)=>{c.grade();$('.ex',c).classList.add('show');$$('label',c)[Q[i].a].classList.add('right');});const n=qb.score();if(n===Q.length)$('#qScore').textContent=n+' / '+Q.length+' · ¡perfecto!';};
+ $('#qReset').onclick=()=>{$$('#quiz input').forEach(i=>i.checked=false);$$('#quiz label').forEach(l=>l.classList.remove('right','wrong'));$$('#quiz .ex').forEach(e=>e.classList.remove('show'));qb.score();};}
+
+/* ---------- destellos solares ---------- */
+{const D={
+ que:'transform cambia cómo se VE un elemento sin cambiar el sitio que OCUPA; no funciona en elementos inline como span.',
+ ejes:'X positivo va a la derecha, Y positivo va hacia ABAJO y Z positivo viene hacia ti; distancias en px o %, ángulos en deg o turn, escalas sin unidad.',
+ translate:'translate(x, y) desplaza desde el sitio original sin empujar a nadie; en % se mide con el tamaño del propio elemento.',
+ rotate:'rotate(ángulo) gira alrededor del centro: positivo como el reloj, 360deg = 1turn = vuelta completa.',
+ scale:'scale es un multiplicador sin unidades (1 igual, 2 doble, 0 invisible, negativo espejo) y escala todo lo de dentro.',
+ skew:'skew inclina y deforma (los ángulos dejan de ser rectos); rotate gira sin deformar.',
+ origin:'transform-origin es la bisagra: el punto que se queda quieto mientras el resto gira, crece o se inclina.',
+ combinar:'Todas las funciones en una sola línea, separadas por espacios; se aplican de izquierda a derecha y cada una mueve los ejes de la siguiente.',
+ individuales:'translate, rotate y scale sueltas se cambian por separado y siempre se aplican en ese orden, antes que transform.',
+ estados:'El transform de :hover, :focus o :active sustituye al normal, así que repite lo que quieras conservar.',
+ perspective:'perspective es la distancia de tu ojo a la pantalla: tamaño aparente = perspective ÷ (perspective − Z), y sin ella no hay 3D.',
+ tresd:'Para 3D: perspective en el padre, rotateX/rotateY/translateZ en el hijo, preserve-3d para que los hijos vivan en 3D y backface-visibility para ocultar la espalda.',
+ matrix:'matrix(a, b, c, d, e, f) es cómo guarda el navegador cualquier transform 2D: a y d escalan, b y c giran o inclinan, e y f mueven.',
+ taller:'Para diseñar un transform: colócalo (translate), elige la bisagra (origin) y después gira, escala o inclina.',
+ efectos:'Casi todos los efectos siguen la misma receta: un transform en reposo y otro distinto en :hover.',
+ errores:'Comas dentro de las funciones, unidades en los ángulos, scale sin unidades, una sola línea transform, nada de inline y perspective en el padre.',
+ chuleta:'Mover, girar, escalar, inclinar: cuatro verbos, una propiedad.'};
+ Object.entries(D).forEach(([id,t])=>{const s=$('#'+id);if(!s)return;const d=el('div','dest reveal');d.innerHTML=`<div class="sw"><i></i></div><div><span class="lb">Destello solar</span><p>${t}</p></div>`;s.appendChild(d);});}
+
+/* ---------- aparición al hacer scroll ---------- */
+if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.04});$$('.reveal').forEach(x=>io.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+})();
+</script>
+</body></html>
