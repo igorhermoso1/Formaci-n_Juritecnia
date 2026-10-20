@@ -1,0 +1,1844 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formularios HTML · La oficina de trámites</title>
+<meta name="description" content="Aprende todas las etiquetas de formulario de HTML en crudo: form, label, input, select, textarea, button, fieldset, datalist, output, meter y progress.">
+<meta name="theme-color" content="#eaf2fc">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   PALETA "OFICINA": azules claros, papel blanco, tinta azul marino
+   ===================================================================== */
+:root{
+  --bg:#eef4fb;          /* fondo general: azul muy claro */
+  --bg2:#e2ecf9;         /* fondo alterno de secciones */
+  --paper:#ffffff;       /* hojas y tarjetas */
+  --ink:#0f2440;         /* texto principal: azul marino */
+  --ink2:#36506f;        /* texto secundario */
+  --mute:#6a7f9a;        /* notas */
+  --line:#d3e0f0;        /* bordes suaves */
+  --blue:#2563eb;        /* azul corporativo */
+  --blue2:#1d4ed8;       /* azul oscuro para hover */
+  --sky:#dbe9ff;         /* azul cielo para fondos */
+  --cyan:#0ea5c6;        /* acento cian */
+  --note:#fff4b5;        /* pósit amarillo */
+  --ok:#15803d;          /* correcto */
+  --okbg:#e3f6e9;
+  --err:#c2341b;         /* error */
+  --errbg:#fde9e4;
+  --warn:#b45309;        /* aviso */
+  --warnbg:#fff1d6;
+  --stamp:#2b59c3;       /* tinta de sello */
+  --code:#0e1d35;        /* fondo de código */
+  --r:16px;              /* radio de esquinas */
+  --sh:0 1px 2px rgba(15,36,64,.06),0 10px 30px -12px rgba(15,36,64,.22);
+  --ui:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --hand:'Caveat','Comic Sans MS',cursive;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.65 var(--ui);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%}
+a{color:var(--blue)}
+code{font:500 .86em var(--mono);background:#e6eefb;color:#173a79;padding:1px 6px;border-radius:6px;white-space:nowrap}
+.wrap{width:min(1180px,calc(100% - 40px));margin-inline:auto}
+::selection{background:#bcd6ff}
+
+/* ---------- barra de navegación fija ---------- */
+.topnav{position:sticky;top:0;z-index:50;background:rgba(246,250,255,.82);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
+.topnav .in{display:flex;align-items:center;gap:8px;height:58px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:.9rem;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.brand i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font:700 .78rem var(--mono);font-style:normal;box-shadow:0 6px 14px -6px var(--blue)}
+.navbtn{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer;font-weight:700}
+#navUl{list-style:none;display:flex;gap:4px;margin:0;padding:0 2px;overflow-x:auto;scrollbar-width:none;flex:1}
+#navUl::-webkit-scrollbar{display:none}
+#navUl a{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--ink2);text-decoration:none;white-space:nowrap;transition:background .2s,color .2s}
+#navUl a span{font:600 .66rem var(--mono);color:var(--mute)}
+#navUl a:hover{background:#e3edfb}
+#navUl a.on{background:var(--ink);color:#fff}
+#navUl a.on span{color:#9cc1ff}
+#prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:0 3px 3px 0}
+
+/* =====================================================================
+   HERO: la mesa de la oficina
+   ===================================================================== */
+.hero{position:relative;overflow:hidden;padding:64px 0 70px;background:
+  linear-gradient(rgba(37,99,235,.07) 1px,transparent 1px) 0 0/28px 28px,
+  linear-gradient(90deg,rgba(37,99,235,.07) 1px,transparent 1px) 0 0/28px 28px,
+  radial-gradient(900px 500px at 85% 10%,#cfe2ff 0,transparent 60%),
+  radial-gradient(700px 500px at 0% 100%,#d6f3fb 0,transparent 60%),
+  linear-gradient(180deg,#f5f9ff,#e7f0fc)}
+.hero>.wrap:first-child{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;padding:6px 14px 6px 6px;border-radius:999px;background:#fff;border:1px solid var(--line);font:600 .72rem var(--mono);letter-spacing:.06em;color:var(--ink2);box-shadow:var(--sh)}
+.eyebrow b{padding:3px 9px;border-radius:999px;background:var(--ink);color:#fff;font-weight:600}
+.hero h1{margin:0;font-size:clamp(2.6rem,6.2vw,4.9rem);line-height:.98;letter-spacing:-.04em;font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--blue) 10%,var(--cyan) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{max-width:540px;margin:20px 0 0;font-size:1.08rem;color:var(--ink2)}
+/* las tres partes del bloque */
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;max-width:560px}
+.part{position:relative;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:.8rem;line-height:1.35;color:var(--mute)}
+.part b{display:block;font-size:.95rem;color:var(--ink)}
+.part small{font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.part.now{background:var(--ink);border-color:var(--ink);color:#b9cdea;box-shadow:0 14px 30px -14px var(--ink)}
+.part.now b{color:#fff}
+.part.now::after{content:'ESTÁS AQUÍ';position:absolute;top:-10px;right:10px;padding:2px 8px;border-radius:6px;background:var(--note);color:var(--ink);font:700 .58rem var(--mono);letter-spacing:.06em;transform:rotate(3deg)}
+
+/* escena animada: portapapeles con una ficha que se rellena sola */
+.desk{position:relative;height:470px}
+.clip{position:absolute;left:8%;top:18px;width:min(360px,82%);padding:46px 22px 22px;border-radius:18px;background:linear-gradient(160deg,#5b8def,#2f5fcf);box-shadow:0 30px 60px -24px rgba(29,78,216,.6);transform:rotate(-3deg);animation:float 7s ease-in-out infinite}
+.clip::before{content:'';position:absolute;left:50%;top:-14px;width:120px;height:38px;margin-left:-60px;border-radius:10px 10px 6px 6px;background:linear-gradient(#d9e2ee,#a9b8cc);box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 4px 8px rgba(0,0,0,.2)}
+.sheet{position:relative;background:#fff;border-radius:8px;padding:18px 18px 16px;box-shadow:0 2px 0 #e7edf6,0 4px 0 #dbe4f0}
+.sheet h4{margin:0 0 12px;font-size:.95rem;letter-spacing:-.01em}
+.sheet h4 small{display:block;font:500 .62rem var(--mono);color:var(--mute);letter-spacing:.06em}
+.f{margin-bottom:10px}
+.f span{display:block;font-size:.66rem;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.f .box{height:30px;margin-top:3px;padding:0 10px;display:flex;align-items:center;border:1.5px solid #c7d6ea;border-radius:7px;font-size:.82rem;color:var(--ink);transition:border-color .3s,box-shadow .3s}
+.f .box.act{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.f .box .caret{width:1.5px;height:15px;margin-left:1px;background:var(--blue);animation:blink 1s steps(1) infinite}
+.opts{display:flex;gap:12px;font-size:.78rem;margin-top:3px}
+.opts i{display:inline-block;width:14px;height:14px;margin-right:5px;vertical-align:-2px;border:1.5px solid #9fb3cf;border-radius:50%;transition:all .25s}
+.opts i.sq{border-radius:4px}
+.opts i.on{border-color:var(--blue);background:radial-gradient(circle,var(--blue) 0 35%,#fff 40%)}
+.opts i.sq.on{background:var(--blue);box-shadow:inset 0 0 0 2px #fff}
+.sendb{display:inline-block;margin-top:6px;padding:7px 16px;border-radius:8px;background:var(--blue);color:#fff;font-size:.78rem;font-weight:700;transition:transform .15s}
+.sendb.press{transform:scale(.92)}
+.bigstamp{position:absolute;right:18px;top:118px;padding:6px 12px;border:3px solid var(--stamp);border-radius:8px;color:var(--stamp);font:800 1.1rem var(--mono);letter-spacing:.12em;transform:rotate(-14deg) scale(2.2);opacity:0;mix-blend-mode:multiply}
+.bigstamp.hit{animation:thunk .45s cubic-bezier(.2,1.6,.4,1) forwards}
+.tray{position:absolute;z-index:3;right:0;bottom:0;width:210px;padding:12px 14px 14px;border-radius:16px;background:rgba(255,255,255,.75);border:1px solid #fff;box-shadow:var(--sh);backdrop-filter:blur(8px);font-size:.75rem}
+.tray b{display:flex;justify-content:space-between;font:600 .66rem var(--mono);letter-spacing:.08em;color:var(--ink2)}
+.tray b em{font-style:normal;color:var(--ok)}
+.tray pre{margin:8px 0 0;padding:9px 10px;border-radius:9px;background:var(--code);color:#9ee8c0;font:500 .66rem/1.5 var(--mono);white-space:pre-wrap;word-break:break-all;min-height:62px}
+.env{position:absolute;width:54px;height:36px;border-radius:5px;background:#fff;border:1.5px solid #9fb3cf;opacity:0;z-index:3}
+.env::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49%,#9fb3cf 50%,transparent 52%),linear-gradient(to bottom left,transparent 49%,#9fb3cf 50%,transparent 52%);background-size:100% 70%;background-repeat:no-repeat}
+.env.fly{animation:fly 1.1s cubic-bezier(.5,0,.3,1) forwards}
+/* pósits con etiquetas flotando */
+.tag{position:absolute;z-index:4;padding:6px 10px;border-radius:4px;background:var(--note);font:600 .78rem var(--mono);color:#5a4a00;box-shadow:0 8px 16px -8px rgba(90,74,0,.45);animation:drift 9s ease-in-out infinite}
+.tag:nth-child(2n){background:#d9ecff;color:#123d7a;animation-duration:11s}
+.tag:nth-child(3n){background:#dff7ec;color:#0d5a3a;animation-duration:13s}
+@keyframes float{50%{transform:rotate(-2deg) translateY(-8px)}}
+@keyframes drift{50%{transform:translateY(-12px) rotate(var(--r,3deg))}}
+@keyframes blink{50%{opacity:0}}
+@keyframes thunk{0%{opacity:0;transform:rotate(-14deg) scale(2.2)}100%{opacity:.9;transform:rotate(-14deg) scale(1)}}
+@keyframes fly{0%{opacity:1;transform:translate(0,0) scale(.6)}60%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(8deg)}}
+
+/* expediente: los 14 elementos */
+.dossier{margin-top:46px;padding:22px;border-radius:22px;background:rgba(255,255,255,.72);border:1px solid #fff;box-shadow:var(--sh);backdrop-filter:blur(10px)}
+.dossier .hd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.dossier h3{margin:0;font-size:1.05rem}
+.dossier h3 small{display:block;font-weight:500;font-size:.8rem;color:var(--mute)}
+.counter{display:flex;align-items:center;gap:10px;font:600 .75rem var(--mono);color:var(--ink2)}
+.counter .bar{width:150px;height:8px;border-radius:9px;background:#dfe8f5;overflow:hidden}
+.counter .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .6s}
+.els{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.els a{position:relative;display:flex;flex-direction:column;gap:2px;padding:10px 10px 9px;border-radius:12px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
+.els a:hover{transform:translateY(-3px);box-shadow:var(--sh);border-color:#b7cdf0}
+.els a b{font:600 .82rem var(--mono);color:var(--blue2)}
+.els a small{font-size:.68rem;color:var(--mute);line-height:1.25}
+.els a.seen{background:linear-gradient(160deg,#fff,#eaf3ff)}
+.els a.seen::after{content:'✓';position:absolute;top:6px;right:8px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:#fff;font-size:.62rem;font-weight:800}
+.els a.nosend b::before{content:'';display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#f59e0b;vertical-align:1px}
+.legendx{margin:10px 0 0;font-size:.74rem;color:var(--mute)}
+.legendx i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b;margin-right:5px}
+
+/* =====================================================================
+   SECCIONES
+   ===================================================================== */
+.sec{padding:84px 0 40px;position:relative}
+.sec:nth-of-type(even){background:linear-gradient(180deg,transparent,rgba(219,233,255,.45) 12%,rgba(219,233,255,.45) 88%,transparent)}
+.shead{display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:end;margin-bottom:30px}
+.folder{grid-row:span 2;position:relative;width:92px;height:76px;border-radius:4px 12px 12px 12px;background:linear-gradient(160deg,#6aa0ff,var(--blue));box-shadow:0 14px 26px -14px var(--blue);display:grid;place-items:center;color:#fff;font:700 1.7rem var(--mono)}
+.folder::before{content:'';position:absolute;left:0;top:-10px;width:44px;height:14px;border-radius:6px 10px 0 0;background:#6aa0ff}
+.folder small{position:absolute;bottom:7px;font:600 .52rem var(--mono);letter-spacing:.12em;opacity:.85}
+.kick{margin:0;font:600 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.shead h2{margin:0;font-size:clamp(1.9rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.035em;font-weight:800}
+.shead h2 code{font-size:.82em;padding:2px 10px;border-radius:10px;background:#fff;border:1px solid var(--line);color:var(--blue2);white-space:normal}
+.intro{max-width:780px;margin:0 0 26px;font-size:1.06rem;color:var(--ink2)}
+h3.sub{margin:44px 0 12px;font-size:1.35rem;letter-spacing:-.02em}
+h3.sub::before{content:'';display:inline-block;width:10px;height:10px;margin-right:10px;border-radius:3px;background:var(--blue);vertical-align:2px}
+p.txt{max-width:800px;color:var(--ink2)}
+
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}
+.card{position:relative;padding:18px 18px 16px;border-radius:var(--r);background:var(--paper);border:1px solid var(--line);box-shadow:var(--sh)}
+.card h4{margin:0 0 6px;font-size:1rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card p{margin:0;font-size:.9rem;color:var(--ink2)}
+.card p+p{margin-top:8px}
+.card .ex{display:block;margin-top:10px;padding:7px 10px;border-radius:8px;background:#f2f6fd;font:500 .76rem var(--mono);color:#173a79;overflow-x:auto;white-space:nowrap}
+.card.accent{border-top:4px solid var(--blue)}
+.card.cy{border-top:4px solid var(--cyan)}
+.card.ok{border-top:4px solid var(--ok)}
+.card.bad{border-top:4px solid var(--err)}
+.card .num{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--sky);color:var(--blue2);font:700 .85rem var(--mono)}
+
+/* avisos */
+.call{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;margin:18px 0;padding:16px 18px;border-radius:var(--r);border:1px solid;font-size:.94rem}
+.call>i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font:700 .95rem var(--mono);font-style:normal}
+.call p{margin:0}
+.call p+p{margin-top:6px}
+.call.key{background:var(--ink);border-color:var(--ink);color:#d5e3f7}
+.call.key>i{background:var(--note);color:var(--ink)}
+.call.key b{color:#fff}
+.call.key code{background:#20395f;color:#bfe0ff}
+.call.tip{background:#eaf3ff;border-color:#c6dbfb;color:#1d3a66}
+.call.tip>i{background:var(--blue);color:#fff}
+.call.warn{background:var(--warnbg);border-color:#f5d39a;color:#6b3d06}
+.call.warn>i{background:#f59e0b;color:#fff}
+.call.bad{background:var(--errbg);border-color:#f4c2b6;color:#6e1d0e}
+.call.bad>i{background:var(--err);color:#fff}
+.postit{position:relative;max-width:420px;margin:22px 0;padding:16px 18px 18px;background:var(--note);font:600 1.35rem/1.25 var(--hand);color:#4d3f00;transform:rotate(-1.2deg);box-shadow:0 14px 22px -14px rgba(77,63,0,.5)}
+.postit::before{content:'';position:absolute;left:50%;top:-10px;width:80px;height:20px;margin-left:-40px;background:rgba(200,220,255,.75);transform:rotate(2deg)}
+.postit code{font-family:var(--mono);font-size:.68em;background:rgba(255,255,255,.6)}
+
+/* tablas */
+.tbl{overflow-x:auto;margin:18px 0;border-radius:var(--r);border:1px solid var(--line);background:#fff;box-shadow:var(--sh)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid #e8eef7}
+th{background:#f3f7fd;font:600 .7rem var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+tr:last-child td{border-bottom:0}
+td .y{color:var(--ok);font-weight:700}
+td .n{color:var(--err);font-weight:700}
+
+/* =====================================================================
+   CÓDIGO
+   ===================================================================== */
+.code{border-radius:var(--r);background:var(--code);color:#dbe7ff;box-shadow:0 18px 40px -22px rgba(14,29,53,.75);overflow:hidden;min-width:0}
+.code .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px 9px 16px;border-bottom:1px solid #1f3558;font:600 .68rem var(--mono);letter-spacing:.08em;color:#8fb0dd;text-transform:uppercase}
+.code .bar span::before{content:'';display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:#ff7a59;box-shadow:12px 0 #ffcf5a,24px 0 #4ad694;vertical-align:0;margin-right:38px}
+.copy{border:1px solid #2c4772;background:#14284a;color:#cfe1ff;border-radius:7px;padding:4px 10px;font:600 .66rem var(--mono);cursor:pointer}
+.copy:hover{background:#1c3966}
+.copy.ok{background:#14532d;border-color:#22804a}
+.code pre{margin:0;padding:14px 16px 16px;overflow:auto;font:500 .8rem/1.62 var(--mono);tab-size:2;max-height:620px}
+.t{color:#7cc4ff}.a{color:#ffcf7a}.v{color:#97eec0}.c{color:#7f97b8;font-style:italic}
+.new{display:inline-block;min-width:100%;background:rgba(96,165,250,.16);box-shadow:inset 3px 0 #60a5fa}
+
+/* =====================================================================
+   MESA DE PRUEBAS: código + navegador en crudo + recibo
+   ===================================================================== */
+.labx{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;align-items:start;margin:20px 0}
+.labx.wide{grid-template-columns:1fr}
+.rcol{display:grid;gap:14px;min-width:0}
+.browser{border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh);overflow:hidden}
+.chrome{display:flex;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(#f8fbff,#ebf2fc);border-bottom:1px solid var(--line)}
+.chrome .dots{display:flex;gap:5px}
+.chrome .dots i{width:9px;height:9px;border-radius:50%;background:#cbd8ea}
+.chrome .url{flex:1;min-width:0;padding:4px 10px;border-radius:8px;background:#fff;border:1px solid var(--line);font:500 .7rem var(--mono);color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chrome .raw{flex:none;padding:3px 8px;border-radius:6px;background:var(--note);font:700 .6rem var(--mono);letter-spacing:.05em;color:#5a4a00}
+.browser iframe{display:block;width:100%;height:120px;border:0;background:#fff}
+.hint{margin:0;padding:8px 14px;border-top:1px dashed var(--line);background:#f8fbff;font-size:.78rem;color:var(--ink2)}
+.hint b{color:var(--blue2)}
+
+/* el recibo: lo que llegaría al servidor */
+.receipt{position:relative;padding:18px 16px 16px;border-radius:4px 4px var(--r) var(--r);background:#fffefa;border:1px solid #e9e2c9;box-shadow:var(--sh);font:500 .76rem/1.55 var(--mono);color:#2b3442;overflow:hidden}
+.receipt::before{content:'';position:absolute;left:0;right:0;top:-6px;height:12px;background:radial-gradient(circle at 6px 0,var(--bg) 5px,transparent 5.5px) 0 0/12px 12px repeat-x}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed #d9cfae;font-weight:600;letter-spacing:.08em;font-size:.66rem;color:#6d6346}
+.st{padding:3px 8px;border-radius:6px;font-size:.62rem;letter-spacing:.06em;background:#eef2f7;color:var(--ink2)}
+.st.sent{background:var(--okbg);color:var(--ok)}
+.st.blk{background:var(--errbg);color:var(--err)}
+.st.rst{background:#fff1d6;color:var(--warn)}
+.req{margin:0 0 10px;padding:9px 11px;border-radius:8px;background:var(--code);color:#cfe1ff;white-space:pre-wrap;word-break:break-all;font-size:.72rem}
+.req .m{color:#ffcf7a;font-weight:600}
+.req .q{color:#97eec0}
+.kv{width:100%;border-collapse:collapse;font-size:.74rem}
+.kv td{padding:4px 6px;border-bottom:1px dotted #e3dcc3;vertical-align:top;word-break:break-word}
+.kv td:first-child{color:#1d4ed8;font-weight:600;width:38%}
+.kv tr.empty td{color:#a19774;font-style:italic}
+.miss{margin:10px 0 0;padding:8px 10px;border-radius:8px;background:#fff6e6;color:#7a4a05;font-size:.7rem}
+.miss b{display:block;margin-bottom:2px;letter-spacing:.06em;font-size:.62rem}
+.blocked{padding:8px 10px;border-radius:8px;background:var(--errbg);color:#7a200f;font-size:.72rem}
+.blocked b{display:block;letter-spacing:.06em;font-size:.62rem;margin-bottom:3px}
+.rstamp{position:absolute;right:14px;top:34px;padding:4px 10px;border:3px solid var(--stamp);border-radius:7px;color:var(--stamp);font:800 .95rem var(--mono);letter-spacing:.12em;transform:rotate(-12deg);opacity:0;pointer-events:none;mix-blend-mode:multiply}
+.rstamp.hit{animation:thunk .45s cubic-bezier(.2,1.6,.4,1) forwards}
+.rstamp.red{border-color:var(--err);color:var(--err)}
+
+/* controles de la propia página (no son las demos) */
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 4px}
+.ctrl>span{font:600 .7rem var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin-right:4px}
+.seg{display:inline-flex;padding:4px;border-radius:12px;background:#fff;border:1px solid var(--line);box-shadow:var(--sh);gap:3px;flex-wrap:wrap}
+.seg button,.chip{border:0;background:transparent;padding:7px 13px;border-radius:9px;font:600 .8rem var(--ui);color:var(--ink2);cursor:pointer;transition:background .2s,color .2s}
+.seg button:hover,.chip:hover{background:#eef4fd}
+.seg button.on{background:var(--blue);color:#fff;box-shadow:0 6px 14px -6px var(--blue)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;font-family:var(--mono);font-size:.76rem;padding:6px 11px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip:disabled{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+.chip.na{opacity:.45}
+
+/* anatomía de un input */
+.anat{padding:26px 22px;border-radius:22px;background:var(--code);box-shadow:0 22px 50px -26px rgba(14,29,53,.8);color:#dbe7ff}
+.anat .line{display:flex;flex-wrap:wrap;gap:6px 4px;font:500 clamp(.82rem,1.6vw,1.05rem) var(--mono)}
+.anat button{border:1px dashed #36507a;background:#132745;color:inherit;font:inherit;padding:6px 9px;border-radius:9px;cursor:pointer;transition:all .2s}
+.anat button:hover{border-color:#7cc4ff}
+.anat button.on{background:#1f3e6e;border-style:solid;border-color:#7cc4ff;transform:translateY(-2px)}
+.anat .exp{margin-top:18px;padding:14px 16px;border-radius:12px;background:#132745;border:1px solid #23406b;font-size:.95rem;min-height:84px}
+.anat .exp b{color:#ffcf7a;font-family:var(--mono)}
+
+/* flujo persona → navegador → servidor */
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch;margin:22px 0}
+.actor{padding:18px;border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh)}
+.actor .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;margin-bottom:10px;font:700 1.1rem var(--mono);color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan))}
+.actor:nth-child(3) .ic{background:linear-gradient(135deg,#0ea5c6,#14b8a6)}
+.actor:nth-child(5) .ic{background:linear-gradient(135deg,#0f2440,#36506f)}
+.actor h4{margin:0 0 4px}
+.actor p{margin:0;font-size:.88rem;color:var(--ink2)}
+.arrow{display:grid;place-items:center;color:var(--blue);font:700 1.4rem var(--mono)}
+.arrow i{position:relative;display:block;width:34px;height:4px;border-radius:4px;background:#c9dbf5;overflow:hidden}
+.arrow i::after{content:'';position:absolute;inset:0;width:40%;background:var(--blue);animation:pkt 1.6s linear infinite}
+@keyframes pkt{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+
+/* probador de type */
+.tester{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start}
+.typelist{position:sticky;top:80px;padding:12px;border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh);max-height:calc(100vh - 100px);overflow:auto}
+.typelist h5{margin:10px 6px 6px;font:600 .62rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.typelist h5:first-child{margin-top:2px}
+.typelist button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;padding:6px 10px;border-radius:8px;font:500 .8rem var(--mono);color:var(--ink);cursor:pointer;text-align:left}
+.typelist button:hover{background:#eef4fd}
+.typelist button.on{background:var(--blue);color:#fff}
+.typelist button small{opacity:.6;font-size:.66rem}
+.tinfo{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.tinfo div{padding:11px 13px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:.84rem;color:var(--ink2)}
+.tinfo div b{display:block;font:600 .62rem var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
+.tdesc{margin:0 0 4px;font-size:1rem}
+.tdesc h4{margin:0 0 4px;font:700 1.3rem var(--mono);color:var(--blue2)}
+
+/* constructor de atributos */
+.builder{padding:18px;border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh)}
+.attrs{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px;margin-top:10px}
+.attr{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:#f8fbff;font:500 .78rem var(--mono);transition:background .2s,border-color .2s}
+.attr input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px;flex:none}
+.attr label{cursor:pointer;flex:none}
+.attr input[type=text]{flex:1;min-width:0;padding:3px 6px;border:1px solid var(--line);border-radius:6px;font:500 .74rem var(--mono);color:var(--ink);background:#fff}
+.attr.on{background:#e7f0ff;border-color:#9fc0f5}
+.attr.na{opacity:.4}
+.attr.na label{text-decoration:line-through}
+.explain{display:grid;gap:6px;margin-top:12px}
+.explain div{padding:8px 12px;border-radius:10px;background:#f3f7fd;font-size:.85rem;color:var(--ink2)}
+.explain div b{font-family:var(--mono);color:var(--blue2)}
+
+/* medidores de la sección 12 */
+.rng{display:grid;grid-template-columns:110px 1fr 54px;align-items:center;gap:10px;font:600 .76rem var(--mono);color:var(--ink2)}
+.rng input{accent-color:var(--blue);width:100%}
+.rng output{text-align:right;color:var(--blue2)}
+.panel{padding:16px 18px;border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh);display:grid;gap:10px}
+.zones{position:relative;height:40px;border-radius:10px;overflow:hidden;display:flex;font:600 .66rem var(--mono)}
+.zones div{display:grid;place-items:center;color:#fff;transition:flex .3s,background .3s}
+.zones .pin{position:absolute;top:0;bottom:0;width:3px;background:var(--ink);transition:left .2s}
+.zones .pin::after{content:'value';position:absolute;top:-1px;left:5px;padding:0 4px;border-radius:4px;background:var(--ink);color:#fff;font-size:.56rem}
+
+/* probador de pattern */
+.ptest{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.ptest label{display:grid;gap:4px;font:600 .7rem var(--mono);color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+.ptest input{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:500 .9rem var(--mono);color:var(--ink);background:#fff;min-width:0}
+.ptest input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.verdict{padding:10px 14px;border-radius:10px;font:700 .8rem var(--mono);white-space:nowrap}
+.verdict.y{background:var(--okbg);color:var(--ok)}
+.verdict.n{background:var(--errbg);color:var(--err)}
+.pex{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* detective */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,470px),1fr));gap:16px}
+.case{display:grid;gap:10px;padding:16px;border-radius:var(--r);background:#fff;border:1px solid var(--line);box-shadow:var(--sh)}
+.case h4{margin:0;display:flex;justify-content:space-between;gap:10px;font-size:.98rem}
+.case h4 span{font:600 .66rem var(--mono);color:var(--mute)}
+.case .code pre{font-size:.74rem;max-height:none}
+.case .opts2{display:grid;gap:6px}
+.case .opts2 button{text-align:left;border:1.5px solid var(--line);background:#f8fbff;border-radius:10px;padding:9px 12px;font:500 .86rem var(--ui);color:var(--ink);cursor:pointer;transition:all .2s}
+.case .opts2 button:hover{border-color:#9fc0f5}
+.case .opts2 button.right{background:var(--okbg);border-color:#86cf9f;color:#0f5a2c}
+.case .opts2 button.wrong{background:var(--errbg);border-color:#f0a796;color:#7a200f}
+.case .why{display:none;padding:10px 12px;border-radius:10px;background:#eaf3ff;color:#1d3a66;font-size:.86rem}
+.case.done .why{display:block}
+.score{display:inline-flex;gap:10px;align-items:center;padding:8px 14px;border-radius:999px;background:var(--ink);color:#fff;font:600 .78rem var(--mono)}
+
+/* revisor */
+.rev{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.rev textarea{width:100%;min-height:420px;padding:14px 16px;border-radius:var(--r);border:0;background:var(--code);color:#dbe7ff;font:500 .78rem/1.6 var(--mono);resize:vertical;box-shadow:0 18px 40px -22px rgba(14,29,53,.75)}
+.rev textarea:focus{outline:3px solid #9fc0f5}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{border:0;border-radius:11px;padding:10px 16px;font:700 .84rem var(--ui);cursor:pointer;background:var(--blue);color:#fff;box-shadow:0 10px 20px -10px var(--blue);transition:transform .15s,background .2s}
+.btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.checks{display:grid;gap:7px}
+.chk{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:.86rem}
+.chk i{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font:700 .78rem var(--mono);font-style:normal;color:#fff}
+.chk.ok i{background:var(--ok)}
+.chk.bad i{background:var(--err)}
+.chk.warn i{background:#f59e0b}
+.chk b{display:block;font-size:.88rem}
+.chk small{color:var(--ink2)}
+.revscore{display:flex;align-items:center;gap:14px;margin-bottom:10px;padding:14px 16px;border-radius:var(--r);background:var(--ink);color:#fff}
+.revscore b{font:700 1.8rem var(--mono)}
+
+/* chuleta */
+.cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.cheat div{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 14px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:.86rem}
+.cheat div code{white-space:nowrap}
+.search{width:100%;max-width:420px;padding:12px 16px;border-radius:12px;border:1.5px solid var(--line);font:500 .95rem var(--ui);background:#fff;margin-bottom:14px}
+.search:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.final{list-style:none;padding:0;margin:14px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:8px}
+.final label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:.88rem;cursor:pointer;transition:background .2s}
+.final input{accent-color:var(--ok);width:18px;height:18px;flex:none;margin-top:2px}
+.final label:has(input:checked){background:var(--okbg);border-color:#9bd6ae}
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:20px}
+.next div{padding:20px;border-radius:var(--r);background:linear-gradient(160deg,#fff,#eaf2ff);border:1px dashed #9fc0f5}
+.next b{display:block;font-size:1.05rem}
+
+footer{padding:40px 0 60px;color:var(--mute);font-size:.82rem;text-align:center}
+
+/* revelado al hacer scroll */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width:980px){
+  .hero>.wrap:first-child{grid-template-columns:1fr}
+  .desk{height:430px;max-width:560px}
+  .els{grid-template-columns:repeat(4,1fr)}
+  .labx,.rev{grid-template-columns:1fr}
+  .tester{grid-template-columns:1fr}
+  .typelist{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px}
+  .typelist h5{width:100%}
+  .typelist button{width:auto}
+  .flow{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg);height:30px}
+}
+@media (max-width:620px){
+  .wrap{width:calc(100% - 28px)}
+  .hero{padding:40px 0 50px}
+  .parts{grid-template-columns:1fr}
+  .desk{height:400px}
+  .clip{left:0;width:88%}
+  .tray{width:180px;right:0}
+  .els{grid-template-columns:repeat(2,1fr)}
+  .shead{grid-template-columns:1fr}
+  .folder{grid-row:auto;width:70px;height:56px;font-size:1.3rem}
+  .sec{padding:64px 0 30px}
+  .ptest{grid-template-columns:1fr}
+  .rng{grid-template-columns:90px 1fr 44px}
+  .brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<!-- ===================== NAVEGACIÓN ===================== -->
+<nav class="topnav" aria-label="Secciones">
+  <div class="wrap in">
+    <a class="brand" href="#top"><i>&lt;/&gt;</i><span>Oficina de formularios</span></a>
+    <button class="navbtn" id="navL" type="button" aria-label="Anterior">‹</button>
+    <ul id="navUl"></ul>
+    <button class="navbtn" id="navR" type="button" aria-label="Siguiente">›</button>
+  </div>
+  <div id="prog"></div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow"><b>HTML</b> Formularios · parte 1 de 3</p>
+      <h1>La oficina de los <em>formularios</em></h1>
+      <p class="lead">Cada formulario es un trámite: alguien rellena una ficha, el navegador la revisa y la mete en un sobre, y un servidor la recibe. Aquí aprenderás todas las etiquetas que lo hacen posible, <b>en crudo</b>: sin CSS ni JavaScript, tal y como las pinta el navegador.</p>
+      <div class="parts">
+        <div class="part now"><small>Parte 1</small><b>Etiquetas HTML</b>qué pieza usar y cómo escribirla</div>
+        <div class="part"><small>Parte 2</small><b>CSS</b>darles un aspecto profesional</div>
+        <div class="part"><small>Parte 3</small><b>JavaScript</b>reaccionar y comprobar en vivo</div>
+      </div>
+    </div>
+    <div class="desk" aria-hidden="true">
+      <span class="tag" style="left:0;top:0;--r:-4deg">&lt;form&gt;</span>
+      <span class="tag" style="right:6%;top:0;--r:5deg">&lt;label&gt;</span>
+      <span class="tag" style="right:0;top:34%;--r:-3deg">&lt;select&gt;</span>
+      <span class="tag" style="left:-2%;bottom:30%;--r:4deg">&lt;fieldset&gt;</span>
+      <span class="tag" style="right:28%;top:13%;--r:-2deg">&lt;input&gt;</span>
+      <span class="tag" style="left:36%;bottom:0;--r:3deg">&lt;meter&gt;</span>
+      <div class="clip">
+        <div class="sheet">
+          <h4>Inscripción<small>FICHA N.º 0427 · ACTIVIDADES DEL CENTRO</small></h4>
+          <div class="f"><span>Actividad</span><div class="box" id="hA"></div></div>
+          <div class="f"><span>Correo</span><div class="box" id="hB"></div></div>
+          <div class="f"><span>Turno</span><div class="opts"><span><i id="hR1"></i>Mañana</span><span><i id="hR2"></i>Tarde</span></div></div>
+          <div class="f"><div class="opts"><span><i class="sq" id="hC"></i>Acepto las normas</span></div></div>
+          <span class="sendb" id="hS">Enviar</span>
+          <span class="bigstamp" id="hStamp">RECIBIDO</span>
+        </div>
+      </div>
+      <div class="env" id="hEnv"></div>
+      <div class="tray"><b>SERVIDOR <em id="hOk">esperando…</em></b><pre id="hPre">…</pre></div>
+    </div>
+  </div>
+
+  <!-- expediente: los 14 elementos -->
+  <div class="wrap">
+    <div class="dossier rv">
+      <div class="hd">
+        <h3>El expediente completo: 14 elementos<small>Pulsa cualquiera para ir a su ventanilla. Se marcan solos cuando los visitas.</small></h3>
+        <div class="counter"><span id="cnt">0 / 14</span><div class="bar"><i id="cntBar"></i></div></div>
+      </div>
+      <div class="els" id="els"></div>
+      <p class="legendx"><i></i>Estos elementos van con los formularios, pero <b>no envían datos</b> al servidor.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ===================== 1 · QUÉ ES ===================== -->
+<section class="sec" id="que" data-nav="Qué es" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">01<small>TRÁMITE</small></div><p class="kick">Antes de la primera etiqueta</p><h2>¿Qué es un formulario?</h2></div>
+    <p class="intro rv">Un formulario no es <em>una</em> etiqueta: es un <b>equipo de elementos</b> que trabajan juntos para recoger datos y enviarlos. HTML se encarga de la estructura y los controles; quien procesa de verdad los datos es un servidor (o, más adelante, JavaScript).</p>
+    <div class="flow rv">
+      <div class="actor"><div class="ic">1</div><h4>La persona rellena</h4><p>Escribe, marca casillas y elige opciones en los controles: <code>input</code>, <code>select</code>, <code>textarea</code>…</p></div>
+      <div class="arrow"><i></i></div>
+      <div class="actor"><div class="ic">2</div><h4>El navegador empaqueta</h4><p>Al pulsar <b>Enviar</b>, revisa las reglas (obligatorios, formatos…) y mete cada dato en el paquete como <code>name=valor</code>.</p></div>
+      <div class="arrow"><i></i></div>
+      <div class="actor"><div class="ic">3</div><h4>El servidor recibe</h4><p>Lee el paquete en la dirección indicada en <code>action</code> y decide qué hacer: guardar, responder, avisar…</p></div>
+    </div>
+    <div class="call tip rv"><i>i</i><p><b>En esta página no hay servidor.</b> Las demos envían de verdad, pero interceptamos el envío y te enseñamos en un <b>recibo</b> exactamente lo que le llegaría. Fíjate siempre en él: es la mejor forma de entender qué hace cada atributo.</p></div>
+
+    <h3 class="sub rv">Tu primera ficha</h3>
+    <p class="txt rv">Cambia los datos y observa el recibo: se actualiza en vivo como <b>vista previa</b>. Después pulsa <b>Enviar</b> y verás el sello. Hay un campo que nunca aparece en el paquete… ¿sabes por qué?</p>
+    <div id="lab1"></div>
+
+    <h3 class="sub rv">Anatomía de un control</h3>
+    <p class="txt rv">Pulsa cada pieza de esta línea para ver qué significa. Casi todos los formularios se escriben con estas piezas.</p>
+    <div class="anat rv"><div class="line" id="anat"></div><div class="exp" id="anatExp">Elige una pieza.</div></div>
+
+    <div class="cards rv">
+      <div class="card accent"><h4><code>id</code> · el DNI del elemento</h4><p>Identifica el elemento <b>dentro de la página</b>. Lo usan <code>label</code>, CSS y JavaScript. Debe ser <b>único</b>: dos elementos nunca comparten id.</p></div>
+      <div class="card cy"><h4><code>name</code> · la etiqueta del dato</h4><p>Es el nombre con el que el dato <b>viaja al servidor</b>. Sin <code>name</code>, el campo se ve y se puede rellenar, pero <b>no se envía</b>.</p></div>
+      <div class="card ok"><h4><code>value</code> · el dato</h4><p>El contenido que se envía. En un campo de texto es lo que escribe la persona; en una casilla u opción es lo que <b>tú</b> decides que se mande.</p></div>
+    </div>
+    <div class="call key rv"><i>!</i><p><b>Regla de oro de este bloque:</b> <code>id</code> sirve para la página y <code>name</code> sirve para el envío. Casi siempre ponemos los dos y, para no liarnos, con el mismo texto: <code>id="correo" name="correo"</code>.</p></div>
+    <div class="call tip rv"><i>¶</i><p><b>¿Por qué cada pareja va dentro de un <code>&lt;p&gt;</code>?</b> Los controles son elementos <em>en línea</em>: sin CSS se colocan uno detrás de otro como palabras de una frase. Usar <code>&lt;p&gt;</code> o <code>&lt;br&gt;</code> es el truco mínimo para separarlos. En la parte 2 lo haremos bien, con CSS. Lo que nunca debes hacer es maquetar el formulario con <code>&lt;table&gt;</code>.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 2 · FORM ===================== -->
+<section class="sec" id="form" data-nav="form" data-els="form">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">02<small>CARPETA</small></div><p class="kick">El contenedor</p><h2><code>&lt;form&gt;</code> · la carpeta del trámite</h2></div>
+    <p class="intro rv">Todo lo que se va a enviar junto vive dentro de un <code>&lt;form&gt;</code>. La etiqueta no se ve, pero decide <b>adónde</b> van los datos y <b>cómo</b> viajan.</p>
+    <div class="cards rv">
+      <div class="card accent"><h4><code>action</code></h4><p>La dirección (URL) del servidor que recibirá los datos. Si no lo pones, se envían a la misma página.</p><span class="ex">action="/registro"</span></div>
+      <div class="card accent"><h4><code>method</code></h4><p>Cómo viajan: <code>get</code> (en la URL, es el valor por defecto) o <code>post</code> (dentro de la petición).</p><span class="ex">method="post"</span></div>
+      <div class="card accent"><h4><code>enctype</code></h4><p>Cómo se codifican los datos. Solo hace falta cambiarlo para <b>subir archivos</b>.</p><span class="ex">enctype="multipart/form-data"</span></div>
+      <div class="card cy"><h4><code>autocomplete</code></h4><p>Permite (<code>on</code>) o pide no ofrecer (<code>off</code>) sugerencias guardadas del navegador.</p><span class="ex">autocomplete="on"</span></div>
+      <div class="card cy"><h4><code>novalidate</code></h4><p>Atributo booleano: desactiva la validación automática del navegador. Útil para pruebas.</p><span class="ex">novalidate</span></div>
+      <div class="card cy"><h4><code>name</code> y <code>target</code></h4><p><code>name</code> identifica el formulario en la página. <code>target="_blank"</code> abre la respuesta en otra pestaña.</p><span class="ex">name="registro" target="_blank"</span></div>
+    </div>
+
+    <h3 class="sub rv">GET o POST: compruébalo</h3>
+    <p class="txt rv">Es el mismo formulario de búsqueda. Cambia el método, escribe algo y envía: mira <b>dónde</b> aparecen los datos en el recibo.</p>
+    <div class="ctrl rv"><span>method</span><div class="seg" id="segMethod"><button type="button" class="on" data-v="get">get</button><button type="button" data-v="post">post</button></div></div>
+    <div id="lab2"></div>
+    <div class="tbl rv"><table>
+      <tr><th></th><th>GET</th><th>POST</th></tr>
+      <tr><td><b>Dónde viajan los datos</b></td><td>Pegados a la URL: <code>?q=gatos&amp;orden=nuevos</code></td><td>Dentro del cuerpo de la petición, no en la URL</td></tr>
+      <tr><td><b>Se pueden guardar en favoritos o compartir</b></td><td><span class="y">Sí</span>, la URL lleva la búsqueda</td><td><span class="n">No</span></td></tr>
+      <tr><td><b>Quedan en el historial</b></td><td><span class="y">Sí</span></td><td><span class="n">No</span></td></tr>
+      <tr><td><b>Archivos</b></td><td><span class="n">No</span>: solo viaja el nombre del archivo</td><td><span class="y">Sí</span>, con <code>enctype="multipart/form-data"</code></td></tr>
+      <tr><td><b>Uso típico</b></td><td>Búsquedas y filtros: <b>consultar</b> sin cambiar nada</td><td>Registros, compras, mensajes: <b>enviar o cambiar</b> datos</td></tr>
+    </table></div>
+    <div class="call warn rv"><i>!</i><p><b>POST no es secreto.</b> Solo saca los datos de la URL; no los cifra. Lo que protege los datos por el camino es <b>HTTPS</b> (el candado del navegador).</p></div>
+    <div class="call bad rv"><i>×</i><p><b>Nunca metas un <code>&lt;form&gt;</code> dentro de otro.</b> HTML no lo permite y el navegador ignora el interior. Si necesitas dos envíos distintos, usa dos formularios separados.</p></div>
+    <div class="cards rv">
+      <div class="card"><h4>Más allá: el atributo <code>form</code></h4><p>Un control situado <b>fuera</b> del <code>&lt;form&gt;</code> puede pertenecer a él si indicas su id: <code>&lt;input name="extra" form="registro"&gt;</code>, con el formulario escrito como <code>&lt;form id="registro"&gt;</code>.</p></div>
+      <div class="card"><h4>Más allá: <code>&lt;search&gt;</code></h4><p>Etiqueta reciente que envuelve un formulario de búsqueda para dar significado: <code>&lt;search&gt;&lt;form&gt;…&lt;/form&gt;&lt;/search&gt;</code>. No cambia nada del envío.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3 · LABEL ===================== -->
+<section class="sec" id="label" data-nav="label" data-els="label">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">03<small>RÓTULO</small></div><p class="kick">Ponerle nombre a cada campo</p><h2><code>&lt;label&gt;</code> · el rótulo</h2></div>
+    <p class="intro rv">El <code>label</code> es el texto que dice qué va en cada campo. No es decoración: al conectarlo con su control, <b>hacer clic en el texto activa el campo</b>, y los lectores de pantalla leen ese texto en voz alta al llegar al campo.</p>
+    <div class="cards rv">
+      <div class="card accent"><h4><span class="num">1</span> Forma explícita: <code>for</code> + <code>id</code></h4><p>El <code>for</code> del label apunta al <code>id</code> del campo. Funciona aunque estén separados en el código.</p><span class="ex">&lt;label for="correo"&gt;…&lt;input id="correo"&gt;</span></div>
+      <div class="card cy"><h4><span class="num">2</span> Forma implícita: envolver</h4><p>El label <b>contiene</b> al campo. No necesita <code>for</code> ni <code>id</code>. Muy cómodo en casillas y radios.</p><span class="ex">&lt;label&gt;&lt;input type="checkbox"&gt; Texto&lt;/label&gt;</span></div>
+    </div>
+    <h3 class="sub rv">Prueba de clic</h3>
+    <p class="txt rv"><b>Haz clic sobre los textos</b>, no sobre los campos. En los casos bien hechos el campo se activa; en el roto no pasa nada; en el último no hay ningún texto que pulsar.</p>
+    <div id="lab3"></div>
+    <div class="call key rv"><i>!</i><p><b>El valor de <code>for</code> tiene que ser idéntico al <code>id</code></b>, letra a letra, mayúsculas incluidas. <code>for="Correo"</code> no conecta con <code>id="correo"</code>.</p></div>
+    <div class="call bad rv"><i>×</i><p><b>El <code>placeholder</code> no sustituye al label.</b> Desaparece en cuanto escribes (y ya no sabes qué era el campo), suele tener poco contraste y muchos lectores de pantalla no lo anuncian. Úsalo solo como pista extra: <em>"nombre@ejemplo.com"</em>.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 4 · INPUT TYPES ===================== -->
+<section class="sec" id="input" data-nav="input y type" data-els="input">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">04<small>CAJONES</small></div><p class="kick">Un elemento, 22 caras</p><h2><code>&lt;input&gt;</code> y sus <code>type</code></h2></div>
+    <p class="intro rv"><code>&lt;input&gt;</code> es una etiqueta <b>vacía</b> (no lleva cierre) y lo cambia todo según su atributo <code>type</code>: el aspecto, el teclado del móvil, la validación y lo que se envía. Elige un type en la lista y pruébalo en crudo.</p>
+    <div class="tester rv">
+      <div class="typelist" id="typeList"></div>
+      <div>
+        <div class="tdesc" id="tDesc"></div>
+        <div class="tinfo" id="tInfo"></div>
+        <div id="lab4"></div>
+      </div>
+    </div>
+    <div class="call tip rv"><i>i</i><p><b>Si escribes mal el type</b> (por ejemplo <code>type="emial"</code>) o no lo pones, el navegador no da error: lo trata como <code>type="text"</code>. Por eso un campo "que no valida el correo" suele tener un type mal escrito.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 5 · ATRIBUTOS ===================== -->
+<section class="sec" id="atributos" data-nav="Atributos" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">05<small>SELLOS</small></div><p class="kick">Las instrucciones de cada campo</p><h2>Atributos fundamentales de <code>&lt;input&gt;</code></h2></div>
+    <p class="intro rv">Los atributos ajustan el comportamiento del campo. Algunos llevan valor (<code>maxlength="20"</code>) y otros son <b>booleanos</b>: basta con escribirlos (<code>required</code>) para activarlos. Monta tu campo: elige un type, activa atributos y prueba a enviar.</p>
+    <div class="builder rv">
+      <div class="ctrl" style="margin-top:0"><span>type</span><div class="seg" id="bType"></div></div>
+      <div class="attrs" id="bAttrs"></div>
+      <div class="explain" id="bExp"></div>
+    </div>
+    <div id="lab5"></div>
+    <div class="cards rv">
+      <div class="card"><h4><code>value</code> vs <code>placeholder</code></h4><p><code>value</code> es contenido real: se ve como texto normal y <b>se envía</b>. <code>placeholder</code> es una pista en gris que <b>nunca se envía</b> y desaparece al escribir.</p></div>
+      <div class="card"><h4><code>autofocus</code></h4><p>Pone el cursor en ese campo al cargar la página. Solo uno por página y con cuidado: en móvil abre el teclado de golpe y puede desorientar.</p><span class="ex">&lt;input type="search" name="q" autofocus&gt;</span></div>
+      <div class="card"><h4><code>autocomplete</code> con valores</h4><p>Además de on/off, admite pistas para rellenar solo: <code>name</code>, <code>email</code>, <code>tel</code>, <code>street-address</code>, <code>postal-code</code>, <code>new-password</code>, <code>current-password</code>…</p></div>
+      <div class="card"><h4><code>inputmode</code></h4><p>Elige el teclado del móvil sin cambiar el type: <code>numeric</code>, <code>decimal</code>, <code>tel</code>, <code>email</code>, <code>url</code>, <code>search</code>. Ideal para códigos postales.</p><span class="ex">&lt;input type="text" inputmode="numeric"&gt;</span></div>
+      <div class="card"><h4><code>size</code></h4><p>Ancho aproximado del campo, en caracteres. No limita lo que se escribe (eso es <code>maxlength</code>). En la parte 2 lo haremos con CSS.</p></div>
+      <div class="card"><h4><code>list</code></h4><p>Conecta el campo con un <code>&lt;datalist&gt;</code> de sugerencias. Lo verás en la ventanilla 09.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6 · TEXTAREA ===================== -->
+<section class="sec" id="textarea" data-nav="textarea" data-els="textarea">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">06<small>CARTAS</small></div><p class="kick">Texto de varias líneas</p><h2><code>&lt;textarea&gt;</code> · el folio en blanco</h2></div>
+    <p class="intro rv">Para mensajes, comentarios o descripciones: cualquier texto que pueda ocupar varias líneas. A diferencia de <code>input</code>, <b>sí lleva etiqueta de cierre</b>.</p>
+    <div id="lab6"></div>
+    <div class="tbl rv"><table>
+      <tr><th>Atributo</th><th>Qué hace</th></tr>
+      <tr><td><code>rows</code></td><td>Filas visibles aproximadas. No limita cuánto se escribe; si hay más texto aparece una barra de desplazamiento.</td></tr>
+      <tr><td><code>cols</code></td><td>Ancho aproximado en caracteres.</td></tr>
+      <tr><td><code>minlength</code> / <code>maxlength</code></td><td>Mínimo y máximo de caracteres. Con maxlength el navegador simplemente deja de escribir.</td></tr>
+      <tr><td><code>placeholder</code>, <code>required</code>, <code>readonly</code>, <code>disabled</code></td><td>Igual que en <code>input</code>.</td></tr>
+      <tr><td><code>wrap</code></td><td><code>soft</code> (por defecto) envía el texto tal cual; <code>hard</code> envía saltos de línea donde el texto se partió visualmente (necesita <code>cols</code>).</td></tr>
+    </table></div>
+    <div class="call key rv"><i>!</i><p><b><code>textarea</code> no tiene atributo <code>value</code>.</b> El texto inicial se escribe <b>entre</b> las etiquetas. Y ojo: todo lo que pongas ahí cuenta, incluidos espacios y saltos de línea. Por eso se escribe pegado: <code>&lt;textarea&gt;&lt;/textarea&gt;</code>.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 7 · SELECT ===================== -->
+<section class="sec" id="select" data-nav="select" data-els="select,option,optgroup">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">07<small>ARCHIVO</small></div><p class="kick">Elegir de una lista</p><h2><code>&lt;select&gt;</code>, <code>&lt;option&gt;</code> y <code>&lt;optgroup&gt;</code></h2></div>
+    <p class="intro rv">Una lista desplegable. <code>select</code> es la caja, cada <code>option</code> es una opción y <code>optgroup</code> agrupa opciones bajo un título. La clave está en distinguir <b>el texto que se ve</b> del <b>valor que se envía</b>.</p>
+    <div class="cards rv">
+      <div class="card accent"><h4>Texto vs <code>value</code></h4><p><code>&lt;option value="js"&gt;JavaScript&lt;/option&gt;</code>: la persona ve "JavaScript" y el servidor recibe <code>js</code>. Si la opción no tiene value, se envía su texto.</p></div>
+      <div class="card accent"><h4><code>selected</code> y <code>disabled</code></h4><p><code>selected</code> marca la opción elegida al cargar. <code>disabled</code> la muestra en gris y no deja elegirla (también sirve en el <code>select</code> o en un <code>optgroup</code> entero).</p></div>
+      <div class="card cy"><h4><code>multiple</code> y <code>size</code></h4><p><code>multiple</code> permite elegir varias (Ctrl o Cmd + clic). <code>size</code> indica cuántas opciones se ven a la vez y convierte el desplegable en una lista.</p></div>
+      <div class="card cy"><h4><code>optgroup label</code></h4><p>El <code>label</code> del grupo es un título: se ve, pero no se puede elegir ni se envía.</p></div>
+    </div>
+    <div id="lab7"></div>
+    <div class="call tip rv"><i>i</i><p><b>Truco para obligar a elegir:</b> primera opción con <code>value=""</code> ("Selecciona...") y <code>required</code> en el select. Como el valor está vacío, el navegador no deja enviar hasta que se elija otra. Fíjate también en <code>dias</code>: con <code>multiple</code>, el mismo name se repite en el paquete una vez por opción elegida.</p></div>
+    <p class="txt rv"><b>¿Select o radio?</b> Con pocas opciones (hasta 4 o 5), los radios se ven todas de un vistazo y se eligen con un clic. Con muchas opciones (provincias, países, cursos), el select ahorra espacio.</p>
+  </div>
+</section>
+
+<!-- ===================== 8 · RADIO Y CHECKBOX ===================== -->
+<section class="sec" id="radio" data-nav="radio y checkbox" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">08<small>CASILLAS</small></div><p class="kick">Elegir una o varias</p><h2><code>radio</code> y <code>checkbox</code></h2></div>
+    <p class="intro rv">Los dos son <code>input</code>, pero se comportan al revés. Con <b>radio</b> se elige <b>una sola</b> opción de un grupo; con <b>checkbox</b> cada casilla es <b>independiente</b>. El responsable de que un grupo de radios funcione es el <code>name</code>.</p>
+    <div class="ctrl rv"><span>Los radios tienen…</span><div class="seg" id="segRadio"><button type="button" class="on" data-v="ok">el mismo name</button><button type="button" data-v="bad">names distintos</button></div></div>
+    <div id="lab8"></div>
+    <div class="tbl rv"><table>
+      <tr><th></th><th>radio</th><th>checkbox</th></tr>
+      <tr><td><b>Cuántas se pueden marcar</b></td><td>Una por grupo</td><td>Las que quieras</td></tr>
+      <tr><td><b>Qué forma el grupo</b></td><td>Compartir el mismo <code>name</code></td><td>Nada: cada una va por libre (pueden compartir name para enviar una lista)</td></tr>
+      <tr><td><b>Se puede desmarcar con clic</b></td><td><span class="n">No</span>: solo eligiendo otra</td><td><span class="y">Sí</span></td></tr>
+      <tr><td><b>Sin <code>value</code></b></td><td colspan="2">Si se marca, envía la palabra <code>on</code>. Pon siempre un value con significado.</td></tr>
+      <tr><td><b>Sin marcar</b></td><td colspan="2">No se envía <b>nada</b>: ni el name aparece en el paquete.</td></tr>
+      <tr><td><b>Marcada al cargar</b></td><td colspan="2">Atributo <code>checked</code></td></tr>
+      <tr><td><b>Obligatoria</b></td><td>Con <code>required</code> en una de ellas, el grupo entero es obligatorio</td><td><code>required</code> obliga a marcar <b>esa</b> casilla (típico en "Acepto las condiciones")</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ===================== 9 · DATALIST ===================== -->
+<section class="sec" id="datalist" data-nav="datalist" data-els="datalist">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">09<small>AGENDA</small></div><p class="kick">Sugerencias, no obligaciones</p><h2><code>&lt;datalist&gt;</code> · la agenda de sugerencias</h2></div>
+    <p class="intro rv">Ofrece una lista de propuestas mientras escribes, pero deja escribir cualquier otra cosa. El datalist <b>no se ve</b> por sí mismo: aparece como sugerencias del campo conectado.</p>
+    <div id="lab9"></div>
+    <div class="call key rv"><i>!</i><p><b>La conexión:</b> el atributo <code>list</code> del input debe coincidir con el <code>id</code> del datalist. Es la misma idea que <code>for</code> e <code>id</code> en los labels.</p></div>
+    <div class="tbl rv"><table>
+      <tr><th></th><th>select</th><th>input + datalist</th></tr>
+      <tr><td><b>Se puede escribir otra cosa</b></td><td><span class="n">No</span></td><td><span class="y">Sí</span></td></tr>
+      <tr><td><b>Filtra mientras escribes</b></td><td><span class="n">No</span></td><td><span class="y">Sí</span></td></tr>
+      <tr><td><b>Ideal para</b></td><td>Opciones cerradas: talla, curso</td><td>Respuestas frecuentes pero abiertas: ciudad, navegador, profesión</td></tr>
+    </table></div>
+    <p class="txt rv">Funciona también con otros types: con <code>type="email"</code> sugiere correos y con <code>type="range"</code> algunos navegadores dibujan marcas en el deslizador.</p>
+  </div>
+</section>
+
+<!-- ===================== 10 · BUTTON ===================== -->
+<section class="sec" id="button" data-nav="button" data-els="button">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">10<small>TIMBRES</small></div><p class="kick">Los que hacen que pase algo</p><h2><code>&lt;button&gt;</code> · los botones</h2></div>
+    <p class="intro rv">Un botón puede enviar, restablecer o no hacer nada (hasta que JavaScript le dé una tarea). Lo decide su <code>type</code>. Pulsa cada botón del ejemplo y mira el recibo.</p>
+    <div id="lab10"></div>
+    <div class="cards rv">
+      <div class="card accent"><h4><code>type="submit"</code></h4><p>Envía el formulario. Si tiene <code>name</code> y <code>value</code>, también se envían: así el servidor sabe <b>qué botón</b> se pulsó.</p></div>
+      <div class="card accent"><h4><code>type="reset"</code></h4><p>Devuelve todo a los valores <b>iniciales del HTML</b>: no vacía los campos que traían value. Se usa poco: un clic sin querer borra el trabajo.</p></div>
+      <div class="card accent"><h4><code>type="button"</code></h4><p>Botón genérico: no hace nada por sí solo. Se usa para acciones de JavaScript (parte 3).</p></div>
+      <div class="card bad"><h4>Sin <code>type</code></h4><p>Dentro de un form, un <code>&lt;button&gt;</code> sin type <b>es un submit</b>. Escribe siempre el type.</p></div>
+    </div>
+    <h3 class="sub rv">Los atributos <code>form…</code> del botón</h3>
+    <p class="txt rv">Un botón submit puede <b>sobrescribir</b> lo que dice el <code>&lt;form&gt;</code> solo para su envío:</p>
+    <div class="tbl rv"><table>
+      <tr><th>Atributo</th><th>Sobrescribe</th><th>Ejemplo</th></tr>
+      <tr><td><code>formaction</code></td><td><code>action</code></td><td>Enviar a otra dirección: <code>formaction="/vista-previa"</code></td></tr>
+      <tr><td><code>formmethod</code></td><td><code>method</code></td><td><code>formmethod="get"</code></td></tr>
+      <tr><td><code>formnovalidate</code></td><td>la validación</td><td>"Guardar borrador" sin rellenar los obligatorios</td></tr>
+      <tr><td><code>formenctype</code>, <code>formtarget</code></td><td><code>enctype</code>, <code>target</code></td><td>Poco frecuentes</td></tr>
+    </table></div>
+    <div class="cards rv">
+      <div class="card"><h4><code>&lt;button&gt;</code> o <code>&lt;input type="submit"&gt;</code></h4><p>Hacen lo mismo. <code>input</code> es vacío y su texto va en <code>value</code>; <code>&lt;button&gt;</code> tiene apertura y cierre y puede llevar dentro texto con formato o una imagen. Hoy se prefiere <code>&lt;button&gt;</code>.</p></div>
+      <div class="card"><h4>Enviar con Enter</h4><p>Pulsar Enter en un campo de texto equivale a pulsar el <b>primer</b> botón submit del formulario.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 11 · FIELDSET ===================== -->
+<section class="sec" id="fieldset" data-nav="fieldset" data-els="fieldset,legend">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">11<small>APARTADOS</small></div><p class="kick">Ordenar por bloques</p><h2><code>&lt;fieldset&gt;</code> y <code>&lt;legend&gt;</code></h2></div>
+    <p class="intro rv"><code>fieldset</code> agrupa controles relacionados y dibuja un marco; <code>legend</code> es el título del grupo, y va <b>justo después</b> de abrir el fieldset. Los lectores de pantalla leen la legend antes de cada campo del grupo: por eso es <b>la mejor forma de hacer la pregunta de un grupo de radios</b>.</p>
+    <div class="ctrl rv"><span>Tercer fieldset</span><div class="seg" id="segFs"><button type="button" class="on" data-v="on">activo</button><button type="button" data-v="off">con disabled</button></div></div>
+    <div id="lab11"></div>
+    <div class="call tip rv"><i>i</i><p><b><code>&lt;fieldset disabled&gt;</code> desactiva todos los controles que contiene</b> de una sola vez, y ninguno se envía. Muy útil para apartados que solo aplican a veces.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 12 · OUTPUT, METER, PROGRESS ===================== -->
+<section class="sec" id="medidores" data-nav="output, meter, progress" data-els="output,meter,progress">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">12<small>PANTALLAS</small></div><p class="kick">Mostrar, no preguntar</p><h2><code>&lt;output&gt;</code>, <code>&lt;meter&gt;</code> y <code>&lt;progress&gt;</code></h2></div>
+    <p class="intro rv">Estos tres no recogen datos: <b>enseñan</b> información. Se usan junto a los formularios, pero <b>nunca se envían</b>, aunque tengan <code>name</code>.</p>
+    <div class="cards rv">
+      <div class="card accent"><h4><code>&lt;meter&gt;</code></h4><p>Una <b>medida</b> dentro de un rango conocido: batería, espacio en disco, nivel de una contraseña, nota.</p></div>
+      <div class="card cy"><h4><code>&lt;progress&gt;</code></h4><p>El <b>avance de una tarea</b> que termina: una subida, una descarga, los pasos de un registro.</p></div>
+      <div class="card ok"><h4><code>&lt;output&gt;</code></h4><p>El <b>resultado de un cálculo</b> o una acción: un total, el valor elegido en un range.</p></div>
+    </div>
+
+    <h3 class="sub rv"><code>&lt;meter&gt;</code>: la medida con zonas</h3>
+    <p class="txt rv">Además de <code>min</code>, <code>max</code> y <code>value</code>, el meter acepta <code>low</code> y <code>high</code> (dónde empieza lo "bajo" y lo "alto") y <code>optimum</code> (qué zona es la buena). Con eso, el navegador colorea solo: <b>verde</b> si el valor está en la zona óptima, <b>amarillo</b> en la de al lado y <b>rojo</b> en la más alejada. Mueve los controles (son de la página, no de la demo) y mira el código.</p>
+    <div class="labx rv">
+      <div class="panel" id="meterPanel"></div>
+      <div class="rcol" id="meterRight"></div>
+    </div>
+
+    <h3 class="sub rv"><code>&lt;progress&gt;</code>: cuánto falta</h3>
+    <p class="txt rv">Solo tiene <code>value</code> y <code>max</code> (por defecto 1). Si <b>quitas el value</b>, pasa a estado <b>indeterminado</b>: una animación que dice "trabajando…, no sé cuánto queda".</p>
+    <div class="labx rv">
+      <div class="panel" id="progPanel"></div>
+      <div class="rcol" id="progRight"></div>
+    </div>
+    <div class="call tip rv"><i>i</i><p><b>El texto de dentro</b> (<code>&lt;meter&gt;75%&lt;/meter&gt;</code>) solo se ve en navegadores muy antiguos que no conocen la etiqueta. Escríbelo igualmente: es la alternativa accesible.</p></div>
+
+    <h3 class="sub rv"><code>&lt;output&gt;</code>: el resultado</h3>
+    <p class="txt rv">El output muestra un valor que <b>calcula otra cosa</b>. Su atributo <code>for</code> indica de qué campos depende (ids separados por espacios). Para que el resultado cambie solo hace falta una pizca de JavaScript: aquí va un <b>adelanto de la parte 3</b>, marcado en el código. Cambia los números.</p>
+    <div id="lab12"></div>
+    <div class="call warn rv"><i>!</i><p><b>Envía el formulario y mira el recibo:</b> <code>a</code> y <code>b</code> viajan, pero <code>total</code> no, aunque tenga name. Si el servidor necesita el resultado, debe calcularlo él.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 13 · VALIDACIÓN ===================== -->
+<section class="sec" id="validacion" data-nav="Validación" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">13<small>CONTROL</small></div><p class="kick">El navegador revisa antes de enviar</p><h2>Validación HTML · la ventanilla de control</h2></div>
+    <p class="intro rv">Con unos pocos atributos, el navegador comprueba los datos <b>antes</b> de enviarlos y, si algo falla, bloquea el envío y muestra un aviso. Prueba a enviar este formulario vacío, con datos raros y bien. El recibo te dirá qué ha bloqueado y por qué (con el mensaje del propio navegador).</p>
+    <div class="ctrl rv"><span>&lt;form&gt;</span><div class="seg" id="segVal"><button type="button" class="on" data-v="on">validando</button><button type="button" data-v="off">con novalidate</button></div></div>
+    <div id="lab13"></div>
+    <div class="tbl rv"><table>
+      <tr><th>Atributo</th><th>Comprueba que…</th><th>Ejemplo</th></tr>
+      <tr><td><code>required</code></td><td>no esté vacío</td><td><code>required</code></td></tr>
+      <tr><td><code>minlength</code> / <code>maxlength</code></td><td>el texto tenga entre X e Y caracteres</td><td><code>minlength="3" maxlength="12"</code></td></tr>
+      <tr><td><code>min</code> / <code>max</code></td><td>el número o la fecha esté dentro del rango</td><td><code>min="16" max="99"</code></td></tr>
+      <tr><td><code>step</code></td><td>el número vaya de X en X</td><td><code>step="0.5"</code></td></tr>
+      <tr><td><code>pattern</code></td><td>el texto siga un patrón (expresión regular)</td><td><code>pattern="[0-9]{5}"</code></td></tr>
+      <tr><td><code>type="email"</code>, <code>type="url"</code></td><td>tenga forma de correo (<code>a@b</code>) o de dirección (<code>https://…</code>)</td><td><code>type="email"</code></td></tr>
+    </table></div>
+
+    <h3 class="sub rv">Probador de <code>pattern</code></h3>
+    <p class="txt rv">El pattern es una <b>expresión regular</b> que debe cumplir el valor <b>entero</b>, de principio a fin. Prueba los ejemplos o escribe el tuyo.</p>
+    <div class="panel rv">
+      <div class="ptest">
+        <label>pattern<input id="pPat" value="[0-9]{5}" spellcheck="false"></label>
+        <label>Texto a probar<input id="pTxt" value="48001" spellcheck="false"></label>
+        <div class="verdict" id="pOut"></div>
+      </div>
+      <div class="pex" id="pEx"></div>
+      <div class="explain" id="pExp"></div>
+    </div>
+    <div class="call warn rv"><i>!</i><p><b>Un campo opcional vacío siempre pasa</b>, aunque tenga pattern, min o minlength: esas reglas solo se comprueban si hay algo escrito. Si debe rellenarse, añade <code>required</code>. Y añade <code>title</code> para explicar el formato: el navegador lo muestra en el aviso.</p></div>
+    <div class="call bad rv"><i>×</i><p><b>La validación del navegador es una ayuda, no una protección.</b> Cualquiera puede quitar un <code>required</code> desde las herramientas del navegador o enviar datos sin usar tu formulario. El servidor <b>siempre</b> debe volver a comprobarlo todo.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 14 · DISABLED, READONLY, HIDDEN ===================== -->
+<section class="sec" id="estados" data-nav="disabled, readonly, hidden" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">14<small>CANDADOS</small></div><p class="kick">Tres formas de "no tocar"</p><h2><code>disabled</code>, <code>readonly</code> y <code>hidden</code></h2></div>
+    <p class="intro rv">Los tres impiden que la persona cambie un dato, pero <b>no hacen lo mismo con el envío</b>. Envía la demo y compruébalo en el recibo.</p>
+    <div id="lab14"></div>
+    <div class="tbl rv"><table>
+      <tr><th></th><th>disabled</th><th>readonly</th><th>type="hidden"</th></tr>
+      <tr><td><b>Se ve</b></td><td><span class="y">Sí</span>, en gris</td><td><span class="y">Sí</span>, normal</td><td><span class="n">No</span></td></tr>
+      <tr><td><b>Se puede editar</b></td><td><span class="n">No</span></td><td><span class="n">No</span></td><td><span class="n">No</span> (desde la página)</td></tr>
+      <tr><td><b>Recibe el foco / se puede seleccionar y copiar</b></td><td><span class="n">No</span></td><td><span class="y">Sí</span></td><td><span class="n">No</span></td></tr>
+      <tr><td><b>Se envía</b></td><td><span class="n">No</span></td><td><span class="y">Sí</span></td><td><span class="y">Sí</span></td></tr>
+      <tr><td><b>Se valida</b> (required, pattern…)</td><td><span class="n">No</span></td><td><span class="n">No</span></td><td><span class="n">No</span></td></tr>
+    </table></div>
+    <div class="call bad rv"><i>×</i><p><b>Hidden no es secreto.</b> Basta con ver el código fuente (Ctrl + U) para leer su value. Nunca guardes ahí contraseñas, precios que el servidor no compruebe ni nada privado.</p></div>
+    <div class="call tip rv"><i>i</i><p><b>No confundas <code>type="hidden"</code> con el atributo <code>hidden</code>.</b> El atributo <code>hidden</code> se puede poner en cualquier etiqueta y solo la oculta en pantalla: un <code>&lt;input type="text" name="x" hidden&gt;</code> no se ve, pero sigue enviándose.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 15 · ARCHIVOS ===================== -->
+<section class="sec" id="archivos" data-nav="Archivos" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">15<small>ADJUNTOS</small></div><p class="kick">Subir documentos e imágenes</p><h2>Subir archivos con <code>type="file"</code></h2></div>
+    <p class="intro rv">Para que un archivo viaje <b>completo</b> hacen falta tres cosas a la vez: <code>method="post"</code>, <code>enctype="multipart/form-data"</code> en el form y <code>name</code> en el input. Elige un archivo cualquiera de tu equipo (no sale de tu navegador) y cambia el enctype.</p>
+    <div class="ctrl rv"><span>enctype</span><div class="seg" id="segEnc"><button type="button" class="on" data-v="mp">multipart/form-data</button><button type="button" data-v="no">sin enctype</button></div></div>
+    <div id="lab15"></div>
+    <div class="cards rv">
+      <div class="card accent"><h4><code>accept</code></h4><p>Filtra qué archivos ofrece el selector: extensiones (<code>.pdf,.zip</code>), tipos (<code>image/*</code>, <code>video/*</code>) o ambos. Es una <b>comodidad, no una seguridad</b>: se puede saltar, y el servidor debe comprobar el archivo.</p></div>
+      <div class="card accent"><h4><code>multiple</code></h4><p>Permite elegir varios archivos de una vez. Viajan todos con el mismo name.</p></div>
+      <div class="card cy"><h4><code>capture</code></h4><p>En el móvil abre directamente la cámara: <code>capture="environment"</code> (trasera) o <code>"user"</code> (frontal). Va junto a <code>accept="image/*"</code>.</p></div>
+      <div class="card bad"><h4>Sin value</h4><p>Por seguridad, un input file <b>no se puede rellenar desde el HTML</b>: siempre empieza vacío y solo la persona elige el archivo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 16 · DETECTIVE ===================== -->
+<section class="sec" id="detective" data-nav="Detective" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">16<small>REVISIÓN</small></div><p class="kick">Errores frecuentes</p><h2>Detective de formularios</h2></div>
+    <p class="intro rv">Cada ficha tiene <b>un fallo</b> de los que más se repiten. Encuéntralo antes de mirar la explicación.</p>
+    <p class="rv"><span class="score" id="dScore">0 / 0 resueltos</span></p>
+    <div class="cases" id="cases"></div>
+  </div>
+</section>
+
+<!-- ===================== 17 · PROYECTO FINAL ===================== -->
+<section class="sec" id="final" data-nav="Proyecto final" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">17<small>EXPEDIENTE</small></div><p class="kick">Todo junto</p><h2>Ficha de inscripción a una actividad</h2></div>
+    <p class="intro rv">Un formulario completo que usa casi todo lo visto: fieldsets, labels, varios types, radios, casillas, select, datalist, textarea, archivo, validaciones y botones. Léelo con calma: cada parte está comentada. Rellénalo y envíalo.</p>
+    <div id="lab17"></div>
+  </div>
+</section>
+
+<!-- ===================== 18 · REVISOR ===================== -->
+<section class="sec" id="revisor" data-nav="Revisor" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">18<small>AUDITORÍA</small></div><p class="kick">Tu propio formulario</p><h2>El revisor de formularios</h2></div>
+    <p class="intro rv">Pega aquí <b>tu</b> formulario (el del ejercicio de clase, por ejemplo) y pulsa <b>Revisar</b>. El revisor comprueba la checklist de la guía, lo dibuja en crudo y te deja enviarlo para ver el paquete.</p>
+    <div class="rev rv">
+      <div>
+        <textarea id="revSrc" spellcheck="false" aria-label="Código HTML a revisar"></textarea>
+        <div class="btns"><button class="btn" type="button" id="revGo">Revisar</button><button class="btn ghost" type="button" id="revBad">Cargar ejemplo con fallos</button><button class="btn ghost" type="button" id="revGood">Cargar proyecto final</button></div>
+      </div>
+      <div><div id="revOut"></div></div>
+    </div>
+    <div id="labRev"></div>
+  </div>
+</section>
+
+<!-- ===================== 19 · CHULETA ===================== -->
+<section class="sec" id="chuleta" data-nav="Chuleta" data-els="">
+  <div class="wrap">
+    <div class="shead rv"><div class="folder">19<small>RESUMEN</small></div><p class="kick">Para tener a mano</p><h2>Chuleta y checklist</h2></div>
+    <input class="search rv" id="cheatQ" type="search" placeholder="Busca: fecha, varias, archivo, sugerencias…" aria-label="Buscar en la chuleta">
+    <div class="cheat rv" id="cheat"></div>
+    <h3 class="sub rv">Checklist antes de entregar</h3>
+    <ul class="final rv" id="checklist"></ul>
+    <div class="next rv">
+      <div><b>Parte 2 · CSS</b>Colocar cada label con su campo, dar estilo a los controles y usar <code>:focus</code>, <code>:invalid</code>, <code>:checked</code> o <code>:disabled</code> para reaccionar a su estado.</div>
+      <div><b>Parte 3 · JavaScript</b>Leer los valores, validar mientras se escribe, actualizar un <code>output</code> o enviar sin recargar la página.</div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Juritecnia · Formularios HTML · parte 1 de 3 · Las demos se muestran en crudo, con el estilo por defecto del navegador.</div></footer>
+<script>
+(function(){
+"use strict";
+/* =====================================================================
+   UTILIDADES
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- resaltado de HTML (etiquetas, atributos, valores, comentarios) ---------- */
+function hlHtml(src){
+  let inTag=false,inCom=false;
+  return src.split('\n').map(raw=>{
+    const mark=raw.startsWith('»');const line=mark?raw.slice(1):raw;let o='',i=0;
+    while(i<line.length){
+      const rest=line.slice(i);
+      if(inCom){const j=rest.indexOf('-->');const part=j<0?rest:rest.slice(0,j+3);o+='<span class="c">'+esc(part)+'</span>';i+=part.length;if(j>=0)inCom=false;continue;}
+      if(!inTag){
+        if(rest.startsWith('<!--')){inCom=true;continue;}
+        const m=rest.match(/^<\/?[a-zA-Z][\w-]*/);
+        if(m){o+='<span class="t">'+esc(m[0])+'</span>';i+=m[0].length;inTag=true;continue;}
+        o+=esc(line[i]);i++;continue;}
+      if(rest.startsWith('/>')||rest[0]==='>'){const g=rest.startsWith('/>')?'/>':'>';o+='<span class="t">'+esc(g)+'</span>';i+=g.length;inTag=false;continue;}
+      if(/\s/.test(rest[0])){o+=rest[0];i++;continue;}
+      const an=rest.match(/^[^\s=>\/]+/);
+      if(an){o+='<span class="a">'+esc(an[0])+'</span>';i+=an[0].length;
+        const vm=line.slice(i).match(/^=("[^"]*"|'[^']*'|[^\s>]+)/);
+        if(vm){o+='=<span class="v">'+esc(vm[1])+'</span>';i+=vm[0].length;}continue;}
+      o+=esc(rest[0]);i++;}
+    return mark?'<span class="new">'+(o||' ')+'</span>':o;}).join('\n');}
+const clean=s=>s.split('\n').map(l=>l.startsWith('»')?l.slice(1):l).join('\n');
+
+function copyText(txt,btn){const done=()=>{const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+/* caja de código con botón Copiar · las líneas que empiezan por » se destacan */
+function codeBox(src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||'HTML')}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+  w.set=s=>{w.src=clean(s);$('pre',w).innerHTML=hlHtml(s);};w.set(src||'');$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+
+/* =====================================================================
+   MESA DE PRUEBAS
+   código (izquierda) + navegador en crudo (iframe) + recibo del servidor
+   ===================================================================== */
+const FILE_DESC=f=>f.name?`${f.name} (${f.size<1024?f.size+' B':Math.round(f.size/1024)+' KB'}${f.type?', '+f.type:''})`:'(ningún archivo elegido)';
+function makeLab(host,cfg){
+  if(typeof host==='string')host=$(host);
+  const box=el('div','labx rv'+(cfg.wide?' wide':''));
+  const code=codeBox(cfg.html,cfg.title||'HTML');
+  const right=el('div','rcol');
+  const br=el('div','browser');
+  br.innerHTML=`<div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">${esc(cfg.file||'formulario.html')}</span><span class="raw">SIN CSS</span></div>`;
+  const fr=document.createElement('iframe');fr.title='Demostración en crudo';fr.setAttribute('loading','lazy');br.appendChild(fr);
+  if(cfg.hint)br.appendChild(el('p','hint',cfg.hint));
+  right.appendChild(br);
+  let rc=null;
+  if(cfg.receipt!==false){rc=el('div','receipt');rc.innerHTML='<div class="rhead"><span>PAQUETE PARA EL SERVIDOR</span><span class="st">vista previa</span></div><div class="rbody"></div><span class="rstamp">ENVIADO</span>';right.appendChild(rc);}
+  box.append(code,right);host.appendChild(box);
+  const api={code,frame:fr,receipt:rc,box,html:cfg.html};
+  let blocked=[],btimer=null,imgXY=null;
+
+  /* pinta el recibo: estado, petición, tabla name/valor y lo que no viaja */
+  function paint(form,sub,state){
+    if(!rc)return;
+    const st=$('.st',rc),body=$('.rbody',rc),stamp=$('.rstamp',rc);
+    const g=a=>sub&&sub.hasAttribute('form'+a)?sub.getAttribute('form'+a):form.getAttribute(a);
+    const method=(g('method')||'get').toLowerCase()==='post'?'POST':'GET';
+    const action=g('action')||'(esta misma página)';
+    const enc=method==='POST'&&(g('enctype')||'').toLowerCase()==='multipart/form-data'?'multipart':'url';
+    let fd;try{fd=sub?new FormData(form,sub):new FormData(form);}catch(e){fd=new FormData(form);}
+    if(sub&&sub.type==='image'&&imgXY){const p=sub.name?sub.name+'.':'';if(!fd.has(p+'x')){fd.append(p+'x',imgXY.x);fd.append(p+'y',imgXY.y);}}
+    const ent=[...fd.entries()];
+    const txt=v=>v instanceof File?(enc==='multipart'?FILE_DESC(v):(v.name||'')):v;
+    const qs=ent.map(([k,v])=>encodeURIComponent(k)+'='+encodeURIComponent(txt(v))).join('&').replace(/%20/g,'+');
+    let req;
+    if(method==='GET')req=`<span class="m">GET</span> ${esc(action)}<span class="q">${qs?'?'+esc(qs):''}</span> HTTP/1.1`;
+    else if(enc==='url')req=`<span class="m">POST</span> ${esc(action)} HTTP/1.1\nContent-Type: application/x-www-form-urlencoded\n\n<span class="q">${esc(qs)||'(cuerpo vacío)'}</span>`;
+    else req=`<span class="m">POST</span> ${esc(action)} HTTP/1.1\nContent-Type: multipart/form-data\n\n`+ent.map(([k,v])=>`<span class="q">--frontera\nname="${esc(k)}"${v instanceof File?'; filename="'+esc(v.name)+'"':''}\n${esc(txt(v))}</span>`).join('\n')+'\n--frontera--';
+    const rows=ent.length?ent.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(txt(v))===''?'<i style="color:#a19774">(vacío)</i>':esc(txt(v))}</td></tr>`).join(''):'<tr class="empty"><td colspan="2">No viaja ningún dato</td></tr>';
+    /* lo que no viaja y por qué */
+    const miss=[],seenRadio={};
+    Array.from(form.elements).forEach(c=>{
+      const tag=c.tagName.toLowerCase(),t=(c.type||'').toLowerCase();
+      if(tag==='fieldset'||tag==='object')return;
+      if(tag==='button'||['submit','reset','button','image'].includes(t))return;
+      const who=c.name?`<b style="display:inline">${esc(c.name)}</b>`:(c.id?'#'+esc(c.id):'&lt;'+tag+(t&&tag==='input'?' type="'+t+'"':'')+'&gt;');
+      if(tag==='output'){miss.push(`output ${who}: un output nunca se envía`);return;}
+      if(!c.name){miss.push(`${who}: no tiene <b style="display:inline">name</b>`);return;}
+      if(c.matches(':disabled')){miss.push(`${who}: está disabled`);return;}
+      if(t==='checkbox'&&!c.checked){miss.push(`${who}${c.hasAttribute('value')?' = '+esc(c.value):' (sin value)'}: casilla sin marcar`);return;}
+      if(t==='radio'){if(seenRadio[c.name])return;seenRadio[c.name]=1;const any=Array.from(form.elements).some(r=>r.type==='radio'&&r.name===c.name&&r.checked);if(!any)miss.push(`${who}: ningún radio del grupo marcado`);}
+    });
+    let h='';
+    if(state==='blk')h+=`<div class="blocked"><b>ENVÍO BLOQUEADO POR EL NAVEGADOR</b>${blocked.map(b=>'· '+esc(b)).join('<br>')}</div><p style="margin:8px 0 0;font-size:.7rem;color:#6d6346">Corrige los campos y vuelve a enviar. El paquete no ha salido.</p>`;
+    else{h+=`<pre class="req">${req}</pre><table class="kv">${rows}</table>`;
+      if(miss.length)h+=`<div class="miss"><b>NO VIAJAN</b>${miss.join('<br>')}</div>`;}
+    body.innerHTML=h;
+    st.className='st'+(state==='sent'?' sent':state==='blk'?' blk':state==='rst'?' rst':'');
+    st.textContent=state==='sent'?'enviado':state==='blk'?'bloqueado':state==='rst'?'restablecido':'vista previa · aún no enviado';
+    if(state==='sent'||state==='blk'){stamp.textContent=state==='sent'?'ENVIADO':'BLOQUEADO';stamp.classList.toggle('red',state==='blk');stamp.classList.remove('hit');void stamp.offsetWidth;stamp.classList.add('hit');}
+    else stamp.classList.remove('hit');
+    if(cfg.onPaint)cfg.onPaint(state,ent);
+  }
+  function note(msg){if(!rc)return;const body=$('.rbody',rc);$('.rstamp',rc).classList.remove('hit');$('.st',rc).className='st';$('.st',rc).textContent='nada que enviar';body.innerHTML=`<div class="miss" style="margin:0"><b>AVISO</b>${msg}</div>`;}
+  api.note=note;
+
+  function fit(){try{const d=fr.contentDocument;if(!d)return;fr.style.height=Math.max(60,Math.ceil(d.documentElement.scrollHeight))+'px';}catch(e){}}
+  fr.addEventListener('load',()=>{
+    const d=fr.contentDocument;if(!d)return;fit();
+    if('ResizeObserver' in window)new ResizeObserver(fit).observe(d.documentElement);
+    const firstForm=()=>d.querySelector('form');
+    const prev=()=>{const f=firstForm();if(f)paint(f,null,'prev');};
+    d.addEventListener('input',e=>{const f=e.target.form;if(f)paint(f,null,'prev');});
+    d.addEventListener('change',e=>{const f=e.target.form;if(f)paint(f,null,'prev');});
+    d.addEventListener('submit',e=>{e.preventDefault();paint(e.target,e.submitter||null,'sent');});
+    d.addEventListener('reset',e=>{const f=e.target;setTimeout(()=>paint(f,null,'rst'),0);});
+    d.addEventListener('invalid',e=>{const c=e.target;blocked.push(`${c.name||c.id||c.tagName.toLowerCase()}: ${c.validationMessage}`);clearTimeout(btimer);btimer=setTimeout(()=>{if(c.form)paint(c.form,null,'blk');blocked=[];},0);},true);
+    d.addEventListener('click',e=>{const b=e.target.closest('button,input');if(!b)return;
+      if(b.type==='image'){imgXY={x:Math.round(e.offsetX),y:Math.round(e.offsetY)};}
+      if(b.type==='button')note('Has pulsado un botón <b style="display:inline">type="button"</b>: no envía ni restablece nada. Hará falta JavaScript para darle una tarea.');});
+    prev();if(cfg.onLoad)cfg.onLoad(d,api);
+  });
+  api.set=(html,codeSrc)=>{api.html=html;code.set(codeSrc!=null?codeSrc:html);
+    const live=cfg.transform?cfg.transform(clean(html)):clean(html);
+    fr.srcdoc='<!doctype html><html lang="es"><head><meta charset="utf-8"><title>demo</title></head><body>'+live+'</body></html>';};
+  api.set(cfg.html);
+  addEventListener('resize',fit);
+  return api;}
+
+/* segmento de botones de la página: <div class="seg" id=…><button data-v=…> */
+function seg(id,fn){const s=$('#'+id);$$('button',s).forEach(b=>b.onclick=()=>{$$('button',s).forEach(x=>x.classList.remove('on'));b.classList.add('on');fn(b.dataset.v);});}
+
+/* =====================================================================
+   NAVEGACIÓN, PROGRESO Y REVELADO
+   ===================================================================== */
+{const ul=$('#navUl'),secs=$$('section.sec');secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${String(i+1).padStart(2,'0')}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<160)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollTo({left:a.offsetLeft-ul.clientWidth/2+a.clientWidth/2,behavior:'smooth'});}}};
+ addEventListener('scroll',on,{passive:true});on();}
+const revealObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealObs.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px'});
+const watchReveal=()=>$$('.rv:not(.in)').forEach(n=>revealObs.observe(n));
+
+/* =====================================================================
+   EXPEDIENTE: los 14 elementos de formulario
+   ===================================================================== */
+const ELS=[['form','el contenedor','form'],['label','el rótulo','label'],['input','el campo','input'],['textarea','texto largo','textarea'],['select','lista','select'],['option','opción','select'],['optgroup','grupo de opciones','select'],['button','botón','button'],['fieldset','apartado','fieldset'],['legend','título del apartado','fieldset'],['datalist','sugerencias','datalist'],['output','resultado','medidores',1],['meter','medida','medidores',1],['progress','avance','medidores',1]];
+{const box=$('#els');ELS.forEach(([t,d,sec,ns])=>{const a=el('a',ns?'nosend':'',`<b>&lt;${t}&gt;</b><small>${d}</small>`);a.href='#'+sec;a.dataset.t=t;box.appendChild(a);});
+ const seen=new Set();const upd=()=>{$('#cnt').textContent=seen.size+' / 14';$('#cntBar').style.width=seen.size/14*100+'%';};
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;(e.target.dataset.els||'').split(',').filter(Boolean).forEach(t=>{seen.add(t);const a=$(`#els a[data-t="${t}"]`);if(a)a.classList.add('seen');});upd();}),{threshold:.25});
+ $$('section.sec').forEach(s=>io.observe(s));upd();}
+
+/* =====================================================================
+   HERO: la ficha se rellena, se sella y viaja al servidor
+   ===================================================================== */
+{const A=$('#hA'),B=$('#hB'),R1=$('#hR1'),R2=$('#hR2'),C=$('#hC'),S=$('#hS'),ST=$('#hStamp'),EV=$('#hEnv'),PRE=$('#hPre'),OK=$('#hOk');
+ const wait=ms=>new Promise(r=>setTimeout(r,ms));
+ async function type(box,text){box.classList.add('act');for(let i=0;i<=text.length;i++){box.innerHTML=esc(text.slice(0,i))+'<span class="caret"></span>';await wait(55+Math.random()*50);}await wait(250);box.classList.remove('act');box.textContent=text;}
+ function resetAll(){A.textContent='';B.textContent='';[R1,R2,C].forEach(i=>i.classList.remove('on'));ST.classList.remove('hit');PRE.textContent='…';OK.textContent='esperando…';}
+ async function loop(){for(;;){resetAll();await wait(700);
+   await type(A,'Taller de robótica');await type(B,'ane@correo.eus');
+   R2.classList.add('on');await wait(500);C.classList.add('on');await wait(600);
+   S.classList.add('press');await wait(160);S.classList.remove('press');
+   ST.classList.add('hit');await wait(500);
+   const d=$('.desk').getBoundingClientRect(),s=S.getBoundingClientRect(),t=$('.tray').getBoundingClientRect();
+   EV.style.left=(s.left-d.left)+'px';EV.style.top=(s.top-d.top)+'px';EV.style.setProperty('--dx',(t.left-s.left+60)+'px');EV.style.setProperty('--dy',(t.top-s.top+40)+'px');
+   EV.classList.remove('fly');void EV.offsetWidth;EV.classList.add('fly');await wait(1000);
+   PRE.textContent='POST /inscripcion\nactividad=Taller+de+rob%C3%B3tica\n&correo=ane%40correo.eus\n&turno=tarde&normas=si';OK.textContent='✓ recibido';
+   await wait(3200);}}
+ if(reduce){A.textContent='Taller de robótica';B.textContent='ane@correo.eus';R2.classList.add('on');C.classList.add('on');ST.style.opacity='.9';ST.style.transform='rotate(-14deg)';PRE.textContent='actividad=Taller+de+rob%C3%B3tica&turno=tarde';}
+ else loop();}
+
+/* =====================================================================
+   01 · PRIMERA FICHA
+   ===================================================================== */
+makeLab('#lab1',{file:'inscripcion.html',html:
+`<!-- form: la carpeta que agrupa los campos y sabe adónde enviarlos -->
+<form action="/inscripcion" method="get">
+  <p>
+    <!-- label: el texto visible · for apunta al id del campo -->
+    <label for="actividad">Actividad:</label>
+    <!-- name="actividad": así se llamará el dato en el paquete -->
+    <input type="text" id="actividad" name="actividad" value="Robótica">
+  </p>
+  <p>
+    <label for="turno">Turno:</label>
+    <!-- se envía el value de la opción elegida, no su texto -->
+    <select id="turno" name="turno">
+      <option value="manana">Mañana</option>
+      <option value="tarde">Tarde</option>
+    </select>
+  </p>
+  <p>
+»    <label for="nota">Nota interna:</label>
+»    <!-- este campo NO tiene name: se ve, pero no viaja -->
+»    <input type="text" id="nota">
+  </p>
+  <!-- submit: revisa, empaqueta y envía -->
+  <button type="submit">Enviar</button>
+</form>`});
+
+/* anatomía de un input */
+{const P=[['&lt;input','<b>&lt;input</b> abre la etiqueta. Es una etiqueta <b>vacía</b>: no tiene contenido ni etiqueta de cierre (<code>&lt;/input&gt;</code> no existe).'],
+ ['type="email"','<b>type</b> decide qué clase de campo es. Con <code>email</code> el navegador comprueba que haya una @ y en el móvil muestra un teclado con @.'],
+ ['id="correo"','<b>id</b> es el identificador único dentro de la página. El <code>label</code> lo usa con su <code>for</code> para conectarse con el campo.'],
+ ['name="correo"','<b>name</b> es el nombre del dato al enviarlo. En el paquete aparecerá <code>correo=lo-que-se-escriba</code>. Sin name, no se envía.'],
+ ['placeholder="nombre@ejemplo.com"','<b>placeholder</b> es una pista en gris dentro del campo. Desaparece al escribir y no se envía nunca.'],
+ ['required','<b>required</b> es un atributo <b>booleano</b>: no lleva valor; con escribirlo basta. El navegador no deja enviar si el campo está vacío.'],
+ ['&gt;','<b>&gt;</b> cierra la etiqueta. Fin: no hace falta <code>/&gt;</code> en HTML (se admite, pero no es necesario).']];
+ const line=$('#anat'),exp=$('#anatExp');P.forEach(([t,d],i)=>{const b=el('button','',t);b.type='button';b.onclick=()=>{$$('button',line).forEach(x=>x.classList.remove('on'));b.classList.add('on');exp.innerHTML=d;};line.appendChild(b);if(i===0)b.click();});}
+
+/* =====================================================================
+   02 · FORM: GET o POST
+   ===================================================================== */
+{const src=m=>`<!-- action: adónde · method: cómo viajan los datos -->
+»<form action="/buscar" method="${m}">
+  <p>
+    <label for="q">Buscar:</label>
+    <input type="search" id="q" name="q" value="gatos">
+  </p>
+  <p>
+    <label for="orden">Ordenar por:</label>
+    <select id="orden" name="orden">
+      <option value="nuevos">Más nuevos</option>
+      <option value="votos">Más votados</option>
+    </select>
+  </p>
+  <button type="submit">Buscar</button>
+</form>`;
+ const lab=makeLab('#lab2',{file:'buscador.html',html:src('get'),hint:'Pulsa <b>Buscar</b> y compara el recibo con get y con post.'});
+ seg('segMethod',v=>lab.set(src(v)));}
+
+/* =====================================================================
+   03 · LABEL: prueba de clic
+   ===================================================================== */
+makeLab('#lab3',{file:'labels.html',receipt:false,hint:'Haz clic en <b>los textos</b>: "Correo:", "Quiero el boletín", "Teléfono:".',html:
+`<!-- 1) BIEN · explícito: for="correo" = id="correo" -->
+<p>
+  <label for="correo">Correo:</label>
+  <input type="email" id="correo" name="correo">
+</p>
+<!-- 2) BIEN · implícito: el label envuelve a la casilla -->
+<p>
+  <label>
+    <input type="checkbox" name="boletin" value="si"> Quiero el boletín
+  </label>
+</p>
+<!-- 3) ROTO · for="tel" no coincide con id="telefono" -->
+<p>
+»  <label for="tel">Teléfono:</label>
+»  <input type="tel" id="telefono" name="telefono">
+</p>
+<!-- 4) MAL · sin label: el placeholder desaparece al escribir -->
+<p>
+»  <input type="text" name="ciudad" placeholder="Ciudad">
+</p>`});
+
+/* =====================================================================
+   04 · PROBADOR DE TYPE
+   ===================================================================== */
+const wrapForm=(inner,extra)=>`<form action="/prueba" method="get"${extra||''}>
+${inner}
+  <button type="submit">Enviar</button>
+</form>`;
+const field=(lab,id,attrs,com)=>`  <p>
+${com?'    <!-- '+com+' -->\n':''}    <label for="${id}">${lab}</label>
+»    <input ${attrs}>
+  </p>`;
+const TYPES=[
+ {g:'Texto',t:'text',d:'Texto corto de una sola línea: nombres, títulos, ciudades… Es el type por defecto.',send:'El texto tal cual',kb:'Normal',val:'Ninguna propia',sup:'Todos',
+  h:field('Ciudad:','ciudad','type="text" id="ciudad" name="ciudad" placeholder="Bilbao"','text: el más básico')},
+ {g:'Texto',t:'password',d:'Oculta lo que se escribe con puntos. Solo lo oculta en pantalla: no lo cifra al enviarlo (eso lo hace HTTPS).',send:'La contraseña en claro',kb:'Normal',val:'Ninguna propia (usa minlength)',sup:'Todos',
+  h:field('Contraseña:','clave','type="password" id="clave" name="clave" minlength="8" autocomplete="new-password"','new-password: el gestor de contraseñas propone una nueva')},
+ {g:'Texto',t:'email',d:'Correo electrónico. El navegador comprueba que tenga forma de correo (algo@algo). Con multiple admite varios separados por comas.',send:'El correo',kb:'Con @ y .',val:'Formato básico de correo',sup:'Todos',
+  h:field('Correo:','correo','type="email" id="correo" name="correo" placeholder="nombre@ejemplo.com"','escribe algo sin @ y envía')},
+ {g:'Texto',t:'tel',d:'Teléfono. No valida ningún formato (cada país usa uno distinto): si lo necesitas, añade pattern. Su gran ventaja es el teclado numérico del móvil.',send:'El texto tal cual',kb:'Numérico de teléfono',val:'Ninguna (usa pattern)',sup:'Todos',
+  h:field('Teléfono:','tel','type="tel" id="tel" name="tel" placeholder="600 123 456"','tel no valida: acepta letras')},
+ {g:'Texto',t:'url',d:'Dirección web. Exige un esquema al principio, como https://. "www.ejemplo.com" sin https:// no es válido.',send:'La dirección',kb:'Con / y .com',val:'Formato de URL',sup:'Todos',
+  h:field('Tu web:','web','type="url" id="web" name="web" placeholder="https://..."','prueba con y sin https://')},
+ {g:'Texto',t:'search',d:'Campo de búsqueda. Funciona como text, pero indica su propósito: algunos navegadores añaden una ✕ para borrar y el teclado del móvil muestra "Buscar".',send:'El texto',kb:'Con tecla Buscar',val:'Ninguna',sup:'Todos',
+  h:field('Buscar:','q','type="search" id="q" name="q" value="formularios"','pulsa Enter: envía el formulario')},
+ {g:'Números',t:'number',d:'Número con flechas para subir y bajar. Admite min, max y step. No sirve para teléfonos ni códigos postales: quita los ceros iniciales y admite la letra e (notación científica).',send:'El número como texto',kb:'Numérico',val:'Que sea número, min, max, step',sup:'Todos',
+  h:field('Nota:','nota','type="number" id="nota" name="nota" min="0" max="10" step="0.5" value="7.5"','step="0.5": prueba a escribir 7.3 y enviar')},
+ {g:'Números',t:'range',d:'Deslizador para valores aproximados (volumen, brillo). Por defecto va de 0 a 100 y empieza en la mitad. No muestra el número elegido: para eso hará falta un output y JavaScript.',send:'El número',kb:'—',val:'Siempre válido',sup:'Todos',
+  h:field('Volumen:','vol','type="range" id="vol" name="vol" min="0" max="100" step="10" value="50"','mueve y mira el recibo')},
+ {g:'Fecha y hora',t:'date',d:'Fecha con calendario. Se muestra en el formato de tu idioma (dd/mm/aaaa), pero se envía SIEMPRE como aaaa-mm-dd.',send:'2026-10-20',kb:'Selector de fecha',val:'min y max',sup:'Todos',
+  h:field('Fecha del examen:','fecha','type="date" id="fecha" name="fecha" min="2026-09-01" max="2027-06-30"','min y max en formato aaaa-mm-dd')},
+ {g:'Fecha y hora',t:'time',d:'Hora (horas y minutos). Con step="1" también pide segundos.',send:'09:30',kb:'Selector de hora',val:'min y max',sup:'Todos',
+  h:field('Hora:','hora','type="time" id="hora" name="hora" value="09:30"')},
+ {g:'Fecha y hora',t:'datetime-local',d:'Fecha y hora juntas, sin zona horaria. Se envía con una T en medio.',send:'2026-10-20T09:30',kb:'Selector de fecha y hora',val:'min y max',sup:'Todos',
+  h:field('Cita:','cita','type="datetime-local" id="cita" name="cita"')},
+ {g:'Fecha y hora',t:'month',d:'Mes y año, sin día. Firefox y Safari de escritorio no tienen selector: muestran un campo de texto normal.',send:'2026-10',kb:'Selector de mes',val:'Formato aaaa-mm',sup:'Chrome, Edge y móviles',
+  h:field('Mes:','mes','type="month" id="mes" name="mes"','si ves un campo de texto, tu navegador no lo soporta')},
+ {g:'Fecha y hora',t:'week',d:'Semana del año. Mismo soporte limitado que month.',send:'2026-W43',kb:'Selector de semana',val:'Formato aaaa-Wnn',sup:'Chrome, Edge y algunos móviles',
+  h:field('Semana:','semana','type="week" id="semana" name="semana"')},
+ {g:'Elegir',t:'checkbox',d:'Casilla independiente de sí/no. Si está marcada envía su value; si no tiene value, envía "on". Sin marcar no envía nada.',send:'Su value, o "on"',kb:'—',val:'required obliga a marcarla',sup:'Todos',
+  h:`  <p>
+    <!-- el label envuelve: hacer clic en el texto marca la casilla -->
+»    <label><input type="checkbox" name="boletin" value="si"> Quiero el boletín</label>
+  </p>
+  <p>
+    <!-- sin value: si se marca, envía "on" -->
+»    <label><input type="checkbox" name="normas"> Acepto las normas</label>
+  </p>`},
+ {g:'Elegir',t:'radio',d:'Una opción dentro de un grupo. Todos los radios del grupo comparten el mismo name; solo se envía el value del marcado.',send:'El value del marcado',kb:'—',val:'required en uno obliga al grupo',sup:'Todos',
+  h:`  <p>Turno:</p>
+  <!-- mismo name = mismo grupo: solo se puede marcar uno -->
+»  <label><input type="radio" name="turno" value="manana" checked> Mañana</label>
+»  <label><input type="radio" name="turno" value="tarde"> Tarde</label>
+»  <label><input type="radio" name="turno" value="noche"> Noche</label>`},
+ {g:'Otros',t:'color',d:'Selector de color. Siempre envía un código hexadecimal de 6 cifras en minúsculas. Por defecto, negro (#000000).',send:'#2563eb',kb:'Selector de color',val:'Siempre válido',sup:'Todos',
+  h:field('Color favorito:','color','type="color" id="color" name="color" value="#2563eb"','value en formato #rrggbb')},
+ {g:'Otros',t:'file',d:'Elegir archivos del equipo. Para enviarlos de verdad hace falta method="post" y enctype="multipart/form-data" (ventanilla 15).',send:'El archivo (o solo su nombre)',kb:'Galería o cámara',val:'required',sup:'Todos',
+  h:field('Documento:','doc','type="file" id="doc" name="doc" accept=".pdf,image/*"','accept filtra los archivos que se ofrecen')},
+ {g:'Otros',t:'hidden',d:'Dato invisible que viaja con el formulario: un identificador, una versión… No se ve en la página, pero sí en el código fuente.',send:'Su value',kb:'—',val:'No se valida',sup:'Todos',
+  h:`  <!-- no se ve en la página, pero aparece en el recibo -->
+»  <input type="hidden" name="curso_id" value="DAW1">
+  <p>Aquí hay un campo oculto. Envía y búscalo en el recibo.</p>`},
+ {g:'Botones',t:'submit',d:'Botón de envío como input. Su texto va en value. Equivale a <button type="submit">.',send:'name=value si tiene name',kb:'—',val:'Lanza la validación',sup:'Todos',
+  btn:1,h:`<form action="/prueba" method="get">
+  <p>
+    <label for="nombre">Usuario:</label>
+    <input type="text" id="nombre" name="usuario" value="ane">
+  </p>
+  <!-- input vacío: su texto visible es el value -->
+»  <input type="submit" value="Enviar con input">
+</form>`},
+ {g:'Botones',t:'reset',d:'Restablece los valores iniciales del HTML. Cambia el texto, pulsa reset y verás que vuelve "ane", no se queda vacío.',send:'Nada: no envía',kb:'—',val:'—',sup:'Todos',
+  btn:1,h:`<form action="/prueba" method="get">
+  <p>
+    <label for="nombre">Usuario:</label>
+    <input type="text" id="nombre" name="usuario" value="ane">
+  </p>
+»  <input type="reset" value="Restablecer">
+  <input type="submit" value="Enviar">
+</form>`},
+ {g:'Botones',t:'button',d:'Botón que no hace nada sin JavaScript. Pulsarlo no envía ni borra.',send:'Nada',kb:'—',val:'—',sup:'Todos',
+  btn:1,h:`<form action="/prueba" method="get">
+  <!-- sin JavaScript, este botón no hace nada -->
+»  <input type="button" value="Calcular">
+</form>`},
+ {g:'Botones',t:'image',d:'Botón de envío hecho con una imagen. Necesita src y alt. Curiosidad: envía las coordenadas x e y del punto donde hiciste clic.',send:'nombre.x y nombre.y',kb:'—',val:'Lanza la validación',sup:'Todos',
+  btn:1,h:`<form action="/prueba" method="get">
+  <p>
+    <label for="nombre">Usuario:</label>
+    <input type="text" id="nombre" name="usuario" value="ane">
+  </p>
+  <!-- alt es obligatorio: describe la imagen -->
+»  <input type="image" src="enviar.png" alt="Enviar" name="boton">
+</form>`}
+];
+/* imagen del botón type="image" dibujada al vuelo (la demo usa un dataURL en vez de enviar.png) */
+const IMG=(()=>{const c=document.createElement('canvas');c.width=150;c.height=46;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,150,46);g.addColorStop(0,'#2563eb');g.addColorStop(1,'#0ea5c6');x.fillStyle=g;x.beginPath();x.roundRect?x.roundRect(0,0,150,46,10):x.rect(0,0,150,46);x.fill();x.fillStyle='#fff';x.font='bold 18px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText('ENVIAR  ➜',75,24);return c.toDataURL();})();
+{const list=$('#typeList');let g0='';let lab;
+ const show=T=>{
+  $('#tDesc').innerHTML=`<h4>type="${T.t}"</h4>${esc(T.d)}`;
+  $('#tInfo').innerHTML=`<div><b>Envía</b>${esc(T.send)}</div><div><b>Teclado del móvil</b>${esc(T.kb)}</div><div><b>Valida</b>${esc(T.val)}</div><div><b>Soporte</b>${esc(T.sup)}</div>`;
+  const html=T.btn?T.h:wrapForm(T.h);
+  if(!lab)lab=makeLab('#lab4',{wide:true,file:'type-'+T.t+'.html',html,transform:s=>s.replace('src="enviar.png"','src="'+IMG+'"')});else lab.set(html);
+  $('.url',lab.box).textContent='type-'+T.t+'.html';};
+ TYPES.forEach((T,i)=>{if(T.g!==g0){g0=T.g;list.appendChild(el('h5','',T.g));}const b=el('button','',`${T.t}<small>${i+1}</small>`);b.type='button';b.onclick=()=>{$$('button',list).forEach(x=>x.classList.remove('on'));b.classList.add('on');show(T);};list.appendChild(b);if(i===0){b.classList.add('on');show(T);}});}
+
+/* =====================================================================
+   05 · CONSTRUCTOR DE ATRIBUTOS
+   ===================================================================== */
+{const TT=['text','email','password','number','date','range','file','checkbox'];
+ const TXT=['text','email','password'];
+ /* k: atributo · v: valor por defecto (null = booleano) · on: types donde funciona · d: explicación */
+ const A=[
+  {k:'value',v:t=>({number:'5',date:'2026-10-20',range:'40',checkbox:'si',email:'ane@correo.eus'}[t]||'Hola'),on:TT.filter(t=>t!=='file'),d:'Contenido inicial real: se ve y se envía. En checkbox es lo que se envía si se marca.'},
+  {k:'placeholder',v:t=>t==='email'?'nombre@ejemplo.com':'Escribe aquí',on:[...TXT,'number'],d:'Pista en gris; desaparece al escribir y nunca se envía.'},
+  {k:'required',v:null,on:TT.filter(t=>t!=='range'),d:'Obligatorio: el navegador no deja enviar si está vacío (o sin marcar).'},
+  {k:'disabled',v:null,on:TT,d:'Desactivado: gris, no se puede usar y NO se envía.'},
+  {k:'readonly',v:null,on:[...TXT,'number','date'],d:'Solo lectura: no se puede cambiar, pero SÍ se envía.'},
+  {k:'minlength',v:()=>'3',on:TXT,d:'Mínimo de caracteres. Solo se comprueba si hay algo escrito.'},
+  {k:'maxlength',v:()=>'10',on:TXT,d:'Máximo de caracteres: el navegador deja de escribir al llegar.'},
+  {k:'pattern',v:()=>'[A-Za-z]+',on:TXT,d:'Expresión regular que debe cumplir todo el valor. Prueba a poner números.'},
+  {k:'min',v:t=>({date:'2026-09-01',range:'0'}[t]||'1'),on:['number','date','range'],d:'Valor mínimo permitido.'},
+  {k:'max',v:t=>({date:'2027-06-30',range:'100'}[t]||'10'),on:['number','date','range'],d:'Valor máximo permitido.'},
+  {k:'step',v:t=>({date:'7',range:'20'}[t]||'2'),on:['number','date','range'],d:'Salto entre valores válidos (en date, en días). Con step="2" desde min="1": 1, 3, 5…'},
+  {k:'multiple',v:null,on:['email','file'],d:'Varios valores: correos separados por comas o varios archivos.'},
+  {k:'accept',v:()=>'image/*',on:['file'],d:'Tipos de archivo que se ofrecen (image/*, .pdf…). No es una seguridad.'},
+  {k:'checked',v:null,on:['checkbox'],d:'La casilla aparece marcada al cargar.'},
+  {k:'autocomplete',v:t=>({email:'email',password:'current-password'}[t]||'off'),on:TXT,d:'Ayuda del navegador para rellenar: off, on o una pista como email.'},
+  {k:'title',v:()=>'Solo letras, sin espacios',on:TXT,d:'Texto de ayuda; con pattern, aparece en el aviso de error.'}];
+ let type='text';const st={};A.forEach(a=>st[a.k]={on:false,v:''});st.required.on=true;st.placeholder.on=true;
+ const bt=$('#bType');TT.forEach((t,i)=>{const b=el('button',i===0?'on':'',t);b.type='button';b.dataset.v=t;bt.appendChild(b);});
+ const box=$('#bAttrs');
+ A.forEach(a=>{const r=el('div','attr');const id='ba_'+a.k;r.innerHTML=`<input type="checkbox" id="${id}"><label for="${id}">${a.k}</label>`+(a.v?`<input type="text" aria-label="valor de ${a.k}" spellcheck="false">`:'');box.appendChild(r);a.row=r;
+  $('input[type=checkbox]',r).onchange=e=>{st[a.k].on=e.target.checked;build();};
+  const tx=$('input[type=text]',r);if(tx)tx.oninput=()=>{st[a.k].v=tx.value;if(st[a.k].on)build();};});
+ const syncVals=()=>A.forEach(a=>{if(!a.v)return;st[a.k].v=a.v(type);$('input[type=text]',a.row).value=st[a.k].v;});
+ let lab;
+ function build(){
+  const act=A.filter(a=>st[a.k].on&&a.on.includes(type));
+  A.forEach(a=>{const ok=a.on.includes(type);a.row.classList.toggle('na',!ok);a.row.classList.toggle('on',ok&&st[a.k].on);a.row.title=ok?'':'No tiene efecto con type="'+type+'"';$('input[type=checkbox]',a.row).checked=st[a.k].on;});
+  const parts=[`type="${type}"`,'id="campo"','name="campo"',...act.map(a=>a.v?`${a.k}="${String(st[a.k].v).replace(/"/g,"'")}"`:a.k)];
+  const com=act.length?act.map(a=>`  <!-- ${a.k}: ${a.d.split('.')[0].toLowerCase()} -->`).join('\n')+'\n':'';
+  const lbl=type==='checkbox'?`  <p>\n${com}»    <label><input ${parts.join(' ')}> Acepto</label>\n  </p>`:`  <p>\n${com.replace(/^  /gm,'    ')}    <label for="campo">Campo:</label>\n»    <input ${parts.join(' ')}>\n  </p>`;
+  const html=`<form action="/prueba" method="${type==='file'?'post" enctype="multipart/form-data':'get'}">\n${lbl}\n  <button type="submit">Enviar</button>\n</form>`;
+  const ign=A.filter(a=>st[a.k].on&&!a.on.includes(type));
+  $('#bExp').innerHTML=act.map(a=>`<div><b>${a.k}</b> · ${esc(a.d)}</div>`).join('')+(ign.length?`<div style="background:#fff1d6;color:#7a4a05"><b>${ign.map(a=>a.k).join(', ')}</b> · activados, pero no tienen efecto con type="${type}", así que no se escriben.</div>`:'')+(act.length?'':'<div>Sin atributos extra: activa alguno.</div>');
+  if(!lab)lab=makeLab('#lab5',{file:'constructor.html',html,hint:'Pulsa <b>Enviar</b> para ver si el navegador lo acepta.'});else lab.set(html);}
+ seg('bType',v=>{type=v;syncVals();build();});
+ syncVals();build();}
+
+/* =====================================================================
+   06 · TEXTAREA
+   ===================================================================== */
+makeLab('#lab6',{file:'contacto.html',html:
+`<form action="/contacto" method="post">
+  <p>
+    <label for="mensaje">Mensaje:</label><br>
+    <!-- rows: filas visibles · cols: ancho en caracteres -->
+    <!-- maxlength: deja de escribir al llegar a 200 -->
+»    <textarea id="mensaje" name="mensaje" rows="5" cols="40"
+»              placeholder="Escribe aquí..." maxlength="200" required></textarea>
+  </p>
+  <p>
+    <label for="firma">Firma:</label><br>
+    <!-- el texto inicial va ENTRE las etiquetas (no hay value) -->
+»    <textarea id="firma" name="firma" rows="2" cols="40">Un saludo,</textarea>
+  </p>
+  <button type="submit">Enviar</button>
+</form>`,hint:'Escribe varias líneas: en el paquete los saltos viajan como <b>%0D%0A</b>.'});
+
+/* =====================================================================
+   07 · SELECT
+   ===================================================================== */
+makeLab('#lab7',{file:'matricula.html',html:
+`<form action="/matricula" method="get">
+  <p>
+    <label for="curso">Curso:</label>
+    <!-- required + primera opción con value="" = obliga a elegir -->
+    <select id="curso" name="curso" required>
+»      <option value="">Selecciona...</option>
+      <option value="html">HTML</option>
+      <option value="css">CSS</option>
+      <!-- selected: elegida al cargar -->
+»      <option value="js" selected>JavaScript</option>
+      <!-- disabled: se ve, pero no se puede elegir -->
+»      <option value="php" disabled>PHP (completo)</option>
+    </select>
+  </p>
+  <p>
+    <label for="lenguaje">Lenguaje:</label>
+    <select id="lenguaje" name="lenguaje">
+      <!-- optgroup: título del grupo, no se puede elegir -->
+»      <optgroup label="Frontend">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+      </optgroup>
+      <optgroup label="Backend">
+        <option value="python">Python</option>
+        <!-- sin value: se envía el texto visible -->
+»        <option>PHP</option>
+      </optgroup>
+    </select>
+  </p>
+  <p>
+    <label for="dias">Días (Ctrl o Cmd + clic):</label><br>
+    <!-- multiple: varias a la vez · size: cuántas se ven -->
+»    <select id="dias" name="dias" multiple size="5">
+      <option value="lun">Lunes</option>
+      <option value="mar">Martes</option>
+      <option value="mie" selected>Miércoles</option>
+      <option value="jue">Jueves</option>
+      <option value="vie" selected>Viernes</option>
+    </select>
+  </p>
+  <button type="submit">Enviar</button>
+</form>`});
+
+/* =====================================================================
+   08 · RADIO Y CHECKBOX
+   ===================================================================== */
+{const src=ok=>`<form action="/encuesta" method="get">
+  <p>¿Qué nivel tienes?</p>
+${ok?`  <!-- los tres comparten name="nivel": forman UN grupo -->
+»  <label><input type="radio" name="nivel" value="principiante"> Principiante</label>
+»  <label><input type="radio" name="nivel" value="medio" checked> Medio</label>
+»  <label><input type="radio" name="nivel" value="avanzado"> Avanzado</label>`:`  <!-- MAL: cada radio tiene su propio name = tres grupos de uno -->
+»  <label><input type="radio" name="nivel1" value="principiante"> Principiante</label>
+»  <label><input type="radio" name="nivel2" value="medio" checked> Medio</label>
+»  <label><input type="radio" name="nivel3" value="avanzado"> Avanzado</label>`}
+
+  <p>Tecnologías que conoces:</p>
+  <!-- checkbox: cada casilla es independiente -->
+  <label><input type="checkbox" name="tec" value="html" checked> HTML</label>
+  <label><input type="checkbox" name="tec" value="css"> CSS</label>
+  <!-- sin value: si se marca, envía "on" -->
+  <label><input type="checkbox" name="tec"> JavaScript</label>
+
+  <p>
+    <!-- required en una casilla: hay que marcarla para enviar -->
+    <label><input type="checkbox" name="normas" value="si" required> Acepto las normas</label>
+  </p>
+  <button type="submit">Enviar</button>
+</form>`;
+ const lab=makeLab('#lab8',{file:'encuesta.html',html:src(true),hint:'Marca los niveles y las tecnologías, y mira cómo se repite <b>tec</b> en el paquete.'});
+ seg('segRadio',v=>{lab.set(src(v==='ok'));lab.box.querySelector('.hint').innerHTML=v==='ok'?'Marca los niveles y las tecnologías, y mira cómo se repite <b>tec</b> en el paquete.':'Intenta marcar <b>los tres</b> niveles… y ahora intenta <b>desmarcar</b> uno.';});}
+
+/* =====================================================================
+   09 · DATALIST
+   ===================================================================== */
+makeLab('#lab9',{file:'navegador.html',html:
+`<form action="/encuesta" method="get">
+  <p>
+    <label for="navegador">Navegador:</label>
+    <!-- list="navegadores" conecta con el id del datalist -->
+»    <input list="navegadores" id="navegador" name="navegador">
+  </p>
+  <!-- el datalist no se ve: aporta las sugerencias -->
+»  <datalist id="navegadores">
+    <option value="Chrome">
+    <option value="Firefox">
+    <option value="Edge">
+    <option value="Safari">
+  </datalist>
+  <button type="submit">Enviar</button>
+</form>`,hint:'Haz clic en el campo (o escribe "F"). Después escribe uno que no esté en la lista: también se acepta.'});
+
+/* =====================================================================
+   10 · BUTTON
+   ===================================================================== */
+makeLab('#lab10',{file:'articulo.html',html:
+`<form action="/articulo" method="get">
+  <p>
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" value="Mi artículo" required>
+  </p>
+  <!-- dos submit con name y value: el servidor sabe cuál se pulsó -->
+»  <button type="submit" name="accion" value="publicar">Publicar</button>
+  <!-- formnovalidate: este botón envía sin validar -->
+»  <button type="submit" name="accion" value="borrador" formnovalidate>Guardar borrador</button>
+  <!-- reset: vuelve a los valores INICIALES del HTML -->
+»  <button type="reset">Deshacer cambios</button>
+  <!-- button: no hace nada sin JavaScript -->
+»  <button type="button">Vista previa</button>
+  <!-- SIN type: dentro de un form se comporta como submit -->
+»  <button>¿Y yo qué hago?</button>
+</form>`,hint:'Borra el título y prueba <b>Publicar</b> y <b>Guardar borrador</b>. Pulsa también el último botón.'});
+
+/* =====================================================================
+   11 · FIELDSET Y LEGEND
+   ===================================================================== */
+{const src=dis=>`<form action="/registro" method="post">
+  <fieldset>
+    <!-- legend: el título del grupo; va justo después de abrir -->
+    <legend>Datos de contacto</legend>
+    <p>
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" value="ane@correo.eus" required>
+    </p>
+    <p>
+      <label for="tel">Teléfono:</label>
+      <input type="tel" id="tel" name="tel">
+    </p>
+  </fieldset>
+
+  <!-- con radios, la pregunta va en legend (mejor que un <p>) -->
+  <fieldset>
+    <legend>Turno preferido</legend>
+    <label><input type="radio" name="turno" value="manana" checked> Mañana</label>
+    <label><input type="radio" name="turno" value="tarde"> Tarde</label>
+  </fieldset>
+
+»  <fieldset${dis?' disabled':''}>
+    <legend>Solo para empresas</legend>
+    <p>
+      <label for="cif">CIF:</label>
+      <input type="text" id="cif" name="cif" value="B12345678">
+    </p>
+  </fieldset>
+  <button type="submit">Enviar</button>
+</form>`;
+ const lab=makeLab('#lab11',{file:'registro.html',html:src(false)});
+ seg('segFs',v=>lab.set(src(v==='off')));}
+
+/* =====================================================================
+   12 · METER (controles de la página que cambian la demo en vivo)
+   ===================================================================== */
+function slider(label,min,max,val,on){const w=el('label','rng');w.innerHTML=`<span>${label}</span><input type="range" min="${min}" max="${max}" value="${val}"><output>${val}</output>`;const i=$('input',w);i.oninput=()=>{$('output',w).textContent=i.value;on();};w.get=()=>+i.value;return w;}
+{const P=$('#meterPanel');const m={};
+ const src=()=>`<p>
+  <label for="bateria">Batería:</label>
+  <!-- low/high: límites de las zonas · optimum: dónde está lo bueno -->
+»  <meter id="bateria" min="0" max="100"
+»         low="${m.low}" high="${m.high}" optimum="${m.opt}"
+»         value="${m.val}">${m.val}%</meter>
+</p>`;
+ const vS=slider('value',0,100,85,upd),lS=slider('low',0,100,25,upd),hS=slider('high',0,100,75,upd);
+ const og=el('div','ctrl','<span>optimum</span>');const sg=el('div','seg');sg.id='segOpt';[['10','bajo'],['50','medio'],['90','alto']].forEach(([v,t],i)=>{const b=el('button',i===2?'on':'',`${t} (${v})`);b.type='button';b.dataset.v=v;sg.appendChild(b);});og.appendChild(sg);
+ const zones=el('div','zones');const verdict=el('p','txt');verdict.style.margin='0';
+ P.append(vS,lS,hS,og,zones,verdict);
+ m.opt=90;
+ const lab=makeLab('#meterRight',{file:'meter.html',receipt:false,html:'<p>…</p>',onLoad:d=>{api.doc=d;}});
+ const api={};lab.box.classList.remove('labx');lab.box.style.display='grid';lab.box.style.gap='14px';
+ function zone(v){return v<m.low?'L':v>m.high?'H':'M';}
+ function upd(){m.val=vS.get();m.low=Math.min(lS.get(),hS.get());m.high=Math.max(lS.get(),hS.get());
+  const oz=zone(m.opt);const col=z=>{if(z===oz)return['#16a34a','óptima'];if(oz==='M'||z==='M')return['#eab308','regular'];return['#dc2626','mala'];};
+  zones.innerHTML=[['L',0,m.low],['M',m.low,m.high],['H',m.high,100]].map(([z,a,b])=>`<div style="flex:${Math.max(b-a,.001)};background:${col(z)[0]}">${b-a>9?(z==='L'?'baja':z==='M'?'media':'alta'):''}</div>`).join('')+`<span class="pin" style="left:calc(${m.val}% - 1px)"></span>`;
+  const c=col(zone(m.val));verdict.innerHTML=`El value (${m.val}) cae en la zona <b>${zone(m.val)==='L'?'baja':zone(m.val)==='M'?'media':'alta'}</b>, que con este optimum es <b style="color:${c[0]}">${c[1]}</b>: el navegador lo pintará ${c[1]==='óptima'?'en verde':c[1]==='regular'?'en amarillo':'en rojo'}.`;
+  lab.code.set(src());const d=lab.frame.contentDocument,me=d&&d.getElementById('bateria');
+  if(me){['low','high','optimum','value'].forEach(k=>me.setAttribute(k,k==='optimum'?m.opt:k==='value'?m.val:m[k]));me.textContent=m.val+'%';}}
+ seg('segOpt',v=>{m.opt=+v;upd();});
+ m.val=85;m.low=25;m.high=75;lab.set(src());lab.frame.addEventListener('load',upd);upd();}
+
+/* =====================================================================
+   12 · PROGRESS
+   ===================================================================== */
+{const P=$('#progPanel');let val=60,ind=false;
+ const src=()=>`<p>
+  <label for="subida">Subiendo proyecto:</label>
+${ind?'  <!-- sin value: estado indeterminado -->\n»  <progress id="subida" max="100">Subiendo…</progress>':'  <!-- value de max: 60 de 100 -->\n»  <progress id="subida" max="100" value="'+val+'">'+val+'%</progress>'}
+</p>`;
+ const vS=slider('value',0,100,60,()=>{val=vS.get();upd();});
+ const ck=el('label','attr','<input type="checkbox"> <span>quitar value (indeterminado)</span>');$('input',ck).onchange=e=>{ind=e.target.checked;upd();};
+ P.append(vS,ck,el('p','txt','<b>meter o progress?</b> Si el valor puede subir y bajar libremente (temperatura, batería), es un meter. Si avanza hacia un final (descarga, pasos), es un progress.'));
+ const lab=makeLab('#progRight',{file:'progress.html',receipt:false,html:src()});lab.box.classList.remove('labx');lab.box.style.display='grid';lab.box.style.gap='14px';
+ function upd(){lab.code.set(src());const d=lab.frame.contentDocument,p=d&&d.getElementById('subida');if(!p)return;if(ind){p.removeAttribute('value');p.textContent='Subiendo…';}else{p.setAttribute('value',val);p.textContent=val+'%';}}
+ lab.frame.addEventListener('load',upd);}
+
+/* =====================================================================
+   12 · OUTPUT
+   ===================================================================== */
+makeLab('#lab12',{file:'calculadora.html',html:
+`<!-- ADELANTO DE LA PARTE 3 (JavaScript):
+     oninput recalcula el resultado cada vez que cambia un número -->
+»<form action="/calculo" method="get"
+»      oninput="total.value = Number(a.value) + Number(b.value)">
+  <input type="number" id="a" name="a" value="10"> +
+  <input type="number" id="b" name="b" value="5"> =
+  <!-- for: ids de los campos de los que depende -->
+»  <output name="total" for="a b">15</output>
+  <p><button type="submit">Enviar</button></p>
+</form>`});
+
+/* =====================================================================
+   13 · VALIDACIÓN
+   ===================================================================== */
+{const src=nv=>`»<form action="/alta" method="get"${nv?' novalidate':''}>
+  <p>
+    <label for="usuario">Usuario (3 a 12 caracteres):</label>
+    <!-- required + longitud mínima y máxima -->
+    <input type="text" id="usuario" name="usuario"
+           required minlength="3" maxlength="12">
+  </p>
+  <p>
+    <label for="correo">Correo:</label>
+    <!-- type="email" ya valida el formato -->
+    <input type="email" id="correo" name="correo" required>
+  </p>
+  <p>
+    <label for="edad">Edad (16 a 99):</label>
+    <input type="number" id="edad" name="edad" min="16" max="99">
+  </p>
+  <p>
+    <label for="cp">Código postal:</label>
+    <!-- pattern: exactamente 5 cifras · title explica el formato -->
+    <input type="text" id="cp" name="cp" pattern="[0-9]{5}"
+           inputmode="numeric" title="5 cifras, por ejemplo 48001">
+  </p>
+  <p>
+    <label for="web">Web:</label>
+    <input type="url" id="web" name="web" placeholder="https://...">
+  </p>
+  <button type="submit">Dar de alta</button>
+</form>`;
+ const lab=makeLab('#lab13',{file:'alta.html',html:src(false),hint:'Prueba: envía vacío · usuario "ab" · edad 12 · código postal "480" · web "www.web.com".'});
+ seg('segVal',v=>lab.set(src(v==='off')));}
+
+/* probador de pattern */
+{const EX=[['[0-9]{5}','48001','Código postal: [0-9] es una cifra; {5}, exactamente 5 veces.'],['[A-Za-z]{3,12}','Ane','Entre 3 y 12 letras sin tildes: {3,12} es "de 3 a 12 veces".'],['[0-9]{4}[A-Z]{3}','1234BCD','Matrícula: 4 cifras y 3 letras mayúsculas.'],['[0-9]{8}[A-Za-z]','12345678Z','8 cifras y una letra.'],['[67][0-9]{8}','600123456','Móvil: empieza por 6 o 7 y siguen 8 cifras. [67] es "6 o 7".'],['[a-z0-9_]+','ane_23','Usuario: minúsculas, cifras o guion bajo; + es "una o más veces".'],['(si|no)','si','Solo "si" o "no": | significa "o".']];
+ const pat=$('#pPat'),txt=$('#pTxt'),out=$('#pOut'),exp=$('#pExp');
+ function test(){let ok,err='';try{let re;try{re=new RegExp('^(?:'+pat.value+')$','v');}catch(e){re=new RegExp('^(?:'+pat.value+')$','u');}ok=re.test(txt.value);}catch(e){err=e.message;}
+  if(err){out.className='verdict n';out.textContent='patrón no válido';}
+  else if(txt.value===''){out.className='verdict y';out.textContent='vacío: pasa (si no es required)';}
+  else{out.className='verdict '+(ok?'y':'n');out.textContent=ok?'✓ cumple':'✗ no cumple';}
+  const hit=EX.find(e=>e[0]===pat.value);exp.innerHTML=`<div>${hit?esc(hit[2]):'Recuerda: el valor <b>entero</b> debe cumplir el patrón, de principio a fin.'}</div>`;}
+ const box=$('#pEx');EX.forEach(([p,t])=>{const b=el('button','chip',esc(p));b.type='button';b.onclick=()=>{pat.value=p;txt.value=t;test();};box.appendChild(b);});
+ pat.oninput=test;txt.oninput=test;test();}
+
+/* =====================================================================
+   14 · DISABLED, READONLY, HIDDEN
+   ===================================================================== */
+makeLab('#lab14',{file:'matricula.html',html:
+`<form action="/matricula" method="get">
+  <p>
+    <label for="curso">Curso:</label>
+    <!-- disabled: gris, no editable y NO se envía -->
+»    <input type="text" id="curso" name="curso" value="DAW" disabled>
+  </p>
+  <p>
+    <label for="centro">Centro:</label>
+    <!-- readonly: no editable, pero SÍ se envía -->
+»    <input type="text" id="centro" name="centro" value="Harrobia" readonly>
+  </p>
+  <!-- hidden: no se ve, pero viaja (y se lee en el código fuente) -->
+»  <input type="hidden" name="curso_id" value="DAW01">
+  <p>
+    <label for="obs">Observaciones:</label>
+    <input type="text" id="obs" name="obs">
+  </p>
+  <button type="submit">Enviar</button>
+</form>`,hint:'Intenta escribir en Curso y en Centro. Luego envía y busca los tres en el recibo.'});
+
+/* =====================================================================
+   15 · ARCHIVOS
+   ===================================================================== */
+{const src=mp=>`<!-- archivos: method="post" + enctype multipart + name -->
+»<form action="/subir" method="post"${mp?' enctype="multipart/form-data"':''}>
+  <p>
+    <label for="proyecto">Proyecto (.zip o .pdf):</label>
+    <!-- accept: filtra lo que ofrece el selector -->
+    <input type="file" id="proyecto" name="proyecto" accept=".zip,.pdf" required>
+  </p>
+  <p>
+    <label for="fotos">Fotos (puedes elegir varias):</label>
+    <!-- multiple: varios archivos con el mismo name -->
+    <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+  </p>
+  <button type="submit">Subir</button>
+</form>`;
+ const lab=makeLab('#lab15',{file:'subir.html',html:src(true),hint:'Sin enctype, al servidor <b>solo le llega el nombre</b> del archivo, no su contenido.'});
+ seg('segEnc',v=>lab.set(src(v==='mp')));}
+
+/* =====================================================================
+   16 · DETECTIVE
+   ===================================================================== */
+const CASES=[
+ {t:'La encuesta rebelde',c:`<p>¿Turno?</p>
+<label><input type="radio" name="turno1" value="m"> Mañana</label>
+<label><input type="radio" name="turno2" value="t"> Tarde</label>`,o:['Falta el atributo checked','Los radios tienen names distintos','Los radios necesitan id'],r:1,w:'Cada radio con su propio name forma un grupo distinto: se pueden marcar los dos y no se pueden desmarcar. Todos deben compartir <code>name="turno"</code>.'},
+ {t:'El rótulo sordo',c:`<label for="mail">Correo:</label>
+<input type="email" id="email" name="email">`,o:['El for no coincide con el id','El label debería ir después del input','type="email" no admite label'],r:0,w:'<code>for="mail"</code> apunta a un id que no existe. Debe ser <code>for="email"</code>, idéntico al id.'},
+ {t:'El dato fantasma',c:`<form action="/alta" method="post">
+  <label for="usuario">Usuario:</label>
+  <input type="text" id="usuario">
+  <button type="submit">Alta</button>
+</form>`,o:['Falta value','Falta name: el dato no se envía','method debería ser get'],r:1,w:'Sin <code>name</code>, el campo se ve y se rellena, pero no entra en el paquete. Añade <code>name="usuario"</code>.'},
+ {t:'El archivo que nunca llega',c:`<form action="/subir" method="post">
+  <input type="file" name="cv">
+  <button type="submit">Subir</button>
+</form>`,o:['Falta enctype="multipart/form-data"','file necesita value','Hay que usar method="get"'],r:0,w:'Sin <code>enctype="multipart/form-data"</code>, al servidor solo le llega el nombre del archivo, no su contenido.'},
+ {t:'El botón traicionero',c:`<form action="/pedido" method="post">
+  ...
+  <button>Calcular total</button>
+  <button type="submit">Pedir</button>
+</form>`,o:['Hay dos botones en el mismo form','"Calcular total" no tiene type y envía el pedido','Los botones deben ser input'],r:1,w:'Un <code>&lt;button&gt;</code> sin type dentro de un form es un submit. Si solo debe calcular (con JavaScript), escribe <code>type="button"</code>.'},
+ {t:'Gemelos',c:`<label for="tel">Teléfono:</label>
+<input type="tel" id="tel" name="tel">
+<label for="tel">Móvil:</label>
+<input type="tel" id="tel" name="movil">`,o:['No puede haber dos campos tel','El id "tel" está repetido','Falta placeholder'],r:1,w:'Los id deben ser únicos. Con dos <code>id="tel"</code>, los dos labels apuntan al primer campo. Usa <code>id="movil"</code> en el segundo (y <code>for="movil"</code>).'},
+ {t:'La pista que desaparece',c:`<input type="text" name="nombre" placeholder="Nombre">
+<input type="email" name="correo" placeholder="Correo">`,o:['Falta label: el placeholder no lo sustituye','placeholder debe ir en mayúsculas','Falta value'],r:0,w:'Al escribir, el placeholder desaparece y ya no sabes qué era cada campo. Además los lectores de pantalla pueden no anunciarlo. Cada campo necesita su <code>label</code>.'},
+ {t:'El centro desaparecido',c:`<!-- queremos ENVIAR el centro, pero que no se cambie -->
+<input type="text" name="centro" value="Harrobia" disabled>`,o:['Debería ser readonly: disabled no se envía','Falta required','value no se puede usar con disabled'],r:0,w:'<code>disabled</code> no se envía. Para que no se pueda cambiar pero sí viaje, usa <code>readonly</code>.'},
+ {t:'El folio con value',c:`<textarea name="mensaje" value="Hola"></textarea>`,o:['textarea no tiene value: el texto va entre las etiquetas','Falta rows','textarea no lleva cierre'],r:0,w:'<code>textarea</code> ignora <code>value</code>. Escribe <code>&lt;textarea name="mensaje"&gt;Hola&lt;/textarea&gt;</code>.'},
+ {t:'El código postal menguante',c:`<label for="cp">Código postal:</label>
+<input type="number" id="cp" name="cp">`,o:['number quita el 0 inicial y no es un número de verdad','Falta step','cp es un nombre reservado'],r:0,w:'"01001" es un código, no una cantidad: number puede quitar el 0, admite la e y pone flechas absurdas. Usa <code>type="text" inputmode="numeric" pattern="[0-9]{5}"</code>.'},
+ {t:'La carpeta dentro de la carpeta',c:`<form action="/registro">
+  <input type="text" name="usuario">
+  <form action="/boletin">
+    <input type="email" name="correo">
+  </form>
+</form>`,o:['Falta method','No se puede anidar un form dentro de otro','Los dos form necesitan name'],r:1,w:'Un <code>form</code> no puede contener otro: el navegador ignora el interior. Escríbelos uno detrás de otro o usa el atributo <code>form</code> en el control.'},
+ {t:'El secreto a la vista',c:`<input type="hidden" name="clave_admin" value="1234">`,o:['hidden necesita id','Cualquiera puede ver un hidden en el código fuente','Falta required'],r:1,w:'Un campo hidden no se ve en la página, pero aparece en el código fuente (Ctrl + U). Nunca guardes ahí nada secreto.'}];
+{const box=$('#cases');let solved=0;const sc=$('#dScore');const upd=()=>sc.textContent=`${solved} / ${CASES.length} resueltos`;upd();
+ CASES.forEach((k,i)=>{const c=el('div','case');c.innerHTML=`<h4>${esc(k.t)}<span>CASO ${String(i+1).padStart(2,'0')}</span></h4>`;c.appendChild(codeBox(k.c,'¿Qué falla?'));
+  const o=el('div','opts2');const ord=k.o.map((t,j)=>j).sort((a,b)=>((a*7+i*3)%5)-((b*7+i*3)%5));const btns=[];ord.forEach(j=>{const t=k.o[j];const b=el('button','',esc(t));b.type='button';b.onclick=()=>{if(c.classList.contains('done'))return;b.classList.add(j===k.r?'right':'wrong');btns[k.r].classList.add('right');c.classList.add('done');if(j===k.r)solved++;upd();};btns[j]=b;o.appendChild(b);});
+  c.append(o,el('div','why','<b>Explicación:</b> '+k.w));box.appendChild(c);});}
+
+/* =====================================================================
+   17 · PROYECTO FINAL
+   ===================================================================== */
+const FINAL=`<!-- FICHA DE INSCRIPCIÓN · archivos: post + multipart -->
+<form action="/inscripcion" method="post" enctype="multipart/form-data">
+
+  <!-- APARTADO 1: quién se inscribe -->
+  <fieldset>
+    <legend>Datos personales</legend>
+    <p>
+      <label for="nombre">Nombre y apellidos:</label>
+      <!-- obligatorio, entre 3 y 60 caracteres -->
+      <input type="text" id="nombre" name="nombre"
+             required minlength="3" maxlength="60" autocomplete="name">
+    </p>
+    <p>
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" required autocomplete="email"
+             placeholder="nombre@ejemplo.com">
+    </p>
+    <p>
+      <label for="tel">Teléfono:</label>
+      <!-- tel no valida: el pattern pide 9 cifras -->
+      <input type="tel" id="tel" name="tel" pattern="[0-9]{9}"
+             title="9 cifras sin espacios">
+    </p>
+    <p>
+      <label for="clave">Contraseña para la plataforma:</label>
+      <input type="password" id="clave" name="clave" required minlength="8"
+             autocomplete="new-password">
+    </p>
+  </fieldset>
+
+  <!-- APARTADO 2: la actividad -->
+  <fieldset>
+    <legend>Actividad</legend>
+    <p>
+      <label for="actividad">Actividad:</label>
+      <!-- value="" + required: obliga a elegir -->
+      <select id="actividad" name="actividad" required>
+        <option value="">Selecciona...</option>
+        <optgroup label="Tecnología">
+          <option value="robotica">Robótica</option>
+          <option value="web">Diseño web</option>
+        </optgroup>
+        <optgroup label="Deporte">
+          <option value="pelota">Pelota vasca</option>
+          <option value="escalada">Escalada</option>
+        </optgroup>
+      </select>
+    </p>
+    <p>
+      <label for="fecha">Fecha de inicio:</label>
+      <input type="date" id="fecha" name="fecha" min="2026-09-01" max="2027-06-30" required>
+    </p>
+    <p>
+      <label for="plazas">Plazas que reservas:</label>
+      <input type="number" id="plazas" name="plazas" min="1" max="4" value="1">
+    </p>
+    <p>
+      <label for="ciudad">Localidad:</label>
+      <!-- sugerencias, pero se puede escribir otra -->
+      <input list="ciudades" id="ciudad" name="ciudad">
+      <datalist id="ciudades">
+        <option value="Bilbao">
+        <option value="Donostia">
+        <option value="Gasteiz">
+      </datalist>
+    </p>
+  </fieldset>
+
+  <!-- APARTADO 3: una elección (radio) -->
+  <fieldset>
+    <legend>Turno</legend>
+    <!-- mismo name: solo uno · required en uno = grupo obligatorio -->
+    <label><input type="radio" name="turno" value="manana" required> Mañana</label>
+    <label><input type="radio" name="turno" value="tarde"> Tarde</label>
+  </fieldset>
+
+  <!-- APARTADO 4: varias elecciones (checkbox) -->
+  <fieldset>
+    <legend>Necesito</legend>
+    <label><input type="checkbox" name="extras" value="material"> Material</label>
+    <label><input type="checkbox" name="extras" value="transporte"> Transporte</label>
+    <label><input type="checkbox" name="extras" value="comedor"> Comedor</label>
+  </fieldset>
+
+  <!-- APARTADO 5: texto largo y archivo -->
+  <fieldset>
+    <legend>Información adicional</legend>
+    <p>
+      <label for="comentario">Comentarios:</label><br>
+      <textarea id="comentario" name="comentario" rows="4" cols="45"
+                maxlength="300"></textarea>
+    </p>
+    <p>
+      <label for="autorizacion">Autorización firmada (PDF):</label>
+      <input type="file" id="autorizacion" name="autorizacion" accept=".pdf">
+    </p>
+  </fieldset>
+
+  <!-- dato interno que viaja sin verse -->
+  <input type="hidden" name="curso" value="2026-2027">
+
+  <p>
+    <!-- casilla obligatoria -->
+    <label><input type="checkbox" name="normas" value="si" required> Acepto las normas de la actividad</label>
+  </p>
+
+  <!-- botones con su type escrito -->
+  <button type="submit">Enviar inscripción</button>
+  <button type="reset">Limpiar</button>
+</form>`;
+makeLab('#lab17',{file:'inscripcion.html',html:FINAL,hint:'Envíalo vacío para ver qué bloquea; luego rellénalo y mira el paquete multipart.'});
+
+/* =====================================================================
+   18 · REVISOR DE FORMULARIOS
+   ===================================================================== */
+const BAD=`<form action="/inscripcion">
+  <p>Nombre: <input type="text" id="nombre"></p>
+  <label for="mail">Correo:</label>
+  <input type="email" id="correo" name="correo">
+  <input type="text" name="tel" placeholder="Teléfono">
+  <p>Turno:</p>
+  <label><input type="radio" name="t1" value="m"> Mañana</label>
+  <label><input type="radio" name="t2" value="t"> Tarde</label>
+  <input type="file" name="foto">
+  <button>Enviar</button>
+</form>`;
+function review(src){
+  const d=new DOMParser().parseFromString(src,'text/html');const R=[];const add=(lv,t,s)=>R.push({lv,t,s});
+  const forms=d.querySelectorAll('form');
+  if(!forms.length){add('bad','Hay un &lt;form&gt;','No encuentro ninguna etiqueta form: sin ella no hay envío.');return R;}
+  add('ok','Hay un &lt;form&gt;',`Encontrado${forms.length>1?'s '+forms.length:''}.`);
+  const ctrls=[...d.querySelectorAll('input,select,textarea')].filter(c=>!['hidden','submit','reset','button','image'].includes((c.getAttribute('type')||'').toLowerCase()));
+  /* labels */
+  const noLab=ctrls.filter(c=>!(c.closest('label')||(c.id&&d.querySelector(`label[for="${CSS.escape(c.id)}"]`))));
+  noLab.length?add('bad','Cada campo tiene su label',`Sin label: ${noLab.map(c=>c.getAttribute('name')||c.id||c.tagName.toLowerCase()).map(esc).join(', ')}. Un placeholder no sirve de label.`):add('ok','Cada campo tiene su label','Todos los campos están conectados a un texto.');
+  /* for → id */
+  const badFor=[...d.querySelectorAll('label[for]')].filter(l=>!d.getElementById(l.getAttribute('for')));
+  badFor.length?add('bad','Los for coinciden con un id',`for sin campo: ${badFor.map(l=>'"'+esc(l.getAttribute('for'))+'"').join(', ')}.`):add('ok','Los for coinciden con un id','Todos los label for apuntan a un id que existe.');
+  /* ids repetidos */
+  const ids={};d.querySelectorAll('[id]').forEach(n=>ids[n.id]=(ids[n.id]||0)+1);const dup=Object.keys(ids).filter(k=>ids[k]>1);
+  dup.length?add('bad','No hay id repetidos',`Repetidos: ${dup.map(esc).join(', ')}.`):add('ok','No hay id repetidos','Cada id es único.');
+  /* name */
+  const noName=ctrls.filter(c=>!c.getAttribute('name'));
+  noName.length?add('bad','Los campos tienen name',`Sin name (no se enviarán): ${noName.map(c=>c.id?'#'+c.id:c.tagName.toLowerCase()).map(esc).join(', ')}.`):add('ok','Los campos tienen name','Todos los datos viajarán.');
+  /* radios */
+  const radios=[...d.querySelectorAll('input[type=radio]')];if(radios.length){const cnt={};radios.forEach(r=>{const n=r.getAttribute('name')||'(sin name)';cnt[n]=(cnt[n]||0)+1;});const lone=Object.keys(cnt).filter(k=>cnt[k]===1);
+   lone.length?add('bad','Los radios de un grupo comparten name',`Radios solos en su grupo: ${lone.map(esc).join(', ')}. Si son la misma pregunta, deben tener el mismo name.`):add('ok','Los radios de un grupo comparten name',`Grupos: ${Object.keys(cnt).map(esc).join(', ')}.`);}
+  /* botones */
+  const noType=[...d.querySelectorAll('form button')].filter(b=>!b.hasAttribute('type'));
+  noType.length?add('warn','Los botones tienen type',`${noType.length} button sin type: se comportarán como submit.`):add('ok','Los botones tienen type','Cada botón dice lo que hace.');
+  if(!d.querySelector('button[type=submit],input[type=submit],input[type=image],form button:not([type])'))add('bad','Hay un botón de envío','No hay ningún submit: el formulario no se puede enviar con un clic.');
+  /* select con option */
+  const emptySel=[...d.querySelectorAll('select')].filter(s=>!s.querySelector('option'));if(emptySel.length)add('bad','Los select tienen option',`${emptySel.length} select sin opciones.`);
+  /* fieldset */
+  const fs=[...d.querySelectorAll('fieldset')];
+  !fs.length?add('warn','Usa fieldset y legend','No hay fieldset: agrupa los campos relacionados.'):fs.some(f=>!f.querySelector(':scope > legend'))?add('warn','Usa fieldset y legend','Algún fieldset no tiene legend.'):add('ok','Usa fieldset y legend',`${fs.length} apartado(s) con título.`);
+  /* validaciones */
+  const v=d.querySelectorAll('[required],[minlength],[maxlength],[min],[max],[pattern]').length;
+  v>=3?add('ok','Al menos 3 validaciones HTML',`${v} campos con validación.`):add('warn','Al menos 3 validaciones HTML',`Solo ${v}. Usa required, minlength, maxlength, min, max o pattern.`);
+  /* archivos */
+  if(d.querySelector('input[type=file]')){const f=d.querySelector('input[type=file]').closest('form');const ok=f&&(f.getAttribute('method')||'').toLowerCase()==='post'&&(f.getAttribute('enctype')||'').toLowerCase()==='multipart/form-data';
+   ok?add('ok','Los archivos pueden viajar','post + multipart/form-data.'):add('bad','Los archivos pueden viajar','Con input file necesitas method="post" y enctype="multipart/form-data".');}
+  /* anidados y tablas */
+  if(d.querySelector('form form'))add('bad','No hay forms anidados','Hay un form dentro de otro.');
+  if(d.querySelector('form table'))add('warn','Sin tablas para maquetar','Hay una tabla dentro del form: la colocación es cosa de CSS.');
+  return R;}
+{const ta=$('#revSrc');let lab=null;
+ function run(){const R=review(ta.value);const ok=R.filter(r=>r.lv==='ok').length;
+  $('#revOut').innerHTML=`<div class="revscore"><b>${ok}/${R.length}</b><span>comprobaciones superadas${ok===R.length?' · ¡expediente impecable!':''}</span></div><div class="checks">${R.map(r=>`<div class="chk ${r.lv}"><i>${r.lv==='ok'?'✓':r.lv==='bad'?'✗':'!'}</i><div><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div>`;
+  if(!lab)lab=makeLab('#labRev',{wide:false,file:'tu-formulario.html',html:ta.value,hint:'Así se ve tu formulario en crudo. Envíalo para ver su paquete.'});else lab.set(ta.value);watchReveal();}
+ $('#revGo').onclick=run;$('#revBad').onclick=()=>{ta.value=BAD;run();};$('#revGood').onclick=()=>{ta.value=FINAL;run();};
+ ta.value=BAD;run();}
+
+/* =====================================================================
+   19 · CHULETA Y CHECKLIST
+   ===================================================================== */
+{const C=[['Un formulario','form'],['El texto de un campo','label'],['Texto corto','input type="text"'],['Contraseña','input type="password"'],['Correo','input type="email"'],['Número','input type="number"'],['Teléfono','input type="tel"'],['Dirección web','input type="url"'],['Búsqueda','input type="search"'],['Fecha','input type="date"'],['Hora','input type="time"'],['Fecha y hora','input type="datetime-local"'],['Mes / semana','type="month" / "week"'],['Color','input type="color"'],['Deslizador','input type="range"'],['Varias líneas','textarea'],['Desplegable','select + option'],['Agrupar opciones','optgroup'],['Una opción de varias','input type="radio"'],['Varias opciones','input type="checkbox"'],['Archivo','input type="file"'],['Dato oculto','input type="hidden"'],['Enviar','button type="submit"'],['Restablecer','button type="reset"'],['Botón para JavaScript','button type="button"'],['Agrupar campos','fieldset + legend'],['Sugerencias','input list + datalist'],['Resultado de un cálculo','output'],['Medida en un rango','meter'],['Progreso de una tarea','progress'],['Obligatorio','required'],['Formato propio','pattern'],['No editable pero se envía','readonly'],['Desactivado y no se envía','disabled']];
+ const box=$('#cheat');const draw=q=>{q=(q||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');box.innerHTML=C.filter(([a,b])=>(a+' '+b).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').includes(q)).map(([a,b])=>`<div><span>${esc(a)}</span><code>${esc(b)}</code></div>`).join('')||'<div>Nada con esa palabra.</div>';};
+ $('#cheatQ').oninput=e=>draw(e.target.value);draw();
+ const L=['Todo está dentro de un &lt;form&gt; con action y method','Cada campo importante tiene su &lt;label&gt;','Cada for coincide exactamente con un id','Ningún id está repetido','Todos los campos que se envían tienen name','He elegido el type adecuado para cada dato','Los radios de una pregunta comparten name','Los checkbox son opciones independientes con value','Los select tienen option (y value="" si obligo a elegir)','He agrupado con fieldset y legend','He usado required donde hace falta','He revisado minlength, maxlength, min, max y pattern','Los botones tienen su type escrito','Si hay archivos: post + multipart/form-data','No guardo nada secreto en hidden','He revisado cierres y anidamientos','Lo he probado en el navegador'];
+ $('#checklist').innerHTML=L.map((t,i)=>`<li><label><input type="checkbox" id="ck${i}"> <span>${t}</span></label></li>`).join('');}
+
+watchReveal();
+})();
+</script>
+</body></html>
