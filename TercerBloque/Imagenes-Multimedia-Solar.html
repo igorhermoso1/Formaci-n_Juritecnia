@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Catedral de Luz · Imágenes, vídeo y proporciones</title>
+<meta name="description" content="Bloque 3 · Escena IV: img, alt, figure, aspect-ratio, object-fit, object-position, zoom en tarjetas, picture, video, audio, iframe, loading lazy y más, en una catedral-invernadero solarpunk.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   LA CATEDRAL DE LUZ · interior de un invernadero solarpunk a la hora dorada
+   Penumbra verde, metal (latón, acero, pátina) y vidrieras que se encienden.
+   ===================================================================== */
+:root{
+  --noche:#091311; --nave:#0f1d1a; --nave2:#152a25; --nave3:#1d3832;
+  --patina:#2f8a74; --patina2:#5fd3b0; --musgo:#3c8d4f; --brote:#a8e36b;
+  --laton:#d4a347; --laton2:#a87a1c; --oro:#ffd27a; --ambar:#f2a33a; --cobre:#e8743b;
+  --acero:#9fb3ad; --acero2:#5b6e69; --perla:#eef5ef;
+  --txt:#e6efe9; --txt2:#a9c2b9; --plomo:#140e08;
+  --v1:#3fd0a6; --v2:#ffcf5a; --v3:#e8743b; --v4:#58b7e0; --v5:#a8e36b; --v6:#d94f6a;
+  --f-dis:'Cormorant Garamond',Georgia,serif;
+  --f-lab:'Unbounded',system-ui,sans-serif;
+  --f-txt:'Manrope',system-ui,'Segoe UI',sans-serif;
+  --f-code:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --radio:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--noche);color:var(--txt);font:400 17.5px/1.72 var(--f-txt);
+  background-image:repeating-linear-gradient(90deg,rgba(212,163,71,.035) 0 1px,transparent 1px 140px),radial-gradient(ellipse 70% 40% at 50% 0,rgba(95,211,176,.08),transparent 70%)}
+img,video{max-width:100%}
+a{color:var(--oro)}
+b,strong{font-weight:700;color:#fff}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto;position:relative}
+textarea.src{display:none}
+::selection{background:var(--oro);color:var(--plomo)}
+
+/* ---------- barra superior: una tira de vitral ---------- */
+.vitral{position:fixed;z-index:80;top:0;left:0;right:0;height:64px;display:flex;align-items:center;gap:14px;padding:0 16px;
+  background:linear-gradient(180deg,rgba(9,19,17,.96),rgba(9,19,17,.86));border-bottom:1px solid rgba(212,163,71,.4);backdrop-filter:blur(8px)}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--perla);font:600 21px/1 var(--f-dis);white-space:nowrap}
+.marca i{width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--v1),var(--v2),var(--v3),var(--v4),var(--v5),var(--v6),var(--v1));border:2px solid var(--laton);box-shadow:0 0 14px rgba(255,210,122,.5)}
+.panes{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;padding:6px 2px}
+.panes::-webkit-scrollbar{display:none}
+.panes a{position:relative;flex:none;display:grid;place-items:center;min-width:44px;height:38px;padding:0 10px;border-radius:10px 10px 3px 3px;text-decoration:none;
+  font:600 12px/1 var(--f-lab);color:rgba(255,255,255,.55);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 22%,#0c1714),color-mix(in srgb,var(--c) 10%,#0c1714));
+  border:2px solid var(--plomo);box-shadow:inset 0 0 0 1px rgba(212,163,71,.35);transition:background .3s,color .3s,box-shadow .3s,transform .2s}
+.panes a.lit{color:#13201c;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 85%,#fff),var(--c));box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 0 16px color-mix(in srgb,var(--c) 70%,transparent)}
+.panes a.on{transform:translateY(-3px);outline:2px solid var(--oro);outline-offset:2px}
+.panes a span{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--perla);color:var(--plomo);font:700 12px var(--f-txt);padding:4px 9px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s}
+.panes a:hover span,.panes a:focus-visible span{opacity:1}
+.prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:linear-gradient(90deg,var(--v1),var(--v2),var(--v3))}
+:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+
+/* ---------- HUD: mini rosetón con el progreso ---------- */
+.hud{position:fixed;z-index:81;right:18px;bottom:18px;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;text-decoration:none;
+  background:rgba(9,19,17,.92);border:1px solid rgba(212,163,71,.55);box-shadow:0 10px 30px rgba(0,0,0,.5);color:var(--perla);font:600 13px var(--f-lab)}
+.hud .mini{width:42px;height:42px;border-radius:50%;border:2px solid var(--laton);background:var(--mini,conic-gradient(#22332e 0 360deg))}
+.toast{position:fixed;z-index:90;left:50%;bottom:28px;transform:translate(-50%,40px);opacity:0;pointer-events:none;transition:all .45s cubic-bezier(.2,1.3,.4,1);
+  display:flex;align-items:center;gap:14px;padding:14px 22px;border-radius:16px;background:linear-gradient(135deg,#1d3832,#0f1d1a);border:1px solid var(--oro);box-shadow:0 0 40px rgba(255,210,122,.35);color:var(--perla);font:600 15px var(--f-txt)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast i{width:34px;height:34px;flex:none;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--tc,var(--v2));box-shadow:0 0 20px var(--tc)}
+
+/* =====================================================================
+   PORTADA: la nave con el rosetón
+   ===================================================================== */
+.hero{position:relative;min-height:100vh;padding:110px 0 70px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(ellipse 60% 50% at 50% 32%,rgba(255,210,122,.16),transparent 70%),linear-gradient(180deg,#0b1714 0%,#10221e 55%,#0a1311 100%)}
+/* columnas de la nave */
+.hero::before,.hero::after{content:'';position:absolute;z-index:-1;top:0;bottom:0;width:min(150px,12vw);
+  background:linear-gradient(90deg,#1a2a26,#3d524c 40%,#22332e 70%,#141f1c),repeating-linear-gradient(180deg,transparent 0 120px,rgba(212,163,71,.35) 120px 124px);background-blend-mode:overlay}
+.hero::before{left:0;border-right:2px solid rgba(212,163,71,.35)}
+.hero::after{right:0;border-left:2px solid rgba(212,163,71,.35)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
+.rose-wrap{position:relative;display:grid;place-items:center}
+/* el rosetón */
+.rose{position:relative;width:min(460px,80vw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,#0b1412 0 55%,transparent 55.5%),conic-gradient(from 15deg,#2b3d38,#5b6e69,#2b3d38,#5b6e69,#2b3d38);
+  box-shadow:0 0 0 10px #20302b,0 0 0 13px var(--laton),0 0 0 22px #141f1c,0 0 0 24px var(--laton2),0 0 120px rgba(255,210,122,.25)}
+/* cada pétalo va de arriba al centro y gira sobre su base (el centro del rosetón) */
+.petal{position:absolute;left:40.5%;top:7%;width:19%;height:43%;transform-origin:50% 100%;transform:rotate(calc(var(--i) * 30deg));
+  border-radius:50% 50% 40% 40%/62% 62% 38% 38%;border:4px solid var(--plomo);
+  background:repeating-linear-gradient(0deg,var(--plomo) 0 3px,transparent 3px 26%),linear-gradient(180deg,color-mix(in srgb,var(--c) 70%,#fff) 0%,var(--c) 45%,color-mix(in srgb,var(--c) 60%,#000) 100%);
+  filter:saturate(.18) brightness(.38);transition:filter 1.2s ease,box-shadow 1.2s ease}
+.petal.lit{filter:none;box-shadow:0 0 26px color-mix(in srgb,var(--c) 80%,transparent),inset 0 0 18px rgba(255,255,255,.35)}
+.core{position:absolute;inset:36%;border-radius:50%;border:5px solid var(--laton);
+  background:repeating-conic-gradient(from 0deg,var(--plomo) 0 2deg,transparent 2deg 30deg),conic-gradient(var(--v2),var(--v3),var(--v6),var(--v2),var(--v1),var(--v4),var(--v2));
+  filter:saturate(.15) brightness(.35);transition:filter 1.4s,box-shadow 1.4s}
+.core.lit{filter:none;box-shadow:0 0 60px rgba(255,210,122,.8),0 0 0 6px rgba(255,210,122,.25)}
+.core b{position:absolute;inset:28%;border-radius:50%;background:radial-gradient(circle,#fffbe9,var(--oro) 60%,var(--laton));border:3px solid var(--plomo)}
+.rose::after{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;mix-blend-mode:soft-light;
+  background:conic-gradient(from 0deg,transparent 0 40deg,rgba(255,255,255,.55) 60deg,transparent 80deg 200deg,rgba(255,255,255,.4) 220deg,transparent 240deg);animation:shimmer 14s linear infinite}
+@keyframes shimmer{to{transform:rotate(360deg)}}
+/* haces de luz que caen hacia el suelo */
+.beams{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.beams i{position:absolute;top:18%;left:var(--x);width:var(--w);height:110%;transform-origin:50% 0;transform:rotate(var(--r));mix-blend-mode:screen;filter:blur(10px);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 55%,transparent),transparent 85%);opacity:.5;animation:haz 7s ease-in-out infinite alternate;animation-delay:var(--d)}
+@keyframes haz{from{opacity:.25}to{opacity:.6}}
+.pools{position:absolute;left:0;right:0;bottom:0;height:38%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 16% 30% at 30% 80%,rgba(63,208,166,.28),transparent 70%),radial-gradient(ellipse 14% 26% at 52% 86%,rgba(255,207,90,.3),transparent 70%),radial-gradient(ellipse 15% 28% at 72% 78%,rgba(232,116,59,.22),transparent 70%),radial-gradient(ellipse 12% 22% at 42% 92%,rgba(88,183,224,.22),transparent 70%)}
+.kick{font:600 12px/1.4 var(--f-lab);letter-spacing:.2em;text-transform:uppercase;color:var(--patina2);margin:0 0 14px}
+.h1{font:700 clamp(54px,7.5vw,104px)/.92 var(--f-dis);margin:0 0 10px;color:#fff6dc;text-shadow:0 0 40px rgba(255,210,122,.45)}
+.h1 em{display:block;font-style:italic;font-weight:500;font-size:.5em;color:var(--oro);margin-top:12px;text-shadow:none}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--txt);max-width:580px;margin:18px 0 0}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:700 15px/1 var(--f-txt);color:#1a1206;text-decoration:none;cursor:pointer;border:0;border-radius:999px;padding:14px 22px;
+  background:linear-gradient(180deg,#ffe2a0,var(--laton));box-shadow:0 0 0 1px rgba(255,255,255,.3) inset,0 8px 24px -8px rgba(255,210,122,.6);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,.4) inset,0 12px 30px -8px rgba(255,210,122,.8)}
+.btn.glass{background:rgba(95,211,176,.1);color:var(--perla);box-shadow:inset 0 0 0 1px rgba(95,211,176,.55)}
+.btn.sm{font-size:13.5px;padding:10px 16px}
+.como{margin-top:26px;padding:16px 18px;border-radius:14px;background:rgba(9,19,17,.6);border:1px solid rgba(212,163,71,.35);max-width:580px;font-size:15.5px}
+.como b{color:var(--oro)}
+.como .cnt{font:600 13px var(--f-lab);color:var(--patina2)}
+
+/* =====================================================================
+   SALAS
+   ===================================================================== */
+.sala{position:relative;padding:110px 0 30px}
+.sala::before{content:'';position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,163,71,.5),transparent)}
+.cab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:34px;align-items:center;margin-bottom:38px}
+/* la ventana ojival de cada sala */
+.arch{position:relative;width:132px;height:212px;border-radius:66px 66px 8px 8px;border:3px solid var(--plomo);
+  box-shadow:0 0 0 5px var(--laton2),0 0 0 7px var(--plomo),0 0 0 9px var(--laton);
+  background:repeating-linear-gradient(0deg,var(--plomo) 0 3px,transparent 3px 44px),repeating-linear-gradient(90deg,var(--plomo) 0 3px,transparent 3px 44px),
+    conic-gradient(from 200deg at 50% 70%,var(--g1),var(--g2),var(--g3),var(--g4),var(--g1));
+  filter:saturate(.25) brightness(.45);transition:filter 1s,box-shadow 1s}
+.arch b{position:absolute;inset:0;display:grid;place-items:center;font:800 40px/1 var(--f-lab);color:#fff;text-shadow:0 2px 0 var(--plomo),0 0 18px rgba(0,0,0,.6)}
+.sala.lit .arch{filter:none;box-shadow:0 0 0 5px var(--laton2),0 0 0 7px var(--plomo),0 0 0 9px var(--laton),0 0 60px color-mix(in srgb,var(--g2) 60%,transparent)}
+/* haz de luz de la ventana hacia el contenido */
+.cab::after{content:'';position:absolute;left:40px;top:60px;width:min(700px,70vw);height:420px;pointer-events:none;z-index:-1;transform:skewX(-28deg);transform-origin:0 0;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--g2) 18%,transparent),transparent 80%);filter:blur(14px);opacity:.25;transition:opacity 1.2s}
+.sala.lit .cab::after{opacity:.75}
+.cab h2{font:700 clamp(38px,5vw,66px)/1 var(--f-dis);margin:0 0 14px;color:#fff6dc}
+.cab h2 code{font:600 .6em var(--f-code);color:var(--oro);background:none;border:0;padding:0}
+.cab p.in{margin:0;max-width:760px;font-size:18.5px;color:var(--txt)}
+.cab .estado{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font:600 12px var(--f-lab);letter-spacing:.06em;color:var(--txt2)}
+.cab .estado i{width:14px;height:14px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:#3b4b46}
+.sala.lit .cab .estado{color:var(--oro)}
+.sala.lit .cab .estado i{background:var(--g2);box-shadow:0 0 10px var(--g2)}
+
+/* vitrina = panel de contenido */
+.vitrina{position:relative;margin-bottom:34px;padding:clamp(20px,3vw,38px);border-radius:var(--radio);
+  background:linear-gradient(160deg,rgba(29,56,50,.86),rgba(13,26,23,.94));border:1px solid rgba(212,163,71,.38);
+  box-shadow:0 30px 60px -34px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05)}
+.vitrina::before{content:'';position:absolute;left:24px;right:24px;top:-1px;height:4px;border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,var(--v1) 0 16%,var(--plomo) 16% 17%,var(--v2) 17% 33%,var(--plomo) 33% 34%,var(--v3) 34% 50%,var(--plomo) 50% 51%,var(--v4) 51% 67%,var(--plomo) 67% 68%,var(--v5) 68% 84%,var(--plomo) 84% 85%,var(--v6) 85%)}
+.vitrina > h3{font:700 clamp(26px,3vw,36px)/1.1 var(--f-dis);color:#fff6dc;margin:0 0 12px}
+.vitrina > p,.vitrina > ul,.vitrina > ol{max-width:900px}
+.sub{font:600 13px var(--f-lab);letter-spacing:.14em;text-transform:uppercase;color:var(--patina2);margin:30px 0 10px}
+code{font-family:var(--f-code);font-size:.84em;padding:1px 6px;border-radius:5px;background:rgba(95,211,176,.12);border:1px solid rgba(95,211,176,.3);color:#c9fbe8}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:16px}
+.ficha{padding:16px 18px;border-radius:14px;background:rgba(9,19,17,.5);border:1px solid rgba(95,211,176,.22)}
+.ficha b{display:block;font:600 14px var(--f-lab);color:var(--oro);margin-bottom:6px}
+.ficha p{margin:0;font-size:15.5px}
+.muted{color:var(--txt2)}
+/* notas: placas de vidrio con letrero */
+.nota{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;margin:24px 0;padding:16px 20px;border-radius:14px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--nc) 12%,transparent),rgba(9,19,17,.4));border:1px solid color-mix(in srgb,var(--nc) 55%,transparent);--nc:var(--v2)}
+.nota > b:first-child{font:700 11px/1 var(--f-lab);letter-spacing:.12em;text-transform:uppercase;padding:8px 10px;border-radius:8px;background:var(--nc);color:#13201c;white-space:nowrap}
+.nota p{margin:0}.nota p + p{margin-top:8px}
+.nota.ojo{--nc:var(--v6)}.nota.dato{--nc:var(--v4)}.nota.luz{--nc:var(--v2)}.nota.hoja{--nc:var(--v5)}
+.tbl-wrap{overflow-x:auto;margin:18px 0}
+.tbl{width:100%;border-collapse:collapse;font-size:15.5px;min-width:560px}
+.tbl th{font:600 12px var(--f-lab);letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:10px 12px;color:var(--plomo);background:linear-gradient(180deg,#ffe2a0,var(--laton))}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(212,163,71,.2);vertical-align:top}
+.tbl td:first-child{white-space:nowrap}
+.tbl tr:hover td{background:rgba(95,211,176,.05)}
+.pasos{counter-reset:p;list-style:none;padding:0;margin:16px 0;display:grid;gap:10px}
+.pasos li{counter-increment:p;display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:start}
+.pasos li::before{content:counter(p);display:grid;place-items:center;height:40px;border-radius:50%;font:700 15px var(--f-lab);color:var(--plomo);background:radial-gradient(circle at 35% 30%,#fff3c4,var(--laton))}
+
+/* ---------- código ---------- */
+.code{border-radius:14px;overflow:hidden;background:#06100d;border:1px solid rgba(212,163,71,.35);margin:16px 0}
+.code .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 14px;background:linear-gradient(90deg,rgba(212,163,71,.22),rgba(95,211,176,.08));font:600 11px var(--f-lab);letter-spacing:.1em;text-transform:uppercase;color:var(--oro)}
+.copy{font:700 12px var(--f-txt);color:var(--plomo);background:var(--oro);border:0;border-radius:999px;padding:4px 12px;cursor:pointer}
+.copy.ok{background:var(--v1)}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font:500 14px/1.65 var(--f-code);color:#dbe9e3;tab-size:2}
+.code .s{color:#ffd27a}.code .p{color:#7fe3c5}.code .v{color:#ffb38a}.code .c{color:#6f9187;font-style:italic}.code .t{color:#ffd27a}.code .at{color:#c9a7ff}
+
+/* ---------- mesa de luz: donde viven las demos ---------- */
+.mesa{border-radius:14px;padding:22px;margin:18px 0;background:radial-gradient(ellipse at 50% 0,rgba(255,210,122,.1),transparent 60%),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 24px),#0b1715;border:1px solid rgba(95,211,176,.25)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:0 0 16px}
+.ctrl label{display:flex;align-items:center;gap:8px;font:600 14px var(--f-txt)}
+.ctrl input[type=range]{accent-color:var(--oro);width:170px}
+.ctrl output{font:600 13px var(--f-code);color:var(--oro);min-width:56px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 13px var(--f-code);color:var(--perla);background:rgba(95,211,176,.08);border:1px solid rgba(95,211,176,.45);border-radius:999px;padding:7px 13px;cursor:pointer;transition:all .2s}
+.chip:hover{background:rgba(95,211,176,.18)}
+.chip.on{background:linear-gradient(180deg,#ffe2a0,var(--laton));color:var(--plomo);border-color:transparent;box-shadow:0 0 16px rgba(255,210,122,.4)}
+.sw{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:600 14px var(--f-txt);user-select:none}
+.sw input{appearance:none;width:42px;height:24px;border-radius:999px;background:#2b3d38;border:1px solid rgba(95,211,176,.4);position:relative;cursor:pointer;transition:background .2s;margin:0}
+.sw input::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--acero);transition:left .2s,background .2s}
+.sw input:checked{background:var(--patina)}
+.sw input:checked::after{left:20px;background:var(--oro)}
+.marco-demo{outline:2px dashed var(--oro);outline-offset:3px;background:repeating-conic-gradient(#1a2b27 0 25%,#13221f 0 50%) 0 0/18px 18px}
+.lectura{font:600 13px var(--f-code);color:var(--patina2);margin-top:10px}
+
+/* sala 1 */
+.cartela{margin:0;max-width:640px}
+.cartela img{display:block;width:100%;height:auto;border-radius:10px 10px 0 0;border:3px solid var(--laton2);border-bottom:0}
+.cartela figcaption{padding:12px 16px;border-radius:0 0 10px 10px;background:linear-gradient(180deg,#ffe2a0,var(--laton));color:var(--plomo);font:600 15px var(--f-txt);border:3px solid var(--laton2);border-top:0}
+.cartela figcaption small{display:block;font:500 13px var(--f-txt);opacity:.8}
+.salto{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.salto > div{padding:14px;border-radius:12px;background:rgba(9,19,17,.6);border:1px solid rgba(95,211,176,.25)}
+.salto img{width:100%;height:auto;display:block;border-radius:8px}
+.salto h4{margin:0 0 10px;font:600 13px var(--f-lab);color:var(--oro)}
+.salto p{margin:10px 0 0;font-size:14.5px;padding:10px;border-radius:8px;background:rgba(255,210,122,.08)}
+.alt-off img{opacity:1}
+
+/* sala 2 */
+.ratios{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+.ratios div{display:grid;place-items:center;width:var(--w);aspect-ratio:var(--r);border:2px solid var(--laton);border-radius:6px;background:linear-gradient(135deg,rgba(63,208,166,.25),rgba(255,207,90,.2));font:600 12px var(--f-code);color:#fff;text-align:center}
+.caja-r{width:60%;aspect-ratio:16/9;max-width:100%;display:grid;place-items:center;border-radius:10px;border:3px solid var(--laton);color:var(--plomo);font:700 16px var(--f-code);
+  background:linear-gradient(135deg,var(--v1),var(--v4) 50%,var(--v2));transition:aspect-ratio .4s}
+.reto-r{position:relative;width:min(300px,100%);margin:10px auto}
+.reto-r .tgt{width:100%;border:3px dashed var(--oro);border-radius:8px}
+.reto-r .yo{position:absolute;left:0;top:0;width:100%;border-radius:8px;background:rgba(63,208,166,.45);border:2px solid var(--v1);transition:aspect-ratio .3s}
+
+/* sala 3 / 4 */
+.fit-wrap{display:flex;justify-content:center;align-items:center;min-height:400px}
+.fit-wrap img{display:block}
+.pos-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start}
+.pad{position:relative;cursor:crosshair;border-radius:8px;overflow:hidden;border:2px solid var(--laton);touch-action:none;user-select:none}
+.pad img{display:block;width:100%;height:auto;opacity:.55}
+.pad .win{position:absolute;border:3px solid var(--oro);box-shadow:0 0 0 2000px rgba(0,0,0,.35);border-radius:4px;pointer-events:none}
+.pad .dot{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--oro);border:3px solid var(--plomo);pointer-events:none}
+.avatar-demo{display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.avatar-demo img{width:120px;aspect-ratio:1/1;object-fit:cover;object-position:72% 30%;border-radius:50%;border:4px solid var(--laton);box-shadow:0 0 30px rgba(255,210,122,.35)}
+.tri{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.tri figure{margin:0}
+.tri img{display:block;object-fit:cover;border-radius:8px;border:2px solid var(--laton)}
+.tri figcaption{font:600 12px var(--f-code);color:var(--txt2);margin-top:6px}
+
+/* sala 5 · zoom */
+.galeria{display:flex;flex-wrap:wrap;gap:18px}
+.galeria .marco{flex:1 1 220px;margin:0;border-radius:14px;border:2px solid var(--laton);background:#0b1715}
+.galeria .marco img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.galeria .marco figcaption{padding:10px 14px;font:600 14px var(--f-txt)}
+.z-hidden .marco{overflow:hidden}
+.z-trans .marco img{transition:transform .5s ease}
+.z-on .marco:hover img{transform:scale(var(--zs,1.12))}
+
+/* simulador de pantalla (picture y srcset) */
+.sim{border-radius:14px;overflow:hidden;border:1px solid rgba(95,211,176,.35);margin:18px 0;background:#081210}
+.sim-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:rgba(212,163,71,.12)}
+.sim-bar button{font:600 12px var(--f-txt);color:var(--perla);background:transparent;border:1px solid rgba(95,211,176,.5);border-radius:999px;padding:6px 12px;cursor:pointer}
+.sim-bar button.on{background:var(--oro);color:var(--plomo);border-color:transparent}
+.sim-bar input{flex:1 1 140px;accent-color:var(--oro)}
+.sim-bar output{font:600 13px var(--f-code);color:var(--oro);min-width:120px}
+.sim-view{padding:14px;overflow:hidden;background:repeating-linear-gradient(45deg,#0e1a17 0 10px,#0b1513 10px 20px)}
+.sim-fit{position:relative;margin:0 auto;overflow:hidden;border-radius:6px;box-shadow:0 0 0 2px var(--laton);background:#fff}
+.sim-fit iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:#fff}
+.sim-read{padding:10px 14px;font:600 13px var(--f-code);color:var(--patina2);border-top:1px solid rgba(95,211,176,.2)}
+
+/* sala 7-9 · multimedia */
+.player{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:start}
+.player video{width:100%;height:auto;border-radius:12px;border:3px solid var(--laton2);background:#000;display:block}
+.toggles{display:flex;flex-direction:column;gap:12px}
+.toggles select{font:600 14px var(--f-code);background:#0b1715;color:var(--perla);border:1px solid rgba(95,211,176,.5);border-radius:8px;padding:6px 8px}
+.banner-video{display:block;width:100%;aspect-ratio:21/9;object-fit:cover;border-radius:14px;border:3px solid var(--laton2)}
+.movil-sim{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center}
+.movil{width:230px;height:450px;border-radius:38px;padding:14px;background:linear-gradient(145deg,#3d524c,#141f1c);box-shadow:0 0 0 2px var(--laton),0 30px 60px -20px #000;position:relative}
+.movil::before{content:'';position:absolute;top:22px;left:50%;width:70px;height:18px;margin-left:-35px;border-radius:999px;background:#050a09;z-index:2}
+.movil .pant{position:relative;height:100%;border-radius:26px;overflow:hidden;background:#0b1715;display:flex;flex-direction:column}
+.movil video{width:100%;aspect-ratio:9/12;object-fit:cover;display:block}
+.movil .msg{flex:1;padding:12px;font:600 13px/1.45 var(--f-txt);display:flex;flex-direction:column;justify-content:center;gap:6px}
+.movil .msg b{font:700 15px var(--f-lab)}
+.movil.ok .msg b{color:var(--v5)} .movil.ko .msg b{color:#ff8a9d} .movil.warn .msg b{color:var(--v2)}
+audio{width:100%;max-width:520px}
+.transcripcion{font-size:15px;padding:14px 16px;border-radius:12px;background:rgba(255,210,122,.07);border-left:4px solid var(--laton)}
+.iframe-16{display:block;width:100%;height:auto;aspect-ratio:16/9;border:0;border-radius:14px;box-shadow:0 0 0 3px var(--laton2)}
+.iframe-43{display:block;width:100%;height:auto;aspect-ratio:4/3;border:0;border-radius:14px;box-shadow:0 0 0 3px var(--laton2)}
+
+/* sala 11 · rendimiento */
+.lazybox{height:420px;overflow-y:auto;padding:14px;border-radius:12px;border:1px solid rgba(95,211,176,.35);background:#081210}
+.lazybox figure{margin:0 0 14px}
+.lazybox img{display:block;width:100%;height:auto;border-radius:10px;background:repeating-linear-gradient(45deg,#13221f 0 12px,#0e1a17 12px 24px)}
+.lazybox figcaption{font:600 12.5px var(--f-code);color:var(--txt2);margin-top:6px}
+.cont{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.cont div{flex:1 1 160px;padding:12px 14px;border-radius:12px;background:rgba(9,19,17,.7);border:1px solid rgba(212,163,71,.4)}
+.cont small{display:block;font:600 11px var(--f-lab);letter-spacing:.08em;color:var(--txt2);text-transform:uppercase}
+.cont b{font:800 26px var(--f-lab);color:var(--oro)}
+.barras{display:grid;gap:8px;margin:14px 0}
+.barras div{display:grid;grid-template-columns:200px minmax(0,1fr) 80px;gap:12px;align-items:center;font:600 13px var(--f-code)}
+.barras i{display:block;height:18px;border-radius:999px;background:linear-gradient(90deg,var(--v1),var(--v2));width:var(--p);transition:width .8s}
+.barras .jpg i{background:linear-gradient(90deg,var(--v3),var(--v2))}
+.presu .fila{display:grid;grid-template-columns:minmax(0,1.4fr) auto auto 90px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(212,163,71,.2)}
+.presu select{font:600 13px var(--f-code);background:#0b1715;color:var(--perla);border:1px solid rgba(95,211,176,.5);border-radius:8px;padding:6px 8px}
+.medidor{height:22px;border-radius:999px;background:#13221f;border:1px solid rgba(212,163,71,.4);overflow:hidden;margin:14px 0 6px}
+.medidor i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--v5),var(--v2));transition:width .5s,background .5s}
+.medidor.over i{background:linear-gradient(90deg,var(--v3),var(--v6))}
+
+/* sala 12 · referencia */
+.mapa-wrap{overflow-x:auto;border-radius:12px;border:1px solid rgba(95,211,176,.3)}
+.mapa-in{position:relative;width:800px}
+.mapa-in img{display:block;width:800px;height:450px;max-width:none}
+.mapa-in svg{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s}
+.mapa-in.ver svg{opacity:1}
+.ref-demo{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+canvas#lienzo{width:100%;max-width:600px;height:auto;border-radius:12px;border:2px solid var(--laton2);background:#081210}
+
+/* ---------- pruebas (gamificación) ---------- */
+.prueba{position:relative;margin:34px 0 10px;padding:24px;border-radius:var(--radio);border:2px dashed rgba(212,163,71,.6);
+  background:radial-gradient(ellipse at 100% 0,rgba(255,210,122,.1),transparent 50%),rgba(9,19,17,.6)}
+.prueba.hecha{border-style:solid;border-color:var(--oro);box-shadow:0 0 50px -10px rgba(255,210,122,.45)}
+.prueba > header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}
+.prueba > header i{width:30px;height:30px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--pc,var(--v2));filter:saturate(.2) brightness(.6);transition:filter .6s}
+.prueba.hecha > header i{filter:none;box-shadow:0 0 18px var(--pc)}
+.prueba > header b{font:700 13px var(--f-lab);letter-spacing:.1em;text-transform:uppercase;color:var(--oro)}
+.prueba > header span{font:600 13px var(--f-txt);color:var(--txt2)}
+.prueba h4{font:700 26px/1.15 var(--f-dis);margin:0 0 10px;color:#fff6dc}
+.res{margin-top:14px;font:600 15px var(--f-txt);min-height:24px}
+.res.ok{color:var(--v5)} .res.ko{color:#ff9aab}
+.preg{padding:14px 16px;margin:12px 0;border-radius:12px;background:rgba(29,56,50,.5);border:1px solid rgba(95,211,176,.2)}
+.preg > p{margin:0 0 8px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:10px;cursor:pointer;background:rgba(9,19,17,.5);border:1px solid rgba(95,211,176,.18);transition:background .2s}
+.opt:hover{background:rgba(95,211,176,.1)}
+.opt input{accent-color:var(--oro);margin-top:5px;flex:none}
+.opt code{white-space:normal}
+.opt.bien{background:rgba(168,227,107,.16);border-color:var(--v5)}
+.opt.mal{background:rgba(217,79,106,.16);border-color:var(--v6)}
+.why{display:none;margin-top:8px;font-size:14.5px;color:var(--txt2)}
+.why.show{display:block}
+
+/* errores y test */
+.q{padding:18px;margin-bottom:18px;border-radius:14px;background:rgba(9,19,17,.55);border:1px solid rgba(95,211,176,.2)}
+.qq{font-weight:700;margin:0 0 8px;font-size:17px}
+.ex{display:none;margin-top:12px;padding:12px 14px;border-radius:10px;border-left:4px solid var(--oro);background:rgba(255,210,122,.07)}
+.ex.show{display:block}
+.scorebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px;font:700 20px var(--f-lab);color:var(--oro)}
+.sheet-wrap{overflow-x:auto;border-radius:var(--radio);border:1px solid rgba(212,163,71,.45)}
+.sheet{border-collapse:collapse;width:100%;min-width:780px;font-size:15px;background:rgba(9,19,17,.6)}
+.sheet th{font:600 12px var(--f-lab);letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:10px 12px;color:var(--plomo);background:linear-gradient(180deg,#ffe2a0,var(--laton))}
+.sheet td{padding:8px 12px;border-bottom:1px solid rgba(212,163,71,.15);vertical-align:top}
+.sheet td:first-child{font:600 13.5px var(--f-code);color:var(--oro);white-space:nowrap}
+.sheet tr.grp td{font:700 18px var(--f-dis);color:#fff6dc;background:rgba(95,211,176,.1);padding-top:12px}
+
+/* taller */
+.taller{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:24px;align-items:start}
+.taller fieldset{border:1px solid rgba(95,211,176,.3);border-radius:12px;padding:12px 14px;margin:0 0 12px}
+.taller legend{font:600 12px var(--f-lab);letter-spacing:.08em;color:var(--oro);padding:0 6px}
+#tPrev{min-height:200px}
+
+footer{padding:70px 0 120px;text-align:center;position:relative;background:radial-gradient(ellipse 50% 60% at 50% 100%,rgba(255,210,122,.15),transparent 70%)}
+footer h2{font:700 clamp(36px,5vw,60px)/1 var(--f-dis);color:#fff6dc;margin:0 0 10px}
+footer p{color:var(--txt2)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+html:not(.js) .reveal{opacity:1;transform:none}
+
+@media (max-width: 900px){
+  .hero-grid,.player,.movil-sim,.taller,.pos-grid{grid-template-columns:minmax(0,1fr)}
+  .rose-wrap{order:-1}
+  .cab{grid-template-columns:minmax(0,1fr);gap:20px}
+  .arch{width:100px;height:160px}
+  .salto{grid-template-columns:minmax(0,1fr)}
+  .barras div{grid-template-columns:130px minmax(0,1fr) 64px}
+  .presu .fila{grid-template-columns:minmax(0,1fr) auto auto;}
+  .presu .fila .kb{grid-column:1/-1}
+}
+@media (max-width: 600px){
+  .marca span{display:none}
+  .hero::before,.hero::after{width:14px}
+  .nota{grid-template-columns:minmax(0,1fr)}
+  .nota > b:first-child{justify-self:start}
+  .hud span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="vitral" aria-label="Salas de la catedral">
+  <a class="marca" href="#inicio"><i></i><span>La Catedral de Luz</span></a>
+  <div class="panes" id="panes"></div>
+  <div class="prog" id="prog"></div>
+</nav>
+<a class="hud" href="#inicio" title="Ver el rosetón"><span class="mini" id="hudMini"></span><span id="hudTxt">0 / 13 fragmentos</span></a>
+<div class="toast" id="toast" role="status" aria-live="polite"><i></i><span></span></div>
+
+<!-- =========================== PORTADA =========================== -->
+<header class="hero" id="inicio">
+  <div class="beams" aria-hidden="true">
+    <i style="--x:38%;--w:120px;--r:18deg;--c:var(--v2);--d:0s"></i>
+    <i style="--x:46%;--w:90px;--r:9deg;--c:var(--v1);--d:-2s"></i>
+    <i style="--x:52%;--w:140px;--r:-4deg;--c:var(--v3);--d:-4s"></i>
+    <i style="--x:58%;--w:80px;--r:-14deg;--c:var(--v4);--d:-1s"></i>
+    <i style="--x:63%;--w:110px;--r:-24deg;--c:var(--v5);--d:-3s"></i>
+  </div>
+  <div class="pools" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kick">Bloque 03 · Escena IV · La hora dorada</p>
+      <h1 class="h1">La Catedral de Luz <em>Imágenes, vídeo y proporciones</em></h1>
+      <p class="lead">Dentro de este invernadero, la luz entra por las vidrieras y pinta el suelo de colores. En la web pasa igual: <b>las imágenes y los vídeos son ventanas</b>. Aquí aprenderás a abrirlas bien: con su texto alternativo, con la proporción justa, recortando sin deformar, cargando rápido… y sin que la página salte.</p>
+      <div class="ctas"><a class="btn" href="#img">Entrar en la nave</a><a class="btn glass" href="#taller">Ir al taller</a></div>
+      <div class="como">
+        <b>Cómo se juega.</b> Cada sala termina con una <b>prueba</b>. Al superarla ganas un fragmento de vidriera y se enciende un pétalo del rosetón. Si apruebas el examen final, se enciende su corazón. Tu progreso se guarda en este navegador.
+        <div class="ctas" style="margin-top:12px"><span class="cnt" id="heroCnt">0 / 13 fragmentos</span><button class="btn glass sm" id="reset" type="button">Empezar de cero</button></div>
+      </div>
+    </div>
+    <div class="rose-wrap"><div class="rose" id="rose" role="img" aria-label="Rosetón: se ilumina un pétalo por cada sala superada"><div class="core" id="core"><b></b></div></div></div>
+  </div>
+</header>
+
+<main>
+
+<!-- =================================================================
+     SALA 1 · img, alt, figure, width y height
+     ================================================================= -->
+<section class="sala" id="img" data-nav="img y alt" data-shard="1" style="--g1:var(--v1);--g2:var(--v2);--g3:var(--v4);--g4:var(--v5)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>1</b></div><div>
+      <p class="kick">Sala 1 · La primera vidriera</p>
+      <h2>La etiqueta <code>&lt;img&gt;</code></h2>
+      <p class="in">Una imagen en la web es como una ventana: el HTML abre el hueco y por él entra la luz, que es el archivo de la imagen. En esta sala aprenderás a colocarla bien: con su <b>texto alternativo</b>, con su <b>pie de foto</b> y sin que la página <b>salte</b> mientras carga.</p>
+      <span class="estado"><i></i>Fragmento 1 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Anatomía de una imagen</h3>
+      <p><code>&lt;img&gt;</code> es una etiqueta <b>vacía</b>: no tiene etiqueta de cierre, porque no envuelve contenido. Toda la información va en sus <b>atributos</b>:</p>
+      <textarea class="src" data-lang="html" data-title="HTML · una imagen bien escrita">
+<!-- img es una etiqueta vacía: no lleva </img> -->
+<img
+  src="media/invernadero.jpg"
+  alt="Ciudad solarpunk al atardecer: torres con jardines colgantes y un gran árbol a la derecha"
+  width="1600"
+  height="900">
+<!-- src: la ruta del archivo (relativa a esta página) -->
+<!-- alt: lo que la imagen cuenta, con palabras -->
+<!-- width y height: el tamaño REAL del archivo, en píxeles y sin "px" -->
+</textarea>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Atributo</th><th>Para qué sirve</th><th>¿Obligatorio?</th></tr>
+        <tr><td><code>src</code></td><td>La ruta del archivo. Recuerda las rutas del primer bloque: <code>media/foto.jpg</code> (carpeta de al lado), <code>../img/foto.jpg</code> (subir un nivel).</td><td>Sí</td></tr>
+        <tr><td><code>alt</code></td><td>Texto que sustituye a la imagen si no se ve: lo leen los lectores de pantalla, Google, y aparece si el archivo no carga.</td><td>Sí, siempre</td></tr>
+        <tr><td><code>width</code> · <code>height</code></td><td>Tamaño real del archivo. <b>No</b> sirven para cambiar el tamaño en pantalla (eso es cosa del CSS): sirven para que el navegador conozca la proporción antes de descargarla.</td><td>Muy recomendable</td></tr>
+        <tr><td><code>loading</code></td><td><code>lazy</code> = descargarla solo cuando te acercas. Lo verás en la sala 11.</td><td>Opcional</td></tr>
+        <tr><td><code>decoding</code></td><td><code>async</code> = dibujarla sin frenar el resto de la página. Ayuda un poco en páginas con muchas fotos.</td><td>Opcional</td></tr>
+      </table></div>
+      <p>Y en el CSS, la <b>regla de oro</b> que llevarás a todos tus proyectos:</p>
+      <textarea class="src" data-lang="css" data-title="CSS · la regla de oro de las imágenes">
+img {
+  max-width: 100%;   /* nunca más ancha que su caja: así no se sale en el móvil */
+  height: auto;      /* el alto se calcula solo para no deformarla */
+  display: block;    /* quita el huequecito que deja debajo por ser "inline" */
+}
+</textarea>
+      <div class="nota dato"><b>Dato</b><div><p><code>display: block</code> lo viste en el segundo bloque. Por defecto la imagen es <code>inline</code>, como si fuera una letra, y deja un pequeño hueco debajo para los "rabitos" de letras como la g o la p. Con <code>block</code> desaparece.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>alt</code>: la imagen contada con palabras</h3>
+      <p>El texto alternativo es para quien <b>no puede ver</b> la imagen: personas ciegas que usan un lector de pantalla, alguien con una conexión lenta en la que la foto no carga, o Google, que no "ve" fotos y lee el <code>alt</code> para entenderlas. Pulsa el interruptor y mira qué quedaría de esta galería si las imágenes no cargasen:</p>
+      <div class="mesa">
+        <div class="ctrl"><label class="sw"><input type="checkbox" id="altOff"> Apagar las imágenes (ver solo el alt)</label></div>
+        <div class="g3" id="altDemo">
+          <img src="media/girasol.jpg" width="1200" height="800" alt="Girasol gigante delante de unas torres cubiertas de enredaderas" data-src="media/girasol.jpg" style="height:auto;width:100%;border-radius:10px">
+          <img src="media/cupula.jpg" width="1600" height="900" alt="Cúpula de vidrieras iluminada por la noche" data-src="media/cupula.jpg" style="height:auto;width:100%;border-radius:10px">
+          <img src="media/galeria-05.jpg" width="900" height="600" alt="" data-src="media/galeria-05.jpg" style="height:auto;width:100%;border-radius:10px">
+        </div>
+        <p class="lectura">La tercera tiene alt="" (decorativa): al apagarla no deja ningún texto, y el lector de pantalla se la salta.</p>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Situación</th><th>Mal</th><th>Bien</th></tr>
+        <tr><td>Foto con contenido</td><td><code>alt="foto"</code> · <code>alt="imagen de un girasol"</code></td><td><code>alt="Girasol gigante delante de torres con enredaderas"</code></td></tr>
+        <tr><td>Imagen decorativa (adornos, fondos)</td><td>sin atributo alt</td><td><code>alt=""</code> vacío: "no hay nada que contar"</td></tr>
+        <tr><td>Imagen que es un enlace</td><td><code>alt="logo"</code></td><td><code>alt="Catedral de Luz: ir al inicio"</code> (lo que pasa al pulsar)</td></tr>
+        <tr><td>Imagen con texto (un cartel)</td><td><code>alt="cartel"</code></td><td>El texto del cartel, tal cual</td></tr>
+        <tr><td>Gráfico o esquema</td><td><code>alt="gráfica"</code></td><td>La conclusión: <code>alt="La energía solar cubre el 80 % del consumo"</code></td></tr>
+      </table></div>
+      <div class="nota ojo"><b>¡Ojo!</b><div><p>No empieces por "imagen de…" o "foto de…": el lector de pantalla ya avisa de que es una imagen. Y <b>no quites nunca</b> el atributo <code>alt</code>: si falta, muchos lectores leen en voz alta el nombre del archivo ("i-m-g-guion-cero-cuatro-punto-jota-pe-ge").</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>figure</code> y <code>figcaption</code>: la cartela del museo</h3>
+      <p>En un museo, cada obra tiene al lado una <b>cartela</b> con su título. En HTML, <code>&lt;figure&gt;</code> agrupa una imagen (o un vídeo, un gráfico, un trozo de código…) con su pie de foto, que va en <code>&lt;figcaption&gt;</code>:</p>
+      <div class="mesa">
+        <figure class="cartela">
+          <img src="media/cupula.jpg" width="1600" height="900" alt="Cúpula de vidrieras iluminada por la noche entre torres con jardines">
+          <figcaption>La Gran Cúpula del invernadero norte<small>Vidriera de 14 paños · se enciende con energía solar acumulada</small></figcaption>
+        </figure>
+      </div>
+      <textarea class="src" data-lang="html" data-title="HTML">
+<figure>                              <!-- agrupa la obra y su pie -->
+  <img src="media/cupula.jpg"
+       alt="Cúpula de vidrieras iluminada por la noche entre torres con jardines"
+       width="1600" height="900">
+  <figcaption>                        <!-- el pie: primer o último hijo de figure -->
+    La Gran Cúpula del invernadero norte
+  </figcaption>
+</figure>
+</textarea>
+      <textarea class="src" data-lang="css" data-title="CSS · el estilo de la cartela">
+figure {
+  margin: 0;                          /* figure trae márgenes de serie: los quitamos */
+  max-width: 640px;                   /* que no crezca sin límite */
+}
+figure img {
+  display: block;                     /* sin hueco debajo */
+  width: 100%;                        /* ocupa todo el ancho de la figure */
+  height: auto;                       /* alto proporcional */
+  border-radius: 10px 10px 0 0;       /* redondeo solo arriba */
+}
+figcaption {
+  padding: 12px 16px;                 /* aire alrededor del texto */
+  background: linear-gradient(#ffe2a0, #d4a347);  /* placa de latón (gradientes, bloque 2) */
+  border-radius: 0 0 10px 10px;       /* redondeo solo abajo */
+}
+</textarea>
+      <div class="nota luz"><b>alt y figcaption</b><div><p>No son lo mismo. El <code>alt</code> <b>sustituye</b> a la imagen cuando no se ve. El <code>figcaption</code> la <b>complementa</b> y lo ve todo el mundo. Por eso no deben repetir el mismo texto.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>width</code> y <code>height</code>: que la página no salte</h3>
+      <p>¿Te ha pasado leer una web en el móvil y que, de repente, el texto <b>salte</b> hacia abajo porque ha terminado de cargar una foto? Pasa porque el navegador no sabía cuánto iba a medir la imagen y no le reservó sitio. Con <code>width</code> y <code>height</code> en el HTML, el navegador calcula la <b>proporción</b> y guarda el hueco <b>antes</b> de descargarla.</p>
+      <div class="mesa">
+        <div class="ctrl"><button class="btn sm" id="saltoGo" type="button">Simular una conexión lenta</button><span class="muted" style="font-size:14px">Fíjate en el párrafo amarillo de cada columna.</span></div>
+        <div class="salto">
+          <div><h4>Sin width ni height</h4><img id="saltoA" src="media/galeria-03.jpg" alt="Escena de la galería"><p>Este párrafo <b>salta</b> cuando la imagen termina de llegar.</p></div>
+          <div><h4>Con width="900" height="600"</h4><img id="saltoB" src="media/galeria-03.jpg" width="900" height="600" alt="Escena de la galería"><p>Este párrafo <b>no se mueve</b>: su hueco ya estaba reservado.</p></div>
+        </div>
+      </div>
+      <div class="nota dato"><b>Dato</b><div><p>Ese salto tiene nombre: <b>CLS</b> (<i>Cumulative Layout Shift</i>, desplazamiento acumulado del diseño). Google lo mide y penaliza a las webs que saltan. Lo verás con la herramienta Lighthouse antes de publicar tu proyecto final.</p><p>Importante: pon en <code>width</code> y <code>height</code> el tamaño <b>real</b> del archivo y deja que el CSS (<code>max-width: 100%</code> y <code>height: auto</code>) decida el tamaño en pantalla.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="1" style="--pc:var(--v2)">
+      <header><i></i><b>Prueba de la sala 1</b><span>El detective del alt</span></header>
+      <h4>Elige el mejor alt para cada imagen</h4>
+      <div id="p1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 2 · aspect-ratio
+     ================================================================= -->
+<section class="sala" id="proporcion" data-nav="aspect-ratio" data-shard="2" style="--g1:var(--v4);--g2:var(--v1);--g3:var(--v5);--g4:var(--v2)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>2</b></div><div>
+      <p class="kick">Sala 2 · La forma de la ventana</p>
+      <h2>Proporciones con <code>aspect-ratio</code></h2>
+      <p class="in">Cada vidriera tiene una forma: cuadrada, apaisada, alargada… La <b>proporción</b> es la relación entre el ancho y el alto. Con <code>aspect-ratio</code> le dices a una caja qué forma tiene que tener, y ella calcula su alto sola, mida lo que mida de ancho.</p>
+      <span class="estado"><i></i>Fragmento 2 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>¿Qué significa 16/9?</h3>
+      <p><code>16 / 9</code> significa "por cada <b>16</b> partes de ancho, <b>9</b> de alto". No son píxeles: es una relación. Una caja de 1600 × 900 px es 16/9, y una de 320 × 180 px, también.</p>
+      <div class="mesa"><div class="ratios">
+        <div style="--w:110px;--r:1/1">1 / 1<br>avatar</div>
+        <div style="--w:130px;--r:4/3">4 / 3<br>foto clásica</div>
+        <div style="--w:140px;--r:3/2">3 / 2<br>cámara</div>
+        <div style="--w:170px;--r:16/9">16 / 9<br>vídeo</div>
+        <div style="--w:200px;--r:21/9">21 / 9<br>cine</div>
+        <div style="--w:80px;--r:9/16">9 / 16<br>stories</div>
+        <div style="--w:96px;--r:2/3">2 / 3<br>retrato</div>
+      </div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>aspect-ratio en una caja</h3>
+      <p>Mueve el ancho y cambia la proporción. Fíjate en que <b>nunca escribimos el alto</b>: lo calcula el navegador a partir del ancho y la proporción.</p>
+      <div class="mesa">
+        <div class="ctrl"><label>Ancho <input type="range" id="rW" min="25" max="100" value="60"><output id="rWo">60%</output></label></div>
+        <div class="chips" id="rChips" style="margin-bottom:16px"></div>
+        <div class="caja-r" id="rBox"></div>
+      </div>
+      <div id="rCode"></div>
+      <div class="nota ojo"><b>¡Ojo!</b><div><p>Si a la vez escribes <code>width</code> <b>y</b> <code>height</code>, <code>aspect-ratio</code> no tiene nada que calcular y se ignora. Da solo una medida (normalmente el ancho) y deja el alto en <code>auto</code>.</p></div></div>
+      <div class="nota dato"><b>Atajos</b><div><p><code>aspect-ratio: 1</code> es lo mismo que <code>1 / 1</code>. También valen decimales: <code>aspect-ratio: 1.5</code> = <code>3 / 2</code>.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>aspect-ratio en una imagen… y el problema</h3>
+      <p>Si a una foto apaisada le obligas a ser cuadrada, el navegador la <b>aplasta</b> para que quepa. La forma del marco es correcta, pero la foto queda deformada:</p>
+      <div class="mesa"><div class="tri">
+        <figure><img src="media/invernadero.jpg" alt="Foto original" style="width:260px;height:auto;object-fit:fill"><figcaption>original · 16 / 9</figcaption></figure>
+        <figure><img src="media/invernadero.jpg" alt="La misma foto aplastada" style="width:160px;aspect-ratio:1/1;object-fit:fill"><figcaption>aspect-ratio: 1 / 1 → ¡aplastada!</figcaption></figure>
+      </div></div>
+      <textarea class="src" data-lang="css" data-title="CSS">
+img {
+  width: 160px;          /* ancho fijo para el ejemplo */
+  aspect-ratio: 1 / 1;   /* obligamos al marco a ser cuadrado… */
+}                        /* …y la foto 16/9 se aplasta para caber */
+</textarea>
+      <p>¿Cómo se encaja una foto en un marco de otra forma <b>sin deformarla</b>? Esa es justo la pregunta de la siguiente sala.</p>
+    </div>
+
+    <div class="prueba reveal" data-prueba="2" style="--pc:var(--v1)">
+      <header><i></i><b>Prueba de la sala 2</b><span>Encaja el marco · 3 rondas</span></header>
+      <h4>Elige la proporción que coincide con el marco punteado</h4>
+      <p class="muted" id="p2round"></p>
+      <div class="reto-r"><div class="tgt" id="p2tgt"></div><div class="yo" id="p2yo"></div></div>
+      <div class="chips" id="p2chips" style="justify-content:center"></div>
+      <div class="res" id="p2res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 3 · object-fit
+     ================================================================= -->
+<section class="sala" id="ajuste" data-nav="object-fit" data-shard="3" style="--g1:var(--v2);--g2:var(--v3);--g3:var(--v2);--g4:var(--v6)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>3</b></div><div>
+      <p class="kick">Sala 3 · Encajar la luz</p>
+      <h2>Encajar sin deformar: <code>object-fit</code></h2>
+      <p class="in">Cuando el marco y la foto no tienen la misma forma, algo tiene que ceder. <code>object-fit</code> decide <b>cómo</b> entra la imagen en su marco: estirándose, encogiéndose hasta caber o recortando lo que sobra.</p>
+      <span class="estado"><i></i>Fragmento 3 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Los cinco valores, en vivo</h3>
+      <p>El marco punteado es la caja (con su <code>width</code> y su <code>height</code>). Cambia su tamaño y prueba cada valor:</p>
+      <div class="mesa">
+        <div class="ctrl">
+          <label>Ancho <input type="range" id="fW" min="120" max="560" value="420"><output id="fWo">420px</output></label>
+          <label>Alto <input type="range" id="fH" min="120" max="380" value="300"><output id="fHo">300px</output></label>
+        </div>
+        <div class="chips" id="fChips"></div>
+        <div class="fit-wrap"><img id="fImg" class="marco-demo" src="media/invernadero.jpg" alt="Ciudad solarpunk con un gran árbol a la derecha"></div>
+        <p class="lectura" id="fTxt"></p>
+      </div>
+      <div id="fCode"></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Valor</th><th>Qué hace</th><th>Úsalo para</th></tr>
+        <tr><td><code>fill</code></td><td>Estira la imagen hasta llenar el marco. <b>Deforma</b>. Es el valor por defecto.</td><td>Casi nunca</td></tr>
+        <tr><td><code>contain</code></td><td>La encoge hasta que cabe <b>entera</b>, sin deformar. Pueden quedar bandas vacías.</td><td>Logos, planos, productos que no se pueden cortar</td></tr>
+        <tr><td><code>cover</code></td><td>La agranda hasta <b>cubrir</b> todo el marco, sin deformar, y <b>recorta</b> lo que sobra.</td><td>Fotos de galerías, portadas, avatares. El más usado</td></tr>
+        <tr><td><code>none</code></td><td>Tamaño original, sin escalar. Se ve solo un trozo.</td><td>Efectos especiales</td></tr>
+        <tr><td><code>scale-down</code></td><td>Elige el más pequeño entre <code>none</code> y <code>contain</code>.</td><td>Iconos que no deben crecer</td></tr>
+      </table></div>
+      <div class="nota luz"><b>¿Te suena?</b><div><p>Es la misma idea que <code>background-size: cover</code> y <code>contain</code>, que viste con los fondos en el segundo bloque. La diferencia: <code>object-fit</code> funciona en etiquetas <code>&lt;img&gt;</code> y <code>&lt;video&gt;</code> de verdad, que tienen su alt y que Google sí "ve".</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Receta: el avatar redondo</h3>
+      <p>Cuatro líneas que verás en todas las webs con perfiles de usuario. Una foto apaisada se convierte en un círculo perfecto sin deformarse:</p>
+      <div class="mesa"><div class="avatar-demo"><img src="media/girasol.jpg" alt="Avatar: un girasol"><span class="muted">← la foto original es de 1200 × 800 (3 / 2)</span></div></div>
+      <textarea class="src" data-lang="css" data-title="CSS · avatar redondo">
+.avatar {
+  width: 120px;            /* el tamaño que queremos */
+  aspect-ratio: 1 / 1;     /* cuadrado: el alto será también 120px */
+  object-fit: cover;       /* rellena el cuadrado recortando, sin deformar */
+  border-radius: 50%;      /* y el cuadrado se convierte en círculo */
+}
+</textarea>
+      <p>Y en el HTML, una imagen normal: <code>&lt;img class="avatar" src="media/girasol.jpg" alt="…"&gt;</code>. (En la demo, además, hemos movido el recorte hacia el girasol con <code>object-position</code>, que es lo que verás en la siguiente sala).</p>
+    </div>
+
+    <div class="prueba reveal" data-prueba="3" style="--pc:var(--v3)">
+      <header><i></i><b>Prueba de la sala 3</b><span>¿Qué object-fit necesita?</span></header>
+      <h4>Elige el valor adecuado para cada caso</h4>
+      <div id="p3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 4 · object-position
+     ================================================================= -->
+<section class="sala" id="posicion" data-nav="object-position" data-shard="4" style="--g1:var(--v5);--g2:var(--v5);--g3:var(--v1);--g4:var(--v2)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>4</b></div><div>
+      <p class="kick">Sala 4 · Elegir el encuadre</p>
+      <h2>Recortar con intención: <code>object-position</code></h2>
+      <p class="in">Con <code>object-fit: cover</code> el navegador recorta… pero ¿por dónde? Por defecto, por el <b>centro</b>. Si lo importante de la foto está a un lado, puede quedarse fuera. <code>object-position</code> mueve el encuadre para quedarte con la parte que te interesa.</p>
+      <span class="estado"><i></i>Fragmento 4 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Mueve el encuadre</h3>
+      <p>A la izquierda, un marco estrecho con <code>object-fit: cover</code>. A la derecha, la foto entera: el rectángulo dorado es la parte que se ve. <b>Pulsa o arrastra</b> sobre la foto grande, o usa las palabras clave:</p>
+      <div class="mesa">
+        <div class="chips" id="oChips" style="margin-bottom:16px"></div>
+        <div class="pos-grid">
+          <img id="oImg" class="marco-demo" src="media/invernadero.jpg" alt="Recorte de la ciudad solarpunk" style="width:200px;height:320px;object-fit:cover;object-position:50% 50%;display:block">
+          <div><div class="pad" id="oPad"><img src="media/invernadero.jpg" alt=""><div class="win"></div><div class="dot"></div></div><p class="lectura" id="oTxt"></p></div>
+        </div>
+      </div>
+      <div id="oCode"></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Valor</th><th>Qué significa</th></tr>
+        <tr><td><code>center</code></td><td>Por defecto: <code>50% 50%</code>, recorta por igual por todos los lados.</td></tr>
+        <tr><td><code>left</code> · <code>right</code> · <code>top</code> · <code>bottom</code></td><td>Pega la imagen a ese borde: lo que se recorta es el lado contrario.</td></tr>
+        <tr><td><code>right top</code></td><td>Dos palabras: primero horizontal, después vertical.</td></tr>
+        <tr><td><code>75% 30%</code></td><td>Porcentajes: <code>0%</code> = pegada al borde izquierdo (o superior), <code>100%</code> = al derecho (o inferior).</td></tr>
+        <tr><td><code>20px 10px</code></td><td>También en píxeles, aunque se usa poco.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Un encuadre, tres marcos</h3>
+      <p>Con <code>object-position: 74% 40%</code> el árbol sobrevive en marcos de cualquier forma. Es lo que hacen las webs de noticias para que la misma foto sirva de portada, de miniatura y de imagen para compartir:</p>
+      <div class="mesa"><div class="tri">
+        <figure><img src="media/invernadero.jpg" alt="Recorte cuadrado" style="width:170px;aspect-ratio:1/1;object-position:74% 40%"><figcaption>1 / 1</figcaption></figure>
+        <figure><img src="media/invernadero.jpg" alt="Recorte vertical" style="width:130px;aspect-ratio:9/16;object-position:74% 40%"><figcaption>9 / 16</figcaption></figure>
+        <figure><img src="media/invernadero.jpg" alt="Recorte panorámico" style="width:380px;aspect-ratio:21/9;object-position:74% 40%"><figcaption>21 / 9</figcaption></figure>
+      </div></div>
+      <textarea class="src" data-lang="css" data-title="CSS · el trío de recortes">
+.recorte {
+  object-fit: cover;              /* rellenar recortando */
+  object-position: 74% 40%;       /* el centro de interés: el árbol */
+}
+.cuadrado    { width: 170px; aspect-ratio: 1 / 1;  }  /* miniatura */
+.vertical    { width: 130px; aspect-ratio: 9 / 16; }  /* formato stories */
+.panoramico  { width: 380px; aspect-ratio: 21 / 9; }  /* cabecera de cine */
+</textarea>
+    </div>
+
+    <div class="prueba reveal" data-prueba="4" style="--pc:var(--v5)">
+      <header><i></i><b>Prueba de la sala 4</b><span>Salva el árbol</span></header>
+      <h4>Pon el árbol en el centro de este marco estrecho</h4>
+      <p>El marco mide 140 × 320 px y usa <code>object-fit: cover</code>: recortando por el centro, el árbol se pierde. Pulsa o arrastra sobre la foto grande hasta que el tronco quede en el centro del encuadre.</p>
+      <div class="pos-grid">
+        <img id="p4img" class="marco-demo" src="media/invernadero.jpg" alt="Marco estrecho" style="width:140px;height:320px;object-fit:cover;object-position:50% 50%;display:block">
+        <div><div class="pad" id="p4pad"><img src="media/invernadero.jpg" alt=""><div class="win"></div><div class="dot"></div></div><p class="lectura" id="p4txt"></p></div>
+      </div>
+      <div class="res" id="p4res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 5 · zoom en tarjetas
+     ================================================================= -->
+<section class="sala" id="zoom" data-nav="Zoom en tarjetas" data-shard="5" style="--g1:var(--v6);--g2:var(--v2);--g3:var(--v3);--g4:var(--v1)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>5</b></div><div>
+      <p class="kick">Sala 5 · La lupa del vidriero</p>
+      <h2>Zoom en tarjetas</h2>
+      <p class="in">El efecto clásico de las galerías: pasas el ratón y la foto se acerca, <b>sin salirse de su marco</b>. Se consigue con tres ingredientes. Dos de ellos, <code>transform</code> y <code>transition</code>, los estudiarás a fondo en las siguientes escenas de este bloque: aquí los usarás como receta.</p>
+      <span class="estado"><i></i>Fragmento 5 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Los tres ingredientes</h3>
+      <div class="g3">
+        <div class="ficha"><b>1 · El marco recorta</b><p><code>overflow: hidden</code> en el marco (la <code>figure</code>): todo lo que sobresalga de él, se corta. Como el bastidor de una vidriera.</p></div>
+        <div class="ficha"><b>2 · El cambio es suave</b><p><code>transition: transform .5s</code> en la imagen: en vez de dar un salto, el cambio dura medio segundo.</p></div>
+        <div class="ficha"><b>3 · Al pasar el ratón, crece</b><p><code>.marco:hover img { transform: scale(1.12); }</code>: cuando el ratón está sobre el marco, la imagen crece un 12 %.</p></div>
+      </div>
+      <p style="margin-top:18px">Apaga y enciende cada ingrediente y pasa el ratón por las tarjetas:</p>
+      <div class="mesa">
+        <div class="ctrl">
+          <label class="sw"><input type="checkbox" id="zH" checked> overflow: hidden</label>
+          <label class="sw"><input type="checkbox" id="zT" checked> transition</label>
+          <label class="sw"><input type="checkbox" id="zS" checked> :hover con scale</label>
+          <label>Escala <input type="range" id="zR" min="1.02" max="1.4" step="0.02" value="1.12"><output id="zRo">1.12</output></label>
+        </div>
+        <div class="galeria z-hidden z-trans z-on" id="zGal">
+          <figure class="marco"><img src="media/galeria-02.jpg" width="900" height="600" alt="Girasol gigante bajo el cielo nocturno"><figcaption>Girasol nocturno</figcaption></figure>
+          <figure class="marco"><img src="media/galeria-04.jpg" width="900" height="600" alt="Cúpula de vidrieras a la hora dorada"><figcaption>Cúpula dorada</figcaption></figure>
+          <figure class="marco"><img src="media/galeria-07.jpg" width="900" height="600" alt="Cúpula de vidrieras al amanecer"><figcaption>Cúpula del alba</figcaption></figure>
+        </div>
+      </div>
+      <div id="zCode"></div>
+      <div class="nota luz"><b>¿Por qué :hover en el marco?</b><div><p>Escribimos <code>.marco:hover img</code> y no <code>img:hover</code>. Así el efecto se activa al pasar por <b>cualquier parte</b> de la tarjeta, también por el pie de foto. Es el selector descendiente del segundo bloque: "la img que está dentro de un .marco con el ratón encima".</p></div></div>
+      <div class="nota hoja"><b>Bonus</b><div><p>Si el marco tiene <code>border-radius</code>, el <code>overflow: hidden</code> también recorta las esquinas de la foto al crecer. Por eso ves las tarjetas siempre redondeadas.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="5" style="--pc:var(--v6)">
+      <header><i></i><b>Prueba de la sala 5</b><span>Arma la receta</span></header>
+      <h4>Marca solo las tres reglas que hacen el zoom correcto</h4>
+      <p class="muted">La tarjeta de prueba aplica en directo las reglas que marques: pasa el ratón por ella.</p>
+      <div class="g2">
+        <div id="p5opts" class="opts"></div>
+        <div class="galeria" id="p5prev"><figure class="marco" style="max-width:320px"><img src="media/galeria-09.jpg" width="900" height="600" alt="Árbol de luz bajo el cielo azul"><figcaption>Tarjeta de prueba</figcaption></figure></div>
+      </div>
+      <button class="btn sm" id="p5go" type="button" style="margin-top:14px">Comprobar</button>
+      <div class="res" id="p5res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 6 · picture y source
+     ================================================================= -->
+<section class="sala" id="picture" data-nav="picture y source" data-shard="6" style="--g1:var(--v4);--g2:var(--v4);--g3:var(--v6);--g4:var(--v1)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>6</b></div><div>
+      <p class="kick">Sala 6 · Una vidriera para cada ventana</p>
+      <h2><code>&lt;picture&gt;</code> y <code>&lt;source&gt;</code></h2>
+      <p class="in">A veces no basta con encoger la imagen: en una pantalla estrecha conviene <b>otra foto</b> (otro encuadre), o un <b>formato más moderno</b> que pese menos. <code>&lt;picture&gt;</code> ofrece varias opciones al navegador y él elige la mejor.</p>
+      <span class="estado"><i></i>Fragmento 6 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Cómo funciona</h3>
+      <ol class="pasos">
+        <li><span><code>&lt;picture&gt;</code> es solo un <b>envoltorio</b>: no se ve, no tiene estilos propios.</span></li>
+        <li><span>Dentro van uno o varios <code>&lt;source&gt;</code>, cada uno con su <b>condición</b> y su archivo en <code>srcset</code> (¡no en <code>src</code>!).</span></li>
+        <li><span>Al final va un <code>&lt;img&gt;</code> <b>obligatorio</b>: lleva el <code>alt</code>, recibe el CSS y es la opción de reserva.</span></li>
+        <li><span>El navegador lee los <code>source</code> <b>de arriba abajo</b> y usa el <b>primero</b> que cumple su condición. Si ninguno la cumple, usa el <code>img</code>.</span></li>
+      </ol>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Dirección de arte: otra foto según el ancho</h3>
+      <p>El atributo <code>media</code> pone una condición sobre la ventana. <code>media="(min-width: 700px)"</code> significa "<b>si la ventana mide al menos 700 píxeles de ancho</b>". (Este tipo de condiciones se llaman <i>media queries</i>: las estudiarás a fondo en el cuarto bloque).</p>
+      <p>Abajo tienes un <b>simulador</b>: una mini-web dentro de una ventana cuyo ancho controlas tú. Muévelo por encima y por debajo de 700 px y mira qué foto elige el navegador:</p>
+      <div id="picSim"></div>
+      <textarea class="src" data-lang="html" data-title="HTML · dirección de arte">
+<picture>
+  <!-- 1.º: si la ventana mide 700px o más, la versión ancha -->
+  <source media="(min-width: 700px)" srcset="media/escena-ancha.jpg">
+  <!-- si no se cumple ninguna condición: la versión alta (y la de reserva) -->
+  <img src="media/escena-alta.jpg"
+       alt="Ciudad solarpunk con un gran árbol"
+       width="800" height="1100">
+</picture>
+</textarea>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Formatos modernos con reserva: <code>type</code></h3>
+      <p>Los formatos <b>WebP</b> y <b>AVIF</b> pesan bastante menos que el JPG con la misma calidad. Con <code>type</code> le dices al navegador qué formato es cada <code>source</code>: si lo entiende, lo usa; si no, pasa al siguiente. El JPG del <code>img</code> queda para los navegadores antiguos.</p>
+      <textarea class="src" data-lang="html" data-title="HTML · formatos con reserva">
+<picture>
+  <!-- el más moderno primero (si existe el archivo) -->
+  <source srcset="media/invernadero.avif" type="image/avif">
+  <!-- después WebP: lo entienden todos los navegadores actuales -->
+  <source srcset="media/invernadero.webp" type="image/webp">
+  <!-- reserva universal: JPG -->
+  <img src="media/invernadero.jpg" alt="Ciudad solarpunk al atardecer" width="1600" height="900">
+</picture>
+</textarea>
+      <div class="mesa">
+        <picture>
+          <source srcset="media/invernadero.webp" type="image/webp">
+          <img id="fmtImg" src="media/invernadero.jpg" alt="Ciudad solarpunk al atardecer" width="1600" height="900" style="width:100%;height:auto;border-radius:10px">
+        </picture>
+        <p class="lectura" id="fmtTxt">Calculando qué archivo ha elegido tu navegador…</p>
+      </div>
+      <div class="nota ojo"><b>¡Ojo!</b><div><p>En la demo no hay archivo AVIF, así que solo ponemos el <code>source</code> WebP. Si escribes un <code>source</code> AVIF y el archivo no existe, el navegador lo elige igualmente (porque entiende el formato), falla la descarga… y la imagen sale rota. Pon solo <code>source</code> de archivos que existan de verdad.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="6" style="--pc:var(--v4)">
+      <header><i></i><b>Prueba de la sala 6</b><span>¿Qué foto verá?</span></header>
+      <h4>Mira el código y responde</h4>
+      <div id="p6code"></div>
+      <div id="p6"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 7 · video
+     ================================================================= -->
+<section class="sala" id="video" data-nav="video y track" data-shard="7" style="--g1:var(--v2);--g2:var(--v2);--g3:var(--v4);--g4:var(--v3)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>7</b></div><div>
+      <p class="kick">Sala 7 · El cine del invernadero</p>
+      <h2>La etiqueta <code>&lt;video&gt;</code></h2>
+      <p class="in"><code>&lt;video&gt;</code> funciona como <code>&lt;img&gt;</code>, pero con tiempo: necesita <b>controles</b>, varios <b>formatos</b>, una <b>portada</b> mientras no se reproduce y, para que todo el mundo lo entienda, <b>subtítulos</b>.</p>
+      <span class="estado"><i></i>Fragmento 7 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>El vídeo más sencillo</h3>
+      <textarea class="src" data-lang="html" data-title="HTML · lo mínimo">
+<video src="media/invernadero.mp4"
+       controls
+       width="960" height="540">
+</video>
+<!-- controls: muestra play, volumen, barra de tiempo y pantalla completa -->
+<!-- width y height: como en img, para reservar el hueco (no saltos) -->
+</textarea>
+      <div class="nota dato"><b>Atributos booleanos</b><div><p><code>controls</code> no lleva valor: basta con escribirlo. Si está, es "sí"; si no está, es "no". Lo mismo pasa con <code>autoplay</code>, <code>muted</code>, <code>loop</code>, <code>playsinline</code> o <code>default</code>. Escribir <code>controls="false"</code> <b>no</b> lo apaga: hay que quitarlo.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>El vídeo completo, pieza a pieza</h3>
+      <p>Este es un vídeo real de esta catedral. Activa y desactiva cada atributo y mira cómo cambian el reproductor y el código:</p>
+      <div class="player">
+        <video id="vid" controls poster="media/video-poster.jpg" preload="metadata" width="960" height="540">
+          <source src="media/invernadero.webm" type="video/webm">
+          <source src="media/invernadero.mp4" type="video/mp4">
+          <track src="media/invernadero-es.vtt" kind="subtitles" srclang="es" label="Español" default>
+          Tu navegador no puede reproducir este vídeo. <a href="media/invernadero.mp4">Descárgalo aquí</a>.
+        </video>
+        <div class="toggles">
+          <label class="sw"><input type="checkbox" id="vC" checked> controls</label>
+          <label class="sw"><input type="checkbox" id="vP" checked> poster</label>
+          <label class="sw"><input type="checkbox" id="vL"> loop</label>
+          <label class="sw"><input type="checkbox" id="vM"> muted</label>
+          <label class="sw"><input type="checkbox" id="vT" checked> subtítulos (track default)</label>
+          <label>preload <select id="vPre"><option>none</option><option selected>metadata</option><option>auto</option></select></label>
+          <p class="lectura" id="vTxt"></p>
+        </div>
+      </div>
+      <div id="vCode"></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Pieza</th><th>Para qué sirve</th></tr>
+        <tr><td><code>&lt;source&gt;</code></td><td>Varias versiones del vídeo. El navegador usa la primera que sabe reproducir. <code>type</code> le ahorra descargar para averiguarlo.</td></tr>
+        <tr><td><code>poster</code></td><td>La imagen de portada que se ve antes de darle al play.</td></tr>
+        <tr><td><code>preload</code></td><td><code>none</code>: no descarga nada hasta el play · <code>metadata</code>: solo la duración y el tamaño · <code>auto</code>: puede descargarlo entero aunque nadie lo mire (gasta datos).</td></tr>
+        <tr><td><code>loop</code></td><td>Al terminar, vuelve a empezar.</td></tr>
+        <tr><td><code>muted</code></td><td>Empieza sin sonido.</td></tr>
+        <tr><td>Texto dentro de <code>&lt;video&gt;</code></td><td>Solo lo ven los navegadores tan antiguos que no conocen la etiqueta. Buen sitio para un enlace de descarga.</td></tr>
+      </table></div>
+      <div class="nota luz"><b>Formatos</b><div><p><b>MP4</b> (con códec H.264) funciona en todos los navegadores. <b>WebM</b> suele pesar menos. Si solo vas a poner uno, que sea MP4. Para convertir vídeos, programas gratuitos como HandBrake.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Subtítulos con <code>&lt;track&gt;</code> y WebVTT</h3>
+      <p>Los subtítulos van en un archivo de texto aparte con formato <b>WebVTT</b> (extensión <code>.vtt</code>). <code>&lt;track&gt;</code> lo conecta con el vídeo. Así es el archivo de esta demo:</p>
+      <textarea class="src" data-lang="txt" data-title="media/invernadero-es.vtt">
+WEBVTT
+
+1
+00:00.000 --> 00:02.000
+La cúpula de vidrieras se enciende al atardecer.
+
+2
+00:02.000 --> 00:04.000
+Los aerogeneradores giran sin hacer ruido.
+
+3
+00:04.000 --> 00:06.000
+Y el polen de luz flota sobre el invernadero.
+</textarea>
+      <ol class="pasos">
+        <li><span>La primera línea es siempre <code>WEBVTT</code>.</span></li>
+        <li><span>Cada subtítulo es un bloque: un número (opcional), la línea de tiempos <code>inicio --&gt; fin</code> y el texto.</span></li>
+        <li><span>Los bloques se separan con una línea en blanco.</span></li>
+      </ol>
+      <textarea class="src" data-lang="html" data-title="HTML · el track">
+<!-- src: el archivo de subtítulos · kind: qué tipo de pista es
+     srclang: idioma del texto · label: nombre en el menú del reproductor
+     default: activado desde el principio -->
+<track src="media/invernadero-es.vtt"
+       kind="subtitles"
+       srclang="es"
+       label="Español"
+       default>
+</textarea>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>kind</th><th>Para quién</th></tr>
+        <tr><td><code>subtitles</code></td><td>Traducción de los diálogos (quien oye pero no entiende el idioma).</td></tr>
+        <tr><td><code>captions</code></td><td>Diálogos <b>y</b> sonidos importantes, como "[suena una campana]" (personas sordas).</td></tr>
+        <tr><td><code>descriptions</code></td><td>Descripción de lo que se ve (personas ciegas).</td></tr>
+        <tr><td><code>chapters</code></td><td>Capítulos para saltar por el vídeo.</td></tr>
+      </table></div>
+      <div class="nota ojo"><b>¡Ojo!</b><div><p>Los subtítulos <b>no funcionan</b> si abres el HTML con doble clic (<code>file://</code>): el navegador bloquea el archivo <code>.vtt</code> por seguridad. Ábrelo con <b>Live Server</b> de VS Code y funcionará.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="7" style="--pc:var(--v2)">
+      <header><i></i><b>Prueba de la sala 7</b><span>Prepara la proyección</span></header>
+      <h4>Vas a poner un vídeo explicativo en la web del cole. Marca lo que debe llevar</h4>
+      <p class="muted">Tiene que poder controlarlo cualquiera, tener portada, funcionar en todos los navegadores y ser accesible para alumnado sordo.</p>
+      <div id="p7"></div>
+      <button class="btn sm" id="p7go" type="button" style="margin-top:12px">Comprobar</button>
+      <div class="res" id="p7res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 8 · vídeo de fondo y autoplay
+     ================================================================= -->
+<section class="sala" id="autoplay" data-nav="Vídeo de fondo" data-shard="8" style="--g1:var(--v3);--g2:var(--v3);--g3:var(--v2);--g4:var(--v5)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>8</b></div><div>
+      <p class="kick">Sala 8 · La ventana viva</p>
+      <h2>Vídeo de fondo: <code>autoplay</code>, <code>muted</code>, <code>loop</code>, <code>playsinline</code></h2>
+      <p class="in">Los vídeos decorativos de las portadas arrancan solos, sin sonido y en bucle. Parece fácil… pero los navegadores tienen reglas estrictas. Para que funcione en todos, también en el iPhone, hacen falta <b>varios atributos juntos</b>.</p>
+      <span class="estado"><i></i>Fragmento 8 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Las reglas de los navegadores</h3>
+      <div class="g2">
+        <div class="ficha"><b>autoplay</b><p>Pide que el vídeo empiece solo. Pero…</p></div>
+        <div class="ficha"><b>muted · obligatorio</b><p>…los navegadores <b>bloquean</b> la reproducción automática de vídeos <b>con sonido</b> (a nadie le gusta que una web le grite). Sin <code>muted</code>, el autoplay no funciona.</p></div>
+        <div class="ficha"><b>playsinline · para el iPhone</b><p>Sin él, el iPhone abre el vídeo a <b>pantalla completa</b>. Con él, se reproduce en su sitio, dentro de la página.</p></div>
+        <div class="ficha"><b>loop</b><p>Vuelve a empezar al terminar. Imprescindible en un fondo.</p></div>
+        <div class="ficha"><b>poster</b><p>La imagen que se ve mientras el vídeo carga (o si no puede reproducirse).</p></div>
+        <div class="ficha"><b>preload="auto"</b><p>Con autoplay, el navegador lo descarga igualmente; <code>preload</code> cobra importancia en vídeos <b>sin</b> autoplay.</p></div>
+      </div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Un banner de vídeo</h3>
+      <p>Juntamos esta sala con las anteriores: <code>aspect-ratio</code> para la forma y <code>object-fit: cover</code> para que el vídeo rellene el marco sin deformarse.</p>
+      <video class="banner-video" autoplay muted loop playsinline poster="media/video-poster.jpg" preload="auto" width="960" height="540" aria-label="Vídeo decorativo de la cúpula de vidrieras">
+        <source src="media/invernadero.webm" type="video/webm">
+        <source src="media/invernadero.mp4" type="video/mp4">
+      </video>
+      <textarea class="src" data-lang="html" data-title="HTML · vídeo de fondo">
+<!-- autoplay: empieza solo… · muted: …y solo puede si está en silencio
+     loop: sin fin · playsinline: en su sitio, no a pantalla completa (iPhone)
+     poster: la portada mientras carga -->
+<video class="banner-video"
+       autoplay muted loop playsinline
+       poster="media/video-poster.jpg"
+       width="960" height="540">
+  <source src="media/invernadero.webm" type="video/webm">
+  <source src="media/invernadero.mp4"  type="video/mp4">
+</video>
+</textarea>
+      <textarea class="src" data-lang="css" data-title="CSS">
+.banner-video {
+  display: block;          /* sin hueco debajo */
+  width: 100%;             /* todo el ancho disponible */
+  aspect-ratio: 21 / 9;    /* forma panorámica (sala 2) */
+  object-fit: cover;       /* rellena recortando, sin deformar (sala 3) */
+  border-radius: 14px;
+}
+</textarea>
+      <div class="nota hoja"><b>Más adelante</b><div><p>Para poner un texto <b>encima</b> del vídeo necesitas <code>position</code>, que verás en la escena del puerto de dirigibles. Y en el cuarto bloque aprenderás <code>prefers-reduced-motion</code> para apagar estos vídeos a quien le marean las animaciones.</p></div></div>
+      <div class="nota ojo"><b>Accesibilidad</b><div><p>Un vídeo que se mueve más de 5 segundos debería poder <b>pausarse</b>. Si no es puramente decorativo, añade <code>controls</code>.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="8" style="--pc:var(--v3)">
+      <header><i></i><b>Prueba de la sala 8</b><span>El móvil de pruebas</span></header>
+      <h4>Haz que el vídeo de fondo funcione en este iPhone</h4>
+      <p>Activa los atributos necesarios. El teléfono te dirá qué pasa con cada combinación.</p>
+      <div class="movil-sim">
+        <div class="movil" id="movil"><div class="pant"><video id="mVid" muted playsinline loop poster="media/video-poster.jpg" preload="none"><source src="media/invernadero.webm" type="video/webm"><source src="media/invernadero.mp4" type="video/mp4"></video><div class="msg" id="mMsg"></div></div></div>
+        <div><div class="toggles" id="mT"></div><div id="mCode"></div></div>
+      </div>
+      <div class="res" id="p8res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 9 · audio
+     ================================================================= -->
+<section class="sala" id="audio" data-nav="audio" data-shard="9" style="--g1:var(--v1);--g2:var(--v5);--g3:var(--v4);--g4:var(--v1)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>9</b></div><div>
+      <p class="kick">Sala 9 · El jardín de las campanillas</p>
+      <h2>La etiqueta <code>&lt;audio&gt;</code></h2>
+      <p class="in"><code>&lt;audio&gt;</code> funciona exactamente igual que <code>&lt;video&gt;</code>, pero sin imagen: <code>controls</code>, varios <code>&lt;source&gt;</code>, <code>loop</code>, <code>preload</code>… Ya sabes casi todo.</p>
+      <span class="estado"><i></i>Fragmento 9 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Las campanillas de viento del invernadero</h3>
+      <div class="player">
+        <div>
+          <audio id="aud" controls preload="metadata">
+            <source src="media/campanillas.webm" type="audio/webm">
+            <source src="media/campanillas.wav" type="audio/wav">
+            Tu navegador no puede reproducir audio. <a href="media/campanillas.wav">Descárgalo</a>.
+          </audio>
+          <p class="lectura" id="aTxt"></p>
+        </div>
+        <div class="toggles">
+          <label class="sw"><input type="checkbox" id="aC" checked> controls</label>
+          <label class="sw"><input type="checkbox" id="aL"> loop</label>
+          <label>preload <select id="aPre"><option>none</option><option selected>metadata</option><option>auto</option></select></label>
+        </div>
+      </div>
+      <div id="aCode"></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Formato</th><th>Características</th></tr>
+        <tr><td><code>MP3</code></td><td>El de toda la vida. Funciona en todas partes. Buena opción por defecto.</td></tr>
+        <tr><td><code>WebM / Ogg (Opus)</code></td><td>Más moderno: mucha calidad con poco peso.</td></tr>
+        <tr><td><code>WAV</code></td><td>Sin comprimir: calidad máxima y <b>muchísimo</b> peso. Nuestras campanillas: <b>345 KB en WAV</b> frente a <b>71 KB en WebM</b>.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Buenas prácticas</h3>
+      <div class="g3">
+        <div class="ficha"><b>Nunca autoplay con sonido</b><p>Además de molestar, los navegadores lo bloquean. Deja que sea la persona quien pulse el play.</p></div>
+        <div class="ficha"><b>Siempre controls</b><p>Sin controles, el audio no se puede pausar ni bajar de volumen. En audio, los controles son la única interfaz.</p></div>
+        <div class="ficha"><b>Una transcripción</b><p>Para personas sordas, debajo del audio pon un texto con lo que se oye.</p></div>
+      </div>
+      <p class="transcripcion"><b>Transcripción:</b> [Durante ocho segundos suenan campanillas de viento de metal, suaves y agudas, sobre un murmullo de brisa].</p>
+    </div>
+
+    <div class="prueba reveal" data-prueba="9" style="--pc:var(--v5)">
+      <header><i></i><b>Prueba de la sala 9</b><span>Afinando el oído</span></header>
+      <h4>Tres preguntas rápidas</h4>
+      <div id="p9"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 10 · iframe
+     ================================================================= -->
+<section class="sala" id="iframe" data-nav="iframe" data-shard="10" style="--g1:var(--v4);--g2:var(--v6);--g3:var(--v2);--g4:var(--v4)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>10</b></div><div>
+      <p class="kick">Sala 10 · Ventanas a otros mundos</p>
+      <h2><code>&lt;iframe&gt;</code>: YouTube y Google Maps</h2>
+      <p class="in">Un <code>&lt;iframe&gt;</code> mete <b>otra página web entera</b> dentro de la tuya: un vídeo de YouTube, un mapa de Google… Es una ventana que da a otro edificio: tú abres el hueco, pero lo de dentro lo controla otra web.</p>
+      <span class="estado"><i></i>Fragmento 10 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>Un vídeo de YouTube</h3>
+      <ol class="pasos">
+        <li><span>En YouTube, debajo del vídeo, pulsa <b>Compartir</b> y después <b>Insertar</b>.</span></li>
+        <li><span>Copia el código <code>&lt;iframe…&gt;</code> y pégalo en tu HTML.</span></li>
+        <li><span>Repásalo: añade <code>loading="lazy"</code>, comprueba que tenga <code>title</code> y quita el ancho y el alto fijos con CSS.</span></li>
+      </ol>
+      <iframe class="iframe-16" src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ" title="Big Buck Bunny, cortometraje de animación de la Blender Foundation" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <textarea class="src" data-lang="html" data-title="HTML · YouTube">
+<!-- src: la dirección /embed/, NO la de "watch?v="
+     title: obligatorio, lo leen los lectores de pantalla
+     loading="lazy": no cargarlo hasta que te acerques (sala 11)
+     allow: permisos que le das al vídeo
+     referrerpolicy: qué datos de tu web se envían a YouTube
+     allowfullscreen: deja usar la pantalla completa -->
+<iframe
+  src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ"
+  title="Big Buck Bunny, cortometraje de animación"
+  loading="lazy"
+  allow="autoplay; encrypted-media; picture-in-picture"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
+</textarea>
+      <div class="nota dato"><b>Privacidad</b><div><p><code>youtube-nocookie.com</code> es la versión de YouTube que no guarda cookies de seguimiento hasta que le das al play. En YouTube: Insertar → "Habilitar el modo de privacidad mejorado".</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Un mapa de Google Maps</h3>
+      <ol class="pasos">
+        <li><span>Busca el lugar en Google Maps y pulsa <b>Compartir</b>.</span></li>
+        <li><span>Pestaña <b>Insertar un mapa</b> → <b>Copiar HTML</b>.</span></li>
+      </ol>
+      <iframe class="iframe-43" src="https://www.google.com/maps?q=Museo%20Guggenheim%20Bilbao&amp;output=embed" title="Mapa: Museo Guggenheim de Bilbao" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <textarea class="src" data-lang="html" data-title="HTML · Google Maps">
+<!-- src: el mapa · title: qué contiene la ventana
+     loading="lazy": los mapas pesan mucho, que esperen a que llegues -->
+<iframe
+  src="https://www.google.com/maps?q=Museo%20Guggenheim%20Bilbao&output=embed"
+  title="Mapa: Museo Guggenheim de Bilbao"
+  loading="lazy"
+  referrerpolicy="no-referrer-when-downgrade">
+</iframe>
+</textarea>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>iframe que se adapta</h3>
+      <p>YouTube te da el código con <code>width="560" height="315"</code>: un tamaño fijo que se sale en el móvil. Con lo aprendido en la sala 2 se arregla en tres líneas:</p>
+      <textarea class="src" data-lang="css" data-title="CSS · iframe flexible">
+.video-embebido {
+  width: 100%;             /* tan ancho como su caja */
+  height: auto;            /* olvida el height="315" del HTML */
+  aspect-ratio: 16 / 9;    /* y mantén la forma de un vídeo */
+  border: 0;               /* quita el borde que trae el iframe */
+}
+</textarea>
+      <div class="nota ojo"><b>¡Ojo!</b><div><p>Incrusta solo webs de confianza. Y no todas se dejan: muchas (Google, tu banco, Instagram…) prohíben aparecer dentro de un iframe por seguridad. Si ves un recuadro gris con un error, es eso. Además, <code>frameborder="0"</code> está obsoleto: usa <code>border: 0</code> en el CSS.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="10" style="--pc:var(--v6)">
+      <header><i></i><b>Prueba de la sala 10</b><span>Revisa el iframe</span></header>
+      <h4>Te han pasado este iframe. Marca lo que debes añadir o cambiar</h4>
+      <div id="p10code"></div>
+      <div id="p10"></div>
+      <button class="btn sm" id="p10go" type="button" style="margin-top:12px">Comprobar</button>
+      <div class="res" id="p10res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 11 · rendimiento
+     ================================================================= -->
+<section class="sala" id="rendimiento" data-nav="loading lazy" data-shard="11" style="--g1:var(--v5);--g2:var(--v1);--g3:var(--v2);--g4:var(--v5)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>11</b></div><div>
+      <p class="kick">Sala 11 · Que la luz llegue rápido ⭐</p>
+      <h2>Rendimiento: <code>loading="lazy"</code> y compañía</h2>
+      <p class="in">Las imágenes son lo que <b>más pesa</b> en casi cualquier web. Una página lenta pierde visitas y gasta los datos del móvil. Aquí tienes cuatro hábitos: <b>carga diferida</b>, <b>formatos modernos</b>, <b>peso razonable</b> y <b>srcset</b>. Y cómo comprobarlo tú mismo.</p>
+      <span class="estado"><i></i>Fragmento 11 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3>loading="lazy": solo lo que vas a ver</h3>
+      <p>Por defecto, el navegador descarga <b>todas</b> las imágenes al abrir la página, aunque estén muy abajo y nunca llegues a verlas. Con <code>loading="lazy"</code> espera a que te acerques. Es como las luces de esta catedral: se encienden cuando entras en la sala.</p>
+      <p>Pruébalo: dentro de esta caja hay 12 fotos. Ponla en modo <b>lazy</b> y baja <b>despacio</b> por la caja: los contadores suben a medida que llegas. Después prueba el modo <b>eager</b> (todo de golpe).</p>
+      <div class="mesa">
+        <div class="ctrl"><button class="btn sm" id="lzLazy" type="button">Cargar con loading="lazy"</button><button class="btn glass sm" id="lzEager" type="button">Cargar sin lazy (eager)</button></div>
+        <div class="cont"><div><small>Imágenes descargadas</small><b id="lzN">0 / 12</b></div><div><small>Datos descargados</small><b id="lzKB">0 KB</b></div><div><small>Modo</small><b id="lzMode">—</b></div></div>
+        <div class="lazybox" id="lzBox"><p class="muted">Pulsa uno de los dos botones.</p></div>
+      </div>
+      <textarea class="src" data-lang="html" data-title="HTML">
+<!-- imágenes que están "más abajo": lazy (espera a que te acerques)
+     width y height: ¡imprescindibles con lazy! reservan el hueco -->
+<img src="media/galeria-08.jpg"
+     loading="lazy"
+     width="900" height="600"
+     alt="Girasol gigante a la hora dorada">
+
+<!-- también en iframes: YouTube o Maps pesan mucho -->
+<iframe src="…" title="…" loading="lazy"></iframe>
+</textarea>
+      <div class="nota ojo"><b>¡No a todas!</b><div><p>La imagen principal, la que se ve nada más entrar (la portada), <b>nunca</b> debe ser lazy: la queremos cuanto antes. Déjala normal (<code>loading="eager"</code> es el valor por defecto) e incluso puedes darle prioridad con <code>fetchpriority="high"</code>.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Formatos: el mismo paisaje, distinto peso</h3>
+      <p>Estas barras miden el peso <b>real</b> de los archivos de esta página. La misma imagen, con la misma calidad, en JPG y en WebP:</p>
+      <div class="barras" id="bars"><p class="muted">Midiendo archivos…</p></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <tr><th>Formato</th><th>Úsalo para</th><th>Notas</th></tr>
+        <tr><td><code>JPG</code></td><td>Fotos</td><td>Universal. Sin transparencia.</td></tr>
+        <tr><td><code>PNG</code></td><td>Capturas de pantalla, imágenes con transparencia</td><td>Pesa mucho con fotos.</td></tr>
+        <tr><td><code>WebP</code></td><td>Fotos y transparencias</td><td>Un 25-50 % menos que JPG. Lo entienden todos los navegadores actuales.</td></tr>
+        <tr><td><code>AVIF</code></td><td>Fotos</td><td>Aún más ligero que WebP. Más reciente: ponlo con reserva en <code>&lt;picture&gt;</code>.</td></tr>
+        <tr><td><code>SVG</code></td><td>Logos, iconos, ilustraciones planas</td><td>Vectorial: nítido a cualquier tamaño y muy ligero.</td></tr>
+        <tr><td><code>GIF</code></td><td>Evítalo</td><td>Para animaciones, un vídeo MP4 <code>muted loop autoplay</code> pesa diez veces menos.</td></tr>
+      </table></div>
+      <div class="g3">
+        <div class="ficha"><b>Foto de contenido</b><p>Entre 100 y 300 KB, y como mucho unos 1600 px de ancho.</p></div>
+        <div class="ficha"><b>Portada grande</b><p>Por debajo de 500 KB.</p></div>
+        <div class="ficha"><b>Miniatura</b><p>Por debajo de 50 KB.</p></div>
+      </div>
+      <div class="nota luz"><b>Herramienta</b><div><p>La foto del móvil pesa 4 o 5 MB y mide 4000 px: <b>nunca</b> la subas tal cual. Redúcela y conviértela gratis en <b>squoosh.app</b>, una web de Google donde ves el antes y el después.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>srcset y sizes: el tamaño justo para cada pantalla</h3>
+      <p><code>&lt;picture&gt;</code> cambia de <b>foto</b>. <code>srcset</code> ofrece la <b>misma foto en varios tamaños</b> y el navegador descarga la más pequeña que se vea bien. Un móvil no necesita una foto de 1600 px.</p>
+      <textarea class="src" data-lang="html" data-title="HTML · srcset con sizes">
+<!-- src: reserva para navegadores antiguos
+     srcset: la misma foto en tres tamaños; "400w" = ese archivo mide 400px de ancho
+     sizes: en pantalla ocupará el 100% del ancho de la ventana -->
+<img src="media/torre-800.jpg"
+     srcset="media/torre-400.jpg 400w,
+             media/torre-800.jpg 800w,
+             media/torre-1600.jpg 1600w"
+     sizes="100vw"
+     alt="Cúpula de vidrieras azul"
+     width="1600" height="900">
+</textarea>
+      <ol class="pasos">
+        <li><span><code>400w</code> no es un tamaño que tú decides: le cuentas al navegador cuánto mide <b>cada archivo</b> (la w es de <i>width</i>).</span></li>
+        <li><span><code>sizes</code> le dice qué ancho <b>ocupará</b> la imagen en pantalla. <code>100vw</code> = todo el ancho de la ventana (vw lo verás en el cuarto bloque).</span></li>
+        <li><span>Con esas dos pistas, más la densidad de la pantalla, el navegador elige el archivo. En una pantalla con el doble de píxeles (un móvil moderno), pedirá uno el doble de grande.</span></li>
+      </ol>
+      <p>Mueve el ancho en el simulador: cada archivo lleva escrito su tamaño.</p>
+      <div id="srcSim"></div>
+      <div class="nota dato"><b>Si no cambia</b><div><p>Una vez que el navegador ha descargado la foto grande, aunque estreches la ventana <b>no</b> vuelve a la pequeña: ya la tiene y se ve mejor. Pulsa <b>Recargar</b> en el simulador para empezar de cero.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3>Compruébalo: la pestaña Red (Network)</h3>
+      <ol class="pasos">
+        <li><span>Abre tu web y pulsa <b>F12</b>. Ve a la pestaña <b>Red</b> (<i>Network</i>).</span></li>
+        <li><span>Marca <b>Desactivar caché</b> y filtra por <b>Img</b> (o <b>Media</b> para vídeo y audio).</span></li>
+        <li><span>Recarga con <b>Ctrl + F5</b>. Cada fila es un archivo: mira las columnas <b>Tamaño</b> y <b>Tiempo</b>.</span></li>
+        <li><span>Baja por la página: las imágenes <code>lazy</code> aparecerán en la lista <b>a medida que llegues</b> a ellas.</span></li>
+        <li><span>Truco: en el desplegable <b>Sin limitación</b> elige <b>3G lenta</b> para notar la diferencia como en un móvil con mala cobertura.</span></li>
+      </ol>
+      <p class="muted">Hazlo ahora con esta misma página y la caja de 12 fotos de arriba.</p>
+    </div>
+
+    <div class="prueba reveal" data-prueba="11" style="--pc:var(--v1)">
+      <header><i></i><b>Prueba de la sala 11</b><span>El presupuesto de luz</span></header>
+      <h4>Que la página cargue al principio menos de 60 KB</h4>
+      <p>La portada se ve nada más entrar; el resto está más abajo. Elige el formato y el modo de carga de cada elemento. Solo cuenta lo que se descarga <b>al abrir</b> la página.</p>
+      <div class="presu" id="presu"></div>
+      <div class="medidor" id="pMed"><i></i></div>
+      <p class="lectura" id="pTxt"></p>
+      <div class="res" id="p11res"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     SALA 12 · referencia
+     ================================================================= -->
+<section class="sala" id="referencia" data-nav="svg, canvas, map…" data-shard="12" style="--g1:var(--v6);--g2:var(--v1);--g3:var(--v4);--g4:var(--v2)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>12</b></div><div>
+      <p class="kick">Sala 12 · El archivo del vidriero</p>
+      <h2>Referencia: <code>svg</code>, <code>canvas</code>, <code>embed</code>, <code>object</code>, <code>map</code> y <code>area</code></h2>
+      <p class="in">Otras etiquetas para dibujar o incrustar contenido. No las usarás todos los días, pero tienes que <b>reconocerlas</b> y saber cuándo tiene sentido cada una.</p>
+      <span class="estado"><i></i>Fragmento 12 · <em>pendiente</em></span>
+    </div></div>
+
+    <div class="vitrina reveal">
+      <h3><code>&lt;svg&gt;</code>: dibujos que nunca se pixelan</h3>
+      <p>Un SVG no guarda píxeles: guarda <b>instrucciones</b> ("un círculo aquí, de este radio y este color"). Por eso se ve nítido a cualquier tamaño y pesa muy poco. Ideal para logos e iconos. Se puede usar como archivo en un <code>&lt;img&gt;</code> o escribir su código directamente en el HTML:</p>
+      <div class="mesa"><div class="ref-demo">
+        <img src="media/sol-vitral.svg" alt="Sol de vitral" width="70" height="70">
+        <img src="media/sol-vitral.svg" alt="Sol de vitral grande" width="160" height="160">
+        <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Círculo de vidriera"><circle cx="60" cy="60" r="50" fill="#3fd0a6" stroke="#d4a347" stroke-width="8"/><circle cx="60" cy="60" r="18" fill="#ffd27a"/></svg>
+        <span class="muted">El mismo archivo a 70 px y a 160 px: igual de nítido.</span>
+      </div></div>
+      <textarea class="src" data-lang="html" data-title="HTML · dos formas de usar SVG">
+<!-- 1 · como archivo, igual que una foto -->
+<img src="media/sol-vitral.svg" alt="Sol de vitral" width="160" height="160">
+
+<!-- 2 · escrito dentro del HTML (inline)
+     viewBox: el "lienzo" del dibujo · role + aria-label: hacen de alt -->
+<svg width="120" height="120" viewBox="0 0 120 120"
+     role="img" aria-label="Círculo de vidriera">
+  <!-- círculo grande: centro (60,60), radio 50, relleno verde y borde de latón -->
+  <circle cx="60" cy="60" r="50" fill="#3fd0a6" stroke="#d4a347" stroke-width="8"/>
+  <!-- círculo central dorado -->
+  <circle cx="60" cy="60" r="18" fill="#ffd27a"/>
+</svg>
+</textarea>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>&lt;canvas&gt;</code>: un lienzo para pintar con JavaScript</h3>
+      <p><code>&lt;canvas&gt;</code> es un rectángulo vacío donde se pinta con <b>JavaScript</b>, píxel a píxel. Se usa para juegos, gráficas, editores de fotos… Las imágenes de esta página se generaron así. Como JavaScript es del octavo bloque, aquí solo tienes que reconocerlo:</p>
+      <canvas id="lienzo" width="600" height="200">Un lienzo con luces flotando (necesita JavaScript)</canvas>
+      <textarea class="src" data-lang="html" data-title="HTML">
+<!-- el lienzo vacío: el texto de dentro solo sale si no hay canvas -->
+<canvas id="lienzo" width="600" height="200">
+  Un lienzo con luces flotando
+</canvas>
+<!-- y JavaScript pinta en él (octavo bloque):
+     const pincel = document.querySelector('#lienzo').getContext('2d');
+     pincel.fillStyle = '#ffd27a';
+     pincel.arc(100, 100, 40, 0, Math.PI * 2);
+     pincel.fill(); -->
+</textarea>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>&lt;embed&gt;</code> y <code>&lt;object&gt;</code>: incrustar archivos</h3>
+      <p>Sirven para meter un archivo externo (un PDF, un SVG…) dentro de la página. Hoy se usan poco: para vídeos tienes <code>&lt;video&gt;</code>, para imágenes <code>&lt;img&gt;</code> y para webs <code>&lt;iframe&gt;</code>. Su uso más habitual es <b>mostrar un PDF</b>.</p>
+      <div class="mesa"><div class="ref-demo">
+        <object data="media/sol-vitral.svg" type="image/svg+xml" width="120" height="120">Sol de vitral (tu navegador no puede mostrarlo)</object>
+        <embed src="media/sol-vitral.svg" type="image/svg+xml" width="120" height="120">
+        <span class="muted">Izquierda: object · Derecha: embed</span>
+      </div></div>
+      <textarea class="src" data-lang="html" data-title="HTML">
+<!-- object: admite contenido alternativo dentro -->
+<object data="media/normas.pdf" type="application/pdf" width="100%" height="600">
+  <a href="media/normas.pdf">Descarga las normas en PDF</a>   <!-- si no puede mostrarlo -->
+</object>
+
+<!-- embed: etiqueta vacía, sin alternativa -->
+<embed src="media/normas.pdf" type="application/pdf" width="100%" height="600">
+</textarea>
+      <div class="nota luz"><b>¿Cuál elijo?</b><div><p>Si tienes que incrustar un PDF, mejor <code>&lt;object&gt;</code>, porque permite poner un enlace de descarga por si no se puede mostrar (por ejemplo, en muchos móviles). Y en el móvil, lo más cómodo suele ser un simple enlace al PDF.</p></div></div>
+    </div>
+
+    <div class="vitrina reveal">
+      <h3><code>&lt;map&gt;</code> y <code>&lt;area&gt;</code>: zonas clicables en una imagen</h3>
+      <p>Un <b>mapa de imagen</b> convierte partes de una foto en enlaces. Pasa el ratón sobre el árbol, el sol y la ciudad, o activa "ver zonas":</p>
+      <div class="ctrl"><label class="sw"><input type="checkbox" id="mapVer"> Ver las zonas</label></div>
+      <div class="mapa-wrap"><div class="mapa-in" id="mapaIn">
+        <img src="media/invernadero.jpg" alt="Mapa del invernadero: árbol, sol y ciudad" width="800" height="450" usemap="#mapa-invernadero">
+        <svg viewBox="0 0 800 450" aria-hidden="true"><circle cx="590" cy="150" r="125" fill="rgba(168,227,107,.3)" stroke="#a8e36b" stroke-width="3"/><circle cx="224" cy="180" r="45" fill="rgba(255,210,122,.3)" stroke="#ffd27a" stroke-width="3"/><rect x="0" y="195" width="330" height="190" fill="rgba(88,183,224,.25)" stroke="#58b7e0" stroke-width="3"/></svg>
+      </div></div>
+      <map name="mapa-invernadero">
+        <area shape="circle" coords="590,150,125" href="#posicion" alt="El árbol: ir a la sala de object-position">
+        <area shape="circle" coords="224,180,45" href="#rendimiento" alt="El sol: ir a la sala de rendimiento">
+        <area shape="rect" coords="0,195,330,385" href="#zoom" alt="La ciudad: ir a la sala del zoom">
+      </map>
+      <textarea class="src" data-lang="html" data-title="HTML · mapa de imagen">
+<!-- la imagen se conecta al mapa con usemap="#nombre" -->
+<img src="media/invernadero.jpg" alt="Mapa del invernadero"
+     width="800" height="450" usemap="#mapa-invernadero">
+
+<map name="mapa-invernadero">
+  <!-- círculo: centro x, centro y, radio -->
+  <area shape="circle" coords="590,150,125" href="#posicion" alt="El árbol">
+  <!-- círculo pequeño: el sol -->
+  <area shape="circle" coords="224,180,45"  href="#rendimiento" alt="El sol">
+  <!-- rectángulo: x1,y1 (esquina superior izquierda), x2,y2 (inferior derecha) -->
+  <area shape="rect" coords="0,195,330,385" href="#zoom" alt="La ciudad">
+  <!-- también existe shape="poly" con una lista de puntos x,y,x,y… -->
+</map>
+</textarea>
+      <div class="nota ojo"><b>Limitación</b><div><p>Las coordenadas están en <b>píxeles fijos</b>: si la imagen se encoge (en el móvil), las zonas no se encogen con ella y dejan de coincidir. Por eso esta demo tiene ancho fijo y hoy se usan poco. La alternativa moderna son enlaces colocados encima con <code>position</code>, que verás en este mismo bloque.</p></div></div>
+    </div>
+
+    <div class="prueba reveal" data-prueba="12" style="--pc:var(--v6)">
+      <header><i></i><b>Prueba de la sala 12</b><span>¿Qué etiqueta usarías?</span></header>
+      <h4>Relaciona cada necesidad con su etiqueta</h4>
+      <div id="p12"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     TALLER
+     ================================================================= -->
+<section class="sala" id="taller" data-nav="Taller" style="--g1:var(--v2);--g2:var(--v1);--g3:var(--v3);--g4:var(--v4)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>✦</b></div><div>
+      <p class="kick">El taller del vidriero</p>
+      <h2>Monta tu galería de vitrales</h2>
+      <p class="in">Junta todo lo aprendido en un componente de verdad: una galería de tarjetas con proporción fija, recorte inteligente, zoom, pie de foto y carga diferida. Elige las opciones y llévate el código completo y comentado.</p>
+    </div></div>
+    <div class="vitrina reveal">
+      <div class="taller">
+        <div id="tOpts"></div>
+        <div><div id="tPrev"></div></div>
+      </div>
+      <div id="tCode"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     ERRORES
+     ================================================================= -->
+<section class="sala" id="errores" data-nav="Arregla el código" style="--g1:var(--v6);--g2:var(--v6);--g3:var(--v3);--g4:var(--v2)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>?</b></div><div>
+      <p class="kick">El vidriero detective</p>
+      <h2>Arregla el código</h2>
+      <p class="in">Doce cristales rotos: imágenes, vídeos e iframes que no se comportan como deberían. Encuentra el fallo de cada uno.</p>
+    </div></div>
+    <div class="vitrina reveal"><div id="fixes"></div></div>
+  </div>
+</section>
+
+<!-- =================================================================
+     TEST
+     ================================================================= -->
+<section class="sala" id="test" data-nav="Examen final" data-shard="13" style="--g1:var(--v2);--g2:var(--oro);--g3:var(--v6);--g4:var(--v1)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>✺</b></div><div>
+      <p class="kick">El corazón del rosetón</p>
+      <h2>Examen final</h2>
+      <p class="in">Quince preguntas con explicación. Si aciertas <b>12 o más</b>, se enciende el corazón del rosetón.</p>
+      <span class="estado"><i></i>Corazón del rosetón · <em>pendiente</em></span>
+    </div></div>
+    <div class="vitrina reveal"><div id="quiz"></div>
+      <div class="scorebar"><span>Puntuación:</span><b id="qScore">0 / 15</b><button class="btn sm" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn glass sm" id="qReset" type="button">Empezar de nuevo</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     CHULETA
+     ================================================================= -->
+<section class="sala" id="chuleta" data-nav="Chuleta" style="--g1:var(--v4);--g2:var(--v5);--g3:var(--v2);--g4:var(--v1)">
+  <div class="wrap">
+    <div class="cab reveal"><div class="arch"><b>≡</b></div><div>
+      <p class="kick">Resumen</p>
+      <h2>Chuleta</h2>
+      <p class="in">Todo lo de esta escena en una tabla.</p>
+    </div></div>
+    <div class="sheet-wrap reveal"><table class="sheet">
+      <tr><th>Código</th><th>Qué hace</th><th>Recuerda</th></tr>
+      <tr class="grp"><td colspan="3">Imágenes</td></tr>
+      <tr><td>&lt;img src alt width height&gt;</td><td>Una imagen</td><td>Etiqueta vacía · alt siempre</td></tr>
+      <tr><td>alt=""</td><td>Imagen decorativa</td><td>Vacío, pero presente</td></tr>
+      <tr><td>width · height</td><td>Tamaño real del archivo</td><td>Evitan que la página salte (CLS)</td></tr>
+      <tr><td>img{max-width:100%;height:auto}</td><td>La regla de oro</td><td>+ display:block</td></tr>
+      <tr><td>&lt;figure&gt; + &lt;figcaption&gt;</td><td>Imagen con pie de foto</td><td>alt sustituye, figcaption complementa</td></tr>
+      <tr class="grp"><td colspan="3">Proporción y recorte</td></tr>
+      <tr><td>aspect-ratio: 16 / 9</td><td>Forma de la caja</td><td>Da solo el ancho</td></tr>
+      <tr><td>object-fit: cover</td><td>Rellena recortando</td><td>Fotos y avatares</td></tr>
+      <tr><td>object-fit: contain</td><td>Cabe entera</td><td>Logos y planos</td></tr>
+      <tr><td>object-fit: fill</td><td>Estira (deforma)</td><td>Valor por defecto</td></tr>
+      <tr><td>object-position: 75% 30%</td><td>Qué parte se ve al recortar</td><td>Horizontal y vertical</td></tr>
+      <tr><td>avatar</td><td>width + aspect-ratio:1 + cover + radius 50%</td><td>Círculo perfecto</td></tr>
+      <tr class="grp"><td colspan="3">Zoom en tarjetas</td></tr>
+      <tr><td>.marco{overflow:hidden}</td><td>El marco recorta</td><td>En el marco, no en la img</td></tr>
+      <tr><td>img{transition:transform .5s}</td><td>Cambio suave</td><td>En el estado normal</td></tr>
+      <tr><td>.marco:hover img{transform:scale(1.1)}</td><td>Crece al pasar el ratón</td><td>Hover en el marco</td></tr>
+      <tr class="grp"><td colspan="3">picture</td></tr>
+      <tr><td>&lt;source media="…" srcset="…"&gt;</td><td>Otra foto si se cumple la condición</td><td>srcset, no src</td></tr>
+      <tr><td>&lt;source type="image/webp" srcset="…"&gt;</td><td>Formato moderno con reserva</td><td>Solo si existe el archivo</td></tr>
+      <tr><td>&lt;img&gt; final</td><td>Reserva + alt + CSS</td><td>Obligatorio</td></tr>
+      <tr class="grp"><td colspan="3">Vídeo y audio</td></tr>
+      <tr><td>&lt;video controls poster preload&gt;</td><td>Vídeo con controles y portada</td><td>preload: none · metadata · auto</td></tr>
+      <tr><td>&lt;source src type&gt;</td><td>Varios formatos</td><td>MP4 para todos · WebM más ligero</td></tr>
+      <tr><td>&lt;track kind srclang label default&gt;</td><td>Subtítulos .vtt</td><td>Necesita Live Server</td></tr>
+      <tr><td>autoplay muted loop playsinline</td><td>Vídeo de fondo</td><td>Sin muted no arranca · sin playsinline, pantalla completa en iPhone</td></tr>
+      <tr><td>&lt;audio controls&gt;</td><td>Audio</td><td>Nunca autoplay con sonido · transcripción</td></tr>
+      <tr class="grp"><td colspan="3">iframe</td></tr>
+      <tr><td>&lt;iframe src title loading="lazy"&gt;</td><td>Otra web dentro de la tuya</td><td>title obligatorio</td></tr>
+      <tr><td>YouTube</td><td>Compartir → Insertar</td><td>/embed/ · youtube-nocookie</td></tr>
+      <tr><td>Google Maps</td><td>Compartir → Insertar un mapa</td><td>Pesa: lazy</td></tr>
+      <tr><td>iframe{width:100%;aspect-ratio:16/9;border:0}</td><td>iframe flexible</td><td>Nada de frameborder</td></tr>
+      <tr class="grp"><td colspan="3">Rendimiento</td></tr>
+      <tr><td>loading="lazy"</td><td>Descarga al acercarse</td><td>Nunca en la portada</td></tr>
+      <tr><td>fetchpriority="high"</td><td>Prioridad a la imagen principal</td><td>Solo una o dos</td></tr>
+      <tr><td>WebP · AVIF</td><td>Formatos ligeros</td><td>25-50 % menos que JPG</td></tr>
+      <tr><td>srcset="a.jpg 400w, b.jpg 800w" sizes="100vw"</td><td>Misma foto, varios tamaños</td><td>w = ancho real del archivo</td></tr>
+      <tr><td>F12 → Red → Img</td><td>Comprobar pesos y lazy</td><td>Desactivar caché · 3G lenta</td></tr>
+      <tr class="grp"><td colspan="3">Referencia</td></tr>
+      <tr><td>&lt;svg&gt;</td><td>Gráfico vectorial</td><td>Logos e iconos</td></tr>
+      <tr><td>&lt;canvas&gt;</td><td>Lienzo para JavaScript</td><td>Juegos y gráficas</td></tr>
+      <tr><td>&lt;object&gt; · &lt;embed&gt;</td><td>Incrustar archivos (PDF)</td><td>object admite alternativa</td></tr>
+      <tr><td>&lt;map&gt; + &lt;area&gt;</td><td>Zonas clicables en una imagen</td><td>Coordenadas fijas: no se adaptan</td></tr>
+    </table></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <h2 id="finTit">La nave espera su luz</h2>
+    <p id="finTxt">Supera las pruebas de cada sala para encender el rosetón entero.</p>
+    <div class="ctas" style="justify-content:center"><a class="btn" href="#inicio">Volver al rosetón</a><a class="btn glass" href="../index.html">Volver al índice del curso</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+document.documentElement.classList.add('js');
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const GLASS=['#3fd0a6','#ffcf5a','#e8743b','#58b7e0','#a8e36b','#d94f6a'];
+
+/* =================== resaltado de código =================== */
+function hlDecl(s){return esc(s).replace(/([\w-]+)(\s*:\s*)([^;{}]+)/g,'<span class="p">$1</span>$2<span class="v">$3</span>');}
+function hlCss(line){let com='';const i=line.indexOf('/*');if(i>=0){com='<span class="c">'+esc(line.slice(i))+'</span>';line=line.slice(0,i);}
+  const j=line.indexOf('{');let out;
+  if(j>=0){const sel=line.slice(0,j);out=(/^\s*@/.test(sel)?'<span class="at">':'<span class="s">')+esc(sel)+'</span>{'+hlDecl(line.slice(j+1));}
+  else if(/^\s*[\w-]+\s*:/.test(line))out=hlDecl(line);else out=esc(line);
+  return out+com;}
+function hlHtml(line){let com='';const i=line.indexOf('<!--');if(i>=0){com='<span class="c">'+esc(line.slice(i))+'</span>';line=line.slice(0,i);}
+  /* primero atributos y después etiquetas: si no, el patrón de atributos atrapa el class="t" que acabamos de añadir */
+  const out=esc(line).replace(/([\w-]+)(=)("[^"]*")/g,'<span class="p">$1</span>$2<span class="v">$3</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>')
+    .replace(/(\s)(controls|autoplay|muted|loop|playsinline|default|allowfullscreen)(?=[\s&>]|$)/g,'$1<span class="p">$2</span>');
+  return out+com;}
+function render(lang,src){let inCom=false;const [open,close]=lang==='css'?['/*','*/']:['<!--','-->'];
+  return src.split('\n').map(l=>{const n=l.startsWith('»');const s=n?l.slice(1):l;let h;
+  if(inCom){const k=s.indexOf(close);if(k<0)h='<span class="c">'+esc(s)+'</span>';else{inCom=false;h='<span class="c">'+esc(s.slice(0,k+close.length))+'</span>'+(lang==='css'?hlCss(s.slice(k+close.length)):hlHtml(s.slice(k+close.length)));}}
+  else{h=lang==='css'?hlCss(s):lang==='html'?hlHtml(s):esc(s);const o=s.lastIndexOf(open);if(lang!=='txt'&&o>=0&&s.indexOf(close,o)<0)inCom=true;}
+  return n?'<span style="background:rgba(255,210,122,.12);display:inline-block;width:100%">'+(h||' ')+'</span>':h;}).join('\n');}
+function copyText(txt,btn){const o=btn.textContent;const done=()=>{btn.textContent='¡Copiado!';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1400);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+function codeBox(lang,src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang)}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+  w.set=s=>{s=s.replace(/^\n+|\s+$/g,'');w.src=s.split('\n').map(l=>l.startsWith('»')?l.slice(1):l).join('\n');$('pre',w).innerHTML=render(lang,s);};w.set(src);
+  $('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+$$('textarea.src').forEach(t=>t.replaceWith(codeBox(t.dataset.lang,t.value,t.dataset.title)));
+const put=(sel,box)=>{$(sel).appendChild(box);return box;};
+
+/* =================== progreso: fragmentos del rosetón =================== */
+const KEY='catedral-luz-fragmentos';
+let got=new Set();try{got=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify([...got]));}catch(e){}};
+const TOTAL=13;
+const rose=$('#rose');
+for(let i=0;i<12;i++){const p=el('i','petal');p.style.setProperty('--i',i);p.style.setProperty('--c',GLASS[i%6]);p.dataset.n=i+1;rose.insertBefore(p,$('#core'));}
+function paint(){
+  $$('.petal').forEach(p=>p.classList.toggle('lit',got.has(+p.dataset.n)));
+  $('#core').classList.toggle('lit',got.has(13));
+  $$('section.sala[data-shard]').forEach(s=>{const n=+s.dataset.shard,on=got.has(n);s.classList.toggle('lit',on);const e=$('.estado em',s);if(e)e.textContent=on?'conseguido':'pendiente';const pr=$('.prueba',s);if(pr)pr.classList.toggle('hecha',on);});
+  $$('.panes a').forEach(a=>a.classList.toggle('lit',got.has(+a.dataset.shard)));
+  const n=got.size,txt=`${n} / ${TOTAL} fragmentos`;$('#hudTxt').textContent=txt;$('#heroCnt').textContent=txt;
+  const deg=360/TOTAL;$('#hudMini').style.setProperty('--mini','conic-gradient('+Array.from({length:TOTAL},(_,i)=>`${got.has(i+1)?GLASS[i%6]:'#22332e'} ${i*deg}deg ${(i+1)*deg-2}deg, #0b1412 ${(i+1)*deg-2}deg ${(i+1)*deg}deg`).join(',')+')');
+  const all=n===TOTAL;$('#finTit').textContent=all?'¡El rosetón brilla entero!':'La nave espera su luz';$('#finTxt').textContent=all?'Has restaurado los 13 fragmentos. Ya dominas imágenes, vídeo y proporciones.':`Llevas ${n} de ${TOTAL} fragmentos. Supera las pruebas de cada sala para encender el rosetón entero.`;}
+let tt;function toast(msg,col){const t=$('#toast');$('span',t).textContent=msg;t.style.setProperty('--tc',col||GLASS[1]);t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3200);}
+function award(n){if(got.has(n)){return;}got.add(n);save();paint();toast(n===13?'¡Corazón del rosetón encendido!':`¡Fragmento ${n} conseguido! (${got.size} / ${TOTAL})`,GLASS[(n-1)%6]);}
+$('#reset').onclick=()=>{got.clear();save();paint();toast('Rosetón apagado: empieza de nuevo',GLASS[3]);};
+
+/* =================== navegación =================== */
+{const P=$('#panes'),secs=$$('section.sala');secs.forEach((s,i)=>{const a=el('a','',`${s.dataset.shard&&+s.dataset.shard<13?s.dataset.shard:$('.arch b',s).textContent}<span>${esc(s.dataset.nav)}</span>`);a.href='#'+s.id;
+   a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--g2').trim()||GLASS[i%6]);if(s.dataset.shard)a.dataset.shard=s.dataset.shard;P.appendChild(a);});
+ const links=$$('a',P);let last=-1;
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)c=i;});
+   if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0)P.scrollTo({left:links[c].offsetLeft-P.clientWidth/2,behavior:'smooth'});}};
+ addEventListener('scroll',on,{passive:true});on();}
+paint();
+{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{rootMargin:'0px 0px -6% 0px'});$$('.reveal').forEach(r=>io.observe(r));}
+
+/* =================== componentes de prueba =================== */
+/* preguntas de opción: todas bien = fragmento */
+function quizPrueba(host,n,items){const h=$(host);const groups=items.map((it,i)=>{const g=el('div','preg');g.innerHTML=`<p>${it.q}</p>`;const o=el('div','opts');
+  it.o.forEach((t,k)=>{const l=el('label','opt');l.innerHTML=`<input type="radio" name="${host.slice(1)}-${i}" value="${k}"><span>${t}</span>`;o.appendChild(l);});
+  const w=el('div','why',it.e);g.append(o,w);h.appendChild(g);return {g,it,w};});
+  const b=el('button','btn sm','Comprobar');b.type='button';const r=el('div','res');h.append(b,r);
+  b.onclick=()=>{let ok=0,ans=0;groups.forEach(({g,it,w})=>{const c=$('input:checked',g);$$('.opt',g).forEach(l=>l.classList.remove('bien','mal'));
+    if(c){ans++;const k=+c.value;c.closest('.opt').classList.add(k===it.a?'bien':'mal');if(k===it.a)ok++;w.classList.add('show');}});
+    if(ans<items.length){r.className='res ko';r.textContent=`Te faltan ${items.length-ans} por responder.`;return;}
+    if(ok===items.length){r.className='res ok';r.textContent='¡Perfecto! Fragmento conseguido.';award(n);}else{r.className='res ko';r.textContent=`${ok} de ${items.length} bien. Lee las pistas y vuelve a intentarlo.`;}};}
+/* casillas: hay que marcar exactamente las correctas */
+function checkList(host,opts,onChange){const h=$(host);const boxes=opts.map((o,i)=>{const l=el('label','opt');l.innerHTML=`<input type="checkbox" value="${i}"><span>${o.t}</span>`;h.appendChild(l);const inp=$('input',l);if(onChange)inp.onchange=onChange;return {l,inp,o};});
+  return {boxes,check(){let bad=0,miss=0;boxes.forEach(({l,inp,o})=>{l.classList.remove('bien','mal');if(inp.checked&&!o.ok){bad++;l.classList.add('mal');}else if(!inp.checked&&o.ok)miss++;else if(inp.checked)l.classList.add('bien');});return {bad,miss};}};}
+
+/* =================== SALA 1 =================== */
+$('#altOff').onchange=e=>{$$('#altDemo img').forEach(i=>{i.src=e.target.checked?'media/no-existe.jpg':i.dataset.src;});};
+$('#saltoGo').onclick=()=>{const a=$('#saltoA'),b=$('#saltoB');const src=a.getAttribute('src').split('?')[0];[a,b].forEach(i=>i.removeAttribute('src'));
+  setTimeout(()=>{const v='?t='+Date.now();a.src=src+v;b.src=src+v;},1600);};
+quizPrueba('#p1',1,[
+ {q:'Una cenefa de hojas que solo adorna el espacio entre dos secciones.',o:['<code>alt="hojas"</code>','Sin atributo alt','<code>alt=""</code>','<code>alt="imagen decorativa de hojas"</code>'],a:2,e:'Decorativa = <code>alt=""</code> vacío. Así el lector de pantalla se la salta. Sin atributo alt leería el nombre del archivo.'},
+ {q:'El logo de la web, que es un enlace a la página de inicio.',o:['<code>alt="logo"</code>','<code>alt="Catedral de Luz: ir al inicio"</code>','<code>alt="imagen del logo de la Catedral de Luz"</code>'],a:1,e:'En una imagen-enlace, el alt dice <b>a dónde lleva</b> el enlace.'},
+ {q:'Una gráfica de barras que demuestra que la energía solar cubre el 80 % del consumo.',o:['<code>alt="gráfica"</code>','<code>alt=""</code>','<code>alt="La energía solar cubre el 80 % del consumo del invernadero"</code>'],a:2,e:'En un gráfico, cuenta la <b>conclusión</b>, lo que la persona que lo ve entiende de un vistazo.'}]);
+
+/* =================== SALA 2 =================== */
+{const box=$('#rBox'),w=$('#rW'),wo=$('#rWo');const RAT=['1 / 1','4 / 3','3 / 2','16 / 9','21 / 9','9 / 16'];let ratio='16 / 9';
+ const cb=put('#rCode',codeBox('css','','CSS'));const ch=$('#rChips');
+ RAT.forEach(r=>{const b=el('button','chip'+(r===ratio?' on':''),r);b.type='button';b.onclick=()=>{ratio=r;$$('.chip',ch).forEach(x=>x.classList.toggle('on',x===b));upd();};ch.appendChild(b);});
+ function upd(){box.style.width=w.value+'%';box.style.aspectRatio=ratio;wo.textContent=w.value+'%';requestAnimationFrame(()=>{const r=box.getBoundingClientRect();box.textContent=`${ratio} · ${Math.round(r.width)} × ${Math.round(r.height)} px`;});
+  cb.set(`.marco {\n  width: ${w.value}%;          /* el ancho lo das tú */\n  aspect-ratio: ${ratio};    /* la forma: el alto se calcula solo */\n}`);}
+ w.oninput=upd;new ResizeObserver(upd).observe(box.parentElement);upd();}
+{const rounds=[['3 / 2','3/2'],['1 / 1','1/1'],['9 / 16','9/16']];let k=0;const tgt=$('#p2tgt'),yo=$('#p2yo'),res=$('#p2res'),ch=$('#p2chips');
+ const OPTS=['1 / 1','4 / 3','3 / 2','16 / 9','9 / 16','2 / 3'];
+ OPTS.forEach(r=>{const b=el('button','chip',r);b.type='button';b.onclick=()=>{yo.style.aspectRatio=r;if(k>=rounds.length)return;
+   if(r===rounds[k][0]){k++;res.className='res ok';if(k===rounds.length){res.textContent='¡Las tres encajan! Fragmento conseguido.';award(2);}else{res.textContent='¡Encaja! Siguiente ronda…';setTimeout(load,900);}}
+   else{res.className='res ko';res.textContent='No coincide: compara el ancho y el alto del marco punteado.';}};ch.appendChild(b);});
+ function load(){if(k>=rounds.length)return;tgt.style.aspectRatio=rounds[k][0];yo.style.aspectRatio='4 / 3';$('#p2round').textContent=`Ronda ${k+1} de ${rounds.length}`;res.textContent='';}
+ load();}
+
+/* =================== SALA 3 =================== */
+{const img=$('#fImg'),W=$('#fW'),H=$('#fH');let fit='cover';const cb=put('#fCode',codeBox('css','','CSS'));
+ const DES={fill:'fill: se estira hasta llenar el marco… y se deforma.',contain:'contain: cabe entera sin deformarse. Fíjate en las bandas vacías.',cover:'cover: cubre todo el marco sin deformarse, recortando lo que sobra.',none:'none: tamaño original. Solo ves el trozo central.','scale-down':'scale-down: el más pequeño entre none y contain.'};
+ const ch=$('#fChips');['fill','contain','cover','none','scale-down'].forEach(v=>{const b=el('button','chip'+(v===fit?' on':''),v);b.type='button';b.onclick=()=>{fit=v;$$('.chip',ch).forEach(x=>x.classList.toggle('on',x===b));upd();};ch.appendChild(b);});
+ function upd(){img.style.width=W.value+'px';img.style.height=H.value+'px';img.style.objectFit=fit;$('#fWo').textContent=W.value+'px';$('#fHo').textContent=H.value+'px';$('#fTxt').textContent=DES[fit];
+  cb.set(`img {\n  width: ${W.value}px;          /* tamaño del marco */\n  height: ${H.value}px;\n  object-fit: ${fit};${' '.repeat(Math.max(1,11-fit.length))}/* cómo entra la foto en el marco */\n}`);}
+ W.oninput=upd;H.oninput=upd;upd();}
+quizPrueba('#p3',3,[
+ {q:'Las fotos de perfil de los usuarios: un círculo de 80 px, con fotos de todo tipo.',o:['fill','contain','cover'],a:2,e:'<code>cover</code>: llena el círculo recortando, sin deformar caras.'},
+ {q:'Los logos de los patrocinadores dentro de cajas iguales: no se puede cortar ni una letra.',o:['cover','contain','fill'],a:1,e:'<code>contain</code>: entero, aunque queden bandas vacías.'},
+ {q:'Una foto de portada que debe llenar una franja de 100 % × 300 px.',o:['cover','none','contain'],a:0,e:'<code>cover</code>: rellena la franja entera recortando lo que sobra.'},
+ {q:'Un plano técnico del invernadero: no se puede deformar ni recortar.',o:['fill','cover','contain'],a:2,e:'<code>contain</code> es la única que no deforma ni recorta.'}]);
+
+/* =================== SALA 4: object-position =================== */
+const IMG_W=1600,IMG_H=900;
+function posWidget(frame,pad,onSet){let px=50,py=50;const win=$('.win',pad),dot=$('.dot',pad);
+ function draw(){frame.style.objectPosition=`${px}% ${py}%`;const fw=frame.clientWidth,fh=frame.clientHeight,sc=Math.max(fw/IMG_W,fh/IMG_H),dw=IMG_W*sc,dh=IMG_H*sc,fx=fw/dw,fy=fh/dh;
+  const l=(1-fx)*px/100,t=(1-fy)*py/100;win.style.left=l*100+'%';win.style.top=t*100+'%';win.style.width=fx*100+'%';win.style.height=fy*100+'%';dot.style.left=(l+fx/2)*100+'%';dot.style.top=(t+fy/2)*100+'%';
+  onSet&&onSet(px,py,{l,t,fx,fy});}
+ function at(e){const r=pad.getBoundingClientRect();const fw=frame.clientWidth,fh=frame.clientHeight,sc=Math.max(fw/IMG_W,fh/IMG_H),fx=fw/(IMG_W*sc),fy=fh/(IMG_H*sc);
+  const cx=(e.clientX-r.left)/r.width,cy=(e.clientY-r.top)/r.height;px=fx<1?Math.round(Math.min(1,Math.max(0,(cx-fx/2)/(1-fx)))*100):50;py=fy<1?Math.round(Math.min(1,Math.max(0,(cy-fy/2)/(1-fy)))*100):50;draw();}
+ let drag=false;pad.addEventListener('pointerdown',e=>{drag=true;pad.setPointerCapture(e.pointerId);at(e);});pad.addEventListener('pointermove',e=>{if(drag)at(e);});pad.addEventListener('pointerup',()=>drag=false);
+ new ResizeObserver(draw).observe(pad);
+ return {set(x,y){px=x;py=y;draw();}};}
+{const cb=put('#oCode',codeBox('css','','CSS'));let label='';
+ const W=posWidget($('#oImg'),$('#oPad'),(x,y)=>{const v=label||`${x}% ${y}%`;$('#oTxt').textContent=`object-position: ${v};`;cb.set(`.recorte {\n  width: 200px;\n  height: 320px;\n  object-fit: cover;               /* rellena recortando */\n  object-position: ${v};${' '.repeat(Math.max(1,12-v.length))}/* qué parte de la foto queda dentro */\n}`);label='';});
+ const K={center:[50,50],left:[0,50],right:[100,50],top:[50,0],bottom:[50,100],'right top':[100,0],'left bottom':[0,100],'74% 40%':[74,40]};
+ const ch=$('#oChips');Object.keys(K).forEach(k=>{const b=el('button','chip',k);b.type='button';b.onclick=()=>{label=k;W.set(...K[k]);};ch.appendChild(b);});W.set(50,50);}
+/* el tronco del árbol está a un 74 % del ancho de la foto: el centro del encuadre debe caer cerca */
+{let done=false,first=true;posWidget($('#p4img'),$('#p4pad'),(x,y,w)=>{const c=w.l+w.fx/2;const ok=c>=.66&&c<=.82;
+  $('#p4txt').textContent=`object-position: ${x}% ${y}%;`;const r=$('#p4res');
+  if(first){first=false;r.textContent='Ahora mismo el recorte es por el centro: el árbol se queda fuera.';return;}
+  if(ok){r.className='res ok';r.textContent='¡Árbol a salvo en el centro del encuadre! Fragmento conseguido.';if(!done){done=true;award(4);}}
+  else{r.className='res ko';r.textContent=c<.66?'Todavía no: el árbol queda más a la derecha.':'Te has pasado: el árbol se queda a la izquierda, casi fuera.';}}).set(50,50);}
+
+/* =================== SALA 5: zoom =================== */
+{const g=$('#zGal'),H=$('#zH'),T=$('#zT'),S=$('#zS'),R=$('#zR');const cb=put('#zCode',codeBox('css','','CSS'));
+ function upd(){g.classList.toggle('z-hidden',H.checked);g.classList.toggle('z-trans',T.checked);g.classList.toggle('z-on',S.checked);g.style.setProperty('--zs',R.value);$('#zRo').textContent=R.value;
+  const off=c=>c?'':'/* ';const off2=c=>c?'':' */ /* (apagado) */';
+  cb.set(`.marco {\n  border-radius: 14px;\n  ${off(H.checked)}overflow: hidden;${off2(H.checked)}${H.checked?'           /* 1 · lo que sobresale, se corta */':''}\n}\n.marco img {\n  display: block;\n  width: 100%;\n  height: auto;                    /* ¡clave! si no, manda el height="600" del HTML */\n  aspect-ratio: 4 / 3;             /* todas con la misma forma */\n  object-fit: cover;               /* sin deformar */\n  ${off(T.checked)}transition: transform .5s ease;${off2(T.checked)}${T.checked?'  /* 2 · cambio suave (escena Transition) */':''}\n}\n.marco:hover img {\n  ${off(S.checked)}transform: scale(${R.value});${off2(S.checked)}${S.checked?'      /* 3 · crece (escena Transform) */':''}\n}`);}
+ [H,T,S,R].forEach(i=>i.addEventListener('input',upd));upd();}
+{const OPTS=[{t:'<code>.marco { overflow: hidden; }</code>',ok:true,css:'#p5prev .marco{overflow:hidden}'},{t:'<code>.marco img { overflow: hidden; }</code>',ok:false,css:'#p5prev .marco img{overflow:hidden}'},
+  {t:'<code>.marco img { transition: transform .5s; }</code>',ok:true,css:'#p5prev .marco img{transition:transform .5s}'},{t:'<code>.marco:hover { transform: scale(1.1); }</code>',ok:false,css:'#p5prev .marco:hover{transform:scale(1.1)}'},
+  {t:'<code>.marco:hover img { transform: scale(1.1); }</code>',ok:true,css:'#p5prev .marco:hover img{transform:scale(1.1)}'},{t:'<code>.marco img:hover { width: 110%; }</code>',ok:false,css:'#p5prev .marco img:hover{width:110%}'}];
+ const st=el('style');document.head.appendChild(st);$('#p5prev .marco img').style.cssText='display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover';
+ const L=checkList('#p5opts',OPTS,()=>{st.textContent=L.boxes.filter(b=>b.inp.checked).map(b=>b.o.css).join('\n');});
+ $('#p5go').onclick=()=>{const {bad,miss}=L.check();const r=$('#p5res');if(!bad&&!miss){r.className='res ok';r.textContent='¡Receta perfecta! Fragmento conseguido.';award(5);}
+  else{r.className='res ko';r.textContent=bad?'Alguna regla marcada no va en su sitio (mírala en rojo y pruébala en la tarjeta).':'Falta algún ingrediente: pasa el ratón por la tarjeta y mira qué no funciona.';}};}
+
+/* =================== simulador de pantalla (iframe con ancho controlado) =================== */
+let SID=0;const SIMS={};
+addEventListener('message',e=>{const d=e.data;if(d&&d.sim&&SIMS[d.sim])SIMS[d.sim](d);});
+function sim(host,html,css,startW,H){const id=++SID;let W=startW;const R=el('div','sim');
+ R.innerHTML=`<div class="sim-bar"><button type="button" data-w="375">Móvil · 375</button><button type="button" data-w="768">Tablet · 768</button><button type="button" data-w="1280">Escritorio · 1280</button><input type="range" min="300" max="1400" aria-label="Ancho de la ventana simulada"><output></output><button type="button" class="rl">↻ Recargar</button></div><div class="sim-view"><div class="sim-fit"><iframe title="Simulador de ventana"></iframe></div></div><div class="sim-read">Cargando…</div>`;
+ const ifr=$('iframe',R),fit=$('.sim-fit',R),view=$('.sim-view',R),rng=$('input',R),out=$('output',R),rd=$('.sim-read',R);
+ function layout(){const A=view.clientWidth-28,k=Math.min(1,A/W);fit.style.width=W*k+'px';fit.style.height=H*k+'px';ifr.style.width=W+'px';ifr.style.height=H+'px';ifr.style.transform=`scale(${k})`;rng.value=W;out.textContent=`${W}px de ancho`;
+  $$('button[data-w]',R).forEach(b=>b.classList.toggle('on',+b.dataset.w===W));}
+ function build(){const v=Date.now();const h=html.replace(/(media\/[\w.-]+\.(?:jpg|webp))/g,'$1?v='+v);
+  ifr.srcdoc=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui;background:#0b1715}${css}</style></head><body>${h}<script>function s(){var i=[].slice.call(document.images).map(function(x){return (x.currentSrc||'').split('/').pop().split('?')[0]});parent.postMessage({sim:${id},w:innerWidth,src:i},'*')}document.addEventListener('load',s,true);addEventListener('resize',function(){setTimeout(s,300)});s();<\/script></body></html>`;}
+ SIMS[id]=d=>{rd.textContent=`Ventana de ${d.w}px · el navegador ha elegido: ${d.src.join(', ')||'(cargando…)'}`;};
+ $$('button[data-w]',R).forEach(b=>b.onclick=()=>{W=+b.dataset.w;layout();});rng.oninput=()=>{W=+rng.value;layout();};$('.rl',R).onclick=build;
+ $(host).appendChild(R);new ResizeObserver(layout).observe(view);layout();build();}
+
+/* =================== SALA 6 =================== */
+sim('#picSim',`<picture><source media="(min-width: 700px)" srcset="media/escena-ancha.jpg"><img src="media/escena-alta.jpg" alt="Ciudad solarpunk" width="800" height="1100"></picture>`,'img{display:block;width:100%;height:auto}',375,520);
+{const i=$('#fmtImg');const show=()=>{const f=(i.currentSrc||'').split('/').pop();$('#fmtTxt').textContent=`Tu navegador ha elegido: ${f} ${f.endsWith('.webp')?'→ entiende WebP, así que se ahorra la mitad de los datos.':'→ no entiende WebP y usa el JPG de reserva.'}`;};
+ if(i.complete)show();else i.addEventListener('load',show);}
+put('#p6code',codeBox('html',`<picture>
+  <source media="(min-width: 700px)" srcset="media/escena-ancha.jpg">
+  <img src="media/escena-alta.jpg" alt="Ciudad solarpunk" width="800" height="1100">
+</picture>`,'HTML · el código de la prueba'));
+quizPrueba('#p6',6,[
+ {q:'Un móvil con una ventana de <b>400 px</b> de ancho. ¿Qué archivo descarga?',o:['escena-ancha.jpg','escena-alta.jpg','Los dos'],a:1,e:'400 no cumple "al menos 700": se salta el source y usa el img.'},
+ {q:'Un portátil con una ventana de <b>1200 px</b>. ¿Qué archivo descarga?',o:['escena-ancha.jpg','escena-alta.jpg','Ninguno'],a:0,e:'1200 cumple la condición: el primer source que se cumple gana. Solo se descarga ese.'},
+ {q:'Un navegador tan antiguo que no conoce <code>&lt;picture&gt;</code>.',o:['No muestra nada','escena-alta.jpg','escena-ancha.jpg'],a:1,e:'Ignora picture y source, pero entiende el img del final: por eso es obligatorio.'},
+ {q:'¿Qué atributo lleva el archivo en un <code>&lt;source&gt;</code> dentro de picture?',o:['src','srcset','href'],a:1,e:'En picture, los source usan <code>srcset</code>. Con src no funciona.'}]);
+
+/* =================== SALA 7: vídeo =================== */
+{const v=$('#vid');const C=$('#vC'),P=$('#vP'),L=$('#vL'),M=$('#vM'),T=$('#vT'),PR=$('#vPre');const cb=put('#vCode',codeBox('html','','HTML'));
+ function upd(){v.controls=C.checked;P.checked?v.setAttribute('poster','media/video-poster.jpg'):v.removeAttribute('poster');v.loop=L.checked;v.muted=M.checked;v.preload=PR.value;
+  if(v.textTracks[0])v.textTracks[0].mode=T.checked?'showing':'hidden';
+  const at=[C.checked&&'controls',P.checked&&'poster="media/video-poster.jpg"',`preload="${PR.value}"`,L.checked&&'loop',M.checked&&'muted'].filter(Boolean);
+  cb.set(`<video ${at.join(' ')}\n       width="960" height="540">\n  <!-- el navegador usa el primer formato que sepa reproducir -->\n  <source src="media/invernadero.webm" type="video/webm">\n  <source src="media/invernadero.mp4"  type="video/mp4">\n  <!-- subtítulos -->\n  <track src="media/invernadero-es.vtt" kind="subtitles" srclang="es" label="Español"${T.checked?' default':''}>\n  <!-- solo para navegadores muy antiguos -->\n  Tu navegador no puede reproducir este vídeo.\n</video>`);}
+ [C,P,L,M,T,PR].forEach(i=>i.addEventListener('change',upd));upd();
+ const info=()=>{$('#vTxt').textContent=`Archivo elegido: ${(v.currentSrc||'—').split('/').pop()} · duración: ${isFinite(v.duration)?v.duration.toFixed(1)+' s':'—'}`;};v.addEventListener('loadedmetadata',info);info();}
+{const OPTS=[{t:'<code>controls</code>',ok:true},{t:'<code>poster="portada.jpg"</code>',ok:true},{t:'Dos <code>&lt;source&gt;</code>: MP4 y WebM',ok:true},{t:'<code>&lt;track kind="captions" srclang="es" default&gt;</code>',ok:true},
+  {t:'<code>autoplay</code> (con sonido)',ok:false},{t:'<code>loop</code>',ok:false},{t:'<code>controls="false"</code>',ok:false}];
+ const L=checkList('#p7',OPTS);$('#p7go').onclick=()=>{const {bad,miss}=L.check();const r=$('#p7res');if(!bad&&!miss){r.className='res ok';r.textContent='¡Proyección lista! Fragmento conseguido.';award(7);}
+  else{r.className='res ko';r.textContent=(bad?'Sobra algo: un vídeo explicativo no debe arrancar solo ni repetirse sin fin. ':'')+(miss?'Falta algo para que sea accesible y funcione en todos los navegadores.':'');}};}
+
+/* =================== SALA 8: el móvil =================== */
+{const A=[['autoplay','autoplay'],['muted','muted'],['loop','loop'],['playsinline','playsinline'],['poster','poster'],['controls','controls']];const st={autoplay:false,muted:false,loop:false,playsinline:false,poster:false,controls:false};
+ const mv=$('#mVid'),mb=$('#movil'),msg=$('#mMsg'),cb=put('#mCode',codeBox('html','','HTML'));let done=false;
+ A.forEach(([k,t])=>{const l=el('label','sw',`<input type="checkbox"> ${t}`);$('input',l).onchange=e=>{st[k]=e.target.checked;upd();};$('#mT').appendChild(l);});
+ function say(c,t,d){mb.className='movil '+c;msg.innerHTML=`<b>${t}</b><span>${d}</span>`;}
+ function upd(){st.poster?mv.setAttribute('poster','media/video-poster.jpg'):mv.removeAttribute('poster');mv.controls=st.controls;let play=false;
+  if(!st.autoplay)say('ko','Quieto','Nadie le ha dicho que empiece: falta <code>autoplay</code>.');
+  else if(!st.muted)say('ko','Bloqueado','El navegador no reproduce solos los vídeos con sonido: falta <code>muted</code>.');
+  else if(!st.playsinline)say('ko','Pantalla completa','El iPhone lo abre a pantalla completa y tapa la web: falta <code>playsinline</code>.');
+  else if(!st.loop){say('warn','Casi','Arranca bien, pero a los 6 segundos se para: falta <code>loop</code>.');play=true;}
+  else if(!st.poster){say('warn','Casi','Funciona, pero mientras carga se ve un hueco negro: falta <code>poster</code>.');play=true;}
+  else if(st.controls){say('warn','Casi','Funciona, pero un vídeo de fondo decorativo no necesita los controles encima.');play=true;}
+  else{say('ok','¡Perfecto!','Arranca solo, en silencio, en su sitio y en bucle, con portada mientras carga.');play=true;if(!done){done=true;award(8);$('#p8res').className='res ok';$('#p8res').textContent='¡Vídeo de fondo perfecto! Fragmento conseguido.';}}
+  if(play){mv.preload='auto';mv.play().catch(()=>{});}else{mv.pause();mv.currentTime=0;}
+  const at=['autoplay','muted','loop','playsinline','controls'].filter(k=>st[k]);if(st.poster)at.push('poster="media/video-poster.jpg"');
+  cb.set(`<video ${at.join(' ')||'<!-- sin atributos -->'}>\n  <source src="media/invernadero.webm" type="video/webm">\n  <source src="media/invernadero.mp4" type="video/mp4">\n</video>`);}
+ upd();}
+
+/* =================== SALA 9: audio =================== */
+{const a=$('#aud'),C=$('#aC'),L=$('#aL'),PR=$('#aPre');const cb=put('#aCode',codeBox('html','','HTML'));
+ function upd(){a.controls=C.checked;a.loop=L.checked;a.preload=PR.value;
+  cb.set(`<audio${C.checked?' controls':''}${L.checked?' loop':''} preload="${PR.value}">\n  <!-- el más ligero primero: WebM con Opus (71 KB) -->\n  <source src="media/campanillas.webm" type="audio/webm">\n  <!-- reserva: WAV sin comprimir (345 KB) -->\n  <source src="media/campanillas.wav" type="audio/wav">\n  Tu navegador no puede reproducir audio.\n</audio>`+(C.checked?'':'\n<!-- ¡Ojo! Sin controls el audio queda invisible y no se puede usar -->'));}
+ [C,L,PR].forEach(i=>i.addEventListener('change',upd));upd();
+ const info=()=>{$('#aTxt').textContent=`Archivo elegido: ${(a.currentSrc||'—').split('/').pop()} · ${isFinite(a.duration)?a.duration.toFixed(1)+' s':''}`;};a.addEventListener('loadedmetadata',info);info();}
+quizPrueba('#p9',9,[
+ {q:'¿Qué archivo pesa menos con calidad parecida?',o:['WAV','WebM (Opus)','Pesan lo mismo'],a:1,e:'WAV va sin comprimir: nuestras campanillas pesan 345 KB en WAV y 71 KB en WebM.'},
+ {q:'¿Qué pasa si pones <code>&lt;audio autoplay&gt;</code> con sonido?',o:['Suena nada más entrar','El navegador lo bloquea','Suena más bajo'],a:1,e:'Los navegadores bloquean el autoplay con sonido. Y aunque no lo hicieran, molesta.'},
+ {q:'¿Por qué es tan importante <code>controls</code> en un audio?',o:['Porque sin controles no se ve ni se puede pausar','Porque mejora el sonido','No es importante'],a:0,e:'Un audio sin controls es invisible: no hay forma de reproducirlo ni de pararlo.'}]);
+
+/* =================== SALA 10: iframe =================== */
+put('#p10code',codeBox('html',`<iframe width="560" height="315" frameborder="0"
+        src="https://www.youtube.com/watch?v=aqz-KE-bpKQ">
+</iframe>`,'HTML · el iframe que te han pasado'));
+{const OPTS=[{t:'Añadir un <code>title</code> que describa el contenido',ok:true},{t:'Añadir <code>loading="lazy"</code>',ok:true},{t:'Cambiar la dirección a <code>/embed/aqz-KE-bpKQ</code>',ok:true},
+  {t:'Quitar <code>frameborder</code> y poner <code>border: 0</code> en el CSS',ok:true},{t:'Cambiar a <code>width="1920" height="1080"</code> para que se vea grande',ok:false},{t:'Añadir <code>autoplay=1</code> a la dirección para que empiece solo con sonido',ok:false}];
+ const L=checkList('#p10',OPTS);$('#p10go').onclick=()=>{const {bad,miss}=L.check();const r=$('#p10res');if(!bad&&!miss){r.className='res ok';r.textContent='¡Ventana reparada! Fragmento conseguido.';award(10);}
+  else{r.className='res ko';r.textContent=(bad?'Hay un cambio que empeora las cosas. ':'')+(miss?'Te falta algún arreglo.':'');}};}
+
+/* =================== SALA 11: rendimiento =================== */
+{const box=$('#lzBox');let run=0;
+ function go(mode){run++;const my=run,stamp=Date.now();let n=0,kb=0;box.innerHTML='';box.scrollTop=0;$('#lzN').textContent='0 / 12';$('#lzKB').textContent='0 KB';$('#lzMode').textContent=mode;
+  for(let i=1;i<=12;i++){const f=String(i).padStart(2,'0');const fig=el('figure');const im=new Image();im.loading=mode;im.width=900;im.height=600;im.alt=`Escena ${i} de la galería`;im.decoding='async';
+   im.onload=()=>{if(my!==run)return;n++;const e=performance.getEntriesByName(im.currentSrc).pop();kb+=e?(e.encodedBodySize||e.transferSize)/1024:0;$('#lzN').textContent=`${n} / 12`;$('#lzKB').textContent=Math.round(kb)+' KB';};
+   im.src=`media/galeria-${f}.jpg?v=${stamp}`;fig.append(im,el('figcaption','',`galeria-${f}.jpg · loading="${mode}"`));box.appendChild(fig);}}
+ $('#lzLazy').onclick=()=>go('lazy');$('#lzEager').onclick=()=>go('eager');}
+const SIZES={};
+async function head(f){try{const r=await fetch('media/'+f,{method:'HEAD',cache:'no-store'});const n=+r.headers.get('content-length');if(n)SIZES[f]=Math.round(n/1024);}catch(e){}return SIZES[f];}
+(async()=>{const files=['invernadero.jpg','invernadero.webp','cupula.jpg','cupula.webp','escena-ancha.jpg','escena-ancha.webp','torre-1600.jpg','torre-400.jpg'];
+ for(const f of files)await head(f);const max=Math.max(...files.map(f=>SIZES[f]||0),1);const B=$('#bars');
+ B.innerHTML=files.filter(f=>SIZES[f]).map(f=>`<div class="${f.endsWith('.jpg')?'jpg':''}"><span>${f}</span><i style="--p:${SIZES[f]/max*100}%"></i><b>${SIZES[f]} KB</b></div>`).join('')||'<p class="muted">Abre la página con Live Server para medir los archivos.</p>';
+ presu();})();
+sim('#srcSim',`<img src="media/torre-800.jpg" srcset="media/torre-400.jpg 400w, media/torre-800.jpg 800w, media/torre-1600.jpg 1600w" sizes="100vw" alt="Cúpula de vidrieras azul" width="1600" height="900">`,'img{display:block;width:100%;height:auto}',375,300);
+function presu(){const I=[{n:'Portada (arriba del todo)',f:'invernadero',hero:true},{n:'Foto de la galería 1',f:'cupula'},{n:'Foto de la galería 2',f:'escena-ancha'},{n:'Mapa de Google (iframe)',f:null,kb:480}];
+ const H=$('#presu');const BUD=60;let done=false;
+ H.innerHTML=I.map((it,i)=>`<div class="fila"><span>${it.n}</span>${it.f?`<select data-k="f" data-i="${i}"><option value="jpg">JPG</option><option value="webp">WebP</option></select>`:'<span class="muted">iframe</span>'}<select data-k="l" data-i="${i}"><option value="eager">eager (al abrir)</option><option value="lazy">lazy (al acercarse)</option></select><b class="kb" data-i="${i}"></b></div>`).join('');
+ function upd(){let total=0,heroLazy=false;I.forEach((it,i)=>{const f=it.f?$(`select[data-k=f][data-i="${i}"]`).value:null;const l=$(`select[data-k=l][data-i="${i}"]`).value;
+   const kb=it.f?(SIZES[`${it.f}.${f}`]||(f==='webp'?55:110)):it.kb;$(`.kb[data-i="${i}"]`).textContent=kb+' KB';if(l==='eager')total+=kb;if(it.hero&&l==='lazy')heroLazy=true;});
+  const m=$('#pMed');m.classList.toggle('over',total>BUD);$('i',m).style.width=Math.min(100,total/BUD*100)+'%';$('#pTxt').textContent=`Al abrir la página se descargan ${total} KB de un presupuesto de ${BUD} KB.`;
+  const r=$('#p11res');
+  if(heroLazy){r.className='res ko';r.textContent='La portada es lo primero que se ve: si es lazy, aparece tarde. Déjala en eager.';}
+  else if(total>BUD){r.className='res ko';r.textContent='Te pasas del presupuesto: ¿qué elementos no se ven al abrir? ¿Qué formato pesa menos?';}
+  else{r.className='res ok';r.textContent='¡Página ligera y portada inmediata! Fragmento conseguido.';if(!done){done=true;award(11);}}}
+ $$('select',H).forEach(s=>s.onchange=upd);upd();}
+
+/* =================== SALA 12 =================== */
+$('#mapVer').onchange=e=>$('#mapaIn').classList.toggle('ver',e.target.checked);
+{const c=$('#lienzo'),g=c.getContext('2d');const pts=Array.from({length:60},(_,i)=>({x:Math.random()*600,y:Math.random()*200,r:1+Math.random()*3,s:.2+Math.random()*.6,c:GLASS[i%6]}));
+ const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function frame(){g.fillStyle='rgba(8,18,16,.35)';g.fillRect(0,0,600,200);pts.forEach(p=>{p.y-=p.s;if(p.y<-5){p.y=205;p.x=Math.random()*600;}const gr=g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);gr.addColorStop(0,p.c);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(p.x,p.y,p.r*4,0,7);g.fill();});
+  g.fillStyle='#ffd27a';g.font='600 22px Cormorant Garamond, serif';g.fillText('Pintado con JavaScript',20,190);if(!still)requestAnimationFrame(frame);}
+ frame();}
+quizPrueba('#p12',12,[
+ {q:'El logo de la web: tiene que verse nítido en el móvil y en una pantalla 4K.',o:['canvas','svg','map'],a:1,e:'SVG es vectorial: nítido a cualquier tamaño.'},
+ {q:'Un minijuego que se dibuja y se mueve con JavaScript.',o:['canvas','object','svg'],a:0,e:'canvas es el lienzo donde pinta JavaScript.'},
+ {q:'Un plano del instituto en el que cada aula es un enlace.',o:['embed','map y area','figure'],a:1,e:'Zonas clicables en una imagen: map + area.'},
+ {q:'Mostrar un PDF con un enlace de descarga por si el navegador no puede mostrarlo.',o:['embed','object','img'],a:1,e:'object admite contenido alternativo dentro; embed no.'}]);
+
+/* =================== TALLER =================== */
+{const O={ratio:'4 / 3',fit:'cover',pos:'center',zoom:true,cap:true,lazy:true,round:true,webp:false};
+ const F=[['Proporción','ratio',['1 / 1','4 / 3','3 / 2','16 / 9']],['object-fit','fit',['cover','contain']],['object-position','pos',['center','left','right','top']]];
+ const T=[['zoom','Zoom al pasar el ratón'],['cap','Pie de foto (figcaption)'],['lazy','loading="lazy"'],['round','Esquinas redondeadas'],['webp','&lt;picture&gt; con WebP']];
+ const opts=$('#tOpts');
+ F.forEach(([lg,k,vals])=>{const fs=el('fieldset','',`<legend>${lg}</legend>`);const ch=el('div','chips');vals.forEach(v=>{const b=el('button','chip'+(O[k]===v?' on':''),v);b.type='button';b.onclick=()=>{O[k]=v;$$('.chip',ch).forEach(x=>x.classList.toggle('on',x===b));upd();};ch.appendChild(b);});fs.appendChild(ch);opts.appendChild(fs);});
+ const fs=el('fieldset','','<legend>Extras</legend>');T.forEach(([k,t])=>{const l=el('label','sw',`<input type="checkbox"${O[k]?' checked':''}> ${t}`);l.style.margin='6px 0';l.style.display='flex';$('input',l).onchange=e=>{O[k]=e.target.checked;upd();};fs.appendChild(l);});opts.appendChild(fs);
+ const st=el('style');document.head.appendChild(st);const hb=put('#tCode',codeBox('html','','HTML · galeria.html'));const cb=put('#tCode',codeBox('css','','CSS · estilos.css'));
+ const FOTOS=[['galeria-01','Cúpula de vidrieras entre torres azules'],['galeria-06','Árbol de luz en una noche estrellada'],['galeria-11','Girasol gigante al amanecer']];
+ function card(f,alt,i){const lz=O.lazy?' loading="lazy"':'';const img=`<img src="media/${f}.jpg" alt="${alt}" width="900" height="600"${lz}>`;
+  const pic=O.webp?`<picture>\n    <source srcset="media/${f}.webp" type="image/webp">  <!-- formato ligero (si existe) -->\n    ${img}\n  </picture>`:img;
+  return `<figure class="vidriera">\n  ${pic}\n${O.cap?`  <figcaption>${alt}</figcaption>\n`:''}</figure>`;}
+ function upd(){const html=`<!-- cada tarjeta: una figure con su imagen y su pie -->\n<div class="galeria">\n${FOTOS.map(([f,a],i)=>card(f,a,i).replace(/^/gm,'  ')).join('\n')}\n</div>`;
+  const css=`.galeria {\n  display: flex;                 /* Flexbox (bloque 2) */\n  flex-wrap: wrap;               /* bajan de línea si no caben */\n  gap: 16px;                     /* espacio entre tarjetas */\n}\n.vidriera {\n  flex: 1 1 220px;               /* crecen, encogen; ideal 220px */\n  margin: 0;                     /* figure trae margen: fuera */\n  border: 2px solid #d4a347;     /* marco de latón */\n${O.round?'  border-radius: 14px;           /* esquinas redondeadas */\n':''}${O.zoom||O.round?'  overflow: hidden;              /* recorta el zoom y las esquinas */\n':''}}\n.vidriera img {\n  display: block;                /* sin hueco debajo */\n  width: 100%;                   /* todo el ancho de la tarjeta */\n  height: auto;\n  aspect-ratio: ${O.ratio};${' '.repeat(Math.max(1,16-O.ratio.length))}/* la forma de todas las fotos */\n  object-fit: ${O.fit};${' '.repeat(Math.max(1,18-O.fit.length))}/* encajar sin deformar */\n  object-position: ${O.pos};${' '.repeat(Math.max(1,13-O.pos.length))}/* qué parte se ve */\n${O.zoom?'  transition: transform .5s ease; /* zoom suave */\n':''}}\n${O.zoom?'.vidriera:hover img {\n  transform: scale(1.1);         /* acercar al pasar el ratón */\n}\n':''}${O.cap?'.vidriera figcaption {\n  padding: 10px 14px;            /* aire alrededor del pie */\n}\n':''}`;
+  hb.set(html);cb.set(css);st.textContent=css.replace(/\/\*.*?\*\//g,'').replace(/(^|\})\s*([^{}]+)\{/g,(m,a,s)=>a+s.split(',').map(x=>'#tPrev '+x.trim()).join(',')+'{');
+  $('#tPrev').innerHTML=html.replace(/<!--.*?-->/g,'');}
+ upd();}
+
+/* =================== preguntas: errores y examen =================== */
+function qBlock(host,list,onScore){const h=$(host);const cards=[];
+ list.forEach((it,i)=>{const c=el('div','q');c.innerHTML=`<p class="qq">${i+1}. ${it.q}</p>`;if(it.code)c.appendChild(codeBox(it.lang||'html',it.code,it.lang==='css'?'CSS':'HTML'));
+  const order=it.o.map((_,k)=>k);for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+  const opts=el('div','opts');order.forEach(k=>{const l=el('label','opt');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${it.o[k]}</span>`;opts.appendChild(l);});
+  const ex=el('div','ex',it.e);c.append(opts,ex);
+  c.grade=()=>{$$('.opt',c).forEach(l=>{l.classList.remove('bien','mal');const inp=$('input',l);if(+inp.value===it.a)l.classList.add('bien');else if(inp.checked)l.classList.add('mal');});ex.classList.add('show');};
+  c.reset=()=>{$$('input',c).forEach(x=>x.checked=false);$$('.opt',c).forEach(l=>l.classList.remove('bien','mal'));ex.classList.remove('show');};
+  c.right=()=>{const s=$('input:checked',c);return !!s&&+s.value===it.a;};
+  opts.addEventListener('change',()=>{c.grade();onScore&&onScore();});cards.push(c);h.appendChild(c);});return cards;}
+
+qBlock('#fixes',[
+ {q:'El validador del W3C marca esta imagen como error.',code:'<img src="media/girasol.jpg">',o:['Falta el atributo alt','Falta la etiqueta de cierre </img>','La ruta debe empezar por /'],a:0,e:'<code>alt</code> es obligatorio. Si la imagen es decorativa, <code>alt=""</code>.'},
+ {q:'El lector de pantalla dice "foto" y no aporta nada.',code:'<img src="media/cupula.jpg" alt="foto">',o:['Hay que describir el contenido: alt="Cúpula de vidrieras iluminada de noche"','Hay que borrar el alt','Hay que poner alt="imagen"'],a:0,e:'El alt cuenta lo que la imagen muestra o la función que tiene.'},
+ {q:'Las fotos de la galería salen aplastadas.',lang:'css',code:'.galeria img {\n  width: 300px;\n  height: 300px;\n}',o:['Falta object-fit: cover;','Falta overflow: hidden;','Hay que quitar el height'],a:0,e:'Con ancho y alto forzados, el valor por defecto es <code>fill</code> y deforma. <code>object-fit: cover</code> recorta sin deformar.'},
+ {q:'En los avatares redondos se corta la cabeza de la gente.',lang:'css',code:'.avatar {\n  width: 120px;\n  aspect-ratio: 1 / 1;\n  object-fit: cover;\n  border-radius: 50%;\n}',o:['Falta object-position: top; (o un porcentaje vertical bajo)','Hay que cambiar cover por fill','Falta overflow: hidden'],a:0,e:'cover recorta por el centro. Si las caras están arriba, <code>object-position: top</code> (o <code>50% 20%</code>) mueve el encuadre.'},
+ {q:'Al pasar el ratón, la foto crece y se sale por encima de las tarjetas de al lado.',lang:'css',code:'.marco img { transition: transform .5s; }\n.marco:hover img { transform: scale(1.15); }',o:['Falta overflow: hidden; en .marco','Falta overflow: hidden; en img','Hay que bajar la escala a 1.01'],a:0,e:'El recorte lo hace el <b>marco</b>: <code>.marco { overflow: hidden; }</code>.'},
+ {q:'El navegador nunca muestra la versión WebP.',code:'<picture>\n  <source src="media/foto.webp" type="image/webp">\n  <img src="media/foto.jpg" alt="…">\n</picture>',o:['En source va srcset, no src','Falta cerrar </source>','El img tiene que ir el primero'],a:0,e:'Dentro de picture, los source usan <code>srcset</code>. Con src lo ignoran.'},
+ {q:'El vídeo de la portada no arranca solo.',code:'<video autoplay loop playsinline>\n  <source src="media/fondo.mp4" type="video/mp4">\n</video>',o:['Falta muted: sin él, el autoplay se bloquea','Falta controls','Hay que poner autoplay="true"'],a:0,e:'Los navegadores solo permiten el autoplay si el vídeo está silenciado.'},
+ {q:'En el iPhone, el vídeo de fondo se abre a pantalla completa.',code:'<video autoplay muted loop>\n  <source src="media/fondo.mp4" type="video/mp4">\n</video>',o:['Falta playsinline','Falta poster','Falta loop'],a:0,e:'<code>playsinline</code> hace que se reproduzca en su sitio.'},
+ {q:'Al cargar la página, el texto salta hacia abajo cuando aparecen las fotos.',code:'<img src="media/galeria-03.jpg" alt="Árbol de luz">',o:['Faltan width y height con el tamaño real del archivo','Falta loading="lazy"','Falta display: block'],a:0,e:'Con width y height, el navegador reserva el hueco antes de descargar.'},
+ {q:'La foto de portada aparece la última, con retraso.',code:'<img src="media/portada.jpg" alt="…" width="1600" height="900" loading="lazy">',o:['La imagen principal no debe ser lazy','Falta decoding="async"','Hay que bajar el width'],a:0,e:'Lazy hace esperar a la imagen. La portada la queremos ya: quita <code>loading="lazy"</code> (y añade <code>fetchpriority="high"</code> si quieres).'},
+ {q:'El vídeo de YouTube sale como una caja gris con un error.',code:'<iframe src="https://www.youtube.com/watch?v=aqz-KE-bpKQ" title="…"></iframe>',o:['Hay que usar la dirección /embed/aqz-KE-bpKQ','Falta allowfullscreen','Falta width="560"'],a:0,e:'La dirección de "ver" (watch?v=) no se puede incrustar. Usa la que da Compartir → Insertar.'},
+ {q:'Los subtítulos no aparecen, aunque el archivo .vtt existe y la página está en Live Server.',code:'<video controls>\n  <source src="media/clase.mp4" type="video/mp4">\n  <track src="media/clase.vtt" kind="subtitles" srclang="es" label="Español">\n</video>',o:['Falta default en el track para que salgan activados','La extensión debe ser .srt','track va fuera del video'],a:0,e:'Sin <code>default</code> los subtítulos existen pero están apagados: hay que activarlos en el menú del reproductor.'}]);
+
+{const Q=[
+ {q:'¿Qué atributo de <code>&lt;img&gt;</code> es obligatorio además de src?',o:['title','alt','width'],a:1,e:'alt, siempre. Vacío si es decorativa.'},
+ {q:'¿Para qué sirven <code>width</code> y <code>height</code> en el HTML de una imagen?',o:['Para cambiar el tamaño en pantalla','Para que el navegador reserve el hueco y la página no salte','Para comprimir la imagen'],a:1,e:'Dan la proporción antes de descargar. El tamaño visible lo controla el CSS.'},
+ {q:'¿Qué diferencia hay entre alt y figcaption?',o:['Ninguna','alt sustituye a la imagen si no se ve; figcaption es un pie visible para todos','figcaption es obligatorio'],a:1,e:'No deben repetir el mismo texto.'},
+ {q:'<code>aspect-ratio: 16 / 9</code> con <code>width: 320px</code>. ¿Cuánto mide de alto?',o:['180px','90px','320px'],a:0,e:'320 / 16 × 9 = 180.'},
+ {q:'¿Qué valor de object-fit rellena el marco recortando sin deformar?',o:['contain','fill','cover'],a:2,e:'cover: el más usado en galerías y avatares.'},
+ {q:'¿Y cuál muestra la imagen entera, aunque queden bandas vacías?',o:['contain','cover','none'],a:0,e:'contain: ideal para logos y planos.'},
+ {q:'<code>object-position: right</code> con <code>object-fit: cover</code>…',o:['Recorta por el lado derecho','Mantiene visible el lado derecho de la foto','Mueve la imagen fuera del marco'],a:1,e:'Pega la imagen al borde derecho: se recorta el lado izquierdo.'},
+ {q:'Para el zoom en tarjetas, ¿dónde va <code>overflow: hidden</code>?',o:['En la img','En el marco (figure)','En el body'],a:1,e:'El marco recorta lo que sobresale de la imagen al crecer.'},
+ {q:'En <code>&lt;picture&gt;</code>, ¿cuál de los source usa el navegador?',o:['El último','El primero que cumple su condición','Todos'],a:1,e:'De arriba abajo; el primero que se cumple gana. Si ninguno, el img.'},
+ {q:'¿Qué combinación hace que un vídeo de fondo arranque solo en todos los navegadores, también en el iPhone?',o:['autoplay controls','autoplay muted playsinline','autoplay loop'],a:1,e:'Sin muted se bloquea; sin playsinline, pantalla completa en iPhone. Y loop para el bucle.'},
+ {q:'¿Qué hace <code>preload="none"</code>?',o:['No descarga nada del vídeo hasta pulsar play','Descarga el vídeo entero','Quita la portada'],a:0,e:'Ahorra datos: ideal si hay muchos vídeos en la página.'},
+ {q:'¿Qué etiqueta conecta un archivo .vtt de subtítulos con el vídeo?',o:['&lt;source&gt;','&lt;track&gt;','&lt;caption&gt;'],a:1,e:'<code>&lt;track kind="subtitles" srclang="es" label="Español" default&gt;</code>.'},
+ {q:'¿Qué atributo es imprescindible en un iframe por accesibilidad?',o:['title','name','frameborder'],a:0,e:'El title dice qué hay dentro de la ventana.'},
+ {q:'¿En qué imagen <b>no</b> debes poner <code>loading="lazy"</code>?',o:['En la galería del final','En la imagen principal que se ve al entrar','En las miniaturas del pie'],a:1,e:'La portada tiene que aparecer cuanto antes.'},
+ {q:'En <code>srcset="foto-400.jpg 400w, foto-800.jpg 800w"</code>, ¿qué significa <code>400w</code>?',o:['Que la imagen se verá a 400px','Que ese archivo mide 400px de ancho','Que pesa 400 KB'],a:1,e:'w = ancho real del archivo. El navegador decide cuál descargar.'}];
+ const sc=$('#qScore');let cards;const upd=()=>{const n=cards.filter(c=>c.right()).length;sc.textContent=`${n} / ${Q.length}`;if(n>=12)award(13);};
+ cards=qBlock('#quiz',Q,upd);$('#qAll').onclick=()=>{cards.forEach(c=>c.grade());upd();};$('#qReset').onclick=()=>{cards.forEach(c=>c.reset());upd();};}
+})();
+</script>
+</body>
+</html>
