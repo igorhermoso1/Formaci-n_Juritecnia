@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selectores CSS · Edición Cómic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ============ PALETA: cuatricromía de imprenta (CMYK) + papel ============ */
+:root{
+  --papel:#fbf1dc; --papel2:#f1deb4; --blanco:#fffdf7;
+  --tinta:#16121b; --tinta2:#4b4352;
+  --amarillo:#ffd23f; --cian:#13a0dc; --magenta:#ea2e71;
+  --amarillo-s:#fff0b3; --cian-s:#d3eefa; --magenta-s:#fcd8e5;
+  --borde:3px solid var(--tinta);
+  --sombra:7px 7px 0 var(--tinta);
+  --f-comic:'Bangers',Impact,system-ui,sans-serif;
+  --f-txt:'Space Grotesk',system-ui,sans-serif;
+  --f-code:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --ink:var(--amarillo);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;background-color:var(--papel);color:var(--tinta);font:400 17px/1.65 var(--f-txt);
+  background-image:radial-gradient(rgba(22,18,27,.08) 1px,transparent 1.4px);background-size:12px 12px}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+code{font-family:var(--f-code);font-size:.86em;background:var(--amarillo-s);border:1.5px solid var(--tinta);padding:0 5px;border-radius:3px}
+b,strong{font-weight:700}
+.dots{background-image:radial-gradient(var(--dot,var(--tinta)) 30%,transparent 33%);background-size:10px 10px}
+
+/* ============ HERO / PORTADA ============ */
+.hero{position:relative;overflow:hidden;border-bottom:var(--borde);padding:46px 0 96px;isolation:isolate}
+.hero-band{position:absolute;z-index:-2;inset:0 0 0 50%;background:var(--magenta);clip-path:polygon(22% 0,100% 0,100% 100%,0 100%)}
+.hero-band::before{content:'';position:absolute;inset:0;background-image:radial-gradient(var(--tinta) 30%,transparent 34%);background-size:13px 13px;opacity:.4;
+  -webkit-mask-image:linear-gradient(210deg,#000 5%,transparent 75%);mask-image:linear-gradient(210deg,#000 5%,transparent 75%)}
+.hero-sun{position:absolute;z-index:-1;width:min(460px,70vw);aspect-ratio:1;border-radius:50%;right:-110px;bottom:-190px;border:var(--borde);
+  background-color:var(--cian);background-image:radial-gradient(var(--blanco) 26%,transparent 29%);background-size:14px 14px}
+.hero-rays{position:absolute;z-index:-3;inset:0;background:repeating-conic-gradient(from 0deg at 18% 60%,rgba(255,210,63,.35) 0 6deg,transparent 6deg 14deg)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center}
+.issue{display:inline-flex;flex-wrap:wrap;border:var(--borde);background:var(--blanco);box-shadow:4px 4px 0 var(--tinta);font:600 12.5px var(--f-code);text-transform:uppercase;letter-spacing:.06em}
+.issue span{padding:6px 11px;border-right:3px solid var(--tinta)}
+.issue span:first-child{background:var(--tinta);color:var(--amarillo)}
+.issue span:last-child{border-right:0}
+.title{font:400 clamp(76px,14.5vw,184px)/.84 var(--f-comic);letter-spacing:3px;margin:22px 0 14px}
+.title span{display:block;-webkit-text-stroke:4px var(--tinta);paint-order:stroke fill;text-shadow:8px 8px 0 var(--tinta)}
+.title .t1{color:var(--amarillo)}
+.title .t2{color:var(--cian);margin-left:.4em}
+.lead{font-size:clamp(18px,2vw,21px);max-width:560px;background:var(--blanco);border:var(--borde);padding:14px 18px;box-shadow:5px 5px 0 var(--tinta);margin:24px 0}
+.ctas{display:flex;flex-wrap:wrap;gap:14px}
+.cover{position:relative;background:var(--blanco);border:var(--borde);box-shadow:12px 12px 0 var(--tinta);padding:26px 24px 22px;transform:rotate(1.6deg)}
+.cover .cap{position:absolute;top:-17px;left:18px}
+.anat{margin-top:22px}
+.anat-code{font:600 clamp(20px,2.6vw,28px)/1.3 var(--f-code);background:var(--tinta);color:var(--papel);padding:16px 18px;border:var(--borde);white-space:nowrap;overflow-x:auto}
+.anat-code .k1{color:var(--amarillo)} .anat-code .k2{color:#7fd6f7} .anat-code .k3{color:#ff8db5}
+.anat-labels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.anat-labels div{border:var(--borde);padding:8px 10px;font:22px/1 var(--f-comic);letter-spacing:1px;box-shadow:3px 3px 0 var(--tinta)}
+.anat-labels small{display:block;font:500 13px/1.3 var(--f-txt);letter-spacing:0;margin-top:4px}
+.anat-labels .l1{background:var(--amarillo)} .anat-labels .l2{background:var(--cian)} .anat-labels .l3{background:var(--magenta);color:#fff}
+.burst{position:absolute;z-index:4;width:178px;aspect-ratio:1;display:grid;place-items:center;transform:rotate(-12deg)}
+.burst::before,.burst::after{content:'';position:absolute;inset:0;clip-path:polygon(50% 0%,61% 17%,79% 6%,77% 27%,98% 24%,85% 42%,100% 55%,81% 62%,91% 83%,69% 78%,63% 100%,50% 84%,36% 100%,30% 79%,9% 86%,18% 63%,0% 52%,16% 40%,3% 22%,24% 25%,22% 4%,39% 17%)}
+.burst::before{background:var(--tinta);transform:scale(1.07)}
+.burst::after{background:var(--amarillo)}
+.burst span{position:relative;z-index:1;font:31px/1 var(--f-comic);letter-spacing:1px;text-align:center}
+.hero .burst{right:44%;top:24px}
+.ticker{background:var(--tinta);color:var(--amarillo);border-bottom:var(--borde);overflow:hidden;white-space:nowrap;font:600 15px var(--f-code)}
+.ticker div{display:inline-block;padding:11px 0;animation:tick 48s linear infinite}
+.ticker i{font-style:normal;color:var(--magenta);margin:0 18px}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ============ NAVEGACIÓN ============ */
+.nav{position:sticky;top:0;z-index:60;background:var(--papel);border-bottom:var(--borde)}
+.nav-in{display:flex;align-items:center;gap:6px}
+.nav ul{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;list-style:none;margin:0;padding:10px 4px;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:flex;align-items:center;gap:7px;white-space:nowrap;text-decoration:none;color:var(--tinta);font:600 14px var(--f-txt);padding:4px 11px 4px 4px;border:2px solid var(--tinta);background:var(--blanco);transition:transform .15s,box-shadow .15s,background-color .15s}
+.nav a span{display:grid;place-items:center;min-width:24px;height:24px;background:var(--tinta);color:var(--amarillo);font:16px/1 var(--f-comic)}
+.nav a:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--tinta)}
+.nav a.on{background:var(--amarillo);box-shadow:3px 3px 0 var(--tinta)}
+.nav-arr{flex:none;width:34px;height:34px;border:2px solid var(--tinta);background:var(--blanco);font:20px var(--f-comic);cursor:pointer}
+.prog{position:absolute;left:0;bottom:-3px;height:5px;width:0;background:var(--magenta)}
+
+/* ============ CAPÍTULOS ============ */
+.sec{padding:76px 0 18px}
+.sec-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start;margin-bottom:30px}
+.num{position:relative;font:clamp(74px,11vw,132px)/.8 var(--f-comic);color:var(--ink);-webkit-text-stroke:3px var(--tinta);paint-order:stroke fill;text-shadow:6px 6px 0 var(--tinta);padding:10px 8px 0}
+.num::before{content:'';position:absolute;z-index:-1;inset:-6px -14px -14px -10px;border-radius:50%;background-image:radial-gradient(var(--ink) 32%,transparent 35%);background-size:9px 9px;opacity:.8}
+.cap{display:inline-block;background:var(--amarillo);border:var(--borde);padding:3px 12px;font:600 13px var(--f-code);text-transform:uppercase;letter-spacing:.07em;box-shadow:3px 3px 0 var(--tinta);margin:0 0 12px}
+.sec-head h2{font:400 clamp(42px,6.4vw,78px)/.95 var(--f-comic);letter-spacing:1.5px;margin:0 0 12px}
+.sec-head p{max-width:780px;margin:0;font-size:18.5px}
+.card{position:relative;background:var(--blanco);border:var(--borde);box-shadow:var(--sombra);padding:clamp(18px,3vw,34px);margin-bottom:30px}
+.card::before{content:'';position:absolute;top:0;right:0;width:150px;height:120px;pointer-events:none;background-image:radial-gradient(var(--ink) 32%,transparent 35%);background-size:10px 10px;opacity:.7;
+  -webkit-mask-image:linear-gradient(225deg,#000 5%,transparent 65%);mask-image:linear-gradient(225deg,#000 5%,transparent 65%)}
+.card > h3{font:400 clamp(28px,3.4vw,38px)/1.05 var(--f-comic);letter-spacing:1px;margin:0 0 12px;position:relative}
+.card > p,.card > ul{max-width:880px}
+.sub-h{font:400 27px/1.1 var(--f-comic);letter-spacing:1px;margin:34px 0 10px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.tile{background:var(--blanco);border:var(--borde);padding:14px 16px;box-shadow:4px 4px 0 var(--tinta)}
+.tile b{display:block;font:400 25px/1.05 var(--f-comic);letter-spacing:1px;margin-bottom:4px}
+.tile p{margin:0;font-size:15.5px}
+.tile.am{background:var(--amarillo-s)} .tile.ci{background:var(--cian-s)} .tile.ma{background:var(--magenta-s)}
+.glyph{display:grid;place-items:center;width:64px;height:64px;margin-bottom:10px;border:var(--borde);background:var(--tinta);color:var(--amarillo);font:44px/1 var(--f-code);box-shadow:3px 3px 0 var(--ink)}
+
+/* tira de 3 viñetas */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;border:var(--borde);background:var(--tinta);gap:3px;margin:20px 0}
+.strip > div{background:var(--blanco);padding:16px;position:relative;min-height:170px}
+.strip > div:nth-child(2){background:var(--cian-s)}
+.strip > div:nth-child(3){background:var(--amarillo-s)}
+.strip .cap{font-size:11.5px;margin-bottom:10px}
+.strip b{display:block;font:400 25px/1.05 var(--f-comic);letter-spacing:1px;margin-bottom:6px}
+.strip p{margin:0;font-size:15.5px}
+
+/* bocadillos (notas) */
+.note{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;background:var(--blanco);border:var(--borde);border-radius:28px;padding:16px 22px;margin:26px 0 30px 10px;box-shadow:4px 4px 0 var(--tinta)}
+.note::after{content:'';position:absolute;left:44px;bottom:-14px;width:24px;height:24px;background:var(--blanco);border-right:var(--borde);border-bottom:var(--borde);transform:rotate(45deg) skew(12deg,12deg)}
+.note .ono{font:400 24px/1 var(--f-comic);letter-spacing:1px;padding:7px 10px 5px;background:var(--amarillo);border:var(--borde);transform:rotate(-6deg);white-space:nowrap}
+.note.ojo .ono{background:var(--magenta);color:#fff}
+.note.info .ono{background:var(--cian)}
+.note p{margin:0}
+.note p + p{margin-top:8px}
+
+/* tablas */
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:15.5px;background:var(--blanco);border:var(--borde)}
+.tbl th{background:var(--tinta);color:var(--amarillo);font:400 19px var(--f-comic);letter-spacing:1px;text-align:left;padding:9px 12px}
+.tbl td{border-top:2px solid var(--tinta);padding:9px 12px;vertical-align:top}
+.tbl td:first-child{white-space:nowrap}
+.tbl-wrap{overflow-x:auto}
+
+/* botones */
+.btn{display:inline-flex;align-items:center;gap:8px;font:400 23px/1 var(--f-comic);letter-spacing:1.5px;color:var(--tinta);text-decoration:none;background:var(--amarillo);border:var(--borde);padding:12px 22px 10px;box-shadow:5px 5px 0 var(--tinta);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--tinta)}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--tinta)}
+.btn:focus-visible,.chip:focus-visible,.nav a:focus-visible{outline:3px dashed var(--magenta);outline-offset:3px}
+.btn.alt{background:var(--blanco)} .btn.ci{background:var(--cian)} .btn.ma{background:var(--magenta);color:#fff}
+.btn.sm{font-size:18px;padding:8px 14px 6px;box-shadow:3px 3px 0 var(--tinta)}
+
+/* ============ DEMOS DE SELECTORES ============ */
+.demo{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;margin:20px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 14px var(--f-code);color:var(--tinta);padding:7px 11px;background:var(--blanco);border:2px solid var(--tinta);box-shadow:3px 3px 0 var(--tinta);cursor:pointer;transition:transform .12s,box-shadow .12s,background-color .12s}
+.chip:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--tinta)}
+.chip.on{background:var(--amarillo);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--tinta)}
+.try{display:flex;flex-direction:column;gap:6px;margin:16px 0}
+.try > span{font:600 12px var(--f-code);text-transform:uppercase;letter-spacing:.08em}
+.inp{width:100%;font:600 16px var(--f-code);color:var(--tinta);padding:10px 12px;border:var(--borde);background:var(--blanco)}
+.inp:focus{outline:none;border-color:var(--cian);box-shadow:0 0 0 4px var(--cian-s)}
+.out{background:var(--papel);border:2px dashed var(--tinta);padding:14px 16px;min-height:96px}
+.out p{margin:6px 0 0;font-size:15.5px}
+.count{font:400 26px/1 var(--f-comic);letter-spacing:1px}
+.count b{color:var(--magenta);font-size:1.45em;-webkit-text-stroke:1.5px var(--tinta);paint-order:stroke fill;font-weight:400}
+.bad{color:#b0124a;font-weight:700}
+.muted{color:var(--tinta2)}
+
+/* el escenario: cada etiqueta es una caja con su nombre */
+.stage{background:var(--blanco);border:var(--borde);padding:14px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;overflow-x:auto;
+  background-image:linear-gradient(var(--papel) 1px,transparent 1px),linear-gradient(90deg,var(--papel) 1px,transparent 1px);background-size:20px 20px}
+.stage.stage *{all:unset;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:flex-start;align-content:flex-start;gap:6px;flex:1 1 auto;position:relative;
+  border:2px solid var(--tinta);border-radius:3px;padding:5px 9px 9px;background:var(--blanco);font:500 14.5px/1.35 var(--f-txt);color:var(--tinta);min-width:60px;
+  transition:background-color .25s,transform .25s,box-shadow .25s}
+.stage.stage *::before{content:attr(data-l);flex:0 0 100%;font:600 11.5px/1.3 var(--f-code);color:var(--tinta2);white-space:nowrap}
+.stage.stage [data-hit]{background-color:var(--amarillo);background-image:radial-gradient(rgba(234,46,113,.3) 28%,transparent 31%);background-size:8px 8px;box-shadow:4px 4px 0 var(--tinta);transform:translate(-2px,-2px)}
+.stage.stage [data-hit]::after{content:'¡ZAS!';position:absolute;top:-12px;right:-9px;font:400 15px/1 var(--f-comic);letter-spacing:1px;background:var(--magenta);color:#fff;padding:3px 6px 2px;border:2px solid var(--tinta);transform:rotate(9deg);z-index:2}
+/* modo familia */
+.stage.fam *{cursor:pointer}
+.stage.stage [data-rel]::after{content:attr(data-rel);position:absolute;top:-11px;right:-7px;font:600 11px/1 var(--f-code);padding:3px 6px;border:2px solid var(--tinta);background:var(--blanco);z-index:2}
+.stage.stage [data-rel="tú"]{background:var(--amarillo);box-shadow:4px 4px 0 var(--tinta)}
+.stage.stage [data-rel="tú"]::after{background:var(--tinta);color:var(--amarillo)}
+.stage.stage [data-rel="padre"]{background:var(--cian)}
+.stage.stage [data-rel="antepasado"]{background:var(--cian-s)}
+.stage.stage [data-rel="hijo"]{background:var(--magenta)}
+.stage.stage [data-rel="descendiente"]{background:var(--magenta-s)}
+.stage.stage [data-rel="hermano"]{background:var(--papel2)}
+.stage.stage [data-rel="hermano +"]{background:var(--papel2);border-style:dashed;border-width:3px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;font:600 12.5px var(--f-code)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:18px;height:18px;border:2px solid var(--tinta);display:inline-block}
+/* modo reto */
+.stage.stage [data-target]{outline:3px dashed var(--magenta);outline-offset:3px}
+.stage.game [data-hit]:not([data-target]){background-color:var(--magenta-s);background-image:none}
+.stage.game [data-hit]:not([data-target])::after{content:'¡UPS!';background:var(--tinta);color:var(--amarillo)}
+
+/* código */
+.code{border:var(--borde);background:#1d1822;color:#f4ead6;margin:16px 0;box-shadow:5px 5px 0 var(--ink)}
+.code .bar{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:var(--tinta);font:600 12px var(--f-code);color:var(--amarillo);text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid #000}
+.copy{font:600 12px var(--f-code);background:var(--amarillo);color:var(--tinta);border:2px solid #000;padding:2px 9px;cursor:pointer}
+.copy.ok{background:var(--cian)}
+.code pre{margin:0;padding:14px 16px;overflow-x:auto;font:500 14px/1.62 var(--f-code);tab-size:2}
+.code .s{color:#ffd23f}.code .p{color:#7fd6f7}.code .v{color:#ff8db5}.code .c{color:#a497b0;font-style:italic}.code .t{color:#ffd23f}
+
+/* nth */
+.nt{border-collapse:collapse;width:100%;font:500 14px var(--f-code);margin-top:10px;background:var(--blanco)}
+.nt td{border:2px solid var(--tinta);padding:5px 8px}
+.nt tr.ok td{background:var(--amarillo-s)}
+.nt tr.ok td:last-child{font-weight:700}
+
+/* ============ DEMOS EN VIVO ============ */
+.live{border:var(--borde);background:var(--papel);padding:22px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:14px 0}
+.lv-btn{font:400 26px/1 var(--f-comic);letter-spacing:1.5px;color:var(--tinta);padding:12px 28px 10px;background:var(--amarillo);border:3px solid var(--tinta);box-shadow:5px 5px 0 var(--tinta);cursor:pointer;transition:transform .15s,box-shadow .15s,background-color .15s}
+.lv-btn:hover{background-color:var(--cian);transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--tinta)}
+.lv-btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--tinta)}
+.lv-btn:focus-visible{outline:4px dashed var(--magenta);outline-offset:5px}
+.lv-field{display:flex;flex-direction:column;gap:4px;flex:1 1 220px;font:600 13px var(--f-code)}
+.lv-in{font:500 16px var(--f-txt);padding:10px 12px;border:3px solid var(--tinta);background:var(--blanco);color:var(--tinta);transition:border-color .2s,box-shadow .2s,background-color .2s}
+.lv-in:focus{outline:none;border-color:var(--cian);box-shadow:0 0 0 5px var(--cian-s)}
+.lv-in:placeholder-shown{background:var(--papel2)}
+.lv-in:not(:placeholder-shown):invalid{border-color:var(--magenta);background:var(--magenta-s)}
+.lv-in:not(:placeholder-shown):valid{border-color:var(--cian);background:var(--cian-s)}
+.lv-in:disabled{opacity:.45;cursor:not-allowed;border-style:dashed}
+.lv-chk{width:22px;height:22px;accent-color:var(--magenta)}
+.lv-lbl{font:400 22px/1 var(--f-comic);letter-spacing:1px;padding:10px 16px 8px;border:3px solid var(--tinta);background:var(--blanco);cursor:pointer;transition:background-color .2s,transform .2s}
+.lv-chk:checked + .lv-lbl{background:var(--magenta);color:#fff;transform:rotate(-3deg) scale(1.06)}
+.lv-target{padding:14px 18px;border:3px dashed var(--tinta);background:var(--blanco);transition:background-color .3s,transform .3s}
+.lv-target:target{background:var(--amarillo);border-style:solid;transform:rotate(-2deg);box-shadow:6px 6px 0 var(--tinta)}
+.lv-carta{display:flex;flex-direction:column;gap:8px;width:170px;padding:14px;border:3px solid var(--tinta);background:var(--blanco);cursor:pointer;transition:transform .2s,background-color .2s,box-shadow .2s}
+.lv-carta b{font:400 26px/1 var(--f-comic);letter-spacing:1px}
+.lv-carta:has(input:checked){background:var(--amarillo);transform:rotate(-2deg) translateY(-6px);box-shadow:6px 6px 0 var(--tinta)}
+.ns-carta{width:220px;padding:14px;border:3px solid var(--tinta);background:var(--blanco);transition:transform .2s;
+  & h4{font:400 26px/1 var(--f-comic);letter-spacing:1px;margin:0 0 6px}
+  & .precio{color:var(--magenta);font-weight:700}
+  &:hover{transform:rotate(-2deg) scale(1.04)}
+}
+/* pseudo-elementos */
+.pe-historia{max-width:620px;margin:0;font-size:17px}
+.pe-historia::first-letter{font:400 300%/1 var(--f-comic);color:var(--magenta)}
+.pe-historia::first-line{font-weight:700}
+.pe-cita{font-style:italic;font-size:19px}
+.pe-cita::before{content:"«";color:var(--cian);font-weight:700}
+.pe-cita::after{content:"»";color:var(--cian);font-weight:700}
+.pe-nuevo{position:relative;padding:12px 18px;border:3px solid var(--tinta);background:var(--blanco);font-weight:600}
+.pe-nuevo::after{content:"¡NUEVO!";position:absolute;top:-14px;right:-14px;font:400 16px/1 var(--f-comic);letter-spacing:1px;background:var(--magenta);color:#fff;padding:5px 7px 3px;border:2px solid var(--tinta);transform:rotate(10deg)}
+.pe-lista{margin:0}
+.pe-lista li::marker{content:"★ ";color:var(--magenta)}
+.pe-in{font:500 16px var(--f-txt);padding:10px 12px;border:3px solid var(--tinta);background:var(--blanco)}
+.pe-in::placeholder{color:var(--magenta);font-style:italic}
+.pe-sel::selection{background:var(--amarillo);color:var(--tinta)}
+/* herencia */
+.her-padre{border:2px dashed var(--tinta2);padding:14px;background:var(--papel);display:flex;flex-direction:column;gap:10px;transition:all .25s}
+.her-padre h4{margin:0}
+.her-padre p{margin:0}
+.her-caja{background:var(--blanco);border:2px solid var(--tinta);padding:8px}
+.her-list{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.her-list li{border:2px solid var(--tinta);padding:8px 12px;background:var(--blanco);font-size:15px}
+.her-list li b{font-family:var(--f-code)}
+.yes{color:#0b6e98;font-weight:700} .no{color:#b0124a;font-weight:700}
+
+/* especificidad */
+.board{display:inline-flex;border:var(--borde);box-shadow:3px 3px 0 var(--tinta);vertical-align:middle}
+.board span{display:flex;flex-direction:column;align-items:center;min-width:58px;padding:4px 6px 2px;background:var(--tinta);color:var(--amarillo);font:400 30px/1 var(--f-comic);border-right:2px solid var(--papel2)}
+.board span:last-child{border-right:0}
+.board small{font:600 9.5px var(--f-code);letter-spacing:.06em;color:var(--papel);margin-top:2px}
+.board span:nth-child(1){color:#ff8db5} .board span:nth-child(2){color:#7fd6f7}
+.sp-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:14px;border:2px solid var(--tinta);background:var(--blanco);margin-top:12px}
+.sp-row.best{background:var(--amarillo-s);box-shadow:4px 4px 0 var(--tinta)}
+.sp-sel{font:600 16px var(--f-code);flex:1 1 200px}
+.sp-parts{display:flex;flex-wrap:wrap;gap:5px;flex-basis:100%}
+.sp-parts span{font:600 12.5px var(--f-code);padding:2px 7px;border:2px solid var(--tinta)}
+.k-a{background:var(--magenta-s)} .k-b{background:var(--cian-s)} .k-c{background:var(--amarillo-s)} .k-0{background:var(--papel2)}
+.steps3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;counter-reset:st}
+.battle{border:var(--borde);background:var(--blanco);box-shadow:5px 5px 0 var(--tinta);padding:18px;margin:18px 0}
+.battle .who{font:600 14px var(--f-code);margin:0 0 12px}
+.fighters{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center}
+.vs{font:400 54px/1 var(--f-comic);color:var(--magenta);-webkit-text-stroke:2px var(--tinta);paint-order:stroke fill;transform:rotate(-8deg);text-align:center}
+.fighter{display:flex;flex-direction:column;gap:8px;text-align:left;font:inherit;color:inherit;border:var(--borde);padding:12px;background:var(--papel);cursor:pointer;transition:transform .15s,background-color .2s,opacity .2s}
+.fighter:hover{transform:translate(-2px,-2px)}
+.fighter pre{margin:0;font:600 14px/1.5 var(--f-code);white-space:pre-wrap}
+.fighter .tagf{font:400 20px/1 var(--f-comic);letter-spacing:1px}
+.fighter.win{background:var(--amarillo);box-shadow:5px 5px 0 var(--tinta)}
+.fighter.lose{opacity:.5}
+.verdict{display:none;margin-top:14px;padding:12px 14px;border-left:6px solid var(--cian);background:var(--papel)}
+.verdict.show{display:block}
+.verdict .prev{display:inline-block;font:400 26px/1 var(--f-comic);letter-spacing:1px;padding:6px 12px 4px;border:2px solid var(--tinta);background:var(--blanco);margin-bottom:8px}
+
+/* reto */
+.lvls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.lvls button{width:36px;height:36px;border:2px solid var(--tinta);background:var(--blanco);font:400 19px/1 var(--f-comic);cursor:pointer;color:var(--tinta)}
+.lvls button.done{background:var(--cian)}
+.lvls button.cur{background:var(--amarillo);box-shadow:3px 3px 0 var(--tinta);transform:translate(-1px,-1px)}
+.mission{font:400 clamp(26px,3vw,34px)/1.05 var(--f-comic);letter-spacing:1px;margin:4px 0 6px}
+.game-st{margin-top:12px;font-weight:600}
+.win{display:none;align-items:center;gap:18px;margin-top:14px;padding:14px;border:var(--borde);background:var(--amarillo);box-shadow:5px 5px 0 var(--tinta)}
+.win.show{display:flex;flex-wrap:wrap}
+.win .burst{position:relative;width:118px}
+.win .burst span{font-size:24px}
+
+/* test / errores */
+.q{border:var(--borde);background:var(--blanco);padding:18px;margin-bottom:20px;box-shadow:4px 4px 0 var(--tinta)}
+.qq{font-weight:600;margin:0 0 8px;font-size:17.5px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:2px solid var(--tinta);margin-top:8px;cursor:pointer;background:var(--papel);transition:background-color .15s}
+.opt:hover{background:var(--amarillo-s)}
+.opt input{accent-color:var(--tinta);margin-top:6px;flex:none}
+.opt.right{background:var(--cian-s);border-color:#0b6e98}
+.opt.right::after{content:'✓';margin-left:auto;font-weight:700;color:#0b6e98}
+.opt.wrong{background:var(--magenta-s)}
+.opt.wrong::after{content:'✗';margin-left:auto;font-weight:700;color:#b0124a}
+.ex{display:none;margin-top:12px;padding:12px 14px;border-left:6px solid var(--cian);background:var(--papel)}
+.ex.show{display:block}
+.scorebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px;font:400 28px/1 var(--f-comic);letter-spacing:1px}
+
+/* chuleta */
+.sheet-wrap{overflow-x:auto;border:var(--borde);box-shadow:var(--sombra);background:var(--blanco)}
+.sheet{border-collapse:collapse;width:100%;min-width:760px;font-size:15px}
+.sheet th{background:var(--tinta);color:var(--amarillo);font:400 19px var(--f-comic);letter-spacing:1px;text-align:left;padding:10px 12px}
+.sheet td{border-top:2px solid var(--tinta);padding:8px 12px;vertical-align:top}
+.sheet td:first-child{font:600 14px var(--f-code);white-space:nowrap}
+.sheet tr.grp td{background:var(--amarillo);font:400 21px var(--f-comic);letter-spacing:1px}
+.sheet tr:nth-child(even):not(.grp) td{background:var(--papel)}
+
+footer{margin-top:70px;background:var(--tinta);color:var(--papel);border-top:var(--borde);padding:46px 0;position:relative;overflow:hidden}
+footer::before{content:'';position:absolute;inset:0 0 0 55%;background-image:radial-gradient(var(--magenta) 30%,transparent 34%);background-size:14px 14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000);mask-image:linear-gradient(90deg,transparent,#000)}
+footer .wrap{position:relative;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+footer .fin{font:400 clamp(64px,10vw,124px)/.85 var(--f-comic);color:var(--amarillo);-webkit-text-stroke:2px var(--papel);paint-order:stroke fill;letter-spacing:3px}
+footer p{margin:6px 0 0}
+
+/* aparición al hacer scroll */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+html:not(.js) .reveal{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero-band{inset:0 0 0 25%;opacity:.55}
+  .hero .burst{right:10px;top:10px;width:130px}
+  .hero .burst span{font-size:23px}
+  .cover{transform:none}
+  .demo{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .sec-head{grid-template-columns:1fr;gap:6px}
+  .fighters{grid-template-columns:1fr}
+  .anat-labels div{font-size:18px}
+  .note{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- =================== PORTADA =================== -->
+<header class="hero" id="inicio">
+  <div class="hero-rays"></div><div class="hero-band"></div><div class="hero-sun"></div>
+  <div class="burst"><span>¡APUNTA<br>Y DISPARA!</span></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="issue"><span>CSS Comics</span><span>N.º 7</span><span>Edición especial</span></div>
+      <h1 class="title"><span class="t1">SELEC</span><span class="t2">TORES</span></h1>
+      <p class="lead">El CSS solo pinta a quien le señalas. El <b>selector</b> es el dedo que apunta: elige qué etiquetas reciben los estilos. En este número aprenderás a apuntar a <b>cualquier</b> elemento de una página… sin fallar ni un tiro.</p>
+      <div class="ctas"><a class="btn" href="#que">¡Empezar!</a><a class="btn alt" href="#reto">Ir directo al reto</a></div>
+    </div>
+    <div class="cover">
+      <span class="cap">La anatomía de una regla</span>
+      <div class="anat">
+        <div class="anat-code"><span class="k1">.heroe</span> { <span class="k2">color</span>: <span class="k3">crimson</span>; }</div>
+        <div class="anat-labels">
+          <div class="l1">Selector<small>¿A quién?</small></div>
+          <div class="l2">Propiedad<small>¿Qué cambio?</small></div>
+          <div class="l3">Valor<small>¿Cómo queda?</small></div>
+        </div>
+      </div>
+      <div class="note info" style="margin:26px 0 6px 0"><div class="ono">¡EH, TÚ!</div><p>Hasta ahora has escrito muchas <b>propiedades</b> (flex, transition, position…). Hoy toca la otra mitad de la regla: la parte de la <b>izquierda</b>.</p></div>
+    </div>
+  </div>
+</header>
+<div class="ticker" aria-hidden="true"><div id="ticker"></div></div>
+
+<nav class="nav" aria-label="Capítulos">
+  <div class="wrap nav-in">
+    <button class="nav-arr" id="navL" type="button" aria-label="Capítulos anteriores">‹</button>
+    <ul id="navUl"></ul>
+    <button class="nav-arr" id="navR" type="button" aria-label="Capítulos siguientes">›</button>
+  </div>
+  <div class="prog" id="prog"></div>
+</nav>
+
+<main class="wrap">
+
+<!-- 1 =================================================================== -->
+<section class="sec" id="que" data-nav="Qué es" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">01</div><div><p class="cap">Origen del héroe</p><h2>¿Qué es un selector?</h2><p>Toda regla CSS tiene dos mitades: <b>a quién</b> se aplica y <b>qué</b> se le aplica. El selector es la primera mitad: un patrón que el navegador compara con cada etiqueta del HTML.</p></div></div>
+  <div class="card reveal">
+    <h3>El director de la viñeta</h3>
+    <p>Imagina que el HTML es una página de cómic llena de personajes y el CSS es el director que da órdenes: <i>«¡Tú, el del sombrero rojo, ponte azul!»</i>. El selector es ese <b>«tú, el del sombrero rojo»</b>: no nombra a un personaje concreto, describe un <b>patrón</b>. Todos los que cumplan el patrón obedecen la orden.</p>
+    <div class="strip">
+      <div><span class="cap">Viñeta 1</span><b>Lee el HTML</b><p>El navegador recorre el HTML y monta un <b>árbol</b> con todas las etiquetas: quién está dentro de quién.</p></div>
+      <div><span class="cap">Viñeta 2</span><b>Busca coincidencias</b><p>Para cada regla, comprueba etiqueta por etiqueta si <b>encaja</b> con el selector. A eso se le llama <i>hacer match</i>.</p></div>
+      <div><span class="cap">Viñeta 3</span><b>Pinta a los elegidos</b><p>Solo las etiquetas que encajan reciben las propiedades. Pueden ser una, cien… o <b>ninguna</b>.</p></div>
+    </div>
+    <pre class="src" data-lang="html" data-title="HTML">&lt;h2 class="heroe"&gt;Pixel&lt;/h2&gt;
+&lt;p class="heroe"&gt;Byte&lt;/p&gt;
+&lt;p&gt;Un ciudadano cualquiera&lt;/p&gt;</pre>
+    <pre class="src" data-lang="css" data-title="CSS">.heroe { color: crimson; }   /* 2 coincidencias: el h2 y el primer p */
+.villano { color: purple; }  /* 0 coincidencias: nadie tiene esa clase */</pre>
+    <div class="note ojo"><div class="ono">¡OJO!</div><p>Si un selector no encaja con nadie, <b>CSS no avisa</b>: no hay error, simplemente no pasa nada. Por eso, cuando un estilo "no funciona", lo primero que hay que sospechar es del selector.</p></div>
+    <h4 class="sub-h">El vocabulario que usaremos</h4>
+    <div class="g3">
+      <div class="tile am"><b>Regla</b><p>Selector + llaves con declaraciones: <code>.heroe { color: crimson; }</code></p></div>
+      <div class="tile ci"><b>Declaración</b><p>Cada pareja <code>propiedad: valor;</code> dentro de las llaves.</p></div>
+      <div class="tile ma"><b>Coincidir</b><p>Una etiqueta <i>coincide</i> (hace <i>match</i>) cuando cumple el patrón del selector.</p></div>
+      <div class="tile"><b>Combinador</b><p>Símbolo que une dos selectores: espacio, <code>&gt;</code>, <code>+</code> o <code>~</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 =================================================================== -->
+<section class="sec" id="familia" data-nav="La familia" style="--ink:var(--cian)">
+  <div class="sec-head reveal"><div class="num">02</div><div><p class="cap">Árbol genealógico</p><h2>La familia del HTML</h2><p>Antes de apuntar hay que saber cómo se relacionan las etiquetas. El HTML es un <b>árbol genealógico</b>: cada etiqueta que está <b>dentro</b> de otra es su hija. Muchos selectores hablan de familia: padre, hijo, hermano…</p></div></div>
+  <div class="card reveal">
+    <h3>Pulsa cualquier caja</h3>
+    <p>Cada caja es una etiqueta (arriba tienes su nombre). Pulsa una y verás quién es su <b>padre</b>, sus <b>hijos</b>, sus <b>hermanos</b> y el resto de la familia.</p>
+    <div class="demo">
+      <div><div id="famStage"></div>
+        <div class="legend"><span><i style="background:var(--amarillo)"></i>tú</span><span><i style="background:var(--cian)"></i>padre</span><span><i style="background:var(--cian-s)"></i>antepasado</span><span><i style="background:var(--magenta)"></i>hijo</span><span><i style="background:var(--magenta-s)"></i>descendiente</span><span><i style="background:var(--papel2)"></i>hermano</span><span><i style="background:var(--papel2);border-style:dashed"></i>hermano + (el siguiente)</span></div>
+      </div>
+      <div class="out" id="famOut"><p class="muted">Pulsa una caja del escenario.</p></div>
+    </div>
+    <div id="famCode"></div>
+    <h4 class="sub-h">Los parentescos</h4>
+    <div class="g3">
+      <div class="tile ci"><b>Padre</b><p>La etiqueta que te contiene <b>directamente</b>. Cada etiqueta tiene un solo padre.</p></div>
+      <div class="tile ma"><b>Hijos</b><p>Las etiquetas que están justo dentro, <b>un nivel</b> por debajo.</p></div>
+      <div class="tile am"><b>Hermanos</b><p>Hijos del <b>mismo padre</b>. Están al mismo nivel, uno detrás de otro.</p></div>
+      <div class="tile"><b>Descendientes</b><p>Todo lo que hay dentro, a <b>cualquier profundidad</b>: hijos, nietos, bisnietos…</p></div>
+      <div class="tile"><b>Antepasados</b><p>Padre, abuelo, bisabuelo… hasta llegar a <code>&lt;html&gt;</code>.</p></div>
+    </div>
+    <div class="note ojo"><div class="ono">¡OJO!</div><p>En CSS los hermanos se miran <b>hacia abajo</b>: los selectores de hermanos solo alcanzan a los que vienen <b>después</b>. Para mirar hacia arriba (al padre o al hermano anterior) existe un selector moderno, <code>:has()</code>, que verás en el capítulo 8.</p></div>
+  </div>
+</section>
+
+<!-- 3 =================================================================== -->
+<section class="sec" id="basicos" data-nav="Básicos" style="--ink:var(--amarillo)">
+  <div class="sec-head reveal"><div class="num">03</div><div><p class="cap">El equipo titular</p><h2>Selectores básicos</h2><p>Los seis que usarás todos los días. Con ellos apuntas por <b>nombre de etiqueta</b>, por <b>clase</b> o por <b>id</b>.</p></div></div>
+  <div class="card reveal">
+    <h3>Los seis básicos</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>Selector</th><th>Nombre</th><th>¿A quién apunta?</th></tr>
+      <tr><td><code>*</code></td><td>Universal</td><td>A <b>todas</b> las etiquetas.</td></tr>
+      <tr><td><code>p</code></td><td>De tipo (etiqueta)</td><td>A todas las etiquetas <code>&lt;p&gt;</code>. Se escribe el nombre tal cual.</td></tr>
+      <tr><td><code>.grito</code></td><td>De clase</td><td>A todas las que tengan <code>class="grito"</code>. Empieza por <b>punto</b>.</td></tr>
+      <tr><td><code>#portada</code></td><td>De id</td><td>Al <b>único</b> elemento con <code>id="portada"</code>. Empieza por <b>almohadilla</b>.</td></tr>
+      <tr><td><code>h3, footer</code></td><td>Agrupación</td><td>A los h3 <b>y</b> a los footer. La coma junta varios selectores en una sola regla.</td></tr>
+      <tr><td><code>p.grito</code></td><td>Compuesto</td><td>A los <code>&lt;p&gt;</code> que <b>además</b> tengan la clase grito. Todo pegado, <b>sin espacios</b>.</td></tr>
+    </table></div>
+    <p>Pruébalos. Pulsa cada selector y mira a quién le cae el <b>¡ZAS!</b>. También puedes escribir el tuyo.</p>
+    <div id="dBasic"></div>
+    <div class="g2">
+      <div class="note"><div class="ono">¡IDEA!</div><div><p>Una etiqueta puede tener <b>varias clases</b> separadas por espacios: <code>class="vineta especial"</code>. Tiene la clase <code>vineta</code> <b>y</b> la clase <code>especial</code>. Para exigir las dos: <code>.vineta.especial</code> (pegadas).</p></div></div>
+      <div class="note info"><div class="ono">¿CLASE O ID?</div><div><p>La clase se puede repetir; el id es <b>único</b> en la página. Para dar estilos usa casi siempre <b>clases</b>: el id "pesa" muchísimo y luego cuesta pisarlo (capítulo 11).</p></div></div>
+    </div>
+    <div class="note ojo"><div class="ono">¡OJO AL ESPACIO!</div><div><p><code>p.grito</code> y <code>p .grito</code> son selectores <b>distintos</b>. Sin espacio: "un p que tiene la clase grito". Con espacio: "algo con clase grito que está <b>dentro</b> de un p". Pruébalo arriba: el segundo no encuentra a nadie.</p><p>Y recuerda: los nombres de clase distinguen mayúsculas. <code>.Grito</code> no es <code>.grito</code>.</p></div></div>
+  </div>
+</section>
+
+<!-- 4 =================================================================== -->
+<section class="sec" id="combinadores" data-nav="Combinadores" style="--ink:var(--cian)">
+  <div class="sec-head reveal"><div class="num">04</div><div><p class="cap">El equipo se une</p><h2>Combinadores</h2><p>Un combinador une dos selectores y dice qué <b>parentesco</b> tiene que haber entre ellos. Siempre se aplica el estilo al <b>último</b> selector de la cadena.</p></div></div>
+  <div class="card reveal">
+    <h3>Los cuatro combinadores</h3>
+    <div class="g2">
+      <div class="tile"><div class="glyph">␣</div><b>Descendiente · <code>A B</code></b><p>Un espacio. B que esté <b>dentro</b> de A, a cualquier profundidad (hijo, nieto…). <code>.vineta p</code></p></div>
+      <div class="tile"><div class="glyph">&gt;</div><b>Hijo directo · <code>A &gt; B</code></b><p>B que sea <b>hijo inmediato</b> de A. Los nietos no cuentan. <code>.vineta &gt; p</code></p></div>
+      <div class="tile"><div class="glyph">+</div><b>Hermano adyacente · <code>A + B</code></b><p>El B que va <b>justo después</b> de A, pegado y con el mismo padre. Solo uno. <code>h3 + p</code></p></div>
+      <div class="tile"><div class="glyph">~</div><b>Hermanos generales · <code>A ~ B</code></b><p><b>Todos</b> los B que vienen después de A, con el mismo padre, aunque haya otros en medio. <code>h3 ~ p</code></p></div>
+    </div>
+    <p style="margin-top:22px">Fíjate en este escenario: hay párrafos a distintas profundidades. Compara <code>.vineta p</code> con <code>.vineta &gt; p</code>, y <code>h3 + p</code> con <code>h3 ~ p</code>.</p>
+    <div id="dComb"></div>
+    <div class="note"><div class="ono">¡TRUCO!</div><div><p>Léelos <b>de derecha a izquierda</b>, como hace el navegador. <code>.vineta &gt; p</code> = "un <b>p</b>… cuyo padre es <b>.vineta</b>". <code>h3 + p</code> = "un <b>p</b>… que tiene justo delante un <b>h3</b>". El último siempre es el que se pinta.</p></div></div>
+    <div class="note info"><div class="ono">ESPACIOS</div><div><p>Alrededor de <code>&gt;</code>, <code>+</code> y <code>~</code> los espacios son opcionales: <code>.vineta&gt;p</code> funciona igual. Pero en el descendiente el espacio <b>es</b> el combinador: si lo quitas, cambias el selector.</p><p>Y se pueden encadenar: <code>article &gt; .vineta p</code> = "p dentro de una .vineta que es hija de article".</p></div></div>
+  </div>
+</section>
+
+<!-- 5 =================================================================== -->
+<section class="sec" id="atributos" data-nav="Atributos" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">05</div><div><p class="cap">Visión de rayos X</p><h2>Selectores de atributo</h2><p>Apuntan según los <b>atributos</b> de la etiqueta y su valor: <code>href</code>, <code>type</code>, <code>title</code>, <code>lang</code>… Se escriben entre <b>corchetes</b>.</p></div></div>
+  <div class="card reveal">
+    <h3>Los corchetes y sus operadores</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>Selector</th><th>Significa</th><th>Para recordarlo</th></tr>
+      <tr><td><code>[target]</code></td><td>Tiene el atributo (da igual el valor)</td><td>Solo el nombre</td></tr>
+      <tr><td><code>[type="submit"]</code></td><td>El valor es <b>exactamente</b> ese</td><td><code>=</code> igual que igual</td></tr>
+      <tr><td><code>[href^="https"]</code></td><td>El valor <b>empieza</b> por…</td><td><code>^</code> un sombrero: va arriba, al principio</td></tr>
+      <tr><td><code>[href$=".pdf"]</code></td><td>El valor <b>termina</b> en…</td><td><code>$</code> el dinero se paga al final</td></tr>
+      <tr><td><code>[href*="numeros"]</code></td><td>El valor <b>contiene</b>… en cualquier parte</td><td><code>*</code> la estrella: en cualquier sitio</td></tr>
+      <tr><td><code>[class~="volador"]</code></td><td>Una de las <b>palabras</b> (separadas por espacio) es…</td><td><code>~</code> una palabra de la lista</td></tr>
+      <tr><td><code>[lang|="es"]</code></td><td>Vale "es" o empieza por "es-"</td><td>Pensado para idiomas: es, es-ES, es-MX…</td></tr>
+    </table></div>
+    <div id="dAttr"></div>
+    <div class="g2">
+      <div class="note"><div class="ono">USO REAL</div><div><p>Su uso más habitual es en formularios: <code>input[type="email"]</code>, <code>input[type="checkbox"]</code>… El <b>tipo</b> de etiqueta (input) más el <b>atributo</b> (type) para afinar.</p></div></div>
+      <div class="note info"><div class="ono">MAYÚSCULAS</div><div><p>Los valores distinguen mayúsculas: <code>[href$=".pdf"]</code> no encuentra <code>"MAPA.PDF"</code>. Añade una <code>i</code> antes del corchete para ignorarlas: <code>[href$=".pdf" i]</code>.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 =================================================================== -->
+<section class="sec" id="posicion" data-nav="El hijo nº 3" style="--ink:var(--amarillo)">
+  <div class="sec-head reveal"><div class="num">06</div><div><p class="cap">Pseudo-clases de posición</p><h2>El hijo número 3</h2><p>Apuntan a un elemento por el <b>lugar que ocupa</b> entre sus hermanos: el primero, el último, el tercero, los impares… Empiezan por <b>dos puntos</b>: <code>:</code></p></div></div>
+  <div class="card reveal">
+    <h3>Primero, último y el n.º que quieras</h3>
+    <p>Dos reglas que hay que grabarse: <b>se empieza a contar en 1</b> (no en 0) y <code>:nth-child()</code> cuenta <b>todos</b> los hermanos, sean de la etiqueta que sean.</p>
+    <div id="dNth"></div>
+    <h4 class="sub-h">La máquina de fórmulas · an + b</h4>
+    <p>Dentro de <code>:nth-child()</code> puedes escribir una fórmula. El navegador da a <b>n</b> los valores 0, 1, 2, 3… y se queda con los resultados que existen. Escribe una fórmula (prueba <code>2n+1</code>, <code>3n</code>, <code>n+4</code>, <code>-n+3</code>, <code>odd</code>, <code>even</code> o un número):</p>
+    <div class="demo">
+      <div id="nthStage"></div>
+      <div>
+        <label class="try"><span>li:nth-child( … )</span><input class="inp" id="nthIn" value="2n+1" spellcheck="false" autocomplete="off"></label>
+        <div class="out" id="nthOut"></div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table class="tbl">
+      <tr><th>Fórmula</th><th>Resultado</th><th>Truco</th></tr>
+      <tr><td><code>odd</code> = <code>2n+1</code></td><td>1, 3, 5, 7…</td><td>Impares: filas de tabla alternas</td></tr>
+      <tr><td><code>even</code> = <code>2n</code></td><td>2, 4, 6, 8…</td><td>Pares</td></tr>
+      <tr><td><code>3n</code></td><td>3, 6, 9…</td><td>Uno de cada tres</td></tr>
+      <tr><td><code>n+4</code></td><td>4, 5, 6…</td><td>Del cuarto en adelante</td></tr>
+      <tr><td><code>-n+3</code></td><td>3, 2, 1</td><td>Solo los tres primeros</td></tr>
+    </table></div>
+  </div>
+  <div class="card reveal">
+    <h3>La trampa: nth-child contra nth-of-type</h3>
+    <p><code>p:nth-child(2)</code> se lee: <b>«el 2.º hijo, si además es un p»</b>. Cuenta a todos los hermanos. En cambio <code>p:nth-of-type(2)</code> se lee: <b>«el 2.º p»</b>: solo cuenta a los de su misma etiqueta. Compáralos:</p>
+    <div id="dType"></div>
+    <div class="note ojo"><div class="ono">¡CUIDADO!</div><p><code>p:first-child</code> no significa "el primer párrafo". Significa "un p que es el primer hijo". Si el primer hijo es un <code>h3</code>, ¡no encuentra a nadie! Para el primer párrafo usa <code>p:first-of-type</code>.</p></div>
+    <h4 class="sub-h">Casos especiales: solitarios y vacíos</h4>
+    <div id="dOnly"></div>
+  </div>
+</section>
+
+<!-- 7 =================================================================== -->
+<section class="sec" id="estado" data-nav="Estados" style="--ink:var(--cian)">
+  <div class="sec-head reveal"><div class="num">07</div><div><p class="cap">Pseudo-clases de estado</p><h2>Selectores que reaccionan</h2><p>Apuntan a un elemento según <b>lo que le está pasando</b>: el ratón está encima, tiene el foco, está marcado, es inválido… Algunos ya los conoces de las transitions.</p></div></div>
+  <div class="card reveal">
+    <h3>Interacción: hover, active, focus</h3>
+    <p>Pasa el ratón, mantén pulsado y llega al botón con la tecla <b>Tab</b>:</p>
+    <div class="live"><button class="lv-btn" type="button">¡POW!</button><span class="muted" style="font-size:15px">:hover → cian · :active → se hunde · :focus-visible → marco discontinuo</span></div>
+    <pre class="src" data-lang="css" data-title="CSS">.boton:hover         { background-color: cyan; }      /* ratón encima */
+.boton:active        { transform: translate(4px, 4px); } /* mientras se pulsa */
+.boton:focus         { outline: 4px dashed magenta; }  /* tiene el foco (clic o Tab) */
+.boton:focus-visible { outline: 4px dashed magenta; }  /* foco solo con teclado: el moderno */</pre>
+    <div class="note info"><div class="ono">ACCESIBILIDAD</div><p>No borres nunca el marco del foco sin poner otro: es lo único que ve quien navega con teclado. <code>:focus-visible</code> te deja mostrarlo solo cuando se usa el teclado, no al hacer clic.</p></div>
+  </div>
+  <div class="card reveal">
+    <h3>Formularios: el campo te avisa</h3>
+    <p>Escribe en el campo de email algo incorrecto y luego algo correcto. Marca la casilla:</p>
+    <div class="live">
+      <label class="lv-field">Email (obligatorio)<input class="lv-in" type="email" placeholder="pixel@comics.com" required></label>
+      <label class="lv-field">Campo desactivado<input class="lv-in" type="text" placeholder="no puedes escribir" disabled></label>
+      <input class="lv-chk" type="checkbox" id="lvCk"><label class="lv-lbl" for="lvCk">Activar superpoder</label>
+    </div>
+    <pre class="src" data-lang="css" data-title="CSS">input:focus             { border-color: cyan; }     /* mientras escribes */
+input:placeholder-shown { background: beige; }      /* vacío: se ve el placeholder */
+input:invalid           { border-color: magenta; }  /* no cumple (email mal escrito) */
+input:valid             { border-color: cyan; }     /* sí cumple */
+input:disabled          { opacity: .45; }           /* tiene el atributo disabled */
+input:required          { font-weight: bold; }      /* tiene el atributo required */
+.casilla:checked + label { background: magenta; }   /* marcada → pinta al label de al lado */</pre>
+    <div class="note"><div class="ono">¡COMBO!</div><p>Fíjate en la última línea: <code>.casilla:checked + label</code> mezcla una pseudo-clase con el combinador <code>+</code> del capítulo 4. "El label que va justo después de una casilla marcada". Los selectores se combinan como piezas de LEGO.</p></div>
+  </div>
+  <div class="card reveal">
+    <h3>Enlaces y destino</h3>
+    <div class="g2">
+      <div>
+        <p><code>a:link</code> enlace sin visitar · <code>a:visited</code> ya visitado. Si los usas con hover y active, respeta el orden <b>LoVe HAte</b>: <b>L</b>ink, <b>V</b>isited, <b>H</b>over, <b>A</b>ctive. Si no, unos pisan a otros.</p>
+        <p><code>:target</code> apunta al elemento cuyo id aparece en la dirección tras la <code>#</code>. Pulsa el enlace:</p>
+        <p><a href="#sorpresa" class="btn sm ci">Ir a #sorpresa</a></p>
+      </div>
+      <div class="live" style="margin:0"><div class="lv-target" id="sorpresa"><b>#sorpresa</b> · cuando la dirección termina en <code>#sorpresa</code>, <code>#sorpresa:target</code> me pinta de amarillo.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 =================================================================== -->
+<section class="sec" id="modernos" data-nav="Modernos" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">08</div><div><p class="cap">La nueva generación</p><h2>:not, :is, :where y :has</h2><p>Cuatro pseudo-clases que reciben <b>otros selectores entre paréntesis</b>. Funcionan en todos los navegadores actuales y ahorran muchísimo código.</p></div></div>
+  <div class="card reveal">
+    <h3>Los cuatro superpoderes</h3>
+    <div class="g2">
+      <div class="tile ma"><b>:not( )</b><p><b>Todos menos</b> los que cumplan lo de dentro. <code>.carta:not(.agotado)</code> = las cartas que no están agotadas.</p></div>
+      <div class="tile ci"><b>:is( )</b><p><b>Cualquiera</b> de la lista. <code>:is(article, aside) h3</code> = <code>article h3, aside h3</code>, pero más corto.</p></div>
+      <div class="tile"><b>:where( )</b><p>Igual que <code>:is()</code>, pero <b>no pesa nada</b> (especificidad 0). Ideal para estilos base fáciles de pisar.</p></div>
+      <div class="tile am"><b>:has( )</b><p>El elemento que <b>contiene</b> algo. <code>.carta:has(.oferta)</code> = las cartas que tienen una oferta dentro. ¡Por fin se puede mirar <b>hacia arriba</b>!</p></div>
+    </div>
+    <div id="dMod"></div>
+    <div class="note"><div class="ono">:has() MOLA</div><div><p>Con <code>:has()</code> pintas al <b>padre</b> según sus hijos, algo imposible hasta hace poco. Y con <code>h3:has(+ .oferta)</code> apuntas al <b>hermano anterior</b>: "el h3 que tiene justo después una .oferta".</p></div></div>
+    <h4 class="sub-h">:has() en vivo</h4>
+    <p>Marca las cartas que quieras. La carta entera cambia porque <code>.carta:has(input:checked)</code> mira si tiene <b>dentro</b> una casilla marcada:</p>
+    <div class="live">
+      <label class="lv-carta"><b>Pixel #1</b><span>3 €</span><span><input type="checkbox"> Lo quiero</span></label>
+      <label class="lv-carta"><b>Pixel #2</b><span>3 €</span><span><input type="checkbox"> Lo quiero</span></label>
+      <label class="lv-carta"><b>Pixel #3</b><span>2 €</span><span><input type="checkbox"> Lo quiero</span></label>
+    </div>
+    <pre class="src" data-lang="css" data-title="CSS">.carta:has(input:checked) {   /* la carta que contiene una casilla marcada */
+  background-color: gold;
+  transform: rotate(-2deg) translateY(-6px);
+}</pre>
+  </div>
+  <div class="card reveal">
+    <h3>Bonus moderno: el anidamiento con &amp;</h3>
+    <p>El CSS actual permite escribir reglas <b>dentro</b> de otras, como en el HTML. El <code>&amp;</code> significa "el selector de fuera". Así agrupas todo lo de un componente en un solo bloque:</p>
+    <div class="g2">
+      <pre class="src" data-lang="css" data-title="Con anidamiento">.carta {
+  border: 3px solid black;
+  & h4 { font-size: 160%; }        /* = .carta h4 */
+  & .precio { color: magenta; }    /* = .carta .precio */
+  &:hover { transform: scale(1.04); } /* = .carta:hover */
+}</pre>
+      <pre class="src" data-lang="css" data-title="Lo mismo, a la antigua">.carta { border: 3px solid black; }
+.carta h4 { font-size: 160%; }
+.carta .precio { color: magenta; }
+.carta:hover { transform: scale(1.04); }</pre>
+    </div>
+    <div class="live"><div class="ns-carta"><h4>Pixel #4</h4><span class="precio">4 €</span><p style="margin:6px 0 0;font-size:14px">Pasa el ratón: este estilo está escrito con anidamiento.</p></div></div>
+    <div class="note info"><div class="ono">OJO CON &amp;:hover</div><p><code>&amp;:hover</code> (pegado) = <code>.carta:hover</code>. Pero <code>&amp; :hover</code> (con espacio) = "cualquier descendiente de .carta con hover". El espacio sigue siendo un combinador.</p></div>
+  </div>
+</section>
+
+<!-- 9 =================================================================== -->
+<section class="sec" id="pseudoel" data-nav="Pseudo-elementos" style="--ink:var(--amarillo)">
+  <div class="sec-head reveal"><div class="num">09</div><div><p class="cap">Los personajes invisibles</p><h2>Pseudo-elementos</h2><p>No apuntan a una etiqueta, sino a <b>una parte</b> de ella (su primera letra, su primera línea…) o crean <b>cajas nuevas</b> que no existen en el HTML. Se escriben con <b>dos puntos dobles</b>: <code>::</code></p></div></div>
+  <div class="card reveal">
+    <h3>Un punto o dos</h3>
+    <div class="g2">
+      <div class="tile ci"><b>:pseudo-clase</b><p>Un <b>estado</b> o una <b>posición</b> del elemento entero: <code>:hover</code>, <code>:nth-child(3)</code>, <code>:checked</code>…</p></div>
+      <div class="tile am"><b>::pseudo-elemento</b><p>Una <b>parte</b> del elemento o una caja extra: <code>::before</code>, <code>::first-letter</code>, <code>::placeholder</code>…</p></div>
+    </div>
+    <h4 class="sub-h">Todos en vivo</h4>
+    <div class="live" style="flex-direction:column;align-items:flex-start">
+      <p class="pe-historia">Era una noche oscura en Ciudad Píxel. La primera letra de este párrafo es gigante y toda la primera línea va en negrita, pero no hay ninguna etiqueta extra en el HTML: lo hacen ::first-letter y ::first-line. Cambia el ancho de la ventana y verás que la negrita sigue siempre a la primera línea.</p>
+      <p class="pe-cita">Las comillas de esta frase las pone el CSS</p>
+      <div class="pe-nuevo">Pixel #5 · la pegatina la crea ::after</div>
+      <ul class="pe-lista"><li>Las estrellas de esta lista</li><li>son ::marker</li></ul>
+      <input class="pe-in" type="text" placeholder="Texto de ::placeholder">
+      <p class="pe-sel" style="margin:0">Selecciona este texto con el ratón: ::selection lo pinta de amarillo.</p>
+    </div>
+    <pre class="src" data-lang="css" data-title="CSS">.historia::first-letter { font-size: 300%; color: magenta; } /* la primera letra */
+.historia::first-line   { font-weight: bold; }                /* la primera línea */
+.cita::before { content: "«"; }        /* caja nueva al PRINCIPIO del contenido */
+.cita::after  { content: "»"; }        /* caja nueva al FINAL del contenido */
+.nuevo { position: relative; }
+.nuevo::after { content: "¡NUEVO!"; position: absolute; top: -14px; right: -14px; }
+.lista li::marker  { content: "★ "; color: magenta; } /* la viñeta de la lista */
+input::placeholder { color: magenta; }                /* el texto de ejemplo */
+.texto::selection  { background-color: gold; }        /* lo que seleccionas */</pre>
+    <div class="note ojo"><div class="ono">¡SIN CONTENT NO HAY NADA!</div><div><p><code>::before</code> y <code>::after</code> <b>necesitan</b> la propiedad <code>content</code>, aunque sea vacía (<code>content: "";</code>). Sin ella, no aparecen.</p><p>Se crean <b>dentro</b> del elemento (antes y después de su contenido), no fuera. Y no metas ahí texto importante: no se puede seleccionar ni lo leen bien todos los lectores de pantalla.</p></div></div>
+  </div>
+</section>
+
+<!-- 10 ================================================================== -->
+<section class="sec" id="herencia" data-nav="Herencia" style="--ink:var(--cian)">
+  <div class="sec-head reveal"><div class="num">10</div><div><p class="cap">De padres a hijos</p><h2>La herencia</h2><p>Algunas propiedades que le pones al padre <b>bajan solas</b> a todos sus descendientes, sin necesidad de selector. Otras se quedan solo en el padre. Saber cuáles te ahorra muchas reglas.</p></div></div>
+  <div class="card reveal">
+    <h3>¿Qué se hereda? Compruébalo</h3>
+    <p>Activa propiedades en el <b>padre</b> (la caja punteada) y mira qué les pasa a los hijos. Ningún hijo tiene estilos propios, salvo la caja blanca, que tiene su propio fondo.</p>
+    <div class="demo">
+      <div>
+        <div class="her-padre" id="herPadre">
+          <h4>Pixel (h4)</h4>
+          <p>Un párrafo con un <a href="#herencia">enlace</a> dentro.</p>
+          <button type="button">Un botón</button>
+          <div class="her-caja">Una caja con fondo propio</div>
+        </div>
+        <div id="herCode"></div>
+      </div>
+      <div><div class="chips" id="herChips"></div><ul class="her-list" id="herList"></ul></div>
+    </div>
+    <div class="g2">
+      <div class="tile ci"><b>Se heredan ✓</b><p>Las del <b>texto</b>: <code>color</code>, <code>font-family</code>, <code>font-size</code>, <code>font-weight</code>, <code>font-style</code>, <code>line-height</code>, <code>text-align</code>, <code>letter-spacing</code>, <code>list-style</code>…</p></div>
+      <div class="tile ma"><b>No se heredan ✗</b><p>Las de la <b>caja</b>: <code>border</code>, <code>padding</code>, <code>margin</code>, <code>background</code>, <code>width</code>, <code>height</code>, <code>display</code>, <code>position</code>, <code>transform</code>…</p></div>
+    </div>
+    <div class="note"><div class="ono">TRUCO PRO</div><div><p>Por eso se suele poner la fuente y el color en el <code>body</code>: toda la página los hereda. Pero los <code>button</code> e <code>input</code> <b>no heredan la fuente</b>. Arréglalo con una línea: <code>button, input { font: inherit; }</code></p></div></div>
+    <h4 class="sub-h">Palabras clave para controlar la herencia</h4>
+    <div class="g3">
+      <div class="tile"><b>inherit</b><p>"Copia el valor de mi padre", aunque la propiedad no se herede sola. <code>border: inherit;</code></p></div>
+      <div class="tile"><b>initial</b><p>"Vuelve al valor de fábrica de CSS". <code>color: initial;</code> → negro.</p></div>
+      <div class="tile"><b>unset</b><p>"Hereda si se hereda; si no, valor de fábrica".</p></div>
+    </div>
+    <div class="note ojo"><div class="ono">¡OJO!</div><p>Lo heredado es lo <b>más débil</b> de CSS. Si le das <code>color: red</code> a un <code>div</code> y existe una regla <code>p { color: blue; }</code>, los párrafos de dentro salen azules. Cualquier regla que apunte al hijo directamente, aunque sea <code>*</code>, gana a la herencia.</p></div>
+  </div>
+</section>
+
+<!-- 11 ================================================================== -->
+<section class="sec" id="especificidad" data-nav="¿Quién gana?" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">11</div><div><p class="cap">El gran combate</p><h2>¿Quién gana? Especificidad</h2><p>Cuando dos reglas apuntan al mismo elemento y se contradicen (una dice rojo y otra azul), CSS tiene que elegir. Lo decide la <b>cascada</b>, y su arma principal es la <b>especificidad</b>: cuánto "pesa" cada selector.</p></div></div>
+  <div class="card reveal">
+    <h3>Las tres preguntas de la cascada</h3>
+    <div class="strip">
+      <div><span class="cap">Pregunta 1</span><b>¿Hay !important?</b><p>Una declaración con <code>!important</code> gana a las que no lo tienen. Es un arma nuclear: úsala casi nunca.</p></div>
+      <div><span class="cap">Pregunta 2</span><b>¿Quién pesa más?</b><p>Si siguen empatadas, gana el selector con <b>más especificidad</b>.</p></div>
+      <div><span class="cap">Pregunta 3</span><b>¿Quién va después?</b><p>Si pesan lo mismo, gana la regla escrita <b>más abajo</b> en el CSS.</p></div>
+    </div>
+    <h4 class="sub-h">El marcador: ID · CLASE · TIPO</h4>
+    <p>La especificidad es un marcador de <b>tres columnas</b>. Cada parte del selector suma un punto en su columna:</p>
+    <div class="g3">
+      <div class="tile ma"><b>Columna ID</b><p>Cada <code>#id</code>.</p></div>
+      <div class="tile ci"><b>Columna CLASE</b><p>Cada <code>.clase</code>, <code>[atributo]</code> y <code>:pseudo-clase</code>.</p></div>
+      <div class="tile am"><b>Columna TIPO</b><p>Cada etiqueta (<code>p</code>, <code>div</code>…) y cada <code>::pseudo-elemento</code>.</p></div>
+    </div>
+    <div class="note ojo"><div class="ono">¡NO SE SUMA!</div><div><p>Se compara <b>columna a columna, de izquierda a derecha</b>, como un marcador de goles por rondas. En cuanto una columna es mayor, gana, sin mirar las demás. Por eso <code>#a</code> (1,0,0) gana a <code>.b.c.d.e.f.g.h.i.j.k.l</code> (0,11,0).</p><p>No cuentan nada: <code>*</code>, los combinadores (espacio, &gt;, +, ~) y <code>:where()</code>. Los <code>:is()</code>, <code>:not()</code> y <code>:has()</code> valen lo que su selector más fuerte de dentro. Y un <code>style="…"</code> escrito en el HTML gana a todos los selectores.</p></div></div>
+    <h4 class="sub-h">Calculadora de especificidad</h4>
+    <label class="try"><span>Escribe uno o varios selectores separados por comas</span><input class="inp" id="spIn" value="#portada .vineta > p, .vineta p.grito, article p" spellcheck="false" autocomplete="off"></label>
+    <div id="spOut"></div>
+  </div>
+  <div class="card reveal">
+    <h3>¡Combates! Elige al ganador</h3>
+    <p>Las dos reglas apuntan al mismo elemento. Pulsa la que crees que gana.</p>
+    <div id="battles"></div>
+  </div>
+</section>
+
+<!-- 12 ================================================================== -->
+<section class="sec" id="lab" data-nav="Laboratorio" style="--ink:var(--amarillo)">
+  <div class="sec-head reveal"><div class="num">12</div><div><p class="cap">El laboratorio del Dr. Selector</p><h2>Laboratorio libre</h2><p>Una página de cómic completa para experimentar. Escribe cualquier selector y mira a quién apunta y cuánto pesa.</p></div></div>
+  <div class="card reveal">
+    <div class="demo">
+      <div id="labStage"></div>
+      <div>
+        <label class="try"><span>Tu selector</span><input class="inp" id="labIn" value=".vineta > p.heroe" spellcheck="false" autocomplete="off"></label>
+        <div class="chips" id="labChips"></div>
+        <div class="out" id="labOut" style="margin-top:16px"></div>
+      </div>
+    </div>
+    <div id="labCode"></div>
+  </div>
+</section>
+
+<!-- 13 ================================================================== -->
+<section class="sec" id="reto" data-nav="Reto" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">13</div><div><p class="cap">Misión especial</p><h2>Dispara al objetivo</h2><p>Dieciséis niveles. Las cajas con <b>borde discontinuo magenta</b> son los objetivos. Escribe un selector que les dé a <b>todos</b>… y a <b>nadie más</b>.</p></div></div>
+  <div class="card reveal">
+    <div class="lvls" id="lvls"></div>
+    <p class="cap" id="lvTopic">Nivel</p>
+    <p class="mission" id="lvMission"></p>
+    <div class="demo">
+      <div id="lvStage"></div>
+      <div>
+        <label class="try"><span>Tu selector</span><input class="inp" id="lvIn" spellcheck="false" autocomplete="off" placeholder="escribe aquí…"></label>
+        <div class="chips"><button class="chip" id="lvHint" type="button">Pista</button><button class="chip" id="lvSol" type="button">Ver una solución</button></div>
+        <div class="out game-st" id="lvSt" style="margin-top:14px"></div>
+        <div class="win" id="lvWin"><div class="burst"><span>¡KA-<br>POW!</span></div><div><b style="font:400 28px var(--f-comic);letter-spacing:1px">¡Nivel superado!</b><br><button class="btn sm ma" id="lvNext" type="button" style="margin-top:8px">Siguiente nivel →</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 ================================================================== -->
+<section class="sec" id="errores" data-nav="Arregla el código" style="--ink:var(--cian)">
+  <div class="sec-head reveal"><div class="num">14</div><div><p class="cap">Detective</p><h2>Arregla el código</h2><p>Ocho selectores que no apuntan a quien deberían. Encuentra el fallo.</p></div></div>
+  <div class="card reveal"><div id="fixes"></div></div>
+</section>
+
+<!-- 15 ================================================================== -->
+<section class="sec" id="test" data-nav="Test" style="--ink:var(--amarillo)">
+  <div class="sec-head reveal"><div class="num">15</div><div><p class="cap">Comprueba lo que sabes</p><h2>Test final</h2><p>Doce preguntas con explicación.</p></div></div>
+  <div class="card reveal"><div id="quiz"></div>
+    <div class="scorebar"><span>Puntuación:</span><b id="qScore">0 / 12</b><button class="btn sm ci" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn sm alt" id="qReset" type="button">Empezar de nuevo</button></div>
+  </div>
+</section>
+
+<!-- 16 ================================================================== -->
+<section class="sec" id="chuleta" data-nav="Chuleta" style="--ink:var(--magenta)">
+  <div class="sec-head reveal"><div class="num">16</div><div><p class="cap">Resumen</p><h2>Chuleta</h2><p>Todos los selectores en una tabla.</p></div></div>
+  <div class="sheet-wrap reveal"><table class="sheet">
+    <tr><th>Selector</th><th>Qué selecciona</th><th>Ejemplo</th><th>Recuerda</th></tr>
+    <tr class="grp"><td colspan="4">Básicos</td></tr>
+    <tr><td>*</td><td>Todos los elementos</td><td>* { margin: 0; }</td><td>No pesa nada</td></tr>
+    <tr><td>etiqueta</td><td>Todas las de ese tipo</td><td>p, h1, li</td><td>Nombre tal cual</td></tr>
+    <tr><td>.clase</td><td>Las que tienen esa clase</td><td>.grito</td><td>Se puede repetir. Distingue mayúsculas</td></tr>
+    <tr><td>#id</td><td>El único con ese id</td><td>#portada</td><td>Pesa mucho: mejor clases</td></tr>
+    <tr><td>A, B</td><td>A y también B</td><td>h2, h3</td><td>La coma agrupa</td></tr>
+    <tr><td>AB</td><td>Los que cumplen A y B a la vez</td><td>p.grito · .a.b</td><td>Pegado, sin espacio</td></tr>
+    <tr class="grp"><td colspan="4">Combinadores</td></tr>
+    <tr><td>A B</td><td>B dentro de A (cualquier nivel)</td><td>.vineta p</td><td>El espacio es el combinador</td></tr>
+    <tr><td>A &gt; B</td><td>B hijo directo de A</td><td>ul &gt; li</td><td>Los nietos no cuentan</td></tr>
+    <tr><td>A + B</td><td>El B justo después de A</td><td>h3 + p</td><td>Solo uno, mismo padre</td></tr>
+    <tr><td>A ~ B</td><td>Todos los B después de A</td><td>h3 ~ p</td><td>Mismo padre, solo hacia abajo</td></tr>
+    <tr class="grp"><td colspan="4">Atributos</td></tr>
+    <tr><td>[attr]</td><td>Tiene el atributo</td><td>[disabled]</td><td>Da igual el valor</td></tr>
+    <tr><td>[attr="v"]</td><td>Valor exacto</td><td>[type="email"]</td><td>Comillas recomendadas</td></tr>
+    <tr><td>[attr^="v"]</td><td>Empieza por</td><td>[href^="https"]</td><td>^ = principio</td></tr>
+    <tr><td>[attr$="v"]</td><td>Termina en</td><td>[href$=".pdf"]</td><td>$ = final</td></tr>
+    <tr><td>[attr*="v"]</td><td>Contiene</td><td>[href*="comic"]</td><td>* = en cualquier parte</td></tr>
+    <tr><td>[attr~="v"]</td><td>Una palabra de la lista</td><td>[class~="heroe"]</td><td>Palabras separadas por espacio</td></tr>
+    <tr><td>[attr="v" i]</td><td>Sin distinguir mayúsculas</td><td>[href$=".pdf" i]</td><td>La i antes del ]</td></tr>
+    <tr class="grp"><td colspan="4">Posición</td></tr>
+    <tr><td>:first-child · :last-child</td><td>Primer / último hijo</td><td>li:first-child</td><td>Cuenta todos los hermanos</td></tr>
+    <tr><td>:nth-child(n)</td><td>El hijo número n</td><td>li:nth-child(3)</td><td>Se empieza a contar en 1</td></tr>
+    <tr><td>:nth-child(odd/even)</td><td>Impares / pares</td><td>tr:nth-child(even)</td><td>odd = 2n+1 · even = 2n</td></tr>
+    <tr><td>:nth-child(an+b)</td><td>Fórmula</td><td>:nth-child(-n+3)</td><td>n vale 0, 1, 2…</td></tr>
+    <tr><td>:nth-last-child(n)</td><td>Contando desde el final</td><td>li:nth-last-child(2)</td><td>El penúltimo</td></tr>
+    <tr><td>:nth-of-type(n)</td><td>El n-ésimo de su etiqueta</td><td>p:nth-of-type(2)</td><td>Solo cuenta su tipo</td></tr>
+    <tr><td>:first-of-type · :last-of-type</td><td>Primero / último de su etiqueta</td><td>p:first-of-type</td><td>El "primer párrafo" de verdad</td></tr>
+    <tr><td>:only-child · :empty</td><td>Hijo único / sin contenido</td><td>p:only-child</td><td>:empty: ni siquiera espacios</td></tr>
+    <tr class="grp"><td colspan="4">Estados</td></tr>
+    <tr><td>:hover · :active</td><td>Ratón encima / pulsando</td><td>.btn:hover</td><td>Disparan transitions</td></tr>
+    <tr><td>:focus · :focus-visible</td><td>Tiene el foco / foco por teclado</td><td>input:focus</td><td>Nunca quites el foco sin sustituto</td></tr>
+    <tr><td>:checked · :disabled · :required</td><td>Marcado / desactivado / obligatorio</td><td>:checked + label</td><td>Formularios</td></tr>
+    <tr><td>:valid · :invalid · :placeholder-shown</td><td>Válido / inválido / vacío</td><td>input:invalid</td><td>Según type, required…</td></tr>
+    <tr><td>:link · :visited · :target</td><td>Enlace / visitado / destino del #</td><td>#seccion:target</td><td>Orden LoVe HAte</td></tr>
+    <tr class="grp"><td colspan="4">Modernos</td></tr>
+    <tr><td>:not(S)</td><td>Todos menos S</td><td>li:not(.agotado)</td><td>Pesa como S</td></tr>
+    <tr><td>:is(S1, S2)</td><td>Cualquiera de la lista</td><td>:is(h2, h3) span</td><td>Pesa como el más fuerte</td></tr>
+    <tr><td>:where(S1, S2)</td><td>Igual que :is</td><td>:where(.tarjeta) p</td><td>Pesa 0</td></tr>
+    <tr><td>:has(S)</td><td>El que contiene S</td><td>.carta:has(img)</td><td>Selector padre y hermano anterior</td></tr>
+    <tr><td>&amp;</td><td>Anidamiento</td><td>.carta { &amp;:hover { } }</td><td>&amp; = el selector de fuera</td></tr>
+    <tr class="grp"><td colspan="4">Pseudo-elementos</td></tr>
+    <tr><td>::before · ::after</td><td>Caja nueva al principio / final</td><td>.cita::before</td><td>Obligatorio content</td></tr>
+    <tr><td>::first-letter · ::first-line</td><td>Primera letra / línea</td><td>p::first-letter</td><td>Letra capital</td></tr>
+    <tr><td>::placeholder · ::marker · ::selection</td><td>Texto de ejemplo / viñeta / selección</td><td>li::marker</td><td>Dos puntos dobles</td></tr>
+    <tr class="grp"><td colspan="4">¿Quién gana?</td></tr>
+    <tr><td>!important</td><td>Gana a todo lo normal</td><td>color: red !important;</td><td>Último recurso</td></tr>
+    <tr><td>Especificidad</td><td>ID · CLASE · TIPO</td><td>#a .b p = (1,1,1)</td><td>Columna a columna, no se suma</td></tr>
+    <tr><td>Orden</td><td>A igual peso, gana la última</td><td>—</td><td>La de más abajo</td></tr>
+    <tr><td>Herencia</td><td>Las de texto bajan a los hijos</td><td>body { color: … }</td><td>Lo más débil de todo</td></tr>
+  </table></div>
+</section>
+
+</main>
+
+<footer><div class="wrap"><div><div class="fin">¡FIN!</div><p>…¿o continuará? Ahora ya sabes apuntar a cualquier personaje de la página.</p></div><a class="btn" href="#inicio">Volver a la portada</a></div></footer>
+
+<script>
+(function(){
+"use strict";
+document.documentElement.classList.add('js');
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ---------- resaltado de código ---------- */
+function hlDecl(s){return esc(s).replace(/([\w-]+)(\s*:\s*)([^;{}]+)/g,'<span class="p">$1</span>$2<span class="v">$3</span>');}
+function hlCss(src){return src.split('\n').map(line=>{
+  let com='';const i=line.indexOf('/*');if(i>=0){com='<span class="c">'+esc(line.slice(i))+'</span>';line=line.slice(0,i);}
+  const j=line.indexOf('{');let out;
+  if(j>=0)out='<span class="s">'+esc(line.slice(0,j))+'</span>{'+hlDecl(line.slice(j+1));
+  else if(/^\s*[\w-]+\s*:/.test(line))out=hlDecl(line);
+  else out=esc(line);
+  return out+com;}).join('\n');}
+function hlHtml(src){return esc(src)
+  .replace(/(&lt;\/?)([\w-]+)((?:\s+[\w-]+(?:="[^"]*")?)*)(\s*\/?&gt;)/g,(m,a,t,at,e)=>a+'<span class="t">'+t+'</span>'+at.replace(/([\w-]+)(="[^"]*")?/g,(x,k,v)=>'<span class="p">'+k+'</span>'+(v?'<span class="v">'+v+'</span>':''))+e)
+  .replace(/(&lt;!--[\s\S]*?--&gt;)/g,'<span class="c">$1</span>');}
+function copyText(txt,btn){const done=()=>{btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('ok');},1300);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+function codeBox(lang,src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang)}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+  w.set=s=>{w.src=s;$('pre',w).innerHTML=lang==='html'?hlHtml(s):hlCss(s);};w.set(src.trim());
+  $('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+$$('pre.src').forEach(p=>p.replaceWith(codeBox(p.dataset.lang,p.textContent,p.dataset.title)));
+
+/* ---------- el escenario: HTML real + motor de selectores real ----------
+   El HTML se parsea dos veces: una copia invisible (documento aparte, con sus atributos intactos)
+   donde se ejecuta querySelectorAll, y otra visible sin atributos para que el CSS de esta página no interfiera. */
+function labelOf(n){let s=n.localName;if(n.id)s+='#'+n.id;n.classList.forEach(c=>s+='.'+c);
+  Array.from(n.attributes).forEach(a=>{if(a.name!=='id'&&a.name!=='class')s+='['+a.name+(a.value?'="'+a.value+'"':'')+']';});return s;}
+function makeStage(html,cls){
+  const w=el('div','stage'+(cls?' '+cls:''));w.innerHTML=html.trim();
+  const doc=document.implementation.createHTMLDocument('');doc.body.innerHTML=html.trim();
+  const vis=$$('*',w),src=$$('*',doc.body);
+  vis.forEach((n,i)=>{const l=labelOf(src[i]);Array.from(n.attributes).forEach(a=>n.removeAttribute(a.name));n.setAttribute('data-l',l);});
+  w.q=sel=>Array.from(doc.body.querySelectorAll(sel)); // lanza error si el selector no es válido
+  w.mark=(attr,nodes)=>{const s=new Set(nodes);vis.forEach((n,i)=>n.toggleAttribute(attr,s.has(src[i])));};
+  w.run=sel=>{const r=w.q(sel);w.mark('data-hit',r);return r;};
+  w.clear=()=>w.mark('data-hit',[]);
+  w.vis=vis;w.src=src;
+  return w;}
+function validSel(s){try{document.createDocumentFragment().querySelector(s);return true;}catch(e){return false;}}
+
+/* demo con chips + campo libre */
+function selDemo(host,html,items,title){
+  const h=$(host);const st=makeStage(html);
+  const wrap=el('div','demo'),left=el('div'),right=el('div');
+  const ch=el('div','chips');const out=el('div','out');
+  const tw=el('label','try','<span>Prueba tu propio selector</span><input class="inp" type="text" spellcheck="false" autocomplete="off" placeholder="escribe un selector…">');
+  const inp=$('input',tw);
+  function show(sel,txt){
+    if(!sel){st.clear();out.innerHTML='<p class="muted">Elige o escribe un selector.</p>';return;}
+    let n;try{n=st.run(sel).length;}catch(e){st.clear();out.innerHTML=`<p class="bad">«${esc(sel)}» no es un selector válido (todavía).</p>`;return;}
+    out.innerHTML=`<div class="count"><b>${n}</b> ${n===1?'coincidencia':'coincidencias'}</div>`+(txt?`<p>${txt}</p>`:'')+(n===0?'<p class="muted">Nadie cumple el selector… y CSS no da ningún error.</p>':'');}
+  items.forEach(it=>{const b=el('button','chip',esc(it.s));b.type='button';
+    b.onclick=()=>{$$('.chip',ch).forEach(x=>x.classList.remove('on'));b.classList.add('on');inp.value=it.s;show(it.s,it.t);};ch.appendChild(b);});
+  inp.addEventListener('input',()=>{$$('.chip',ch).forEach(x=>x.classList.remove('on'));const v=inp.value.trim();const it=items.find(x=>x.s===v);show(v,it?it.t:'');});
+  left.append(st);right.append(ch,tw,out);wrap.append(left,right);h.append(wrap,codeBox('html',html,title||'El HTML del escenario'));
+  if(ch.firstChild)ch.firstChild.click();
+  return st;}
+
+/* ---------- navegación ---------- */
+{const ul=$('#navUl'),secs=$$('section.sec');secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${i+1}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<160)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollTo({left:a.offsetLeft-ul.clientWidth/2+a.clientWidth/2,behavior:'smooth'});}}};
+ addEventListener('scroll',on,{passive:true});on();}
+{const t=['*','p','.clase','#id','h2, h3','p.grito','.vineta p','ul > li','h3 + p','h3 ~ p','[href^="https"]','[href$=".pdf"]',':nth-child(3)',':nth-child(odd)',':first-of-type',':hover',':checked + label',':not(.agotado)',':is(h2, h3)',':where(.x)',':has(img)','::before','::first-letter','#a .b p = (1,1,1)'];
+ const s=t.map(x=>esc(x)+'<i>✦</i>').join('');$('#ticker').innerHTML=s+s;}
+{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px'});$$('.reveal').forEach(r=>io.observe(r));}
+
+/* ---------- 2. familia ---------- */
+{const html=`<article class="pagina">
+  <h2>El regreso de Pixel</h2>
+  <div class="vineta">
+    <h3>Viñeta 1</h3>
+    <p>Pixel vuela sobre la ciudad.</p>
+    <p class="grito">¡<em>CRASH</em>!</p>
+  </div>
+  <div class="vineta">
+    <h3>Viñeta 2</h3>
+    <p>El villano escapa.</p>
+  </div>
+  <footer>Continuará…</footer>
+</article>`;
+ const st=makeStage(html,'fam');$('#famStage').append(st);$('#famCode').append(codeBox('html',html,'El HTML de la familia'));
+ const out=$('#famOut');
+ st.vis.forEach(n=>n.tabIndex=0);
+ const names=a=>a.length?a.map(n=>'<code>'+esc(n.dataset.l)+'</code>').join(' '):'<span class="muted">ninguno</span>';
+ function pick(me){
+  st.vis.forEach(n=>n.removeAttribute('data-rel'));
+  me.dataset.rel='tú';
+  const p=me.parentElement,isTop=p===st;
+  const anc=[];if(!isTop){p.dataset.rel='padre';let a=p.parentElement;while(a&&a!==st){a.dataset.rel='antepasado';anc.push(a);a=a.parentElement;}}
+  const kids=Array.from(me.children);kids.forEach(c=>c.dataset.rel='hijo');
+  const desc=$$('*',me).filter(d=>!d.dataset.rel);desc.forEach(d=>d.dataset.rel='descendiente');
+  const sibs=Array.from(p.children).filter(s=>s!==me);sibs.forEach(s=>s.dataset.rel='hermano');
+  const next=me.nextElementSibling;if(next)next.dataset.rel='hermano +';
+  const after=sibs.filter(s=>me.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING);
+  out.innerHTML=`<div class="count">Has elegido <b style="font-size:1em">${esc(me.dataset.l)}</b></div>
+   <p><b>Padre:</b> ${isTop?'<span class="muted">es la raíz de este escenario</span>':names([p])}</p>
+   <p><b>Hijos:</b> ${names(kids)}</p>
+   <p><b>Hermanos:</b> ${names(sibs)}</p>
+   <p><b>El siguiente hermano</b> (el que alcanza <code>+</code>): ${names(next?[next]:[])}</p>
+   <p><b>Hermanos posteriores</b> (los que alcanza <code>~</code>): ${names(after)}</p>
+   <p><b>Descendientes</b> (hijos y más abajo): ${kids.length+desc.length}</p>`;}
+ st.addEventListener('click',e=>{const me=e.target.closest('[data-l]');if(me&&st.contains(me))pick(me);});
+ st.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-l]')){e.preventDefault();pick(e.target);}});
+ pick($$('[data-l]',st)[3]);}
+
+/* ---------- 3. básicos ---------- */
+selDemo('#dBasic',`<article id="portada" class="pagina">
+  <h2 class="titulo">Capitán Selector</h2>
+  <div class="vineta">
+    <h3>¡Alerta!</h3>
+    <p class="grito">¡BOOM!</p>
+    <p>La ciudad tiembla.</p>
+  </div>
+  <div class="vineta especial">
+    <h3>Mientras tanto…</h3>
+    <p>El villano sonríe.</p>
+    <span class="grito">¡JA!</span>
+  </div>
+  <footer>Fin</footer>
+</article>`,[
+ {s:'p',t:'Selector de <b>tipo</b>: todas las etiquetas <code>&lt;p&gt;</code>, estén donde estén.'},
+ {s:'.grito',t:'Selector de <b>clase</b>: todo lo que tenga <code>class="grito"</code>, sea p o span.'},
+ {s:'#portada',t:'Selector de <b>id</b>: el único elemento con <code>id="portada"</code>.'},
+ {s:'*',t:'<b>Universal</b>: absolutamente todas las etiquetas.'},
+ {s:'h3, footer',t:'<b>Agrupación</b>: los h3 y también el footer. Una regla, varios destinatarios.'},
+ {s:'p.grito',t:'<b>Compuesto</b>: solo los <code>p</code> que además tienen la clase grito. El span.grito se queda fuera.'},
+ {s:'.vineta.especial',t:'Dos clases pegadas: la viñeta que tiene <b>las dos</b>.'},
+ {s:'p .grito',t:'¡Con espacio! Busca un <code>.grito</code> que esté <b>dentro</b> de un p. No hay ninguno.'}]);
+
+/* ---------- 4. combinadores ---------- */
+selDemo('#dComb',`<article class="pagina">
+  <h3>Portada</h3>
+  <p>Texto A</p>
+  <p>Texto B</p>
+  <div class="vineta">
+    <p>Hijo directo</p>
+    <blockquote>
+      <p>Nieto (dentro de la cita)</p>
+    </blockquote>
+    <h3>Subtítulo</h3>
+    <span>Un span</span>
+    <p>Hermano lejano</p>
+  </div>
+</article>`,[
+ {s:'.vineta p',t:'<b>Descendiente</b>: los tres p que hay dentro de .vineta, también el nieto que está dentro de la cita.'},
+ {s:'.vineta > p',t:'<b>Hijo directo</b>: solo los p que cuelgan directamente de .vineta. El nieto ya no entra.'},
+ {s:'h3 + p',t:'<b>Adyacente</b>: el p pegado justo después de un h3. El del segundo h3 no cuenta, porque entre ellos hay un span.'},
+ {s:'h3 ~ p',t:'<b>Hermanos generales</b>: todos los p que vienen después de un h3 con el mismo padre, aunque haya cosas en medio.'},
+ {s:'article > p',t:'Los p hijos directos del article: Texto A y Texto B.'},
+ {s:'article p',t:'Todos los p del article, a cualquier profundidad.'},
+ {s:'blockquote + h3',t:'El h3 que va justo después de la cita.'}]);
+
+/* ---------- 5. atributos ---------- */
+selDemo('#dAttr',`<nav class="menu">
+  <a href="https://comics.com">Tienda</a>
+  <a href="/numeros/7">Número 7</a>
+  <a href="poster.pdf">Póster</a>
+  <a href="MAPA.PDF">Mapa</a>
+  <a href="#" target="_blank">Nueva pestaña</a>
+</nav>
+<div class="formulario">
+  <button type="submit">Enviar</button>
+  <button type="reset">Borrar</button>
+  <p title="Aviso legal" lang="es-ES">Con title y lang</p>
+  <p class="heroe volador">Pixel</p>
+</div>`,[
+ {s:'[target]',t:'Todo lo que tenga el atributo <code>target</code>, valga lo que valga.'},
+ {s:'[type="submit"]',t:'Valor <b>exacto</b>: solo el botón de enviar.'},
+ {s:'a[href^="https"]',t:'Enlaces cuyo href <b>empieza</b> por https: los externos y seguros.'},
+ {s:'a[href$=".pdf"]',t:'Enlaces que <b>terminan</b> en .pdf. El de MAPA.PDF no entra: las mayúsculas cuentan.'},
+ {s:'a[href$=".pdf" i]',t:'Con la <code>i</code> se ignoran las mayúsculas: ahora entran los dos PDF.'},
+ {s:'a[href*="numeros"]',t:'Enlaces que <b>contienen</b> "numeros" en cualquier parte.'},
+ {s:'[class~="volador"]',t:'La lista de clases contiene la <b>palabra</b> volador. (Es lo mismo que <code>.volador</code>.)'},
+ {s:'[lang|="es"]',t:'Idioma "es" o cualquier variante "es-…".'},
+ {s:'[title]',t:'Todo lo que tiene el atributo title.'}]);
+
+/* ---------- 6. posición ---------- */
+const LI=n=>Array.from({length:n},(_,i)=>`  <li>${i+1}</li>`).join('\n');
+selDemo('#dNth',`<ol class="ranking">
+${LI(8)}
+</ol>`,[
+ {s:'li:first-child',t:'El primer hijo.'},
+ {s:'li:last-child',t:'El último hijo.'},
+ {s:'li:nth-child(3)',t:'<b>El hijo número 3.</b> Se cuenta desde 1.'},
+ {s:'li:nth-child(odd)',t:'Los impares: 1, 3, 5, 7.'},
+ {s:'li:nth-child(even)',t:'Los pares: 2, 4, 6, 8.'},
+ {s:'li:nth-child(3n)',t:'Uno de cada tres: 3, 6.'},
+ {s:'li:nth-child(n+4)',t:'Del cuarto en adelante.'},
+ {s:'li:nth-child(-n+3)',t:'Los tres primeros.'},
+ {s:'li:nth-last-child(2)',t:'El segundo contando desde el final: el penúltimo.'},
+ {s:'li:not(:first-child)',t:'Todos menos el primero. (Adelanto del capítulo 8.)'}],'El HTML: una lista de 8');
+
+{const st=makeStage(`<ol>\n${LI(10)}\n</ol>`);$('#nthStage').append(st);
+ const inp=$('#nthIn'),out=$('#nthOut');
+ function parseNth(f){f=f.replace(/\s+/g,'').toLowerCase();if(f==='odd')return[2,1];if(f==='even')return[2,0];
+  let m=f.match(/^([+-]?\d*)n([+-]\d+)?$/);if(m){const a=m[1]===''||m[1]==='+'?1:m[1]==='-'?-1:+m[1];return[a,+(m[2]||0)];}
+  if(/^[+-]?\d+$/.test(f))return[0,+f];return null;}
+ function upd(){const f=inp.value.trim();let hits;
+  try{if(!f)throw 0;hits=st.run('li:nth-child('+f+')');}catch(e){st.clear();out.innerHTML='<p class="bad">Esa fórmula no es válida. Ejemplos: 3, 2n+1, -n+3, odd.</p>';return;}
+  const p=parseNth(f);let rows='';
+  if(p&&p[0]===0)rows=`<p>Sin <b>n</b>: solo el hijo número <b>${p[1]}</b>.</p>`;
+  else if(p){const[a,b]=p;rows='<table class="nt">';for(let n=0;n<=7;n++){const v=a*n+b,ok=v>=1&&v<=10;
+    rows+=`<tr class="${ok?'ok':''}"><td>n = ${n}</td><td>${a}·${n} ${b<0?'−':'+'} ${Math.abs(b)} = ${v}</td><td>${ok?'✓ el '+v+'.º':v<1?'no existe':'no hay tantos'}</td></tr>`;}rows+='</table>';}
+  out.innerHTML=`<div class="count"><b>${hits.length}</b> ${hits.length===1?'coincidencia':'coincidencias'}</div>${rows}`;}
+ inp.addEventListener('input',upd);upd();}
+
+selDemo('#dType',`<div class="vineta">
+  <h3>Título</h3>
+  <p>Párrafo 1</p>
+  <p>Párrafo 2</p>
+  <span>Nota</span>
+  <p>Párrafo 3</p>
+</div>`,[
+ {s:'p:nth-child(2)',t:'El 2.º hijo es un p (Párrafo 1), así que entra. Cuenta también el h3.'},
+ {s:'p:nth-of-type(2)',t:'El 2.º <b>párrafo</b>: Párrafo 2. Solo cuenta a los p.'},
+ {s:'p:first-child',t:'¡Nadie! El primer hijo es un h3, no un p.'},
+ {s:'p:first-of-type',t:'El primer párrafo de verdad.'},
+ {s:'p:last-child',t:'El último hijo es Párrafo 3, y es un p: entra.'},
+ {s:'p:nth-child(4)',t:'¡Nadie! Cuenta: h3 (1), p (2), p (3), span (4). El 4.º hijo es el span, que no es un p.'},
+ {s:'span:only-of-type',t:'El span es el único span entre sus hermanos.'},
+ {s:'p:nth-of-type(odd)',t:'Párrafos 1 y 3: los impares contando solo párrafos.'}],'El HTML: etiquetas mezcladas');
+
+selDemo('#dOnly',`<section class="tira">
+  <div class="vineta">
+    <p>Solo yo</p>
+  </div>
+  <div class="vineta">
+    <p>Uno</p>
+    <p>Dos</p>
+  </div>
+  <div class="vineta"></div>
+</section>`,[
+ {s:'p:only-child',t:'El p que es <b>hijo único</b>: no tiene hermanos.'},
+ {s:'.vineta:empty',t:'La viñeta <b>vacía</b>: sin hijos y sin texto (ni siquiera espacios).'},
+ {s:'.vineta:not(:empty)',t:'Las viñetas que tienen algo dentro.'}],'El HTML');
+
+/* ---------- 8. modernos ---------- */
+selDemo('#dMod',`<section class="tienda">
+  <article class="carta">
+    <h3>Pixel #1</h3>
+    <span class="precio">3 €</span>
+  </article>
+  <article class="carta agotado">
+    <h3>Pixel #2</h3>
+    <span class="precio">3 €</span>
+  </article>
+  <article class="carta">
+    <h3>Pixel #3</h3>
+    <span class="oferta">¡Oferta!</span>
+    <span class="precio">2 €</span>
+  </article>
+  <aside>
+    <h3>Novedades</h3>
+    <p>Llega el número 4.</p>
+  </aside>
+</section>`,[
+ {s:'.carta:not(.agotado)',t:'<b>:not</b>: las cartas que no tienen la clase agotado.'},
+ {s:':is(article, aside) h3',t:'<b>:is</b>: los h3 dentro de un article <b>o</b> de un aside. Igual que <code>article h3, aside h3</code>.'},
+ {s:':where(article, aside) h3',t:'<b>:where</b>: mismas coincidencias que :is… pero con especificidad 0 en la parte del paréntesis.'},
+ {s:'.carta:has(.oferta)',t:'<b>:has</b>: la carta que <b>contiene</b> una oferta. ¡Estamos pintando al padre según su hijo!'},
+ {s:'.tienda:has(.agotado)',t:'La tienda entera, porque dentro hay algo agotado.'},
+ {s:'h3:has(+ .oferta)',t:'El h3 que tiene <b>justo después</b> una .oferta: el hermano anterior.'},
+ {s:'article:not(:has(.oferta))',t:'Combinados: los article que <b>no</b> tienen oferta.'}]);
+
+/* ---------- 10. herencia ---------- */
+{const HP=[
+ {p:'color',v:'#ea2e71',h:1,t:'El texto de los hijos se vuelve magenta… excepto el enlace y el botón: el navegador ya les da su propio color.'},
+ {p:'font-family',v:'Bangers, cursive',h:1,t:'Cambia la fuente de todos… menos la del botón: los botones no heredan la fuente.'},
+ {p:'font-size',v:'130%',h:1,t:'Los hijos crecen. Y como el h4 ya tenía un tamaño relativo, crece todavía más.'},
+ {p:'text-align',v:'center',h:1,t:'El texto de todos los hijos se centra.'},
+ {p:'font-style',v:'italic',h:1,t:'Todos en cursiva.'},
+ {p:'border',v:'4px solid #16121b',h:0,t:'Solo el padre tiene borde. Si se heredara, cada hijo tendría su propio marco: un desastre.'},
+ {p:'padding',v:'30px',h:0,t:'Solo el padre gana relleno.'},
+ {p:'background-color',v:'#ffd23f',h:0,t:'¡Trampa! Parece que se hereda, pero no: los hijos son transparentes y dejan ver el fondo del padre. La caja blanca lo demuestra: tiene su propio fondo y no cambia.'}];
+ const pad=$('#herPadre'),list=$('#herList'),ch=$('#herChips'),on=new Set();
+ const cb=codeBox('css','','CSS del padre');$('#herCode').append(cb);
+ function upd(){HP.forEach(x=>on.has(x)?pad.style.setProperty(x.p,x.v):pad.style.removeProperty(x.p));
+  list.innerHTML=on.size?HP.filter(x=>on.has(x)).map(x=>`<li><b>${x.p}</b> → ${x.h?'<span class="yes">✓ se hereda</span>':'<span class="no">✗ no se hereda</span>'}<br>${x.t}</li>`).join(''):'<li class="muted">Activa alguna propiedad.</li>';
+  cb.set('.padre {\n'+HP.filter(x=>on.has(x)).map(x=>`  ${x.p}: ${x.v};`).join('\n')+(on.size?'\n':'  /* vacío */\n')+'}');}
+ HP.forEach(x=>{const b=el('button','chip',esc(x.p));b.type='button';b.onclick=()=>{on.has(x)?on.delete(x):on.add(x);b.classList.toggle('on',on.has(x));upd();};ch.append(b);});
+ ch.firstChild.click();}
+
+/* ---------- 11. especificidad ---------- */
+const WC='[\\w\\u00C0-\\uFFFF-]';
+function splitTop(s){const out=[];let d=0,cur='',q=null;for(const c of s){
+  if(q){cur+=c;if(c===q)q=null;continue;}
+  if(c==='"'||c==="'"){q=c;cur+=c;continue;}
+  if(c==='('||c==='[')d++;if(c===')'||c===']')d--;
+  if(c===','&&d===0){out.push(cur.trim());cur='';continue;}cur+=c;}
+  if(cur.trim())out.push(cur.trim());return out;}
+const cmpSpec=(x,y)=>x.a-y.a||x.b-y.b||x.c-y.c;
+function spec(sel){
+  let a=0,b=0,c=0;const parts=[];
+  let s=sel.replace(/"[^"]*"|'[^']*'/g,'""');
+  const take=(re,k)=>{s=s.replace(re,m=>{if(k==='a')a++;else if(k==='b')b++;else c++;parts.push({t:m.trim(),k});return ' ';});};
+  s=s.replace(/:(is|not|has|where)\(((?:[^()]|\([^()]*\))*)\)/g,(m,f,args)=>{
+    if(f==='where'){parts.push({t:m,k:'0',n:'vale 0'});return ' ';}
+    const best=splitTop(args).map(spec).sort(cmpSpec).pop()||{a:0,b:0,c:0};
+    a+=best.a;b+=best.b;c+=best.c;parts.push({t:m,k:best.a?'a':best.b?'b':best.c?'c':'0',n:`vale (${best.a},${best.b},${best.c})`});return ' ';});
+  take(/\[[^\]]*\]/g,'b');
+  take(new RegExp('::'+WC+'+(\\([^)]*\\))?','g'),'c');
+  take(/:(before|after|first-line|first-letter)(?![\w-])/g,'c');
+  take(new RegExp('#'+WC+'+','g'),'a');
+  take(new RegExp('\\.'+WC+'+','g'),'b');
+  take(new RegExp(':'+WC+'+(\\([^)]*\\))?','g'),'b');
+  take(/[a-zA-ZÀ-￿][\wÀ-￿-]*/g,'c');
+  return {a,b,c,parts};}
+/* autocomprobación de la calculadora (ver consola) */
+[['p',0,0,1],['.a .b',0,2,0],['#x p.y',1,1,1],[':where(#a) p',0,0,1],[':is(#a, .b) p',1,0,1],['a[href$=".pdf"]',0,1,1],
+ ['li:nth-child(2n+1)',0,1,1],['p::first-letter',0,0,2],['div:not(.x)',0,1,1],['*',0,0,0],['.niño',0,1,0],['h3:has(+ .oferta)',0,1,1],['ul > li ~ li',0,0,3]]
+ .forEach(([s,a,b,c])=>{const r=spec(s);console.assert(r.a===a&&r.b===b&&r.c===c,'spec',s,r);});
+const boardHTML=r=>`<span class="board"><span>${r.a}<small>ID</small></span><span>${r.b}<small>CLASE</small></span><span>${r.c}<small>TIPO</small></span></span>`;
+{const inp=$('#spIn'),out=$('#spOut');
+ function upd(){const list=splitTop(inp.value);if(!list.length){out.innerHTML='';return;}
+  const rows=list.map(s=>({s,ok:validSel(s),r:spec(s)}));const good=rows.filter(x=>x.ok);
+  const best=good.length>1?good.slice().sort((x,y)=>cmpSpec(x.r,y.r)).pop():null;
+  out.innerHTML=rows.map(x=>x.ok?`<div class="sp-row${best&&cmpSpec(x.r,best.r)===0?' best':''}"><span class="sp-sel">${esc(x.s)}</span>${boardHTML(x.r)}
+   <div class="sp-parts">${x.r.parts.length?x.r.parts.map(p=>`<span class="k-${p.k}">${esc(p.t)}${p.n?' → '+p.n:''}</span>`).join(''):'<span class="k-0">no suma nada</span>'}</div></div>`
+   :`<div class="sp-row"><span class="sp-sel bad">${esc(x.s)} · no es válido</span></div>`).join('')
+   +(best?`<p class="muted" style="margin-top:10px">Si todos apuntaran al mismo elemento, ganaría el resaltado en amarillo${good.filter(x=>cmpSpec(x.r,best.r)===0).length>1?' (hay empate: decidiría el orden, gana el último)':''}.</p>`:'');}
+ inp.addEventListener('input',upd);upd();}
+
+{const MA='#ea2e71',CI='#13a0dc';
+ const BT=[
+ {el:'<p class="nota">¡Cuidado!</p>',A:{s:'p',css:'p { color: magenta; }'},B:{s:'.nota',css:'.nota { color: cyan; }'},w:1,e:'Una clase (0,1,0) gana a una etiqueta (0,0,1): la columna CLASE se mira antes que la de TIPO.'},
+ {el:'<p id="aviso" class="nota roja">¡Cuidado!</p>',A:{s:'#aviso',css:'#aviso { color: magenta; }'},B:{s:'.nota.roja',css:'.nota.roja { color: cyan; }'},w:0,e:'Un id (1,0,0) gana a cualquier cantidad de clases. Con un 1 en la primera columna ya está decidido.'},
+ {el:'<div><p class="nota">¡Cuidado!</p></div>',A:{s:'div p',css:'div p { color: magenta; }'},B:{s:'p.nota',css:'p.nota { color: cyan; }'},w:1,e:'(0,0,2) contra (0,1,1). Se compara de izquierda a derecha: en la columna CLASE, 1 gana a 0. Lo de la derecha ya no importa.'},
+ {el:'<p class="nota">¡Cuidado!</p>',A:{s:'.nota',css:'.nota { color: magenta; }  /* línea 10 */'},B:{s:'.nota',css:'.nota { color: cyan; }  /* línea 40 */'},w:1,e:'Empate exacto: (0,1,0) contra (0,1,0). Decide el orden: gana la regla escrita <b>más abajo</b>.'},
+ {el:'<p id="aviso">¡Cuidado!</p>',A:{s:':where(#aviso)',css:':where(#aviso) { color: magenta; }'},B:{s:'p',css:'p { color: cyan; }'},w:1,e:'<code>:where()</code> siempre vale 0, aunque dentro haya un id. (0,0,0) pierde contra (0,0,1).'},
+ {el:'<div id="caja"><p>¡Cuidado!</p></div>',A:{s:'#caja',css:'#caja { color: magenta; }  /* al div padre */',tag:'Heredado: no compite'},B:{s:'*',css:'* { color: cyan; }'},w:1,e:'La regla del id apunta al <b>div</b>, no al p: al p solo le llega por herencia, y lo heredado es lo más débil. <code>*</code> apunta al p directamente y gana.'},
+ {el:'<p id="aviso" class="nota">¡Cuidado!</p>',A:{s:'#aviso',css:'#aviso { color: magenta; }'},B:{s:'.nota',css:'.nota { color: cyan !important; }',tag:'!important'},w:1,e:'<code>!important</code> se salta la especificidad. Por eso es peligroso: después solo se puede pisar con otro !important más fuerte. Úsalo casi nunca.'}];
+ const host=$('#battles');
+ BT.forEach((bt,i)=>{const d=el('div','battle');
+  const f=(x,col,k)=>`<button class="fighter" type="button" data-k="${k}"><span class="tagf" style="color:${col}">Regla ${k?'B':'A'}</span><pre>${esc(x.css)}</pre><span class="sc" hidden>${x.tag?'<b>'+x.tag+'</b> · ':''}${boardHTML(spec(x.s))}</span></button>`;
+  d.innerHTML=`<p class="who">Combate ${i+1} · HTML: <code>${esc(bt.el)}</code></p><div class="fighters">${f(bt.A,MA,0)}<div class="vs">VS</div>${f(bt.B,CI,1)}</div>
+   <div class="verdict"><div class="prev" style="color:${bt.w?CI:MA}">¡Cuidado!</div><p class="res"></p><p style="margin:6px 0 0">${bt.e}</p></div>`;
+  $$('.fighter',d).forEach(b=>b.onclick=()=>{const k=+b.dataset.k;
+   $$('.fighter',d).forEach(x=>{x.classList.toggle('win',+x.dataset.k===bt.w);x.classList.toggle('lose',+x.dataset.k!==bt.w);$('.sc',x).hidden=false;});
+   $('.res',d).innerHTML=k===bt.w?'<b class="yes">¡Correcto!</b> Gana la regla '+(bt.w?'B':'A')+'.':'<b class="no">¡Ups!</b> Gana la regla '+(bt.w?'B':'A')+'.';
+   $('.verdict',d).classList.add('show');});
+  host.append(d);});}
+
+/* ---------- 12. laboratorio ---------- */
+{const html=`<article id="portada" class="pagina">
+  <header class="cabecera">
+    <h2 class="titulo">Capitán Selector</h2>
+    <p class="numero" data-n="7">Nº 7</p>
+  </header>
+  <div class="vineta">
+    <h3>Viñeta 1</h3>
+    <p class="bocadillo heroe">¡Alto ahí!</p>
+    <p class="bocadillo villano">¡Jamás!</p>
+  </div>
+  <div class="vineta especial">
+    <h3>Viñeta 2</h3>
+    <p class="onomatopeya">¡<em>KA</em>-<em>BOOM</em>!</p>
+    <p class="bocadillo heroe">¿Todos bien?</p>
+  </div>
+  <ul class="personajes">
+    <li class="heroe">Pixel</li>
+    <li class="heroe">Byte</li>
+    <li class="villano">Dr. Null</li>
+    <li>Ciudadano</li>
+  </ul>
+  <nav class="enlaces">
+    <a href="https://comics.com">Tienda</a>
+    <a href="numero8.pdf">Nº 8 (PDF)</a>
+  </nav>
+  <footer>Continuará…</footer>
+</article>`;
+ const st=makeStage(html);$('#labStage').append(st);$('#labCode').append(codeBox('html',html,'El HTML del laboratorio'));
+ const inp=$('#labIn'),out=$('#labOut'),ch=$('#labChips');
+ ['.vineta > p.heroe','.heroe','h3 + p','header ~ div','li:nth-child(odd)','li:not(.heroe)','.vineta:has(em)','a[href$=".pdf"]','[data-n]','article > *','.especial em:last-child',':is(h2, h3)']
+  .forEach(s=>{const b=el('button','chip',esc(s));b.type='button';b.onclick=()=>{inp.value=s;upd();};ch.append(b);});
+ function upd(){const s=inp.value.trim();$$('.chip',ch).forEach(b=>b.classList.toggle('on',b.textContent===s));
+  if(!s){st.clear();out.innerHTML='<p class="muted">Escribe un selector.</p>';return;}
+  let r;try{r=st.run(s);}catch(e){st.clear();out.innerHTML=`<p class="bad">«${esc(s)}» no es un selector válido.</p>`;return;}
+  out.innerHTML=`<div class="count"><b>${r.length}</b> ${r.length===1?'coincidencia':'coincidencias'}</div>
+   <p>Especificidad: ${splitTop(s).map(x=>boardHTML(spec(x))).join(' ')}</p>
+   ${r.length?'<p>'+r.map(n=>'<code>'+esc(labelOf(n))+'</code>').join(' ')+'</p>':''}`;}
+ inp.addEventListener('input',upd);upd();}
+
+/* ---------- 13. reto ---------- */
+{const LV=[
+ {k:'Tipo',m:'Dispara a todos los párrafos.',t:'p',p:'El selector de tipo es el nombre de la etiqueta, sin nada más.',h:`<div class="vineta">
+  <h3>¡Alerta!</h3>
+  <p>Algo se acerca.</p>
+  <span>ruido</span>
+  <p>¿Qué será?</p>
+</div>`},
+ {k:'Clase',m:'Dispara a los villanos.',t:'.villano',p:'Las clases empiezan por punto.',h:`<div class="vineta">
+  <p class="villano">Dr. Null</p>
+  <p>Pixel</p>
+  <span class="villano">Esbirro</span>
+  <p>Ciudadano</p>
+</div>`},
+ {k:'Id',m:'Solo al capitán.',t:'#capitan',p:'Los tres son .heroe, pero solo uno tiene id. El id empieza por #.',h:`<div class="vineta">
+  <p class="heroe">Pixel</p>
+  <p class="heroe" id="capitan">Capitán</p>
+  <p class="heroe">Byte</p>
+</div>`},
+ {k:'Compuesto',m:'Los gritos que son párrafos (el span no).',t:'p.grito',p:'Etiqueta y clase pegadas, sin espacio.',h:`<div class="vineta">
+  <p class="grito">¡BAM!</p>
+  <span class="grito">¡ZOK!</span>
+  <p>Silencio</p>
+  <p class="grito">¡POW!</p>
+</div>`},
+ {k:'Descendiente',m:'Los em que están dentro de la viñeta, a cualquier profundidad.',t:'.vineta em',p:'Dos selectores separados por un espacio.',h:`<article>
+  <em>Portada</em>
+  <div class="vineta">
+    <p>Pixel dice <em>¡rápido!</em></p>
+    <blockquote>
+      <em>Eco</em>
+    </blockquote>
+  </div>
+  <em>Fin</em>
+</article>`},
+ {k:'Hijo directo',m:'Solo los párrafos que son hijos directos de la viñeta.',t:'.vineta > p',p:'El combinador > no deja pasar a los nietos.',h:`<div class="vineta">
+  <p>Uno</p>
+  <blockquote>
+    <p>Cita</p>
+  </blockquote>
+  <p>Dos</p>
+</div>`},
+ {k:'Hermano adyacente',m:'La primera frase justo después de cada título.',t:'h3 + p',p:'El combinador + alcanza solo al hermano pegado.',h:`<div class="vineta">
+  <h3>Viñeta 1</h3>
+  <p>Primera frase</p>
+  <p>Segunda</p>
+  <h3>Viñeta 2</h3>
+  <p>Otra primera</p>
+  <p>Otra segunda</p>
+</div>`},
+ {k:'Hermanos generales',m:'Todos los párrafos que vienen después del título.',t:'h3 ~ p',p:'El combinador ~ alcanza a todos los hermanos posteriores, aunque haya otros en medio.',h:`<div class="vineta">
+  <p>Antes</p>
+  <h3>Aparece Pixel</h3>
+  <p>Uno</p>
+  <span>¡fiu!</span>
+  <p>Dos</p>
+</div>`},
+ {k:'Atributo ^=',m:'Los enlaces seguros: los que empiezan por https.',t:'a[href^="https"]',p:'^= significa "empieza por".',h:`<nav>
+  <a href="https://tienda.com">Tienda</a>
+  <a href="/archivo">Archivo</a>
+  <a href="https://foro.com">Foro</a>
+  <a href="mapa.pdf">Mapa</a>
+</nav>`},
+ {k:'Atributo $=',m:'Los enlaces a PDF.',t:'a[href$=".pdf"]',p:'$= significa "termina en".',h:`<nav>
+  <a href="poster.pdf">Póster</a>
+  <a href="/pdf/ayuda">Ayuda</a>
+  <a href="guia.pdf">Guía</a>
+  <a href="https://comics.com">Web</a>
+</nav>`},
+ {k:'El hijo n.º 3',m:'Solo el tercer personaje.',t:'li:nth-child(3)',p:':nth-child() con un número. Se empieza a contar en 1.',h:`<ul>
+  <li>Pixel</li>
+  <li>Byte</li>
+  <li>Nibble</li>
+  <li>Bit</li>
+  <li>Giga</li>
+</ul>`},
+ {k:'Pares',m:'Las filas pares.',t:'li:nth-child(even)',p:'even o 2n.',h:`<ul>
+${LI(7)}
+</ul>`},
+ {k:':not()',m:'Los números que no están agotados.',t:'li:not(.agotado)',p:':not() con la clase dentro del paréntesis.',h:`<ul>
+  <li>Nº 1</li>
+  <li class="agotado">Nº 2</li>
+  <li>Nº 3</li>
+  <li class="agotado">Nº 4</li>
+  <li>Nº 5</li>
+</ul>`},
+ {k:'Último de su tipo',m:'El último párrafo. (Ojo: no es el último hijo.)',t:'p:last-of-type',p:'p:last-child no funciona porque el último hijo es el span. Busca el último de su tipo.',h:`<div class="vineta">
+  <p>A</p>
+  <p>B</p>
+  <p>C</p>
+  <span>firma</span>
+</div>`},
+ {k:':has()',m:'Las cartas que tienen una oferta dentro.',t:'.carta:has(.oferta)',p:':has() pinta al padre según lo que contiene.',h:`<section>
+  <article class="carta">
+    <h3>Nº 1</h3>
+  </article>
+  <article class="carta">
+    <h3>Nº 2</h3>
+    <span class="oferta">-50%</span>
+  </article>
+  <article class="carta">
+    <h3>Nº 3</h3>
+  </article>
+  <article class="carta">
+    <h3>Nº 4</h3>
+    <span class="oferta">-20%</span>
+  </article>
+</section>`},
+ {k:'Jefe final',m:'Los títulos que tienen justo detrás una oferta.',t:'h3:has(+ .oferta)',p:'El hermano anterior: un h3 que "tiene" un + .oferta.',h:`<div class="vineta">
+  <h3>Título A</h3>
+  <p class="oferta">¡Oferta!</p>
+  <h3>Título B</h3>
+  <p>Normal</p>
+  <h3>Título C</h3>
+  <p class="oferta">¡Oferta!</p>
+</div>`}];
+ let cur=0,st=null,target=[];const done=new Set();
+ const inp=$('#lvIn'),out=$('#lvSt'),win=$('#lvWin'),lv=$('#lvls');
+ LV.forEach((_,i)=>{const b=el('button','',String(i+1));b.type='button';b.title='Nivel '+(i+1);b.onclick=()=>load(i);lv.append(b);});
+ function dots(){$$('button',lv).forEach((b,i)=>{b.className=(done.has(i)?'done ':'')+(i===cur?'cur':'');});}
+ function load(i){cur=i;const L=LV[i];
+  $('#lvTopic').textContent=`Nivel ${i+1} / ${LV.length} · ${L.k}`;$('#lvMission').textContent=L.m;
+  st=makeStage(L.h,'game');$('#lvStage').replaceChildren(st);
+  target=st.q(L.t);st.mark('data-target',target);
+  inp.value='';win.classList.remove('show');out.innerHTML=`<p class="muted">Objetivos: <b>${target.length}</b>. Escribe un selector.</p>`;dots();}
+ function check(){const s=inp.value.trim();if(!s){st.clear();out.innerHTML=`<p class="muted">Objetivos: <b>${target.length}</b>. Escribe un selector.</p>`;win.classList.remove('show');return;}
+  let r;try{r=st.run(s);}catch(e){st.clear();out.innerHTML='<p class="bad">Selector no válido (todavía).</p>';win.classList.remove('show');return;}
+  const T=new Set(target),good=r.filter(n=>T.has(n)).length,extra=r.length-good;
+  const ok=good===target.length&&extra===0;
+  out.innerHTML=ok?'<p class="yes">¡Diana! Todos los objetivos y nadie más.</p>':`<p>Aciertos: <b>${good} / ${target.length}</b>${extra?` · <span class="no">te sobran ${extra}</span>`:''}</p>`;
+  win.classList.toggle('show',ok);if(ok){done.add(cur);dots();}}
+ inp.addEventListener('input',check);
+ $('#lvHint').onclick=()=>{out.innerHTML=`<p><b>Pista:</b> ${esc(LV[cur].p)}</p>`;};
+ $('#lvSol').onclick=()=>{inp.value=LV[cur].t;check();};
+ $('#lvNext').onclick=()=>{load((cur+1)%LV.length);inp.focus();};
+ load(0);}
+
+/* ---------- preguntas (errores y test) ---------- */
+function qBlock(host,list,onScore){const h=$(host);const cards=[];
+  list.forEach((it,i)=>{const c=el('div','q');c.innerHTML=`<p class="qq">${i+1}. ${it.q}</p>`;
+   if(it.html)c.append(codeBox('html',it.html,'HTML'));if(it.code)c.append(codeBox('css',it.code,'CSS'));
+   const order=it.o.map((_,k)=>k);for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+   const opts=el('div');order.forEach(k=>{const l=el('label','opt');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${it.o[k]}</span>`;opts.append(l);});
+   const ex=el('div','ex',it.e);c.append(opts,ex);
+   c.grade=()=>{const sel=$('input:checked',c);$$('.opt',c).forEach(l=>{l.classList.remove('right','wrong');const v=+$('input',l).value;if(v===it.a)l.classList.add('right');else if($('input',l).checked)l.classList.add('wrong');});ex.classList.add('show');return sel&&+sel.value===it.a;};
+   c.reset=()=>{$$('input',c).forEach(x=>x.checked=false);$$('.opt',c).forEach(l=>l.classList.remove('right','wrong'));ex.classList.remove('show');};
+   c.right=()=>{const sel=$('input:checked',c);return !!sel&&+sel.value===it.a;};
+   opts.addEventListener('change',()=>{c.grade();if(onScore)onScore();});
+   cards.push(c);h.append(c);});
+  return cards;}
+
+qBlock('#fixes',[
+ {q:'Quería pintar todas las viñetas, pero no se pinta ninguna.',html:'<div class="vineta">…</div>',code:'vineta { border: 3px solid black; }',o:['Falta el punto: .vineta','Hay que usar #vineta','border no funciona en un div'],a:0,e:'Sin punto, <code>vineta</code> busca una <b>etiqueta</b> llamada &lt;vineta&gt;, que no existe. Para una clase: <code>.vineta</code>.'},
+ {q:'El estilo de la portada no se aplica.',html:'<article id="portada">…</article>',code:'#Portada { background-color: gold; }',o:['Los nombres distinguen mayúsculas: #portada','El id se escribe con punto','Hay que poner article#Portada'],a:0,e:'<code>Portada</code> y <code>portada</code> son nombres distintos. Escríbelos siempre igual (mejor todo en minúsculas).'},
+ {q:'Quería los párrafos con clase grito, pero no sale nada.',html:'<p class="grito">¡BOOM!</p>',code:'p .grito { color: red; }',o:['Sobra el espacio: p.grito','Falta un > entre p y .grito','La clase va antes: .grito p'],a:0,e:'Con espacio significa "un .grito <b>dentro</b> de un p". Sin espacio, "un p que <b>es</b> .grito": <code>p.grito</code>.'},
+ {q:'Quería pintar el primer elemento de la lista, pero no pasa nada.',html:'<ul>\n  <li>Uno</li>\n  <li>Dos</li>\n</ul>',code:'li:nth-child(0) { color: red; }',o:['Se empieza a contar en 1: li:nth-child(1) o li:first-child','Hay que escribir li:nth-child(first)','nth-child solo funciona con números pares'],a:0,e:'En CSS se cuenta desde <b>1</b>. El hijo 0 no existe. Usa <code>li:nth-child(1)</code> o, más claro, <code>li:first-child</code>.'},
+ {q:'Quería pintar todos los párrafos que hay después del título, pero solo se pinta el primero.',html:'<h3>Título</h3>\n<p>Uno</p>\n<p>Dos</p>\n<p>Tres</p>',code:'h3 + p { color: red; }',o:['El + solo alcanza al hermano pegado: h3 ~ p','Hay que usar h3 > p','Hay que poner h3 + p + p + p'],a:0,e:'<code>+</code> = solo el <b>siguiente</b>. <code>~</code> = <b>todos</b> los posteriores.'},
+ {q:'Quería marcar los enlaces a PDF, pero no se marca ninguno.',html:'<a href="mapa.pdf">Mapa</a>',code:'a[href^=".pdf"] { font-weight: bold; }',o:['^= es "empieza por"; para "termina en" es $=','Falta poner comillas simples','Los atributos van entre paréntesis'],a:0,e:'<code>^=</code> busca el principio del valor. Para el final: <code>a[href$=".pdf"]</code>.'},
+ {q:'El hover no hace nada.',html:'<button class="boton">Pulsa</button>',code:'.boton: hover { background-color: cyan; }',o:['Sobra el espacio: .boton:hover','Hay que escribir ::hover','hover solo funciona en enlaces'],a:0,e:'Con espacio, el navegador lo lee mal y descarta la regla entera. La pseudo-clase va <b>pegada</b>: <code>.boton:hover</code>.'},
+ {q:'La pegatina no aparece.',html:'<div class="nuevo">Pixel #5</div>',code:'.nuevo::after {\n  background-color: magenta;\n  color: white;\n}',o:['Falta content, por ejemplo content: "¡NUEVO!";','Hay que usar :after con un solo punto','::after solo funciona en párrafos'],a:0,e:'Sin <code>content</code>, <code>::before</code> y <code>::after</code> no se crean. Aunque no quieras texto, pon <code>content: "";</code>.'}]);
+
+{const Q=[
+ {q:'¿Qué selector apunta a todos los elementos con <code>class="aviso"</code>?',o:['.aviso','#aviso','aviso'],a:0,e:'Las clases se seleccionan con punto. Con # sería un id y sin nada, una etiqueta.'},
+ {q:'¿Qué diferencia hay entre <code>ul li</code> y <code>ul &gt; li</code>?',o:['Ninguna','ul li incluye también los li de listas anidadas (nietos); ul &gt; li solo los hijos directos','ul &gt; li es más lento'],a:1,e:'El espacio alcanza a todos los descendientes; &gt; solo al primer nivel.'},
+ {q:'<code>h2 + p</code> selecciona…',o:['Todos los p después de un h2','El p que va inmediatamente después de un h2, con el mismo padre','El h2 y el p'],a:1,e:'+ es el hermano adyacente: solo el siguiente, pegado.'},
+ {q:'<code>li:nth-child(3)</code> selecciona…',o:['El li que es el tercer hijo de su padre','Los tres primeros li','El cuarto li, porque se cuenta desde 0'],a:0,e:'Se cuenta desde 1, y cuenta a todos los hermanos.'},
+ {q:'¿Qué filas pinta <code>tr:nth-child(odd)</code>?',o:['2, 4, 6…','1, 3, 5…','Solo la primera'],a:1,e:'odd = impares = 2n+1.'},
+ {q:'¿Qué selecciona <code>a[href$=".pdf"]</code>?',o:['Enlaces cuyo href empieza por .pdf','Enlaces cuyo href termina en .pdf','Enlaces con un archivo .pdf dentro del texto'],a:1,e:'$= significa "termina en".'},
+ {q:'¿Qué selector tiene más especificidad?',o:['#menu','.a.b.c.d','ul li a span'],a:0,e:'(1,0,0) gana a (0,4,0) y a (0,0,4): se compara columna a columna, no se suma.'},
+ {q:'¿Cuánta especificidad aporta <code>:where(.tarjeta)</code>?',o:['La de una clase (0,1,0)','Cero','La de un id'],a:1,e:':where() siempre vale 0. :is() valdría lo de su argumento más fuerte.'},
+ {q:'¿Para qué sirve <code>:has()</code>?',o:['Para seleccionar un elemento según lo que contiene (o lo que tiene detrás)','Para comprobar si un elemento tiene una clase','Es lo mismo que :is()'],a:0,e:'.carta:has(.oferta) pinta la carta (el padre) según su hijo.'},
+ {q:'¿Qué propiedad es obligatoria en <code>::before</code> y <code>::after</code>?',o:['display','content','position'],a:1,e:'Sin content no se crea la caja. Puede ser vacío: content: "".'},
+ {q:'Si le pones <code>border</code> a un div, ¿lo heredan sus hijos?',o:['Sí, todos','No: las propiedades de la caja no se heredan','Solo los párrafos'],a:1,e:'Se heredan las de texto (color, font…), no las de caja (border, padding, margin, background…).'},
+ {q:'<code>p:first-child</code> en <code>&lt;div&gt;&lt;h3&gt;&lt;/h3&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;</code> selecciona…',o:['El p','Nada','El h3'],a:1,e:'El primer hijo es el h3, que no es un p. Para el primer párrafo: p:first-of-type.'}];
+ const sc=$('#qScore');let cards;const upd=()=>{const n=cards.filter(c=>c.right()).length;sc.textContent=n+' / '+Q.length+(n===Q.length?' · ¡KAPOW!':'');};
+ cards=qBlock('#quiz',Q,upd);
+ $('#qAll').onclick=()=>{cards.forEach(c=>c.grade());upd();};
+ $('#qReset').onclick=()=>{cards.forEach(c=>c.reset());upd();};}
+
+})();
+</script>
+</body>
+</html>
