@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Position y z-index · Puerto de dirigibles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..600&family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cielo:#d8f0fb; --cielo2:#a9dcf3; --azul:#3f9fd6; --azul2:#2678ae; --nube:#ffffff; --bruma:#eef7fb;
+  --hoja:#55b36b; --musgo:#2f8051; --brote:#b4e39a; --menta:#dcf4e4;
+  --oro:#f2b93b; --sol:#ffd75e; --miel:#fff0c2; --laton:#c9962e; --coral:#f27a5a;
+  --pizarra:#2f3e46; --hierro:#22303a; --gris:#7f8d94;
+  --tinta:#1e2d33; --tinta2:#4b5d64;
+  --deco:'Fraunces',Georgia,serif; --body:'Sora',system-ui,'Segoe UI',sans-serif; --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:80px;overflow-x:clip}
+body{margin:0;color:var(--tinta);font-family:var(--body);font-size:17px;line-height:1.72;overflow-x:clip;
+  background:linear-gradient(180deg,#cfeefc 0,#e9f7fd 700px,#f7fbfd 50%,#eef8f4)}
+::selection{background:var(--sol);color:var(--tinta)}
+*{scrollbar-width:thin;scrollbar-color:#a9cfe0 transparent}
+a{color:var(--azul2)}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.84em;background:#fff;color:var(--azul2);padding:1px 7px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(38,120,174,.22);overflow-wrap:anywhere}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+
+/* nubes que pasan detrás del contenido */
+.sky-drift{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.sky-drift i{position:absolute;height:60px;border-radius:60px;background:#fff;opacity:.55;filter:blur(2px);box-shadow:50px -24px 0 8px #fff,110px 0 0 0 #fff;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-260px)}to{transform:translateX(110vw)}}
+
+/* ===== HERO: puerto de dirigibles sobre las nubes ===== */
+.hero{position:relative;z-index:3;min-height:min(92vh,860px);min-height:min(92svh,860px);overflow:hidden;background:linear-gradient(180deg,#7fc6ec,#b9e3f7 45%,#eaf7fd);display:flex;align-items:flex-end}
+.layers{position:absolute;inset:0;perspective:1600px}
+.stack{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.2s cubic-bezier(.34,1.2,.64,1)}
+.stack canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:transform 1.2s cubic-bezier(.34,1.2,.64,1),opacity .6s}
+.stack .tagz{position:absolute;left:6%;top:12%;padding:4px 12px;border-radius:999px;background:rgba(34,48,58,.85);color:var(--sol);font:600 22px var(--mono);opacity:0;transition:opacity .6s;white-space:nowrap}
+.explode .stack{transform:translateX(16%) translateY(10%) rotateX(56deg) rotateZ(-26deg) scale(.52)}
+.explode .stack canvas,.explode .stack .lw{outline:2px dashed rgba(34,48,58,.25);outline-offset:-2px}
+.explode .stack .tagz{opacity:1}
+.stack .lw{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.2s cubic-bezier(.34,1.2,.64,1)}
+.stack .lw{transform:translateZ(0)}
+.explode .stack .lw{transform:translateZ(calc(var(--z) * 120px));background:rgba(255,255,255,.08)}
+.hero .wrap{position:relative;z-index:10;width:100%;padding:110px 20px 54px}
+.hero-card{max-width:600px;padding:26px 30px 28px;border-radius:28px;background:linear-gradient(150deg,rgba(255,255,255,.82),rgba(255,255,255,.6));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 0 0 1px rgba(201,150,46,.35),0 30px 60px -30px rgba(38,120,174,.55)}
+.hero .kick{font:italic 18px var(--deco);color:var(--azul2);margin:0}
+.title{font:600 clamp(42px,6.6vw,84px)/1 var(--deco);letter-spacing:-.02em;margin:6px 0 4px;color:var(--pizarra);font-variation-settings:"opsz" 144}
+.title em{font-style:italic;color:var(--azul)}
+.lead{font-size:17.5px;margin:10px 0 18px;color:var(--tinta2)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;font:600 15px var(--body);text-decoration:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s}
+.btn:hover{transform:translateY(-3px)}.btn:active{transform:scale(.95)}
+.btn.oro{background:linear-gradient(180deg,#ffe28a,var(--oro));color:var(--tinta);box-shadow:0 10px 22px -10px rgba(242,185,59,.9)}
+.btn.azul{background:linear-gradient(180deg,#5db6e6,var(--azul2));color:#fff;box-shadow:0 10px 22px -10px rgba(38,120,174,.9)}
+.btn.claro{background:#fff;color:var(--azul2);box-shadow:inset 0 0 0 1.5px rgba(38,120,174,.35)}
+.btn.sm{padding:8px 15px;font-size:13.5px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(38,120,174,.25)}
+.nav .wrap{display:flex;align-items:center;gap:10px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 20px var(--deco);color:var(--pizarra);white-space:nowrap}
+.brand i{display:block;width:34px;height:18px;border-radius:50%;background:linear-gradient(180deg,#fff,#cfe6f1);box-shadow:inset 0 0 0 2px var(--laton);position:relative}
+.brand i::after{content:"";position:absolute;left:12px;top:15px;width:10px;height:6px;border-radius:2px;background:var(--laton)}
+.nav-links{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 16px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:6px 12px;border-radius:999px;color:var(--tinta2);text-decoration:none;font-size:13.5px}
+.nav-links a span{font:italic 14px var(--deco);color:var(--laton);margin-right:5px}
+.nav-links a:hover{background:var(--bruma);color:var(--azul2)}
+.nav-links a.on{background:var(--azul2);color:#fff}
+.nav-arrow{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1px solid rgba(38,120,174,.35);background:#fff;color:var(--azul2);cursor:pointer}
+.prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--azul),var(--oro))}
+
+/* secciones */
+main{position:relative;z-index:2;padding-bottom:40px}
+section.sec{padding:84px 0 8px;position:relative}
+.sec-head{display:grid;grid-template-columns:92px 1fr;gap:24px;align-items:center;margin-bottom:28px}
+.alt{position:relative;width:92px;height:92px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle,#fff 0 52%,transparent 53%),conic-gradient(var(--azul) 0 var(--p,30%),#d9ebf3 0);box-shadow:inset 0 0 0 4px #fff,0 0 0 2px var(--laton),0 14px 26px -12px rgba(38,120,174,.6)}
+.alt b{font:600 30px var(--deco);color:var(--pizarra)}
+.alt small{position:absolute;bottom:14px;font:600 9px var(--mono);color:var(--gris);letter-spacing:.08em}
+.sec-head .kick{font:italic 18px var(--deco);color:var(--azul2);margin:0}
+.sec-head h2{font:600 clamp(32px,4.8vw,54px)/1.06 var(--deco);letter-spacing:-.015em;margin:4px 0 8px;color:var(--pizarra)}
+.sec-head h2 code{font-size:.7em;padding:0 12px;border-radius:12px;background:linear-gradient(135deg,var(--miel),#fff);box-shadow:inset 0 0 0 1px rgba(201,150,46,.5);color:var(--pizarra);vertical-align:.08em}
+.sec-head p{margin:0;font-size:18px;color:var(--tinta2);max-width:760px}
+.card{position:relative;margin-bottom:26px;padding:32px;border-radius:26px;background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(246,251,253,.85));box-shadow:0 0 0 1px rgba(38,120,174,.14),0 34px 60px -44px rgba(38,120,174,.6)}
+.card::before{content:"";position:absolute;left:28px;right:28px;top:0;height:4px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--azul),var(--hoja),var(--oro))}
+.card h3{font:600 28px/1.2 var(--deco);margin:0 0 12px;color:var(--pizarra)}
+.card h4{font:600 17px var(--body);margin:22px 0 6px;color:var(--azul2)}
+.card p{margin:0 0 13px}
+.card ul,.card ol{margin:0 0 13px;padding-left:22px}
+.card li{margin-bottom:7px}
+.card li::marker{color:var(--oro)}
+.sub-h{font:600 24px var(--deco)!important;color:var(--pizarra)!important;margin:28px 0 10px!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2>*,.g3>*{min-width:0}
+
+/* tabla de valores */
+.vals{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.vals div{padding:12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px rgba(38,120,174,.16)}
+.vals code{font-weight:600}
+.vals p{font-size:13.5px;margin:6px 0 0;color:var(--tinta2);line-height:1.45}
+.vals .flow{display:inline-block;margin-top:6px;font:600 11px var(--mono);padding:2px 8px;border-radius:999px}
+.flow.si{background:var(--menta);color:var(--musgo)}.flow.no{background:#ffe3da;color:#b2482c}
+
+/* notas */
+.note{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:14px 18px;border-radius:18px;margin:16px 0;font-size:16px;background:#fff;box-shadow:inset 3px 0 0 var(--g),inset 0 0 0 1px rgba(38,120,174,.12)}
+.note .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--deco);color:#fff;background:var(--g)}
+.note b.t{display:block;font:600 18px var(--deco);margin-bottom:2px;color:var(--g)}
+.note p{margin:0}.note p+p{margin-top:6px}
+.note.azul{--g:var(--azul2)}.note.oro{--g:#b98712}.note.hoja{--g:var(--musgo)}.note.coral{--g:#c95536}
+
+/* bitácora */
+.log{position:relative;display:grid;grid-template-columns:62px 1fr;gap:18px;align-items:center;margin:6px 0 10px;padding:18px 24px;border-radius:22px;background:linear-gradient(110deg,#fff8dd,#e7f6fc);box-shadow:0 0 0 1px rgba(201,150,46,.4),0 20px 34px -26px rgba(38,120,174,.7)}
+.log .ic{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,transparent 31%),conic-gradient(from 45deg,var(--coral) 0 25%,#fff 0 50%,var(--azul) 0 75%,#fff 0);box-shadow:inset 0 0 0 3px var(--laton),0 0 0 3px #fff;position:relative}
+.log .ic::after{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:3px;margin-left:-1.5px;background:linear-gradient(var(--coral) 50%,var(--pizarra) 50%);border-radius:3px;transform:rotate(30deg)}
+.log .lb{display:block;font:italic 15px var(--deco);color:var(--laton)}
+.log p{margin:0;font:500 20px/1.45 var(--deco);color:var(--pizarra)}
+
+/* código */
+.code{position:relative;margin:14px 0 8px;border-radius:18px;background:#1d2a33;color:#e8f0f3;overflow:hidden;box-shadow:0 0 0 1px rgba(63,159,214,.3),0 18px 30px -22px rgba(0,0,0,.6)}
+.code .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px 7px 16px;background:linear-gradient(90deg,#26363f,#1f2d36);box-shadow:inset 0 -1px 0 rgba(63,159,214,.3)}
+.code .bar span{font:italic 14px var(--deco);color:var(--miel)}
+.copy{border:none;border-radius:999px;padding:4px 12px;background:var(--oro);color:var(--tinta);font:600 12px var(--body);cursor:pointer}
+.copy.ok{background:var(--brote)}
+.code pre{margin:0;padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.72;white-space:pre-wrap;word-break:break-word}
+.code .s{color:#8fd0f0}.code .p{color:#ffc08f}.code .v{color:#ffe08a}.code .c{color:#93aab4;font-style:italic}.code .t{color:#b6e6a0}.code .ps{color:#f3a6cf}.code .fn{color:#b6e6a0}
+.code .new{display:inline-block;width:100%;background:rgba(255,215,94,.12);box-shadow:inset 3px 0 0 var(--sol)}
+.pair{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr);gap:14px;align-items:start}
+.pair>.code{margin-top:6px}
+
+/* controles */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.chip{border:none;background:#fff;color:var(--azul2);border-radius:999px;padding:6px 13px;font:600 12.5px var(--mono);cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(38,120,174,.28)}
+.chip:hover{background:var(--bruma)}
+.chip.on{background:var(--azul2);color:#fff;box-shadow:none}
+.rng{display:grid;grid-template-columns:110px 1fr 76px;gap:10px;align-items:center;font:600 12.5px var(--mono);color:var(--tinta2);margin:7px 0}
+.rng input{width:100%;accent-color:var(--azul2)}
+.rng output{text-align:right;color:var(--azul2)}
+.rng .r{border:none;background:var(--bruma);color:var(--azul2);border-radius:7px;font:700 11px var(--body);padding:2px 6px;cursor:pointer;margin-left:4px}
+.exp{padding:12px 16px;border-radius:16px;background:var(--bruma);font-size:15.5px;margin-top:10px;box-shadow:inset 0 0 0 1px rgba(38,120,174,.18)}
+.exp p{margin:0}
+.ck{display:flex;align-items:center;gap:8px;font:600 13px var(--mono);color:var(--pizarra);margin:6px 0;cursor:pointer}
+.ck input{accent-color:var(--azul2);width:16px;height:16px}
+
+/* escenarios de demo: cielo con cuadrícula */
+.sky{position:relative;border-radius:22px;
+  background:linear-gradient(rgba(38,120,174,.08) 1px,transparent 1px) 0 0/30px 30px,linear-gradient(90deg,rgba(38,120,174,.08) 1px,transparent 1px) 0 0/30px 30px,linear-gradient(180deg,#e6f5fc,#fbfeff);box-shadow:inset 0 0 0 1px rgba(38,120,174,.2)}
+.tag{position:absolute;padding:2px 9px;border-radius:999px;font:600 11px var(--mono);background:rgba(34,48,58,.8);color:#fff;pointer-events:none;white-space:nowrap}
+.blk{display:flex;align-items:center;justify-content:center;border-radius:14px;font:700 15px var(--body);color:var(--tinta)}
+.blk.a{background:#cfe9f6;box-shadow:inset 0 0 0 2px #9ccbe3}
+.blk.b{background:linear-gradient(135deg,var(--sol),var(--oro));box-shadow:0 10px 20px -10px rgba(242,185,59,.9),inset 0 0 0 2px rgba(255,255,255,.6)}
+.blk.c{background:#d7f1dd;box-shadow:inset 0 0 0 2px #9fd5ad}
+.ghost{border:2px dashed var(--gris);border-radius:14px;background:rgba(127,141,148,.08)}
+
+/* laboratorio de position */
+.lab{display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+.city{padding:24px;min-height:380px}
+.city .lbl{position:absolute;right:12px;bottom:8px;font:italic 14px var(--deco);color:var(--azul2)}
+.city .row{display:flex;flex-direction:column;gap:12px}
+.city .blk{height:64px}
+
+/* ancestros */
+.nest{padding:22px;border-radius:18px;border:2px dashed #9ccbe3;background:rgba(255,255,255,.6);transition:border-color .3s,background-color .3s}
+.nest.pos{border:2px solid var(--azul2);background:rgba(169,220,243,.25)}
+.nest>.nlbl{display:block;font:600 12px var(--mono);color:var(--azul2);margin-bottom:8px}
+.badge{width:70px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:#fff;background:var(--coral);box-shadow:0 8px 16px -8px rgba(242,122,90,.9);z-index:3}
+
+/* fixed */
+#fixedPin{position:fixed;left:18px;bottom:18px;z-index:60;padding:10px 16px;border-radius:999px;background:var(--pizarra);color:var(--sol);font:600 13px var(--mono);box-shadow:0 12px 24px -10px rgba(0,0,0,.5)}
+
+/* sticky */
+.scrollbox{height:340px;overflow-y:auto;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 1px rgba(38,120,174,.2)}
+.floor{padding:0 0 10px}
+.floor h5{margin:0;padding:10px 16px;font:600 15px var(--body);color:#fff;background:linear-gradient(90deg,var(--azul2),var(--azul));box-shadow:0 6px 12px -8px rgba(0,0,0,.4)}
+.floor p{margin:10px 16px;font-size:15px;color:var(--tinta2)}
+.floor .room{height:46px;margin:8px 16px;border-radius:12px;background:var(--bruma)}
+.diag{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:22px;align-items:start}
+.diag .scrollbox{height:300px}
+.verdict{margin-top:10px;padding:12px 16px;border-radius:16px;font-size:15.5px}
+.verdict.ok{background:var(--menta);color:var(--musgo)}.verdict.ko{background:#ffe7df;color:#9c3a22}
+.sticky-row{display:flex;gap:14px;align-items:flex-start;padding:16px}
+.side{width:120px;padding:12px;border-radius:14px;background:linear-gradient(135deg,var(--sol),var(--oro));font:700 13px var(--body);text-align:center}
+.sidecol{flex:1}
+
+/* z-index */
+.zstage{height:300px;overflow:hidden}
+.ship{position:absolute;width:150px;height:90px;border-radius:50% 50% 46% 46%;display:flex;align-items:center;justify-content:center;font:700 14px var(--mono);color:var(--tinta);box-shadow:0 14px 24px -12px rgba(0,0,0,.45),inset 0 0 0 3px rgba(255,255,255,.7)}
+.ship::after{content:"";position:absolute;left:50%;bottom:-16px;width:46px;height:16px;margin-left:-23px;border-radius:0 0 8px 8px;background:var(--laton)}
+.ctx{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.ctx .sky{height:260px}
+
+/* errores / test */
+.fix{border-radius:20px;padding:16px 18px;margin-bottom:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(38,120,174,.18)}
+.fix .hd{display:flex;gap:12px;align-items:baseline;font-weight:600;margin-bottom:6px}
+.fix .hd .n{flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--azul2);color:#fff;font:600 16px var(--deco)}
+.fix .opts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.fix label{display:flex;gap:10px;align-items:center;padding:7px 12px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-size:15.5px}
+.fix label:hover{background:var(--bruma)}
+.fix input{accent-color:var(--azul2);width:17px;height:17px;flex:0 0 auto}
+.fix label.right{border-color:var(--hoja);background:var(--menta)}.fix label.wrong{border-color:var(--coral);background:#ffe7df}
+.fix .ex{display:none;margin-top:8px;padding:10px 14px;border-radius:12px;background:var(--bruma);font-size:15px}.fix .ex.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 20px;border-radius:22px;background:linear-gradient(110deg,var(--miel),var(--cielo));font-weight:600}
+.score b{font:600 34px var(--deco);color:var(--pizarra)}
+.sheet{width:100%;border-collapse:separate;border-spacing:0;border-radius:18px;overflow:hidden;font-size:14.5px;background:#fff;box-shadow:0 0 0 1px rgba(38,120,174,.2)}
+.sheet th{background:linear-gradient(90deg,var(--azul2),var(--azul));color:#fff;text-align:left;padding:11px 12px;font:italic 600 16px var(--deco)}
+.sheet td{padding:9px 12px;border-top:1px solid rgba(38,120,174,.1);vertical-align:top}
+.sheet td:first-child{font:600 13px var(--mono);color:var(--azul2);white-space:nowrap}
+.sheet-wrap{overflow-x:auto;border-radius:18px}
+
+footer{position:relative;z-index:2;margin-top:70px;background:linear-gradient(180deg,#bfe5f6,#8ccbea);color:var(--pizarra)}
+footer .wrap{padding:40px 20px 50px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .ft{font:600 30px var(--deco)}
+footer p{margin:4px 0 0}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .g2,.lab,.pair,.diag,.ctx{grid-template-columns:1fr}
+  .vals{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .card{padding:24px 16px}
+  .sec-head{grid-template-columns:62px 1fr;gap:14px}.alt{width:62px;height:62px}.alt b{font-size:22px}.alt small{display:none}
+  .rng{grid-template-columns:86px 1fr 66px}
+  .log{grid-template-columns:42px 1fr;padding:16px}.log .ic{width:40px;height:40px}.log p{font-size:17px}
+  .brand span{display:none}
+  .hero-card{padding:22px 18px}
+  .hero .wrap{padding-top:42vh;padding-bottom:26px}
+  .explode .stack{transform:rotateX(58deg) rotateZ(-28deg) scale(.5) translateY(-30%)}
+}
+@media (prefers-reduced-motion:reduce){
+  .sky-drift{display:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="sky-drift" aria-hidden="true"><i style="top:18%;width:120px;animation-duration:70s"></i><i style="top:55%;width:90px;animation-duration:95s;animation-delay:-40s"></i><i style="top:80%;width:140px;animation-duration:120s;animation-delay:-80s"></i></div>
+
+<header class="hero" id="inicio">
+  <div class="layers" id="layers"><div class="stack" id="stack"></div></div>
+  <div class="wrap">
+    <div class="hero-card">
+      <p class="kick">CSS · Puerto de dirigibles</p>
+      <h1 class="title">Position <em>y</em> <span style="white-space:nowrap">z-index</span></h1>
+      <p class="lead">Sobre las nubes, cada cosa tiene su sitio: las islas flotan en su lugar, los dirigibles se anclan a su torre, el ascensor sube pegado a su hueco y unas capas pasan por delante de otras. Así se colocan los elementos en una página.</p>
+      <div class="hero-btns"><a class="btn oro" href="#que">Despegar</a><button class="btn azul" id="explode" type="button">Ver las capas (z-index)</button></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones"><div class="wrap">
+  <a class="brand" href="#inicio"><i></i><span>Position</span></a>
+  <button class="nav-arrow" id="navL" aria-label="Secciones anteriores">‹</button>
+  <div class="nav-links"><ul id="navUl"></ul></div>
+  <button class="nav-arrow" id="navR" aria-label="Secciones siguientes">›</button>
+  <div class="prog" id="prog"></div>
+</div></nav>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section class="sec" id="que" data-nav="Qué es position">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">El mapa de vuelo</p><h2><code>position</code></h2><p>Decide cómo se coloca un elemento: en su sitio normal, desplazado, anclado a otro, pegado a la ventana o pegado mientras haces scroll.</p></div></div>
+  <div class="card reveal">
+    <h3>Primero: el flujo normal</h3>
+    <p>Sin hacer nada, los elementos se colocan uno detrás de otro (o donde los ponga Flexbox o Grid). A eso se le llama <b>flujo normal</b>. Cada elemento ocupa un sitio y empuja a los siguientes. <code>position</code> permite sacar a un elemento de ese orden o moverlo respecto a algo.</p>
+    <div class="vals">
+      <div><code>static</code><p>El valor por defecto. Sigue el flujo normal y <b>ignora</b> top, left…</p><span class="flow si">ocupa su sitio</span></div>
+      <div><code>relative</code><p>Se desplaza desde su sitio normal. Su hueco se queda reservado.</p><span class="flow si">ocupa su sitio</span></div>
+      <div><code>absolute</code><p>Sale del flujo y se coloca respecto a su <b>ancestro posicionado</b> más cercano.</p><span class="flow no">no ocupa sitio</span></div>
+      <div><code>fixed</code><p>Sale del flujo y se queda fijo en la <b>ventana</b>, aunque hagas scroll.</p><span class="flow no">no ocupa sitio</span></div>
+      <div><code>sticky</code><p>Normal hasta que llega a un punto del scroll; ahí se <b>pega</b>, pero solo dentro de su padre.</p><span class="flow si">ocupa su sitio</span></div>
+    </div>
+    <h4>Las coordenadas: top, right, bottom, left</h4>
+    <p>Con cualquier valor salvo <code>static</code>, el elemento acepta cuatro propiedades que dicen <b>a qué distancia de cada borde</b> se coloca. <code>top: 20px</code> significa "a 20px del borde de arriba" (de su referencia). <code>inset: 0</code> es el atajo para poner las cuatro a 0 a la vez.</p>
+    <h4 class="sub-h">Laboratorio de vuelo</h4>
+    <p>La caja dorada <b>B</b> está entre A y C. Elige su <code>position</code>, mueve <code>top</code> y <code>left</code> y fíjate en dos cosas: <b>adónde va</b> y <b>qué les pasa a A y a C</b>.</p>
+    <div class="lab">
+      <div><div id="labCtl"></div><div class="exp" id="labExp"></div></div>
+      <div class="sky city" id="city"><div class="row"><div class="blk a">A</div><div class="blk b" id="labB">B</div><div class="blk c">C</div></div><span class="lbl" id="cityLbl"></span></div>
+    </div>
+    <div class="pair" id="labCode"></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="relative" data-nav="relative">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Isla que se desplaza</p><h2><code>relative</code></h2><p>Mueve el elemento desde su sitio normal, pero su hueco sigue ahí. Y tiene un segundo trabajo, aún más importante.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <h3>Uso 1: desplazar un poco</h3>
+        <p>Con <code>position: relative</code> y <code>top: 10px</code> el elemento baja 10px. Es como <code>translate</code>, que ya conoces: los vecinos no se mueven. Hoy se usa poco para esto, porque <code>transform</code> lo hace mejor.</p>
+        <h3 style="margin-top:20px">Uso 2: ser la referencia de un absolute</h3>
+        <p>Este es el uso estrella. Un elemento <code>absolute</code> se coloca respecto a su <b>ancestro posicionado</b> más cercano (un padre, abuelo… que tenga position distinto de static). La forma habitual de convertir una caja en esa referencia es ponerle <code>position: relative</code> <b>sin moverla</b>.</p>
+      </div>
+      <div class="note oro" style="margin:0;align-self:start"><div class="ic">!</div><div><b class="t">La receta más usada de position</b><p>Padre con <code>position: relative</code> (no se mueve) + hijo con <code>position: absolute</code> (se coloca dentro del padre). La verás en la siguiente sección en insignias, etiquetas, botones de cerrar, capas encima de una imagen…</p></div></div>
+    </div>
+    <div class="pair" id="relCode"></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="absolute" data-nav="absolute">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Anclado a su torre</p><h2><code>absolute</code></h2><p>Sale del flujo (ya no ocupa sitio) y se coloca con top, right, bottom y left respecto a su ancestro posicionado más cercano.</p></div></div>
+  <div class="card reveal">
+    <h3>¿Respecto a quién se coloca?</h3>
+    <p>La insignia roja tiene <code>position: absolute; top: -12px; right: -12px</code>. Sube por sus ancestros buscando el <b>primero que tenga position</b> (relative, absolute, fixed o sticky) y se coloca en su esquina. Activa y desactiva el <code>position: relative</code> de cada caja:</p>
+    <div class="g2">
+      <div id="ancCtl"></div>
+      <div class="nest pos" id="anc0"><span class="nlbl">sección (position: relative, siempre)</span>
+        <div class="nest" id="anc1"><span class="nlbl">torre</span>
+          <div class="nest" id="anc2"><span class="nlbl">dirigible</span>
+            <div class="nest" id="anc3" style="min-height:70px"><span class="nlbl">góndola</span><div class="badge" id="badge" style="position:absolute;top:-12px;right:-12px">NUEVO</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="exp" id="ancExp"></div>
+    <div class="pair" id="ancCode"></div>
+    <div class="note coral"><div class="ic">!</div><div><b class="t">Si no encuentra a nadie</b><p>Si ningún ancestro tiene position, el absolute se coloca respecto a <b>la página entera</b> (el bloque inicial): con <code>top: 0</code> se iría arriba del todo de la web. Es el error típico de "mi elemento ha desaparecido": seguramente está en una esquina de la página.</p></div></div>
+    <h4 class="sub-h">Tres recetas con absolute</h4>
+    <div class="g3" id="recipes"></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="fixed" data-nav="fixed">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">El sol no se mueve</p><h2><code>fixed</code></h2><p>Se coloca respecto a la <b>ventana del navegador</b> y se queda ahí aunque hagas scroll.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <p>Es lo que usan los botones de chat, los avisos de cookies o un "volver arriba". Pulsa el botón y haz scroll por toda la página: la etiqueta se queda en la esquina.</p>
+        <button class="btn oro sm" id="pinBtn" type="button">Activar un aviso fixed</button>
+        <ul style="margin-top:14px">
+          <li>Sale del flujo: <b>no ocupa sitio</b>. Si haces un menú fixed arriba, tapará el principio de la página: deja un hueco con <code>padding-top</code> en el body (o usa sticky).</li>
+          <li>Su referencia es siempre la ventana, no su padre.</li>
+          <li>Necesita al menos una coordenada (<code>bottom: 20px; right: 20px</code>…).</li>
+        </ul>
+      </div>
+      <div class="note coral" style="margin:0;align-self:start"><div class="ic">!</div><div><b class="t">La trampa del transform</b><p>Si un ancestro tiene <code>transform</code> (o <code>filter</code>), el fixed deja de fijarse en la ventana y pasa a fijarse en ese ancestro: se moverá con el scroll. Si un fixed "no se queda quieto", busca un transform por encima.</p></div></div>
+    </div>
+    <div class="pair" id="fixCode"></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="sticky" data-nav="sticky">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">El ascensor de la torre</p><h2><code>sticky</code></h2><p>El más útil y el que más errores da. Se comporta como un elemento normal hasta que el scroll lo lleva a su punto; entonces se pega… pero solo mientras su padre siga a la vista.</p></div></div>
+  <div class="card reveal">
+    <h3>Cómo funciona: el ascensor</h3>
+    <p>Imagina un ascensor dentro de su hueco. Mientras subes por la torre, el ascensor te acompaña pegado al techo de la ventana (<code>top: 0</code>). Pero <b>no puede salir de su hueco</b>: cuando el hueco (su padre) se acaba, el ascensor se va con él. Haz scroll dentro de la caja: cada planta tiene un título sticky, y el título de una planta empuja al anterior.</p>
+    <div class="g2">
+      <div class="scrollbox" id="floors"></div>
+      <div id="floorCode"></div>
+    </div>
+    <h4 class="sub-h">Las 5 reglas de sticky</h4>
+    <ol>
+      <li><b>Necesita un umbral.</b> Sin <code>top</code> (o bottom, left, right) no sabe dónde pegarse y actúa como relative.</li>
+      <li><b>Solo se mueve dentro de su padre.</b> Si el padre mide lo mismo que él, no tiene recorrido y parece que no funciona.</li>
+      <li><b>Se pega al ancestro que hace scroll más cercano.</b> Si un ancestro tiene <code>overflow: hidden</code> o <code>auto</code> (lo verás en el bloque de scroll), se pega a esa caja y no a la ventana.</li>
+      <li><b>En Flexbox y Grid, cuidado con el estiramiento.</b> Por defecto los hijos se estiran a todo el alto (<code>align-items: stretch</code>): el elemento ya ocupa todo el padre y no le queda recorrido. Solución: <code>align-self: start</code> (o <code>flex-start</code>).</li>
+      <li><b>Ocupa su sitio.</b> A diferencia de fixed, no tapa nada al principio. Pero al pegarse pasa por encima del contenido: dale <b>fondo</b> y, si hace falta, <code>z-index</code>.</li>
+    </ol>
+    <h4 class="sub-h">Diagnóstico: rompe el sticky</h4>
+    <p>La caja dorada es un menú lateral sticky dentro de una fila flex. Funciona. Activa cada error y haz scroll dentro de la caja para ver cómo deja de pegarse:</p>
+    <div class="diag">
+      <div><div id="diagCtl"></div><div class="verdict" id="diagV"></div></div>
+      <div class="scrollbox" id="diagBox">
+        <p style="margin:16px;font-size:15px;color:var(--tinta2)">Haz scroll hacia abajo dentro de esta caja ↓</p>
+        <div class="sticky-row" id="diagRow"><div id="diagWrap"><div class="side" id="diagSide">Menú lateral<br><small style="font-weight:400">sticky · top: 10px</small></div></div>
+          <div class="sidecol" id="diagCol"></div></div>
+        <p style="margin:16px;font-size:15px;color:var(--tinta2)">Fin de la fila: aquí el menú tiene que irse con ella.</p><div style="height:220px"></div>
+      </div>
+    </div>
+    <div class="pair" id="diagCode"></div>
+    <div class="note azul"><div class="ic">i</div><div><b class="t">Menú de la web: top con hueco</b><p>Si tu web tiene un menú fixed o sticky arriba de 60px de alto, los títulos sticky de dentro deben usar <code>top: 60px</code>, o quedarán escondidos debajo del menú. Por ejemplo, el menú de secciones de esta página es sticky con <code>top: 0</code>: un título sticky que tuviera que quedar debajo de él necesitaría <code>top: 60px</code>.</p></div></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="zindex" data-nav="z-index">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Capas de cielo</p><h2><code>z-index</code></h2><p>Cuando dos elementos se solapan, decide cuál queda por delante. Número mayor = más cerca de ti.</p></div></div>
+  <div class="card reveal">
+    <div class="g2">
+      <div>
+        <h3>El orden de las capas</h3>
+        <ul>
+          <li>Sin z-index, gana el que está <b>más abajo en el HTML</b>: se pinta después, encima.</li>
+          <li><code>z-index</code> solo funciona en elementos <b>posicionados</b> (cualquier position salvo static) o en hijos de un Flexbox o Grid.</li>
+          <li>Admite números enteros, también negativos: <code>z-index: -1</code> manda el elemento detrás.</li>
+          <li>No hace falta usar 9999: basta con 1, 2, 3… y dejar huecos (10, 20, 30) para poder meter capas entre medias.</li>
+        </ul>
+        <div id="zCtl"></div>
+      </div>
+      <div class="sky zstage" id="zStage"></div>
+    </div>
+    <div class="pair" id="zCode"></div>
+    <h4 class="sub-h">La trampa del contexto de apilamiento</h4>
+    <p>Un padre posicionado <b>con z-index</b> crea una "caja de capas" propia (un <b>contexto de apilamiento</b>). Sus hijos ordenan sus z-index <b>solo dentro de esa caja</b>: aunque un hijo tenga <code>z-index: 999</code>, nunca podrá ponerse por encima de algo que esté por encima de su padre. También crean contexto <code>opacity</code> menor que 1, <code>transform</code> y <code>filter</code>.</p>
+    <div class="ctx">
+      <div><div class="sky" id="ctxStage"></div><div id="ctxCtl"></div><div class="exp" id="ctxExp"></div></div>
+      <div id="ctxCode"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="errores" data-nav="Arregla el código">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Turbulencias</p><h2>Arregla el código</h2><p>Seis errores clásicos de position y z-index.</p></div></div>
+  <div class="card reveal"><div id="fixes"></div></div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="test" data-nav="Test">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Aterrizaje</p><h2>Test final</h2><p>Diez preguntas con explicación.</p></div></div>
+  <div class="card reveal"><div id="quiz"></div><div class="score"><span>Puntuación:</span><b id="qScore">0 / 10</b><button class="btn azul sm" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn claro sm" id="qReset" type="button">Empezar de nuevo</button></div></div>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="chuleta" data-nav="Chuleta">
+  <div class="sec-head reveal"><div class="alt"></div><div><p class="kick">Resumen</p><h2>Chuleta</h2><p>Todo el bloque en una tabla.</p></div></div>
+  <div class="sheet-wrap reveal"><table class="sheet">
+    <tr><th>Valor</th><th>¿Ocupa su sitio?</th><th>Se coloca respecto a…</th><th>Recuerda</th></tr>
+    <tr><td>static</td><td>Sí</td><td>Flujo normal</td><td>Por defecto. Ignora top/left y z-index</td></tr>
+    <tr><td>relative</td><td>Sí (hueco reservado)</td><td>Su propio sitio</td><td>Sobre todo, referencia de los absolute</td></tr>
+    <tr><td>absolute</td><td>No</td><td>Ancestro posicionado más cercano</td><td>Padre relative + hijo absolute</td></tr>
+    <tr><td>fixed</td><td>No</td><td>La ventana</td><td>Un transform en un ancestro lo rompe</td></tr>
+    <tr><td>sticky</td><td>Sí</td><td>Su padre + el scroll</td><td>Umbral (top), recorrido en el padre, sin overflow, align-self: start en flex</td></tr>
+    <tr><td>top / right / bottom / left</td><td colspan="2">Distancia a cada borde de la referencia</td><td>inset: 0 = las cuatro a 0</td></tr>
+    <tr><td>z-index</td><td colspan="2">Orden de las capas: mayor = delante</td><td>Solo posicionados o hijos flex/grid; contexto de apilamiento</td></tr>
+  </table></div>
+</section>
+
+</main>
+<div id="fixedPin" hidden>position: fixed · bottom: 18px · left: 18px</div>
+<footer><div class="wrap"><div><div class="ft">Puerto de dirigibles</div><p>Cada cosa en su sitio, cada capa en su altura.</p></div><a class="btn oro sm" href="#inicio">Volver arriba</a></div></footer>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dyn=el('style');document.head.appendChild(dyn);const rules={};
+const setRule=(k,css)=>{rules[k]=css;dyn.textContent=Object.values(rules).join('\n');};
+const fmt=n=>{const r=Math.round(n*1000)/1000;return Object.is(r,-0)?'0':String(r);};
+const pad=(s,n)=>s+' '.repeat(Math.max(1,n-s.length));
+
+/* ---------- resaltado de código ---------- */
+function hlVal(v){return esc(v).replace(/([a-zA-Z][\w-]*)\(/g,'<span class="fn">$1</span>(');}
+function hlDecl(d){return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+hlVal(v)+'</span>'+sc);}
+function hlSel(s){return esc(s).replace(/(:[\w-]+(\([^)]*\))?)/g,'<span class="ps">$1</span>');}
+function hlCssLine(line){let code=line,com='';const i=line.indexOf('/*');if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+ let out;
+ if(code.indexOf('{')>=0){const j=code.indexOf('{');const rest=code.slice(j+1);const cl=rest.match(/\}(\s*)$/);const inner=cl?rest.slice(0,rest.length-cl[0].length):rest;out='<span class="s">'+hlSel(code.slice(0,j))+'</span>{'+(inner.indexOf(':')>=0?hlDecl(inner):esc(inner))+(cl?'}'+cl[1]:'');}
+ else if(/^\s*\}/.test(code))out=esc(code);
+ else if(/^\s*[\w-]+\s*:/.test(code))out=hlDecl(code);
+ else out=code.trim()?'<span class="v">'+hlVal(code)+'</span>':esc(code);
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+function hlHtmlLine(h){let code=h,com='';const i=h.indexOf('<!--');if(i>=0){code=h.slice(0,i);com=h.slice(i);}
+ const out=esc(code).replace(/(class|style)="([^"]*)"/g,'<span class="p">$1</span>=<span class="v">"$2"</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+ return out+(com?'<span class="c">'+esc(com)+'</span>':'');}
+/* » = línea destacada · ~ = línea del próximo bloque (transition) */
+function render(lang,src){return src.split('\n').map(l=>{const n=l.startsWith('»'),s0=l.startsWith('~');const s=(n||s0)?l.slice(1):l;const h=lang==='html'?hlHtmlLine(s):hlCssLine(s);return n?'<span class="new">'+(h||' ')+'</span>':s0?'<span class="soon">'+h+'</span>':h;}).join('\n');}
+function copyText(txt,btn){const done=()=>{if(!btn)return;const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='Copiado';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+ const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();}
+function codeBox(lang,src,title){const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang.toUpperCase())}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+ w.set=s=>{w.src=s.split('\n').map(l=>/^[»~]/.test(l)?l.slice(1):l).join('\n');$('pre',w).innerHTML=render(lang,s);};w.set(src||'');$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;}
+/* pareja HTML + CSS */
+function pair(sel,html,css,th,tc){const h=typeof sel==='string'?$(sel):sel;const a=codeBox('html',html,th||'HTML'),b=codeBox('css',css,tc||'CSS');h.append(a,b);return{h:a,c:b};}
+const put=(sel,...b)=>{const h=$(sel);if(h)h.append(...b);};
+
+function rng(label,min,max,step,val,unit,onIn){const w=el('label','rng');w.innerHTML=`<span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${val}"><output></output>`;
+ const i=$('input',w),o=$('output',w);const show=()=>{o.innerHTML=fmt(+i.value)+(unit||'')+'<button class="r" type="button" title="Volver al valor inicial">↺</button>';$('.r',o).onclick=e=>{e.preventDefault();i.value=val;show();onIn();};};
+ i.addEventListener('input',()=>{show();onIn();});show();w.inp=i;w.get=()=>+i.value;w.setV=v=>{i.value=v;show();};return w;}
+function chips(list,onPick,first){const c=el('div','chips');list.forEach((t,k)=>{const b=el('button','chip',esc(t.label||t));b.type='button';b.onclick=()=>{$$('.chip',c).forEach(x=>x.classList.remove('on'));b.classList.add('on');onPick(t,k);};c.appendChild(b);});
+ if(first!=null&&c.children[first])c.children[first].classList.add('on');c.pick=k=>c.children[k]&&c.children[k].click();return c;}
+
+/* ---------- navegación ---------- */
+{const ul=$('#navUl'),secs=$$('section.sec');secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${i+1}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;$('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ const on=()=>{const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<150)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollTo({left:a.offsetLeft-ul.clientWidth/2+a.clientWidth/2,behavior:'smooth'});}}};
+ addEventListener('scroll',on,{passive:true});on();}
+
+
+/* ---------- comentarios alineados ---------- */
+/* rows: 'línea' o ['línea','comentario'] · la línea puede empezar por » o ~ */
+const AUTO={width:'ancho',height:'alto','border-radius':'esquinas redondeadas','background-color':'color de fondo','background':'fondo','background-image':'imagen de fondo',color:'color del texto','font-size':'tamaño de letra','font-weight':'grosor de letra','justify-content':'centrado principal','align-items':'centrado cruzado','flex-direction':'dirección de los hijos',gap:'separación entre hijos','box-shadow':'sombra',opacity:'transparencia',transform:'transformación','grid-area':'celda del grid','line-height':'altura de línea',border:'borde',margin:'margen',padding:'relleno','transition':'qué se suaviza y cómo','transition-delay':'espera antes de empezar','transition-duration':'cuánto dura','transition-property':'qué se suaviza','outline':'contorno','perspective':'profundidad 3D',position:'tipo de posicionamiento',top:'distancia desde arriba',left:'distancia desde la izquierda',right:'distancia desde la derecha',bottom:'distancia desde abajo',inset:'top, right, bottom y left a la vez','z-index':'altura de la capa','align-self':'alineación de este hijo','align-items':'centrado cruzado'};
+function autoC(c){const m=/^[»~]?\s*([\w-]+)\s*:\s*([^;]*);\s*$/.exec(c);if(!m)return null;const p=m[1],v=m[2].trim();if(p==='display')return v==='flex'?'caja flexible':v==='grid'?'rejilla (grid)':v==='inline-block'?'caja en línea':'tipo de caja';return AUTO[p]||null;}
+function CM(rows){rows=rows.map(r=>typeof r==='string'||r[1]?r:[r[0],autoC(r[0])]);const body=r=>{const c=r[0];return /^[»~]/.test(c)?c.slice(1):c;};const w=rows.filter(r=>typeof r!=='string'&&r[1]).map(r=>body(r).length);const col=Math.min(Math.max(...w,10)+3,40);return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;const pre=/^[»~]/.test(c)?c[0]:'';const b=pre?c.slice(1):c;return pre+(m?pad(b,col)+'/* '+m+' */':b);}).join('\n');}
+function HM(rows){return rows.map(r=>{if(typeof r==='string')return r;const[c,m]=r;if(!m)return c;const ind=c.match(/^\s*/)[0];return ind+'<!-- '+m+' -->\n'+c;}).join('\n');}
+
+/* ---------- altímetros numerados ---------- */
+{const secs=$$('section.sec');secs.forEach((s,i)=>{const a=$('.alt',s);if(!a)return;a.style.setProperty('--p',Math.round((i+1)/secs.length*100)+'%');a.innerHTML=`<b>${i+1}</b><small>ALT</small>`;});}
+
+/* ---------- HERO: puerto de dirigibles sobre las nubes (capas reales) ---------- */
+{const stack=$('#stack'),hero=$('.hero');const NAMES=['cielo','nubes lejanas','isla y torre','dirigibles','nubes cercanas'];
+ const L=NAMES.map((n,i)=>{const w=el('div','lw');w.style.setProperty('--z',i);const c=document.createElement('canvas');const t=el('span','tagz',`z-index: ${i} · ${n}`);t.style.top=(70-i*13)+'%';t.style.left=(4+i*3)+'%';w.append(c,t);stack.appendChild(w);return{w,c,x:c.getContext('2d')};});
+ let W,H,D,seed=3;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
+ const cloud=(x,cx,cy,r,sh)=>{for(let k=0;k<7;k++){const a=k/7*Math.PI,rr=r*(.45+rnd()*.35);const px=cx+Math.cos(a)*r*.9-r*.1,py=cy-Math.sin(a)*r*.35;const g=x.createRadialGradient(px,py-rr*.3,rr*.2,px,py,rr);g.addColorStop(0,'#fff');g.addColorStop(1,sh);x.fillStyle=g;x.beginPath();x.arc(px,py,rr,0,7);x.fill();}
+  x.fillStyle=sh;x.beginPath();x.ellipse(cx,cy+r*.12,r*1.15,r*.28,0,0,7);x.fill();};
+ function island(x,cx,cy,w,tower){// roca invertida
+  let g=x.createLinearGradient(0,cy,0,cy+w*.7);g.addColorStop(0,'#8a7a66');g.addColorStop(1,'#4f463c');x.fillStyle=g;x.beginPath();x.moveTo(cx-w/2,cy);x.quadraticCurveTo(cx-w*.3,cy+w*.35,cx,cy+w*.7);x.quadraticCurveTo(cx+w*.3,cy+w*.35,cx+w/2,cy);x.closePath();x.fill();
+  x.strokeStyle='rgba(60,110,70,.7)';x.lineWidth=2;for(let k=0;k<7;k++){const rx=cx-w*.35+k*w*.1;x.beginPath();x.moveTo(rx,cy+w*.1);x.quadraticCurveTo(rx+4,cy+w*.3,rx-2,cy+w*(.35+rnd()*.25));x.stroke();}
+  // cascada
+  g=x.createLinearGradient(0,cy,0,cy+w);g.addColorStop(0,'rgba(220,245,255,.9)');g.addColorStop(1,'rgba(220,245,255,0)');x.fillStyle=g;x.fillRect(cx+w*.28,cy,w*.04,w);
+  x.fillStyle='#5fb46e';x.beginPath();x.ellipse(cx,cy,w/2,w*.07,0,0,7);x.fill();
+  for(let k=0;k<9;k++){const tx=cx-w*.42+rnd()*w*.84;x.fillStyle=k%2?'#3e8f55':'#57ad69';x.beginPath();x.arc(tx,cy-6-rnd()*8,6+rnd()*w*.06,0,7);x.fill();}
+  if(tower){const th=w*1.05,tw=w*.16,bx=cx-tw/2,by=cy-4;g=x.createLinearGradient(bx,0,bx+tw,0);g.addColorStop(0,'#e9f1f4');g.addColorStop(.5,'#ffffff');g.addColorStop(1,'#cbdbe2');x.fillStyle=g;x.fillRect(bx,by-th,tw,th);
+   for(let k=0;k<7;k++){const ty=by-th*(.1+k*.12);x.fillStyle='#c9962e';x.fillRect(bx-tw*.25,ty,tw*1.5,3);x.fillStyle='#4aa262';for(let j=0;j<5;j++){x.beginPath();x.arc(bx-tw*.2+j*tw*.35,ty-3,3+rnd()*4,0,7);x.fill();}}
+   x.fillStyle='rgba(169,220,243,.85)';x.beginPath();x.arc(cx,by-th,tw*.75,Math.PI,0);x.fill();x.strokeStyle='#c9962e';x.lineWidth=2.5;x.stroke();
+   x.fillStyle='#22303a';x.fillRect(cx-1,by-th-tw*1.4,2,tw*.65);
+   // hueco del ascensor y ascensor pegado (sticky)
+   x.fillStyle='rgba(34,48,58,.18)';x.fillRect(cx-tw*.12,by-th,tw*.24,th);L.tower={cx,by,th,tw};
+   // muelle de amarre
+   x.fillStyle='#c9962e';x.fillRect(cx+tw/2,by-th*.7,w*.35,4);}}
+ function airship(x,cx,cy,s,t,col){x.save();x.translate(cx,cy);x.scale(s,s);
+  x.strokeStyle='#8a6a2a';x.lineWidth=1.5;x.beginPath();x.moveTo(-40,18);x.lineTo(-18,38);x.moveTo(40,18);x.lineTo(18,38);x.stroke();
+  let g=x.createLinearGradient(0,-34,0,34);g.addColorStop(0,'#ffffff');g.addColorStop(.6,col);g.addColorStop(1,'#a9c3cf');x.fillStyle=g;x.beginPath();x.ellipse(0,0,90,32,0,0,7);x.fill();
+  x.strokeStyle='rgba(201,150,46,.7)';x.lineWidth=1.5;for(let k=-2;k<=2;k++){x.beginPath();x.ellipse(0,0,90-Math.abs(k)*18,32,0,0,7);x.stroke();}
+  x.fillStyle='#2678ae';x.fillRect(-46,-34,92,7);x.strokeStyle='#fff';x.lineWidth=1;for(let k=-46;k<46;k+=11){x.beginPath();x.moveTo(k,-34);x.lineTo(k,-27);x.stroke();}
+  x.fillStyle='#c9962e';x.beginPath();x.moveTo(84,0);x.lineTo(108,-18);x.lineTo(108,18);x.closePath();x.fill();
+  x.fillStyle='#22303a';x.beginPath();x.roundRect?x.roundRect(-24,36,48,16,6):x.rect(-24,36,48,16);x.fill();x.fillStyle='#ffe08a';for(let k=0;k<4;k++)x.fillRect(-18+k*11,40,6,6);
+  x.save();x.translate(-28,44);x.rotate(t*8);x.fillStyle='rgba(34,48,58,.6)';x.fillRect(-2,-12,4,24);x.restore();x.restore();}
+ function layout(){const r=hero.getBoundingClientRect();W=r.width;H=r.height;D=Math.min(2,devicePixelRatio||1);seed=3;
+  L.forEach(o=>{o.c.width=W*D;o.c.height=H*D;o.x.setTransform(D,0,0,D,0,0);});
+  const wide=W>760;
+  // 0 cielo
+  let x=L[0].x;let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#6bbbe6');g.addColorStop(.5,'#ade0f6');g.addColorStop(1,'#eaf7fd');x.fillStyle=g;x.fillRect(0,0,W,H);
+  const sx=wide?W*.83:W*.75,sy=H*.16;g=x.createRadialGradient(sx,sy,0,sx,sy,W*.4);g.addColorStop(0,'rgba(255,250,220,1)');g.addColorStop(.08,'rgba(255,230,140,.9)');g.addColorStop(.35,'rgba(255,215,94,.25)');g.addColorStop(1,'rgba(255,215,94,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  // 1 nubes lejanas + islas pequeñas
+  x=L[1].x;for(let k=0;k<14;k++)cloud(x,rnd()*W,H*(.72+rnd()*.12),40+rnd()*80,'#dcecf3');
+  for(let k=0;k<4;k++){x.globalAlpha=.55;island(x,W*(.08+k*.24+rnd()*.05),H*(.42+rnd()*.15),26+rnd()*30,false);}x.globalAlpha=1;
+  for(let k=0;k<10;k++)cloud(x,rnd()*W,H*(.86+rnd()*.1),60+rnd()*90,'#e7f2f7');
+  // 2 isla principal con torre
+  x=L[2].x;island(x,wide?W*.68:W*.62,wide?H*.62:H*.34,wide?Math.min(W*.26,330):W*.5,true);island(x,wide?W*.42:W*.18,wide?H*.4:H*.2,wide?110:70,false);
+  L.wide=wide;}
+ let t0=performance.now(),running=false,mx=0,tmx=0;
+ function frame(now){const t=(now-t0)/1000;mx+=(tmx-mx)*.05;
+  const x=L[3].x;x.clearRect(0,0,W,H);
+  const ships=L.wide?[[W*.18+((t*14)%(W*1.2))-W*.2,H*.22,.9,'#e9f4f8'],[W*.88-((t*9)%(W*1.3))+W*.1,H*.33,.6,'#f6efdc'],[W*.55,H*.12+Math.sin(t)*6,.45,'#e2f2e6']]:[[W*.3+((t*10)%(W*1.4))-W*.3,H*.1,.55,'#e9f4f8'],[W*.8-((t*7)%(W*1.4))+W*.2,H*.42,.4,'#f6efdc']];
+  ships.forEach(s=>airship(x,s[0],s[1]+Math.sin(t*1.3+s[0]*.01)*5,s[2],t,s[3]));
+  // ascensor de la torre (sube y baja como un sticky en su hueco)
+  if(L.tower){const T=L.tower;const p=(Math.sin(t*.6)+1)/2;x.fillStyle='#f2b93b';x.strokeStyle='#22303a';x.lineWidth=1.5;const ey=T.by-T.th*.1-p*T.th*.8;x.fillRect(T.cx-T.tw*.16,ey-14,T.tw*.32,14);x.strokeRect(T.cx-T.tw*.16,ey-14,T.tw*.32,14);}
+  const y=L[4].x;y.clearRect(0,0,W,H);seed=99;const off=(t*6)%120;for(let k=0;k<8;k++){const cx=((k*W/6+off)%(W+240))-120;cloud(y,cx,H*(.93+rnd()*.06),90+rnd()*70,'#f1f7fa');}
+  L.forEach((o,i)=>{if(!$('#layers').classList.contains('explode'))o.c.style.transform=`translateX(${(mx*i*10).toFixed(1)}px)`;else o.c.style.transform='';});
+  if(running)requestAnimationFrame(frame);}
+ layout();running=!reduce;frame(performance.now());
+ if(!reduce)new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!running){running=true;requestAnimationFrame(frame);}else if(!e.isIntersecting)running=false;})).observe(hero);
+ let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{layout();frame(performance.now());},150);});
+ hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tmx=(e.clientX-r.left)/r.width-.5;});
+ $('#explode').onclick=()=>{const on=$('#layers').classList.toggle('explode');$('#explode').textContent=on?'Juntar las capas':'Ver las capas (z-index)';};}
+
+/* ---------- 1. laboratorio de vuelo ---------- */
+{const B=$('#labB'),city=$('#city'),ex=$('#labExp');let pos='static',parentRel=true;const cd=pair('#labCode','','');
+ const host=$('#labCtl');host.appendChild(el('h4',null,'position de B'));host.appendChild(chips(['static','relative','absolute','fixed','sticky'],t=>{pos=t;upd();},0));
+ const T=rng('top',-60,120,10,20,'px',upd),Lf=rng('left',-60,160,10,40,'px',upd);host.append(T,Lf);
+ const ck=el('label','ck','<input type="checkbox" checked> la ciudad (padre) tiene position: relative');$('input',ck).onchange=e=>{parentRel=e.target.checked;upd();};host.appendChild(ck);
+ function upd(){const t=T.get(),l=Lf.get();B.style.position=pos;B.style.top=t+'px';B.style.left=l+'px';B.style.zIndex=pos==='fixed'?'60':'';B.style.width=pos==='absolute'||pos==='fixed'?'120px':'';city.style.position=parentRel?'relative':'static';
+  $('#cityLbl').textContent=parentRel?'.ciudad · position: relative':'.ciudad · position: static';
+  const M={static:`<b>Ignora top y left</b>: B sigue en el flujo normal, entre A y C. static es el valor por defecto.`,
+   relative:`B se desplaza <b>${t}px hacia abajo y ${l}px a la derecha desde su sitio</b>. A y C no se mueven: el hueco de B sigue reservado.`,
+   absolute:parentRel?`B <b>sale del flujo</b>: C sube a ocupar su hueco. B se coloca a ${t}px del borde de arriba y ${l}px del borde izquierdo <b>de la ciudad</b>, que es su ancestro posicionado.`:`B sale del flujo y, como <b>ningún ancestro tiene position</b>, se coloca respecto a la página entera: está arriba del todo de la web, a ${t}px del borde. ¡Por eso "desaparece"!`,
+   fixed:`B sale del flujo y se pega a la <b>ventana</b>: mira la esquina de arriba a la izquierda de tu pantalla y haz scroll; no se mueve. Al padre le da igual tener position.`,
+   sticky:`B ocupa su sitio normal. Cuando bajes la página y B llegue a ${t}px del borde superior de la ventana, se quedará pegado <b>mientras su padre (la fila) siga visible</b>. Como el padre es bajito, apenas tiene recorrido: lo verás a fondo en la sección sticky.`};
+  ex.innerHTML='<p>'+M[pos]+'</p>';
+  cd.h.set(HM([['<div class="ciudad">','el padre'],['  <div class="a">A</div>'],['  <div class="b">B</div>','la caja que movemos'],['  <div class="c">C</div>'],['</div>']]));
+  const rows=[['.ciudad{'],['  display: flex;'],['  flex-direction: column;','A, B y C en columna'],['  gap: 12px;']];if(parentRel)rows.push(['»  position: relative;','referencia para los absolute de dentro']);rows.push(['}'],['.b{'],['»  position: '+pos+';',{static:'flujo normal',relative:'se mueve desde su sitio',absolute:'sale del flujo',fixed:'pegado a la ventana',sticky:'normal hasta pegarse'}[pos]],['  top: '+t+'px;',pos==='static'?'✗ se ignora con static':'distancia desde arriba'],['  left: '+l+'px;',pos==='static'?'✗ se ignora con static':'distancia desde la izquierda']);if(pos==='fixed')rows.push(['  z-index: 60;','por encima del menú de la página']);rows.push(['}']);cd.c.set(CM(rows));}
+ upd();}
+
+/* ---------- 2. relative ---------- */
+pair('#relCode',HM([['<div class="tarjeta">','el padre: relative, sin moverlo'],['  <h3>Isla norte</h3>'],['  <span class="etiqueta">Nuevo</span>','el hijo: absolute'],['</div>']]),
+ CM(['/* Uso 1: desplazar un poco (hoy se prefiere transform) */',['.aviso{'],['  position: relative;'],['  top: 10px;','baja 10px; su hueco se queda'],['}'],'','/* Uso 2: ser la referencia de un absolute */',['.tarjeta{'],['»  position: relative;','no se mueve: solo marca "aquí dentro"'],['}'],['.etiqueta{'],['»  position: absolute;','se coloca respecto a .tarjeta'],['  top: 10px;','a 10px del borde de arriba de la tarjeta'],['  right: 10px;','a 10px del borde derecho'],['}']]));
+
+/* ---------- 3. absolute: ¿respecto a quién? ---------- */
+{const N=['sección','torre','dirigible','góndola'];const on=[true,false,true,false];const cd=pair('#ancCode','','');
+ const host=$('#ancCtl');host.appendChild(el('p',null,'<span style="font-size:15px">Marca qué cajas tienen <code>position: relative</code>:</span>'));
+ [1,2,3].forEach(i=>{const l=el('label','ck',`<input type="checkbox" ${on[i]?'checked':''}> ${N[i]}`);$('input',l).onchange=e=>{on[i]=e.target.checked;upd();};host.appendChild(l);});
+ function upd(){let ref=0;for(let i=3;i>=0;i--){if(on[i]){ref=i;break;}}
+  [0,1,2,3].forEach(i=>{const n=$('#anc'+i);n.classList.toggle('pos',on[i]);n.style.position=on[i]?'relative':'static';$('.nlbl',n).textContent=N[i]+(on[i]?' · position: relative':' · static')+(i===ref?'  ← referencia':'');});
+  $('#ancExp').innerHTML=`<p>La insignia sube por sus ancestros: ${[3,2,1,0].filter(i=>i>=ref).map(i=>i===ref?`<b>${N[i]}</b> tiene position → se coloca en su esquina`:`${N[i]} es static → sigue subiendo`).join(' · ')}.</p>`;
+  cd.h.set(HM([['<section class="seccion">'],['  <div class="torre">'],['    <div class="dirigible">'],['      <div class="gondola">'],['        <span class="insignia">NUEVO</span>','el absolute'],['      </div>'],['    </div>'],['  </div>'],['</section>']]));
+  const cls=['.seccion','.torre','.dirigible','.gondola'];const rows=[];[0,1,2,3].forEach(i=>{if(on[i])rows.push([cls[i]+'{ position: relative; }',i===ref?'← la más cercana: la referencia':'tiene position, pero hay otra más cerca']);});
+  rows.push(['.insignia{'],['»  position: absolute;','sale del flujo'],['  top: -12px;','asoma 12px por arriba…'],['  right: -12px;','…y 12px por la derecha de '+cls[ref]],['}']);cd.c.set(CM(rows));}
+ upd();
+ const R=[
+  {t:'Insignia en la esquina',demo:'<div style="position:relative;width:150px;height:96px;border-radius:14px;background:#cfe9f6;display:flex;align-items:center;justify-content:center;font-weight:700">Isla norte<span style="position:absolute;top:-10px;right:-10px;padding:2px 10px;border-radius:999px;background:var(--coral);color:#fff;font:700 12px var(--mono)">3</span></div>',
+   h:HM([['<div class="tarjeta">Isla norte'],['  <span class="insignia">3</span>'],['</div>']]),c:CM([['.tarjeta{ position: relative; }','referencia'],['.insignia{'],['  position: absolute;'],['  top: -10px;','asoma por arriba'],['  right: -10px;','y por la derecha'],['}']])},
+  {t:'Capa sobre una imagen',demo:'<div style="position:relative;width:170px;height:110px;border-radius:14px;background:linear-gradient(160deg,#6bbbe6,#b4e39a)"><div style="position:absolute;inset:0;border-radius:14px;display:flex;align-items:flex-end;padding:10px;background:linear-gradient(transparent,rgba(34,48,58,.75));color:#fff;font-weight:700">Puerto alto</div></div>',
+   h:HM([['<figure class="foto">'],['  <img src="puerto.jpg" alt="Puerto">'],['  <figcaption class="capa">Puerto alto</figcaption>'],['</figure>']]),c:CM([['.foto{ position: relative; }','referencia'],['.capa{'],['  position: absolute;'],['»  inset: 0;','ocupa toda la foto'],['  display: flex;'],['  align-items: flex-end;','texto abajo'],['  background: linear-gradient(transparent, rgba(0,0,0,.7));','oscurece para que se lea'],['}']])},
+  {t:'Centrar del todo',demo:'<div style="position:relative;width:170px;height:110px;border-radius:14px;background:#e6f5fc;box-shadow:inset 0 0 0 2px #9ccbe3"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);padding:8px 14px;border-radius:12px;background:var(--sol);font-weight:700">Centro</div></div>',
+   h:HM([['<div class="cielo">'],['  <div class="globo">Centro</div>'],['</div>']]),c:CM([['.cielo{ position: relative; }'],['.globo{'],['  position: absolute;'],['  top: 50%;','su esquina va al centro…'],['  left: 50%;'],['»  transform: translate(-50%, -50%);','…y retrocede la mitad de su tamaño'],['}']])}];
+ R.forEach(r=>{const d=el('div');d.innerHTML=`<h4 style="margin-top:0">${r.t}</h4><div class="sky" style="height:150px;display:flex;align-items:center;justify-content:center">${r.demo}</div>`;d.append(codeBox('html',r.h,'HTML'),codeBox('css',r.c,'CSS'));$('#recipes').appendChild(d);});}
+
+/* ---------- 4. fixed ---------- */
+{const pin=$('#fixedPin'),b=$('#pinBtn');b.onclick=()=>{pin.hidden=!pin.hidden;b.textContent=pin.hidden?'Activar un aviso fixed':'Quitar el aviso fixed';};
+ pair('#fixCode',HM([['<body>'],['  <a class="volver" href="#inicio">↑ Volver arriba</a>','puede estar en cualquier parte del HTML'],['  …'],['</body>']]),
+  CM([['.volver{'],['»  position: fixed;','pegado a la ventana'],['  bottom: 18px;','a 18px del borde de abajo de la ventana'],['  left: 18px;','a 18px del borde izquierdo'],['  z-index: 60;','por encima del resto de la página'],['}'],'','/* Si el menú de arriba es fixed, deja hueco al contenido */',['.menu{ position: fixed; top: 0; left: 0; right: 0; height: 60px; }'],['body{ padding-top: 60px; }','para que el menú no tape el principio']]));}
+
+/* ---------- 5. sticky ---------- */
+{const F=['Planta 5 · Mirador','Planta 4 · Huerto','Planta 3 · Taller de dirigibles','Planta 2 · Biblioteca','Planta 1 · Muelle'];
+ $('#floors').innerHTML=F.map(f=>`<div class="floor"><h5 style="position:sticky;top:0">${f}</h5><p>Cada planta es el padre de su título.</p><div class="room"></div><div class="room"></div><div class="room"></div></div>`).join('');
+ pair('#floorCode',HM([['<div class="planta">','el padre: el hueco del ascensor'],['  <h5>Planta 5 · Mirador</h5>','el sticky'],['  <p>…</p>'],['</div>'],['<div class="planta">…</div>','otra planta, otro título']]),
+  CM([['.planta h5{'],['»  position: sticky;','normal… hasta llegar al umbral'],['»  top: 0;','el umbral: pegarse a 0px del borde de arriba'],['  background: steelblue;','fondo: lo de debajo no se transparenta'],['}']]),'HTML','CSS');
+ $('#floorCode').style.display='block';
+ const col=$('#diagCol');col.innerHTML=Array.from({length:9},(_,i)=>`<div class="room" style="margin:0 0 10px;height:54px;border-radius:12px;background:var(--bruma);display:flex;align-items:center;padding-left:12px;font-size:13px;color:var(--tinta2)">Sala ${i+1}</div>`).join('');
+ const side=$('#diagSide'),row=$('#diagRow'),wrap=$('#diagWrap');wrap.style.display='contents';side.style.position='sticky';
+ const E=[{k:'top',l:'Quitar top',why:'Sin umbral (top) sticky no sabe dónde pegarse: actúa como relative.'},
+  {k:'stretch',l:'align-items: stretch (lo que hace flex por defecto)',why:'El menú se estira a todo el alto de la fila: ya ocupa todo su padre y no le queda recorrido.'},
+  {k:'overflow',l:'overflow: hidden en la fila (el padre)',why:'Con overflow: hidden la fila se convierte en la caja de scroll del sticky, pero ella no hace scroll: el menú no se pega a nada.'},
+  {k:'wrap',l:'Meter el menú en un div que mide lo mismo que él',why:'Su padre ahora es ese div, del mismo alto que el menú: no hay recorrido dentro de él.'}];
+ const st={};const host=$('#diagCtl');E.forEach(e=>{st[e.k]=false;const l=el('label','ck',`<input type="checkbox"> ${e.l}`);$('input',l).onchange=x=>{st[e.k]=x.target.checked;upd();};host.appendChild(l);});
+ const cd=pair('#diagCode','','');
+ function upd(){side.style.top=st.top?'':'10px';row.style.alignItems=st.stretch?'stretch':'flex-start';row.style.overflow=st.overflow?'hidden':'';wrap.style.display=st.wrap?'block':'contents';
+  const bad=E.filter(e=>st[e.k]);const v=$('#diagV');v.className='verdict '+(bad.length?'ko':'ok');v.innerHTML=bad.length?'<b>No se pega.</b><br>'+bad.map(e=>'· '+e.why).join('<br>'):'<b>Funciona:</b> haz scroll en la caja y el menú se queda a 10px del borde de arriba hasta que se acaba la fila.';
+  cd.h.set(HM([['<div class="fila">','display: flex'],...(st.wrap?[['  <div class="envoltorio">','✗ un padre del mismo alto'],['    <aside class="menu">Menú lateral</aside>'],['  </div>']]:[['  <aside class="menu">Menú lateral</aside>','el sticky']]),['  <div class="salas">…</div>','la columna alta'],['</div>']]));
+  cd.c.set(CM([['.fila{'],['  display: flex;'],[st.stretch?'  align-items: stretch;':'»  align-items: flex-start;',st.stretch?'✗ el menú se estira a todo el alto':'el menú mide lo que su contenido'],...(st.overflow?[['  overflow: hidden;','✗ rompe el sticky']]:[]),['}'],['.menu{'],['»  position: sticky;'],[st.top?'  /* sin top */':'»  top: 10px;',st.top?'✗ falta el umbral':'se pega a 10px de arriba'],['}']]));}
+ upd();}
+
+/* ---------- 6. z-index ---------- */
+{const S=$('#zStage');const ships=[['A','#cfe9f6',30,60],['B','#ffe08a',110,100],['C','#d7f1dd',190,140]];const els=ships.map(([n,c,l,t])=>{const d=el('div','ship',n);d.style.cssText=`left:${l}px;top:${t}px;background:linear-gradient(180deg,#fff,${c})`;S.appendChild(d);return d;});
+ const cd=pair('#zCode','','');const R=[];let useZ=true;
+ const host=$('#zCtl');host.appendChild(chips(['con z-index','sin z-index (orden del HTML)'],(t,k)=>{useZ=k===0;upd();},0));
+ ships.forEach(([n],i)=>{R[i]=rng('z-index de '+n,-1,5,1,[3,2,1][i],'',upd);host.appendChild(R[i]);});
+ function upd(){els.forEach((d,i)=>{d.style.zIndex=useZ?R[i].get():'';d.textContent=ships[i][0]+(useZ?' · z '+R[i].get():' · auto');});R.forEach(r=>r.style.opacity=useZ?1:.4);
+  cd.h.set(HM([['<div class="cielo">','el padre (position: relative)'],['  <div class="nave a">A</div>','el primero del HTML'],['  <div class="nave b">B</div>'],['  <div class="nave c">C</div>','el último: sin z-index, queda delante'],['</div>']]));
+  const rows=[['.nave{'],['  position: absolute;','posicionadas: z-index funciona'],['}']];if(useZ)ships.forEach(([n],i)=>rows.push(['».'+n.toLowerCase()+'{ z-index: '+R[i].get()+'; }',i===0?'mayor número = más delante':null]));else rows.push('/* sin z-index: el que va después en el HTML queda encima */');cd.c.set(CM(rows));}
+ upd();
+ /* contexto de apilamiento */
+ const C=$('#ctxStage');C.style.overflow='hidden';C.innerHTML=`<div id="pA" style="position:absolute;left:24px;top:30px;width:190px;height:150px;border-radius:16px;background:rgba(63,159,214,.85);color:#fff;font:700 13px var(--mono);padding:10px">padre A<div id="kA" style="position:absolute;left:110px;top:70px;width:150px;height:110px;border-radius:14px;background:linear-gradient(135deg,var(--sol),var(--oro));color:var(--tinta);display:flex;align-items:center;justify-content:center;text-align:center;font:700 12px var(--mono)">hijo de A<br>z-index: 999</div></div><div id="pB" style="position:absolute;right:20px;top:60px;width:170px;height:160px;border-radius:16px;background:rgba(85,179,107,.92);color:#fff;font:700 13px var(--mono);padding:10px;display:flex;align-items:flex-end">padre B<br>z-index: 2</div>`;
+ const cc=pair('#ctxCode','','');$('#ctxCode').style.display='block';let aZ=true;
+ $('#ctxCtl').appendChild(chips(['padre A con z-index: 1','quitar el z-index del padre A'],(t,k)=>{aZ=k===0;cu();},0));
+ function cu(){$('#pA').style.zIndex=aZ?'1':'';$('#pA').firstChild.textContent=aZ?'padre A · z-index: 1':'padre A · sin z-index';$('#kA').style.zIndex='999';$('#pB').style.zIndex='2';
+  $('#ctxExp').innerHTML=aZ?'<p>El hijo tiene 999, pero vive <b>dentro de la caja de capas de A</b> (z-index 1). Como B (2) está por encima de A, todo lo de A queda debajo de B.</p>':'<p>Sin z-index, A ya no crea su propia caja de capas: el 999 del hijo compite directamente con el 2 de B y gana.</p>';
+  cc.h.set(HM([['<div class="padre-a">'],['  <div class="hijo">999</div>'],['</div>'],['<div class="padre-b"></div>']]));
+  cc.c.set(CM([['.padre-a{'],['  position: absolute;'],[aZ?'»  z-index: 1;':'  /* sin z-index */',aZ?'crea una caja de capas propia':'no crea caja de capas'],['}'],['.hijo{'],['  position: absolute;'],['  z-index: 999;',aZ?'solo cuenta DENTRO de .padre-a':'compite con todo el documento'],['}'],['.padre-b{'],['  position: absolute;'],['  z-index: 2;','por encima de .padre-a (1)'],['}']]));}
+ cu();}
+/* ---------- motor de preguntas ---------- */
+function qBlock(host,items,withScore){const h=$(host);const cards=items.map((q,i)=>{const d=el('div','fix');d.innerHTML=`<div class="hd"><span class="n">${i+1}</span><span>${q.q}</span></div>`;
+  if(q.html||q.code){const pr=el('div','pair');if(q.html)pr.appendChild(codeBox('html',q.html,'HTML'));else pr.style.gridTemplateColumns='1fr';if(q.code)pr.appendChild(codeBox('css',q.code,'CSS'));d.appendChild(pr);}
+  const o=el('div','opts');q.o.forEach((t,k)=>{const l=el('label');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${t}</span>`;o.appendChild(l);});d.appendChild(o);
+  const ex=el('div','ex',q.e);d.appendChild(ex);
+  d.grade=()=>{const sel=$('input:checked',d);$$('label',d).forEach((l,k)=>{l.classList.remove('right','wrong');if(k===q.a&&sel)l.classList.add('right');});if(sel&&+sel.value!==q.a)sel.closest('label').classList.add('wrong');if(sel)ex.classList.add('show');return sel&&+sel.value===q.a;};
+  $$('input',d).forEach(inp=>inp.addEventListener('change',()=>{d.grade();if(withScore)score();}));h.appendChild(d);return d;});
+ function score(){const n=cards.filter((c,i)=>{const s=$('input:checked',c);return s&&+s.value===items[i].a;}).length;if(withScore)$('#qScore').textContent=n+' / '+items.length;return n;}
+ return{cards,score};}
+
+
+/* ---------- 7. errores ---------- */
+qBlock('#fixes',[
+ {q:'He puesto <code>top: 30px</code> y la caja no se mueve.',html:'<div class="caja">Hola</div>',code:CM([['.caja{'],['  top: 30px;'],['}']]),o:['Falta position: con static (por defecto) top se ignora','top solo funciona en porcentaje','Hay que usar margin-top'],a:0,e:'top, right, bottom y left solo actúan con position distinto de static: <code>position: relative; top: 30px;</code>'},
+ {q:'Mi etiqueta absolute ha "desaparecido". Debería estar en la esquina de la tarjeta.',html:HM([['<div class="tarjeta">'],['  <span class="etiqueta">Nuevo</span>'],['</div>']]),code:CM([['.etiqueta{'],['  position: absolute;'],['  top: 0;'],['  right: 0;'],['}']]),o:['La tarjeta no tiene position: la etiqueta se ha ido a la esquina de la página. Falta .tarjeta{ position: relative; }','absolute no admite right','Falta z-index: 9999'],a:0,e:'El absolute busca el ancestro posicionado más cercano. Sin ninguno, usa la página entera. Solución: <code>.tarjeta{ position: relative; }</code>'},
+ {q:'El menú sticky no se pega.',html:'<nav class="menu">…</nav>',code:CM([['.menu{'],['  position: sticky;'],['}']]),o:['Falta el umbral: top: 0','sticky necesita z-index','sticky solo funciona en tablas'],a:0,e:'Sin <code>top</code> (o bottom…) sticky no sabe cuándo pegarse. <code>top: 0;</code>'},
+ {q:'El lateral sticky dentro de una fila flex no se pega, aunque tiene top.',html:HM([['<div class="fila">'],['  <aside class="lateral">…</aside>'],['  <article>… muy largo …</article>'],['</div>']]),code:CM([['.fila{ display: flex; }'],['.lateral{'],['  position: sticky;'],['  top: 20px;'],['}']]),o:['Flex estira el lateral a todo el alto de la fila: añade align-self: flex-start','Hay que poner position: fixed','Falta overflow: hidden en la fila'],a:0,e:'Con <code>align-items: stretch</code> (por defecto) el lateral mide lo mismo que la fila y no tiene recorrido. <code>.lateral{ align-self: flex-start; }</code> (overflow: hidden lo rompería aún más).'},
+ {q:'Le he dado <code>z-index: 999</code> a un desplegable y sigue quedando debajo del menú vecino.',html:HM([['<header class="cabecera">'],['  <ul class="desplegable">…</ul>'],['</header>'],['<nav class="vecino">…</nav>']]),code:CM([['.cabecera{ position: relative; z-index: 1; }'],['.desplegable{ position: absolute; z-index: 999; }'],['.vecino{ position: relative; z-index: 2; }']]),o:['El 999 solo cuenta dentro de .cabecera (z-index 1), que está debajo de .vecino (2). Sube el z-index de .cabecera','El desplegable necesita position: fixed','z-index máximo es 99'],a:0,e:'La cabecera con z-index crea un contexto de apilamiento. Hay que subir la <b>cabecera</b>: <code>.cabecera{ z-index: 3; }</code>'},
+ {q:'Mi menú fixed tapa el título de la página.',code:CM([['.menu{'],['  position: fixed;'],['  top: 0;'],['  height: 60px;'],['}']]),o:['fixed no ocupa sitio: deja hueco con body{ padding-top: 60px; } (o usa sticky)','Hay que poner z-index: -1 al menú','fixed necesita bottom'],a:0,e:'Un fixed sale del flujo: el contenido empieza debajo de él. Deja el hueco con padding o usa <code>sticky</code>, que sí ocupa su sitio.'},
+],false);
+
+/* ---------- 8. test ---------- */
+const Q=[
+ {q:'¿Cuál es el valor por defecto de <code>position</code>?',o:['static','relative','absolute'],a:0,e:'static: flujo normal; ignora top, left y z-index.'},
+ {q:'Con <code>position: relative; top: 20px;</code> el elemento…',o:['baja 20px y su hueco se queda reservado','sale del flujo','se pega a la ventana'],a:0,e:'relative desplaza desde su sitio sin que los vecinos se muevan.'},
+ {q:'¿Respecto a qué se coloca un elemento <code>absolute</code>?',o:['Su ancestro posicionado más cercano','Siempre su padre directo','La ventana'],a:0,e:'Sube por sus ancestros hasta el primero con position distinto de static; si no hay, la página.'},
+ {q:'¿Qué valor queda fijo en la ventana aunque hagas scroll?',o:['fixed','sticky','relative'],a:0,e:'fixed se coloca respecto a la ventana y no se mueve con el scroll.'},
+ {q:'¿Cuál de estos SÍ ocupa su sitio en el flujo?',o:['sticky','absolute','fixed'],a:0,e:'sticky (como static y relative) reserva su sitio; absolute y fixed no.'},
+ {q:'Un sticky deja de pegarse cuando…',o:['su padre sale de la pantalla','pasan 3 segundos','el ratón se mueve'],a:0,e:'Solo puede moverse dentro de su padre: cuando el padre se va, él se va.'},
+ {q:'¿Qué hace <code>inset: 0</code>?',o:['Pone top, right, bottom y left a 0','Quita el position','Centra el texto'],a:0,e:'Es el atajo de las cuatro coordenadas: el elemento ocupa toda su referencia.'},
+ {q:'Sin z-index, cuando dos elementos posicionados se solapan, queda delante…',o:['el que va después en el HTML','el más grande','el que va antes en el HTML'],a:0,e:'Se pinta en orden: el último, encima.'},
+ {q:'¿En qué elementos funciona <code>z-index</code>?',o:['En los posicionados (no static) y en hijos de flex o grid','En todos','Solo en imágenes'],a:0,e:'En un elemento static normal, z-index no hace nada.'},
+ {q:'Un hijo con <code>z-index: 999</code> no consigue ponerse encima de otra caja. La causa más probable es…',o:['su padre tiene z-index y crea un contexto de apilamiento','999 es demasiado poco','falta !important'],a:0,e:'Dentro de un contexto, los z-index de los hijos solo se comparan entre ellos.'}];
+{const qb=qBlock('#quiz',Q,true);$('#qAll').onclick=()=>{qb.cards.forEach((c,i)=>{c.grade();$('.ex',c).classList.add('show');$$('label',c)[Q[i].a].classList.add('right');});const n=qb.score();if(n===Q.length)$('#qScore').textContent=n+' / '+Q.length+' · ¡perfecto!';};
+ $('#qReset').onclick=()=>{$$('#quiz input').forEach(i=>i.checked=false);$$('#quiz label').forEach(l=>l.classList.remove('right','wrong'));$$('#quiz .ex').forEach(e=>e.classList.remove('show'));qb.score();};}
+
+/* ---------- bitácora de vuelo ---------- */
+{const D={
+ que:'position decide cómo se coloca un elemento; con cualquier valor salvo static acepta top, right, bottom y left.',
+ relative:'relative desplaza sin dejar de ocupar su sitio y, sobre todo, sirve de referencia a los absolute de dentro.',
+ absolute:'absolute sale del flujo y se coloca respecto al ancestro posicionado más cercano: padre relative + hijo absolute.',
+ fixed:'fixed se pega a la ventana y no ocupa sitio: deja hueco al contenido y vigila los transform de sus ancestros.',
+ sticky:'sticky necesita umbral (top), recorrido dentro de su padre, ningún overflow por encima y align-self: start en flex.',
+ zindex:'z-index ordena las capas de los elementos posicionados, pero solo dentro de su contexto de apilamiento.',
+ errores:'Sin position no hay top; sin padre relative el absolute se escapa; sin top el sticky no se pega.',
+ chuleta:'Cada cosa en su sitio, cada capa en su altura.'};
+ Object.entries(D).forEach(([id,t])=>{const s=$('#'+id);if(!s)return;const d=el('div','log reveal');d.innerHTML=`<div class="ic"></div><div><span class="lb">Bitácora de vuelo</span><p>${t}</p></div>`;s.appendChild(d);});}
+
+/* ---------- aparición al hacer scroll ---------- */
+if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.04});$$('.reveal').forEach(x=>io.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+})();
+</script>
+</body></html>
