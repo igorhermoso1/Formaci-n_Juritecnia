@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trucos CSS de maquetación</title>
+<style>
+:root{--bg:#fff;--fg:#1e2430;--mut:#5b6472;--pri:#2563eb;--card:#f4f6fa;--code:#0f172a;--codefg:#e2e8f0;--line:#dde2ea;--tip:#e8f5ee;--tipb:#2f9e62;--warn:#fff4e5;--warnb:#e08a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161d;--fg:#e6e9ef;--mut:#9aa4b2;--pri:#6ea0ff;--card:#1a212b;--line:#2a3340;--tip:#15291f;--warn:#2d2312}}
+:root[data-theme="dark"]{--bg:#12161d;--fg:#e6e9ef;--mut:#9aa4b2;--pri:#6ea0ff;--card:#1a212b;--line:#2a3340;--tip:#15291f;--warn:#2d2312}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:24px 20px 80px}
+header{padding:32px 0 12px;border-bottom:2px solid var(--pri)}
+header h1{margin:0;font-size:2.1rem}header p{margin:6px 0 0;color:var(--mut)}
+nav{background:var(--card);border-radius:10px;padding:14px 18px;margin:22px 0;display:grid;gap:4px}
+nav b{margin-bottom:4px}nav a{color:var(--pri);text-decoration:none}nav a:hover{text-decoration:underline}
+section{margin-top:48px}
+h2{font-size:1.5rem;display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.n{background:var(--pri);color:#fff;border-radius:8px;min-width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem}
+h3{margin:26px 0 6px;font-size:1.1rem;color:var(--pri)}
+.lead{color:var(--mut);font-size:1.05rem}
+code{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:.88em ui-monospace,Consolas,Menlo,monospace}
+pre{background:var(--code);color:var(--codefg);border-radius:10px;padding:16px;overflow-x:auto;line-height:1.5;margin:14px 0}
+pre code{background:none;border:0;padding:0;color:inherit;font-size:.9rem}
+ol.steps{counter-reset:s;list-style:none;padding:0}
+ol.steps li{counter-increment:s;position:relative;padding:8px 12px 8px 46px;margin:8px 0;background:var(--card);border-radius:8px}
+ol.steps li::before{content:counter(s);position:absolute;left:12px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--pri);color:#fff;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.box{padding:12px 16px;border-radius:8px;border-left:4px solid;margin:16px 0}
+.tip{background:var(--tip);border-color:var(--tipb)}.warn{background:var(--warn);border-color:var(--warnb)}
+.demo{position:relative;border:1px dashed var(--line);border-radius:10px;padding:34px 16px 16px;margin:14px 0;overflow-x:auto;color:#222}
+.dl{position:absolute;top:8px;left:12px;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+#tema{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));border:0;border-radius:999px;padding:10px 14px;background:var(--pri);color:#fff;cursor:pointer}
+</style></head><body><div class="wrap">
+<header><h1>Trucos CSS de maquetación</h1><p>Apuntes de HTML y CSS</p></header>
+<nav><b>Contenido</b><a href="#border-box">1. box-sizing: border-box</a><a href="#centrado-absoluto">2. Centrado con position absolute + transform</a><a href="#flex-centrado">3. Centrado con Flexbox</a><a href="#vh">4. Unidades de viewport: 100vh y min-height: 100vh</a><a href="#calc">5. calc(): operaciones matemáticas en CSS</a><a href="#outline">6. Depurar maquetación con outline</a><a href="#pseudo">7. Pseudoelementos ::before y ::after con content</a><a href="#float-fila">8. Fila de cajas con float + border-box</a><a href="#inline-block">9. inline-block sin huecos (font-size: 0)</a><a href="#sombras">10. box-shadow inset y text-shadow</a><a href="#supports">11. Feature queries: @supports</a><a href="#nth">12. Selectores nth-child con rangos ("mod queries")</a><a href="#flex">13. Flexbox y CSS Grid: los aliados</a></nav>
+<section id="border-box"><h2><span class="n">1</span>box-sizing: border-box</h2><p class="lead">Cambia la forma en que el navegador calcula el tamaño real de una caja. Es probablemente el truco que más problemas de maquetación resuelve.</p><h3>¿Qué problema resuelve?</h3><p>Por defecto, todos los elementos usan <code>box-sizing: content-box</code>: el <code>width</code> y el <code>height</code> que escribes solo afectan al <strong>contenido</strong>. El <code>padding</code> y el <code>border</code> se suman por fuera. Así, una caja con <code>width: 200px</code> y <code>padding: 20px</code> acaba ocupando 240px en pantalla.</p><p>Con <code>box-sizing: border-box</code> el <code>width</code> incluye contenido + padding + borde. La caja mide exactamente lo que tú dices, aunque luego cambies el padding.</p><h3>Paso a paso</h3><ol class="steps"><li>Declara una caja con <code>width: 200px</code>, <code>padding: 20px</code> y <code>border: 5px solid</code>.</li><li>Con <code>content-box</code>: 200 (contenido) + 40 (padding izq. + der.) + 10 (bordes) = <strong>250px</strong> en pantalla.</li><li>Con <code>border-box</code>: el navegador reserva 200px totales y <strong>reduce el contenido</strong> a 200 − 40 − 10 = <strong>150px</strong>.</li><li>Resultado: puedes poner dos cajas de <code>width: 50%</code> con padding y borde, y siguen cabiendo en una fila.</li></ol><pre><code>/* Reset universal recomendado */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.tarjeta {
+  width: 200px;
+  padding: 20px;
+  border: 5px solid #333;
+  /* Ocupa 200px en total, no 250px */
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#border-box .demo .cb,#border-box .demo .bb{width:200px;padding:20px;border:5px solid #c0392b;margin-bottom:8px;background:#fdecea;color:#222}#border-box .demo .bb{box-sizing:border-box;border-color:#27ae60;background:#eafaf1}</style><div class="cb">content-box (250px)</div><div class="bb">border-box (200px)</div></div><div class="box tip"><strong>Consejo:</strong> Ponlo siempre al principio de tu hoja de estilos. Incluir <code>::before</code> y <code>::after</code> en el selector hace que también los pseudoelementos se comporten igual.</div></section><section id="centrado-absoluto"><h2><span class="n">2</span>Centrado con position absolute + transform</h2><p class="lead">Centra un elemento horizontal y verticalmente respecto a su contenedor sin conocer su tamaño.</p><h3>Concepto</h3><p><code>top: 50%</code> y <code>left: 50%</code> colocan la <strong>esquina superior izquierda</strong> del elemento en el centro del contenedor, no el elemento entero. Para corregirlo hay que desplazarlo hacia atrás la mitad de su propio tamaño. Eso es lo que hace <code>transform: translate(-50%, -50%)</code>: los porcentajes de <code>translate</code> se calculan sobre el tamaño <strong>del propio elemento</strong>, por lo que no hace falta saber cuánto mide.</p><h3>Paso a paso</h3><ol class="steps"><li>El contenedor lleva <code>position: relative</code> para que sea el punto de referencia.</li><li>El hijo lleva <code>position: absolute</code>, que lo saca del flujo normal.</li><li><code>top: 50%; left: 50%</code> → su esquina superior izquierda queda en el centro del padre.</li><li><code>transform: translate(-50%, -50%)</code> → se mueve la mitad de su ancho a la izquierda y la mitad de su alto hacia arriba. Queda centrado.</li></ol><pre><code>.contenedor {
+  position: relative;
+  height: 300px;
+}
+
+.centrado {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#centrado-absoluto .demo .pc{position:relative;height:140px;background:#eef;border:1px dashed #557}#centrado-absoluto .demo .pk{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#557;color:#fff;padding:10px 16px}</style><div class="pc"><div class="pk">Centrado</div></div></div><div class="box warn"><strong>Ojo:</strong> Un elemento con <code>position: absolute</code> no ocupa espacio en el flujo, así que el contenedor no crece con él. Úsalo con cuidado; para la mayoría de casos actuales, Flexbox o Grid son más limpios.</div></section><section id="flex-centrado"><h2><span class="n">3</span>Centrado con Flexbox</h2><p class="lead">La versión moderna y más sencilla de centrar contenido en dos ejes.</p><p>Al poner <code>display: flex</code> en el contenedor, sus hijos pasan a ser elementos flex. <code>justify-content</code> alinea sobre el <strong>eje principal</strong> (horizontal por defecto) y <code>align-items</code> sobre el <strong>eje transversal</strong> (vertical por defecto).</p><ol class="steps"><li><code>display: flex</code> activa el modo flexible en el padre.</li><li><code>justify-content: center</code> centra los hijos horizontalmente.</li><li><code>align-items: center</code> los centra verticalmente.</li><li>El contenedor necesita altura (por ejemplo <code>min-height: 100vh</code>) para que el centrado vertical sea visible.</li></ol><pre><code>.flexcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Variante corta con Grid */
+.gridcenter {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#flex-centrado .demo .fc{display:flex;justify-content:center;align-items:center;height:140px;background:#efe;border:1px dashed #575}#flex-centrado .demo .fk{background:#575;color:#fff;padding:10px 16px}</style><div class="fc"><div class="fk">Centrado</div></div></div></section><section id="vh"><h2><span class="n">4</span>Unidades de viewport: 100vh y min-height: 100vh</h2><p class="lead">Permiten que un elemento ocupe el alto (o ancho) de la ventana del navegador.</p><p><code>1vh</code> es el 1% del alto de la ventana (<em>viewport height</em>) y <code>1vw</code> el 1% del ancho. Por tanto <code>100vh</code> es exactamente la altura visible.</p><ul><li><code>height: 100vh</code> → el elemento mide siempre lo que la ventana. Si el contenido es mayor, se desborda.</li><li><code>min-height: 100vh</code> → mide <strong>como mínimo</strong> la ventana, pero puede crecer si hay más contenido. Suele ser la opción más segura.</li></ul><pre><code>.portada {
+  min-height: 100vh;   /* pantalla completa, sin recortar contenido */
+}
+
+/* Footer siempre abajo aunque haya poco contenido */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main { flex: 1; }</code></pre><div class="box tip"><strong>Consejo:</strong> En móviles la barra de direcciones cambia la altura visible. Existen <code>100dvh</code> (altura dinámica) y <code>100svh</code> (altura pequeña) para resolverlo.</div></section><section id="calc"><h2><span class="n">5</span>calc(): operaciones matemáticas en CSS</h2><p class="lead">Permite calcular valores de propiedades mezclando unidades distintas. Es la herramienta clave para resolver situaciones que con un solo valor fijo son imposibles.</p><h3>¿Qué es y por qué es tan útil?</h3><p>Con <code>calc()</code> el navegador resuelve la operación <strong>en tiempo de renderizado</strong>, cuando ya conoce el tamaño real del contenedor y de la ventana. Por eso puedes mezclar valores relativos (<code>%</code>, <code>vh</code>, <code>vw</code>, <code>rem</code>) con valores absolutos (<code>px</code>), algo que ninguna unidad por sí sola permite.</p><p>Ejemplo típico: quieres que el contenido ocupe todo el alto de la pantalla <strong>menos</strong> una cabecera fija de 80px. No puedes escribir <code>100vh - 80px</code> a pelo; sí puedes con <code>calc(100vh - 80px)</code>.</p><h3>Sintaxis y reglas</h3><ul><li>Operadores: <code>+</code>, <code>-</code>, <code>*</code> y <code>/</code>.</li><li><strong><code>+</code> y <code>-</code> necesitan un espacio a cada lado.</strong> <code>calc(100% - 20px)</code> funciona; <code>calc(100%-20px)</code> o <code>calc(20vw+50px)</code> no funcionan. Es el error más habitual.</li><li><code>*</code> y <code>/</code> no requieren espacios, pero conviene ponerlos por legibilidad.</li><li>En una multiplicación, al menos uno de los factores debe ser un número sin unidad (<code>calc(10px * 3)</code>). En una división, el divisor debe ser un número sin unidad (<code>calc(100% / 3)</code>).</li><li>No se escribe <code>calc: (...)</code>; se usa como <strong>valor</strong> de una propiedad: <code>width: calc(...)</code>.</li><li>Se pueden anidar paréntesis para controlar el orden: <code>calc((100% - 40px) / 2)</code>.</li><li>Se puede usar con variables CSS: <code>calc(var(--gap) * 2)</code>.</li></ul><h3>Caso 1: alto de pantalla menos cabecera</h3><p>Paso a paso: el navegador toma el alto de la ventana (100vh), le resta 80px y asigna el resultado al elemento. Si la ventana cambia de tamaño, el cálculo se rehace automáticamente.</p><pre><code>header { height: 80px; }
+
+main {
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+}</code></pre><h3>Caso 2: anchura fluida con margen fijo</h3><p>Una caja que ocupa todo el ancho menos 40px de margen lateral (20px por cada lado).</p><pre><code>.caja {
+  width: calc(100% - 40px);
+  margin: 0 auto;
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#calc .demo .cw{background:#fff3cd;padding:0;border:1px dashed #a80}#calc .demo .ck{width:calc(100% - 40px);margin:0 auto;background:#f0ad4e;color:#222;padding:10px;box-sizing:border-box}</style><div class="cw"><div class="ck">width: calc(100% - 40px)</div></div></div><h3>Caso 3: columnas con separación exacta</h3><p>Tres columnas iguales con 20px de hueco entre ellas. El ancho total de huecos es 2 × 20 = 40px, se restan al 100% y el resto se divide entre 3.</p><pre><code>.fila { display: flex; gap: 20px; }
+
+.col {
+  width: calc((100% - 40px) / 3);
+}</code></pre><h3>Caso 4: mezclar unidades relativas y absolutas</h3><pre><code>.titulo {
+  font-size: calc(1rem + 2vw);      /* texto que crece con la ventana */
+}
+
+.hero {
+  width: calc(20vw + 50px);          /* con espacios alrededor del + */
+}</code></pre><h3>Caso 5: calc() con variables CSS</h3><pre><code>:root {
+  --cabecera: 80px;
+  --pie: 60px;
+}
+
+.contenido {
+  min-height: calc(100vh - var(--cabecera) - var(--pie));
+}</code></pre><p>Cambias el valor en un solo sitio y todos los cálculos se actualizan.</p><h3>Funciones relacionadas</h3><ul><li><code>min(a, b)</code>: elige el menor de dos valores. <code>width: min(90%, 800px)</code> → nunca pasa de 800px.</li><li><code>max(a, b)</code>: elige el mayor.</li><li><code>clamp(mín, ideal, máx)</code>: valor flexible con límites. <code>font-size: clamp(1rem, 2.5vw, 2rem)</code>.</li></ul><div class="box tip"><strong>Consejo:</strong> Regla práctica: si necesitas restar o sumar píxeles a un porcentaje o a una unidad de viewport, la respuesta es <code>calc()</code>.</div></section><section id="outline"><h2><span class="n">6</span>Depurar maquetación con outline</h2><p class="lead">Un selector universal con contorno muestra dónde empieza y termina cada caja.</p><p>A diferencia del <code>border</code>, el <code>outline</code> <strong>no ocupa espacio</strong> ni altera el tamaño de las cajas, así que puedes activarlo sin descolocar el diseño.</p><pre><code>* {
+  outline: 1px solid grey;
+}
+
+/* Cada nivel de anidamiento con un color distinto */
+* { outline: 1px solid rgba(255, 0, 0, .4); }
+* * { outline-color: rgba(0, 128, 0, .4); }
+* * * { outline-color: rgba(0, 0, 255, .4); }</code></pre><ol class="steps"><li>Añade la regla temporalmente.</li><li>Localiza qué caja se sale, se solapa o tiene un ancho inesperado.</li><li>Combínalo con el inspector del navegador (pasar el ratón sobre un elemento muestra margin, border y padding).</li><li>Elimina la regla cuando termines.</li></ol></section><section id="pseudo"><h2><span class="n">7</span>Pseudoelementos ::before y ::after con content</h2><p class="lead">Añaden elementos decorativos sin ensuciar el HTML con divs o spans extra.</p><p><code>::before</code> inserta un elemento virtual <strong>antes</strong> del contenido de una etiqueta y <code>::after</code> <strong>después</strong>. Solo se generan si defines la propiedad <code>content</code> (aunque sea vacía: <code>content: ""</code>). Por defecto son <code>inline</code>, por lo que suele hacer falta darles <code>display: block</code> o <code>position: absolute</code> para darles tamaño.</p><ol class="steps"><li>Elige el elemento (<code>.boton</code>) y dale <code>position: relative</code>.</li><li>Crea el pseudoelemento con <code>content: ""</code>.</li><li>Dale <code>position: absolute</code>, tamaño y color.</li><li>Colócalo con <code>top/left/right/bottom</code>.</li></ol><pre><code>.titulo {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.titulo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 4px;
+  background: crimson;      /* subrayado decorativo */
+}
+
+.enlace::before {
+  content: "→ ";            /* icono de texto */
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#pseudo .demo .pt{position:relative;padding-bottom:10px;margin:0}#pseudo .demo .pt::after{content:"";position:absolute;left:0;bottom:0;width:60px;height:4px;background:crimson}</style><h4 class="pt">Título con subrayado</h4></div><div class="box tip"><strong>Consejo:</strong> Se pueden combinar dos niveles, por ejemplo <code>.caja::before</code> para un fondo y <code>.caja::after</code> para un adorno: con ambos tienes dos elementos decorativos "gratis" por etiqueta.</div></section><section id="float-fila"><h2><span class="n">8</span>Fila de cajas con float + border-box</h2><p class="lead">Una especie de cuadrícula unidimensional con anchos porcentuales, útil en proyectos con compatibilidad antigua.</p><p>Con <code>float: left</code> las cajas se colocan una junto a otra. Gracias a <code>border-box</code>, el padding y el borde no rompen la suma de porcentajes: 10% + 30% + 60% = 100% exactos.</p><pre><code>.core {
+  float: left;              /* sin esto, las cajas se apilan */
+  box-sizing: border-box;
+  border: 1px solid black;
+}
+.pdg { padding: 20px 0 10px; height: 60px; }
+
+/* HTML */
+&lt;div style="text-align:center"&gt;
+  &lt;div class="pdg core" style="width:10%"&gt;10%&lt;/div&gt;
+  &lt;div class="pdg core" style="width:30%"&gt;30%&lt;/div&gt;
+  &lt;div class="pdg core" style="width:60%"&gt;60%&lt;/div&gt;
+&lt;/div&gt;</code></pre><div class="box warn"><strong>Ojo:</strong> Los floats sacan a los hijos del flujo y el contenedor colapsa a altura 0. Hay que "limpiar" con <code>clear: both</code> o un <code>clearfix</code>. Hoy se prefiere Flexbox o Grid.</div></section><section id="inline-block"><h2><span class="n">9</span>inline-block sin huecos (font-size: 0)</h2><p class="lead">Alternativa a los floats para colocar cajas en línea con ancho definido.</p><p><code>display: inline-block</code> hace que cada caja se comporte como una palabra (se coloca en línea) pero acepte <code>width</code>, <code>height</code>, <code>margin</code> y <code>padding</code>. El problema: el espacio en blanco entre etiquetas del HTML se interpreta como un espacio de texto, y dos cajas del 50% no caben en una línea porque suman 100% más ese hueco.</p><ol class="steps"><li>Se pone <code>font-size: 0</code> en el contenedor: el espacio entre etiquetas pasa a medir 0.</li><li>En cada hijo se <strong>restablece</strong> el tamaño de fuente (<code>font-size: 1rem</code>), porque lo hereda.</li><li>Los hijos con <code>display: inline-block; width: 50%</code> ahora caben exactamente en la misma línea.</li></ol><pre><code>.container {
+  font-size: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.container .col-1,
+.container .col-2 {
+  display: inline-block;
+  font-size: 1rem;      /* recuperar el tamaño de texto */
+  width: 50%;
+  vertical-align: top;
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#inline-block .demo .ic{font-size:0}#inline-block .demo .ic div{display:inline-block;font-size:1rem;width:50%;box-sizing:border-box;background:#d6eaf8;border:1px solid #2980b9;padding:8px;vertical-align:top}</style><div class="ic"><div>50%</div>
+<div>50%</div></div></div></section><section id="sombras"><h2><span class="n">10</span>box-shadow inset y text-shadow</h2><p class="lead">Efectos visuales de profundidad sin usar imágenes.</p><p><code>box-shadow: inset</code> dibuja la sombra <strong>dentro</strong> de la caja, lo que da aspecto de botón pulsado o campo hundido. <code>text-shadow</code> aplica sombra al texto. Ambos siguen la sintaxis <code>desplazamiento-x desplazamiento-y desenfoque color</code>.</p><pre><code>.boton {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, .3);
+}
+
+.boton:active {
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, .5);
+}
+
+h1 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, .4);
+}</code></pre><div class="demo"><span class="dl">Resultado</span><style>#sombras .demo .bs{padding:10px 20px;border:1px solid #888;border-radius:6px;background:#eee;box-shadow:inset 0 2px 4px rgba(0,0,0,.3)}#sombras .demo .ts{font-size:2rem;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,.4)}</style><button class="bs">Botón</button> <span class="ts">Texto</span></div></section><section id="supports"><h2><span class="n">11</span>Feature queries: @supports</h2><p class="lead">Aplican estilos solo si el navegador soporta una propiedad concreta.</p><p>Sirven para hacer <em>mejora progresiva</em>: primero defines un estilo básico válido en todos los navegadores y después añades el avanzado dentro de <code>@supports</code>. Los navegadores que no lo entienden lo ignoran sin romper nada.</p><pre><code>.tarjeta { background: #eee; }          /* base para todos */
+
+@supports (display: grid) {
+  .galeria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@supports (filter: blur(2px)) {
+  .fondo { filter: blur(2px); }
+}</code></pre></section><section id="nth"><h2><span class="n">12</span>Selectores nth-child con rangos ("mod queries")</h2><p class="lead">Seleccionan elementos de una lista según su posición.</p><p><code>:nth-child(an+b)</code> selecciona los hijos cuya posición cumple la fórmula, donde <em>n</em> va tomando los valores 0, 1, 2… Combinando <code>:nth-child(n+3)</code> y <code>:nth-last-child(n+3)</code> se pueden seleccionar rangos o cambiar el diseño según cuántos elementos hay.</p><ul><li><code>li:nth-child(2n)</code> → posiciones pares.</li><li><code>li:nth-child(n+4)</code> → del cuarto en adelante.</li><li><code>li:nth-child(-n+3)</code> → los tres primeros.</li><li><code>li:first-child:nth-last-child(3), li:first-child:nth-last-child(3) ~ li</code> → los elementos de una lista que tiene exactamente 3.</li></ul><pre><code>li:nth-child(-n+3) { font-weight: bold; }
+
+/* Si la lista tiene exactamente 3 elementos, cada uno ocupa un tercio */
+li:first-child:nth-last-child(3),
+li:first-child:nth-last-child(3) ~ li {
+  width: calc(100% / 3);
+}</code></pre><div class="box tip"><strong>Consejo:</strong> Hoy Flexbox y Grid resuelven la mayoría de estos casos, pero conocer <code>nth-child</code> sigue siendo imprescindible para listas, tablas y galerías.</div></section><section id="flex"><h2><span class="n">13</span>Flexbox y CSS Grid: los aliados</h2><p class="lead">Los dos sistemas de maquetación modernos que reemplazan a floats e inline-block.</p><ul><li><strong>Flexbox</strong>: maquetación en <strong>una dimensión</strong> (fila o columna). Ideal para barras de navegación, centrar y repartir espacio.</li><li><strong>Grid</strong>: maquetación en <strong>dos dimensiones</strong> (filas y columnas a la vez). Ideal para la estructura general de la página.</li></ul><pre><code>.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}</code></pre></section>
+</div><button id="tema" type="button">Modo claro/oscuro</button>
+<script>
+document.getElementById('tema').onclick=function(){var r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'};
+</script></body></html>
