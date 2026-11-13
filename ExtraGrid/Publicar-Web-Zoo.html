@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Súbela a internet · el zoo del hosting</title>
+<meta name="description" content="Publicar una web: localhost, index.html y carpetas, repositorio en GitHub, Vercel con despliegue automático, GitHub Pages, Netlify, comparativa y dominio propio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Rubik+Dirt&family=Permanent+Marker&family=Special+Elite&family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* paleta punk de Extras; el color dominante pasa a verde jungla (zoo tattoo) */
+:root{
+  --asfalto:#161617; --panel:#121213; --tiza:#ece6d8; --tiza2:#b9b2a3;
+  --jungla:#2bb15f; --rosa:#ff2d8a; --cian:#2ee6ff; --amarillo:#ffe14d; --queso:#ffc23c; --tomate:#e2381d; --lila:#9a7fc0; --menta:#7dffc8;
+  --rotulo:'Rye','Rockwell',serif;
+  --dirt:'Rubik Dirt','Impact','Arial Black',sans-serif;
+  --marker:'Permanent Marker','Comic Sans MS',cursive;
+  --zine:'Special Elite','Courier New',monospace;
+  --body:'Archivo',system-ui,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --brick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Crect width='120' height='60' fill='%23231d1a'/%3E%3Crect x='1' y='1' width='57' height='27' rx='2' fill='%23743222'/%3E%3Crect x='61' y='1' width='58' height='27' rx='2' fill='%23662b1d'/%3E%3Crect x='-29' y='31' width='58' height='27' rx='2' fill='%235e281c'/%3E%3Crect x='31' y='31' width='57' height='27' rx='2' fill='%237c3a26'/%3E%3Crect x='91' y='31' width='58' height='27' rx='2' fill='%235e281c'/%3E%3C/svg%3E");
+  --dots:radial-gradient(circle,rgba(43,177,95,.22) 2px,transparent 2.6px) 0 0/22px 22px;
+  --candy:repeating-linear-gradient(-45deg,var(--jungla) 0 14px,#f6ecd2 14px 28px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:74px;overflow-x:clip}
+body{margin:0;color:var(--tiza);font-family:var(--body);font-size:17px;line-height:1.7;overflow-x:hidden;
+  background:var(--dots),var(--noise),radial-gradient(circle at 20% 10%,#22301f,transparent 60%),radial-gradient(circle at 90% 60%,#2a2a20,transparent 55%),#191b17}
+::selection{background:var(--jungla);color:#000}
+a{color:var(--jungla)}
+b,strong{font-weight:800;color:#fff}
+code{font-family:var(--mono);font-size:.84em;background:#000;color:var(--jungla);padding:1px 7px;border-radius:6px;border:1px solid #333;overflow-wrap:anywhere}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px}
+:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px}
+.skip{position:fixed;left:12px;top:-60px;z-index:100;font-family:var(--marker);background:var(--amarillo);color:#000;border:3px solid #000;padding:8px 14px;box-shadow:4px 4px 0 #000;text-decoration:none;transition:top .15s;border-radius:12px}
+.skip:focus{top:12px}
+
+/* portada */
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(10,10,10,.35),rgba(10,10,10,.78)),var(--dots),var(--noise),var(--brick);background-size:auto,22px 22px,auto,120px 60px;border-bottom:6px solid #000;padding:26px 0 30px}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 40%,rgba(43,177,95,.25),transparent 45%),radial-gradient(circle at 15% 70%,rgba(46,230,255,.12),transparent 40%);pointer-events:none}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center}
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.sticker{display:inline-block;font-family:var(--marker);font-size:15px;line-height:1.1;color:#000;background:var(--amarillo);padding:6px 12px;transform:rotate(-3deg);box-shadow:3px 3px 0 #000;border:2px solid #000;border-radius:999px}
+.sticker.p{background:var(--rosa);color:#fff;transform:rotate(2deg)}
+.sticker.c{background:var(--jungla);transform:rotate(3deg)}
+.sticker.m{background:var(--menta);transform:rotate(-1deg)}
+.h-title{margin:6px 0 0;font-family:var(--rotulo);font-weight:400;font-size:clamp(60px,10.5vw,140px);line-height:.86;letter-spacing:.01em;color:var(--jungla);text-shadow:4px 4px 0 #fff,8px 8px 0 #000;transform:rotate(-2deg);animation:bote 4s ease-in-out infinite}
+.h-title small{display:block;font-family:var(--marker);font-size:.26em;color:var(--amarillo);text-shadow:3px 3px 0 #000;letter-spacing:.02em;margin-top:14px;transform:rotate(1deg)}
+@keyframes bote{0%,100%{translate:0 0}50%{translate:0 -6px}}
+.h-lead{max-width:580px;font-size:19px;color:#f3eee2;margin:22px 0 18px;background:rgba(0,0,0,.6);padding:12px 16px;border-left:6px solid var(--jungla);border-radius:0 14px 14px 0}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--marker);font-size:18px;text-decoration:none;color:#000;background:var(--jungla);border:3px solid #000;padding:10px 20px;box-shadow:5px 5px 0 #000;cursor:pointer;transition:transform .12s,box-shadow .12s;border-radius:999px}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 #000}
+.btn.p{background:var(--rosa);color:#fff}.btn.y{background:var(--amarillo)}.btn.m{background:var(--menta)}
+.btn.sm{font-size:14.5px;padding:6px 14px;box-shadow:3px 3px 0 #000;border-width:2px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px}
+.hero-art{position:relative;height:440px}
+.hero-art img{position:absolute;filter:drop-shadow(6px 8px 0 #000);animation:flota 5s ease-in-out infinite alternate}
+.hero-art .a1{width:52%;left:22%;top:16%;rotate:-6deg}
+.hero-art .a2{width:30%;left:2%;top:0;rotate:-12deg;animation-delay:-1.5s}
+.hero-art .a3{width:36%;right:0;top:2%;rotate:9deg;animation-delay:-3s}
+.hero-art .a4{width:38%;right:4%;bottom:0;rotate:-4deg;animation-delay:-2s}
+.hero-art .a5{width:30%;left:4%;bottom:2%;rotate:8deg;animation-delay:-4s}
+@keyframes flota{to{translate:0 -12px}}
+.ikasle{position:relative;z-index:2;margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;background:rgba(0,0,0,.72);border:3px solid #000;outline:2px dashed rgba(43,177,95,.55);outline-offset:-8px;padding:18px 20px;border-radius:18px}
+.ikasle label{display:flex;flex-direction:column;gap:4px;font-family:var(--marker);font-size:14px;color:var(--amarillo);min-width:0}
+.ikasle input{width:100%;min-width:0;font:600 16px var(--body);padding:9px 12px;border:3px solid #000;background:var(--tiza);color:#111;outline:none;box-shadow:3px 3px 0 #000;border-radius:10px}
+.ikasle input:focus{background:#fff;box-shadow:3px 3px 0 var(--jungla)}
+
+/* cintas */
+.ticker{background:var(--candy);color:#000;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden;white-space:nowrap;transform:rotate(-1deg);margin:0 -10px;position:relative;z-index:3}
+.ticker div{display:inline-block;font-family:var(--marker);font-size:20px;padding:6px 0;animation:tick 40s linear infinite}
+.ticker span{margin:0 14px;background:#000;color:var(--jungla);padding:0 12px;border-radius:999px}
+.ticker.p{background:var(--amarillo);transform:rotate(1deg)}
+.ticker.p span{color:var(--amarillo)}
+.ticker.p div{animation-direction:reverse}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* menú */
+.nav{position:sticky;top:0;z-index:50;background:#0b0b0b;border-bottom:3px solid var(--jungla);box-shadow:0 6px 0 rgba(0,0,0,.4)}
+.nav .wrap{display:flex;align-items:center;gap:12px;height:62px;position:relative}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--rotulo);font-size:26px;color:var(--jungla);white-space:nowrap}
+.brand img{width:40px;height:40px;object-fit:contain}
+.nav-links{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 16px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:5px 12px;color:var(--tiza2);text-decoration:none;font-weight:800;font-size:14px;border:2px solid transparent;border-radius:999px;position:relative;overflow:hidden}
+.nav-links a span{font-family:var(--mono);font-size:11px;color:var(--jungla);margin-right:4px}
+.nav-links a:hover{color:#fff;border-color:#333}
+.nav-links a::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);translate:-120% 0;transition:translate .5s}
+.nav-links a:hover::after{translate:120% 0}
+.nav-links a.on{background:var(--jungla);color:#000;border-color:#000;transform:rotate(-2deg)}
+.nav-links a.on span{color:#000}
+.nav-arrow{flex:0 0 auto;width:34px;height:34px;border:2px solid var(--jungla);background:#000;color:var(--jungla);font-weight:900;cursor:pointer;border-radius:50%}
+.nav-arrow:hover{background:var(--jungla);color:#000}
+.prog{position:absolute;left:0;bottom:-3px;height:3px;width:0;background:var(--amarillo);box-shadow:0 0 8px var(--amarillo)}
+
+/* secciones */
+main{padding-bottom:40px}
+section.sec{padding:76px 0 8px;position:relative}
+.parte{margin:70px 0 0;padding:30px 24px;text-align:center;background:var(--noise),#000;border:3px solid #000;outline:6px solid transparent;box-shadow:0 0 0 6px var(--jungla),10px 10px 0 6px #000;transform:rotate(-.6deg);border-radius:22px}
+.parte b{display:block;font-family:var(--rotulo);font-weight:400;font-size:clamp(38px,7vw,74px);line-height:1;color:var(--jungla);text-shadow:3px 3px 0 #fff,6px 6px 0 var(--rosa)}
+.parte span{font-family:var(--zine);font-size:18px}
+.sec-head{display:flex;align-items:center;gap:18px;margin-bottom:26px;flex-wrap:wrap;position:relative}
+.sec-num{position:relative;flex:0 0 auto;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;color:#000;font-family:var(--rotulo);font-size:38px;border:4px solid #000;box-shadow:5px 5px 0 #000;transform:rotate(-6deg);
+  background:radial-gradient(circle,#f6ecd2 0 52%,#000 53% 56%,transparent 57%),repeating-conic-gradient(var(--jungla) 0 15deg,#1d7a41 15deg 30deg)}
+.sec-head.alt .sec-num{background:radial-gradient(circle,#f6ecd2 0 52%,#000 53% 56%,transparent 57%),repeating-conic-gradient(var(--tomate) 0 15deg,#9e2414 15deg 30deg)}
+.sec-head.alt2 .sec-num{background:radial-gradient(circle,#f6ecd2 0 52%,#000 53% 56%,transparent 57%),repeating-conic-gradient(var(--queso) 0 15deg,#b07d12 15deg 30deg)}
+main{counter-reset:recinto}
+section.sec{counter-increment:recinto}
+.sec-title h2::before{content:"Recinto " counter(recinto);display:block;font:400 13px var(--marker);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;opacity:.75}
+.sec-title{position:relative;min-width:0;flex:1}
+.sec-title h2{display:inline-block;margin:0;font-family:var(--rotulo);font-weight:400;font-size:clamp(32px,5vw,56px);line-height:1;color:#000;background:var(--jungla);padding:10px 22px 8px;transform:rotate(-1.5deg);box-shadow:6px 6px 0 #000;border:3px solid #000;border-radius:18px}
+.sec-head.alt .sec-title h2{background:var(--rosa);color:#fff}
+.sec-head.alt2 .sec-title h2{background:var(--amarillo)}
+.sec-title p{margin:16px 0 0;font-family:var(--zine);font-size:18px;color:#f3eee2;max-width:820px;background:rgba(0,0,0,.55);display:inline-block;padding:4px 12px;border-radius:8px}
+.sec-prop{position:absolute;right:0;top:-46px;width:clamp(90px,13vw,150px);height:auto;rotate:8deg;filter:drop-shadow(4px 5px 0 #000);pointer-events:none}
+
+.panel{position:relative;background:var(--noise),var(--panel);border:3px solid var(--pc,var(--jungla));box-shadow:8px 8px 0 #000;padding:28px;margin-bottom:28px;border-radius:20px}
+.panel.p{--pc:var(--rosa)}.panel.y{--pc:var(--amarillo)}.panel.w{--pc:var(--tiza)}.panel.c{--pc:var(--cian)}.panel.m{--pc:var(--menta)}
+.panel::before{content:"";position:absolute;top:-14px;left:40px;width:110px;height:26px;background:rgba(255,225,77,.75);transform:rotate(-4deg);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.panel h3{font-family:var(--marker);font-weight:400;font-size:27px;line-height:1.2;margin:0 0 12px;color:var(--pc,var(--jungla))}
+.panel h4{font-family:var(--marker);font-weight:400;font-size:20px;margin:24px 0 8px;color:var(--amarillo)}
+.panel p{margin:0 0 12px}
+.panel ul,.panel ol{margin:0 0 12px;padding-left:24px}
+.panel li{margin-bottom:6px}
+.panel li::marker{color:var(--jungla);font-weight:900}
+.panel.zine{--pc:#000;background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.08) 31px 32px),#f6ecd2;color:#1a1209}
+.panel.zine h3,.panel.zine h4{color:#b3202a}
+.panel.zine b,.panel.zine strong{color:#000}
+.panel.zine code{background:#000;color:var(--jungla)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.g2>*,.g3>*{min-width:0}
+
+/* notas */
+.note{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;margin:20px 0;padding:14px 18px;border:3px solid #000;box-shadow:5px 5px 0 #000;color:#111;font-size:16px;line-height:1.6;border-radius:16px}
+.note b,.note strong{color:#000}
+.note code{background:rgba(0,0,0,.85);color:var(--jungla);border-color:#000}
+.note p{margin:0}.note p+p{margin-top:6px}
+.note .lbl{font-family:var(--marker);font-size:17px;background:#000;color:#fff;padding:2px 10px;transform:rotate(-4deg);white-space:nowrap;align-self:start;border-radius:8px}
+.note.ojo{background:var(--rosa);color:#fff;transform:rotate(-.6deg)}.note.ojo b,.note.ojo strong{color:#fff}.note.ojo .lbl{color:var(--amarillo)}
+.note.truco{background:var(--jungla);transform:rotate(.5deg)}.note.truco .lbl{color:var(--jungla)}
+.note.zine{background:#f6ecd2;font-family:var(--zine);transform:rotate(.4deg)}.note.zine .lbl{color:#f6ecd2}
+.note.menta{background:var(--menta);transform:rotate(-.4deg)}.note.menta .lbl{color:var(--menta)}
+
+/* código */
+.code{position:relative;margin:14px 0 6px;background:#070707;border:2px solid #000;box-shadow:5px 5px 0 #000;outline:1px solid #2c2c2c;min-width:0;border-radius:12px;overflow:hidden}
+.code .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 12px;background:#1d1d1d;border-bottom:2px solid #000}
+.code .bar span{font-family:var(--marker);font-size:14px;color:var(--amarillo)}
+.copy{border:2px solid #000;background:var(--jungla);color:#000;font-family:var(--marker);font-size:13px;padding:2px 12px;cursor:pointer;box-shadow:2px 2px 0 #000;border-radius:999px}
+.copy:hover{background:var(--amarillo)}
+.copy.ok{background:var(--menta)}
+.code pre{margin:0;padding:14px 16px;font-family:var(--mono);font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:#e9e4d8}
+.code .s{color:var(--cian)}.code .p{color:#7fe0a5}.code .v{color:var(--amarillo)}.code .c{color:#a9b9d6;font-style:italic}.code .t{color:var(--jungla)}
+textarea.src{display:none}
+
+/* ejemplo en vivo */
+.caso{margin:18px 0 26px}
+.caso > h4{margin-top:0}
+.vineta{border:3px solid #000;box-shadow:6px 6px 0 var(--jungla);background:#000;margin-bottom:10px;border-radius:14px;overflow:hidden}
+.vineta .barra{display:flex;justify-content:space-between;align-items:center;padding:5px 8px 5px 12px;font-family:var(--marker);font-size:14px;color:var(--amarillo)}
+.vineta iframe{display:block;width:100%;border:0;background:#fff4fa;resize:vertical}
+.vineta button{font-family:var(--marker);font-size:13px;border:2px solid #000;background:var(--amarillo);padding:2px 12px;cursor:pointer;border-radius:999px}
+.prueba{font-family:var(--zine);font-size:15.5px;color:#000;background:var(--amarillo);border:2px solid #000;padding:6px 12px;margin:0 0 10px;border-radius:10px;box-shadow:3px 3px 0 #000}
+
+/* resumen de cada sección */
+.fip{display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:center;margin:8px 0 10px;padding:16px 20px;background:linear-gradient(135deg,#f3e3bd,#e6cf98);border:3px solid #000;box-shadow:7px 7px 0 #000;transform:rotate(-.6deg);color:#1a1209;position:relative;border-radius:20px}
+.fip::before{content:"";position:absolute;inset:6px;border:2px dashed rgba(0,0,0,.35);pointer-events:none;border-radius:14px}
+.fip img{width:96px;height:auto;filter:drop-shadow(3px 3px 0 #000);transform:rotate(-10deg)}
+.fip .lb{display:inline-block;font-family:var(--rotulo);font-size:19px;color:#fff;background:var(--rosa);border:2px solid #000;padding:2px 12px;transform:rotate(-2deg);box-shadow:3px 3px 0 #000;margin-bottom:6px;border-radius:999px}
+.fip p{margin:0;font-family:var(--zine);font-size:19px;line-height:1.45;color:#1a1209}
+.fip code{background:#000;color:var(--jungla);border-color:#000;font-size:.8em}
+
+/* tabla */
+.tabla-wrap{overflow-x:auto;border:3px solid #000;box-shadow:6px 6px 0 #000;border-radius:14px}
+.tabla{width:100%;min-width:640px;border-collapse:collapse;background:#0b0b0b;font-size:15px}
+.tabla th{background:var(--jungla);color:#000;font-family:var(--marker);font-weight:400;font-size:16px;text-align:left;padding:8px 12px}
+.tabla td{padding:8px 12px;border-top:1px solid #2a2a2a;vertical-align:top}
+.tabla td:first-child{font-family:var(--mono);font-size:13.5px;color:var(--amarillo);white-space:nowrap}
+
+/* test */
+.q{background:#0b0b0b;border:2px solid #333;padding:16px 18px;margin-bottom:12px;border-radius:14px}
+.q .qt{display:flex;gap:12px;font-weight:800;margin-bottom:8px;line-height:1.5}
+.q .qt .n{flex:0 0 34px;height:34px;display:grid;place-items:center;background:var(--jungla);color:#000;font-family:var(--rotulo);border:2px solid #000;transform:rotate(-6deg);border-radius:50%}
+.q label{display:flex;align-items:center;gap:10px;padding:7px 12px;cursor:pointer;border:2px solid transparent;font-size:16px;border-radius:10px}
+.q label:hover{background:#151515}
+.q input{accent-color:var(--jungla);width:17px;height:17px;flex:0 0 auto}
+.q label.right{border-color:var(--menta);background:rgba(125,255,200,.12)}
+.q label.wrong{border-color:var(--rosa);background:rgba(255,45,138,.12)}
+.q .ex{display:none;margin-top:8px;background:#f6ecd2;color:#111;padding:8px 12px;font-size:15px;border:2px solid #000;border-radius:10px}
+.q .ex b{color:#000}.q .ex code{background:#000;color:var(--jungla)}
+.q .ex.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--jungla);color:#000;border:3px solid #000;box-shadow:6px 6px 0 #000;padding:14px 18px;position:sticky;bottom:10px;z-index:5;border-radius:18px;font-weight:800}
+.score b{font-family:var(--rotulo);font-size:36px;color:#000}
+.sub-test{font-family:var(--marker);font-weight:400;font-size:26px;color:var(--amarillo);margin:28px 0 12px}
+
+footer.pie{margin-top:60px;background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.85)),var(--brick);background-size:auto,120px 60px;border-top:6px solid #000}
+footer.pie .wrap{padding:40px 16px 60px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer.pie .ft{font-family:var(--rotulo);font-size:clamp(30px,5vw,50px);color:var(--jungla);text-shadow:3px 3px 0 #000;transform:rotate(-2deg)}
+footer.pie p{margin:6px 0 0;font-family:var(--zine);color:var(--tiza)}
+footer.pie img{width:150px;height:auto;rotate:-6deg;filter:drop-shadow(4px 5px 0 #000)}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width: 900px){
+  .hero-grid,.g2,.g3{grid-template-columns:minmax(0,1fr)}
+  .hero-art{height:320px}
+}
+@media (max-width: 600px){
+  .sec-title h2{font-size:26px}
+  .ikasle{grid-template-columns:minmax(0,1fr)}
+  .sec-prop{display:none}
+  .fip{grid-template-columns:64px 1fr;padding:12px}
+  .fip img{width:64px}
+  .fip p{font-size:16.5px}
+  .panel{padding:20px 16px}
+  .nav .brand span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .h-title,.hero-art img,.ticker div{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+
+/* ---------- piezas propias de esta web ---------- */
+/* el viaje */
+.viaje{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;position:relative;margin:6px 0 18px;padding:10px 0}
+.viaje::before{content:"";position:absolute;left:30px;right:30px;top:50%;border-top:4px dashed var(--jungla);z-index:0}
+.parada{position:relative;z-index:1;display:grid;justify-items:center;gap:4px;background:none;border:0;cursor:pointer;color:var(--tiza);font:800 14px var(--body);padding:0}
+.parada img{width:78px;height:78px;object-fit:contain;background:#000;border:3px solid #000;border-radius:50%;padding:8px;box-shadow:0 0 0 4px var(--tiza2),4px 4px 0 4px #000;transition:transform .2s,box-shadow .2s}
+.parada:hover img{transform:rotate(-8deg) scale(1.06)}
+.parada.on img{box-shadow:0 0 0 5px var(--jungla),5px 5px 0 5px #000;transform:scale(1.1)}
+.parada.on{color:var(--jungla)}
+.parada-info{background:#f6ecd2;color:#1a1209;border:3px solid #000;border-radius:18px;padding:18px 20px;box-shadow:6px 6px 0 var(--jungla)}
+.parada-info h4{margin:0 0 6px;font-family:var(--rotulo);font-weight:400;font-size:28px;color:#b3202a}
+.parada-info p{margin:0 0 8px}
+.parada-info .an{font-family:var(--zine);background:var(--amarillo);border:2px solid #000;border-radius:10px;padding:6px 10px;display:block}
+.parada-info .pasos{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.glosario{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.palabra{background:#000;border:3px solid #000;border-radius:16px;box-shadow:4px 4px 0 var(--pc,var(--jungla));padding:12px 14px;font-size:15px;line-height:1.5}
+.palabra b{display:block;font-family:var(--rotulo);font-weight:400;font-size:22px;color:var(--pc,var(--jungla))}
+
+/* árbol de carpetas */
+.arbol-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:22px;align-items:start}
+.arbol{list-style:none;margin:0;padding:14px 16px;background:#0b0b0b;border:3px solid #000;border-radius:16px;box-shadow:5px 5px 0 var(--jungla);font-family:var(--mono);font-size:14.5px}
+.arbol li{padding:1px 0}
+.arbol button{all:unset;cursor:pointer;padding:2px 8px;border-radius:8px;white-space:pre}
+.arbol button:hover,.arbol button:focus-visible{background:#222;outline:2px solid var(--amarillo)}
+.arbol button.on{background:var(--jungla);color:#000}
+.arbol .dir{color:var(--amarillo)}
+.arbol .mal{color:var(--rosa)}
+.url-res{background:#f6ecd2;color:#1a1209;border:3px solid #000;border-radius:16px;padding:16px 18px;box-shadow:5px 5px 0 #000}
+.url-res h4{margin:0 0 8px;font-family:var(--mono);font-size:17px;color:#b3202a;overflow-wrap:anywhere}
+.url-res .u{display:block;font-family:var(--mono);font-size:13.5px;background:#000;color:var(--menta);border-radius:8px;padding:6px 10px;margin:4px 0 10px;overflow-wrap:anywhere}
+.url-res .av{background:var(--rosa);color:#fff;border:2px solid #000;border-radius:10px;padding:6px 10px;margin-top:8px;font-size:15px}
+.url-res .ok{background:var(--menta);color:#000;border:2px solid #000;border-radius:10px;padding:6px 10px;margin-top:8px;font-size:15px}
+.nombre-test{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.nombre-test input{flex:1;min-width:180px;font:15px var(--mono);padding:9px 12px;border:3px solid #000;border-radius:10px;background:var(--tiza);color:#111}
+.nombre-test output{display:block;width:100%;font-size:15px}
+
+/* pantallas simuladas (paso a paso) */
+.wiz{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start}
+.pantalla{background:#fff;color:#1f2328;border:3px solid #000;border-radius:14px;box-shadow:6px 6px 0 var(--jungla);overflow:hidden;font:14px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif}
+.pantalla .nav-b{display:flex;align-items:center;gap:8px;background:#e9e9ef;border-bottom:2px solid #000;padding:7px 10px}
+.pantalla .nav-b i{width:11px;height:11px;border-radius:50%;background:#ff5f57;border:1px solid #0003}
+.pantalla .nav-b i:nth-child(2){background:#febc2e}.pantalla .nav-b i:nth-child(3){background:#28c840}
+.pantalla .nav-b span{flex:1;background:#fff;border-radius:999px;padding:2px 12px;font:12.5px var(--mono);color:#444;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pantalla .cuerpo{padding:16px;min-height:270px}
+.pantalla .top{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#24292f;color:#fff;margin:-16px -16px 14px;padding:8px 14px;font-weight:700}
+.pantalla .top.v{background:#000}
+.pantalla .top.n{background:#0e1e25;color:#32e6e2}
+.pantalla h5{margin:0 0 10px;font-size:18px}
+.pantalla .fl{display:block;font-size:12.5px;font-weight:700;margin:8px 0 3px}
+.m-in{display:block;width:100%;border:1px solid #d0d7de;border-radius:6px;padding:5px 9px;background:#f6f8fa;font:13px var(--mono);color:#1f2328;min-height:30px}
+.m-btn{display:inline-block;border:1px solid #1f883d;background:#1f883d;color:#fff;border-radius:6px;padding:5px 14px;font-weight:700;font-size:13px;margin-top:10px}
+.m-btn.gris{background:#f6f8fa;color:#1f2328;border-color:#d0d7de}
+.m-btn.negro{background:#000;border-color:#000}
+.m-btn.turq{background:#32e6e2;color:#0e1e25;border-color:#0e1e25}
+.m-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.m-radio{display:flex;align-items:center;gap:6px;border:1px solid #d0d7de;border-radius:6px;padding:6px 10px;margin-top:6px;font-size:13px}
+.m-radio::before{content:"";width:12px;height:12px;border-radius:50%;border:2px solid #57606a}
+.m-radio.sel::before{background:#0969da;border-color:#0969da;box-shadow:inset 0 0 0 2px #fff}
+.m-side{display:grid;grid-template-columns:150px 1fr;gap:12px}
+.m-side ul{list-style:none;margin:0;padding:0;font-size:13px;border-right:1px solid #d0d7de}
+.m-side li{padding:4px 8px;border-radius:6px}
+.m-side li.sel{background:#f6f8fa;font-weight:700;box-shadow:inset 3px 0 0 #fd8c73}
+.m-drop{border:2px dashed #8c959f;border-radius:10px;padding:26px 10px;text-align:center;color:#57606a;margin:8px 0}
+.m-files{font:12.5px var(--mono);background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:6px 10px}
+.m-ok{background:#dafbe1;border:1px solid #1f883d;border-radius:8px;padding:10px 12px;color:#116329;font-weight:700}
+.m-card{border:1px solid #d0d7de;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
+.resalta{outline:3px solid var(--rosa)!important;outline-offset:3px;animation:latido 1.2s ease-in-out infinite;position:relative}
+@keyframes latido{50%{outline-color:var(--amarillo);outline-offset:6px}}
+.wiz-txt{background:#000;border:3px solid var(--jungla);border-radius:18px;padding:18px 20px;box-shadow:6px 6px 0 #000}
+.wiz-txt .paso{font-family:var(--marker);color:var(--amarillo);font-size:15px}
+.wiz-txt h4{margin:2px 0 8px;font-family:var(--rotulo);font-weight:400;font-size:26px;color:var(--jungla);line-height:1.15}
+.wiz-txt p{margin:0 0 10px;font-size:16px}
+.wiz-txt .ctr{display:flex;gap:10px;justify-content:space-between;margin-top:12px}
+.puntos{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.puntos i{width:10px;height:10px;border-radius:50%;background:#444;border:2px solid #000}
+.puntos i.on{background:var(--jungla)}
+
+/* tubería del despliegue automático */
+.tuberia{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0}
+.tubo{background:#0b0b0b;border:3px solid #333;border-radius:16px;padding:14px;text-align:center;transition:border-color .3s,background .3s,transform .3s}
+.tubo img{width:64px;height:64px;object-fit:contain}
+.tubo b{display:block;font-family:var(--marker);font-weight:400;color:var(--amarillo)}
+.tubo small{display:block;font-size:13.5px;color:var(--tiza2);line-height:1.4}
+.tubo.act{border-color:var(--jungla);background:#0f2a1a;transform:translateY(-6px)}
+.tubo.hecho{border-color:var(--menta)}
+
+/* elige plataforma, lista de comprobación y DNS */
+.elige .esc{font-family:var(--zine);font-size:19px;background:#f6ecd2;color:#1a1209;border:3px solid #000;border-radius:14px;padding:14px 16px;margin:10px 0 14px}
+.elige .ops{display:flex;flex-wrap:wrap;gap:10px}
+.elige .ops button{font:700 15px var(--body);border:3px solid #000;background:var(--tiza);color:#000;border-radius:999px;padding:8px 18px;cursor:pointer;box-shadow:3px 3px 0 #000}
+.elige .ops button:hover{background:var(--jungla)}
+.veredicto{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;background:var(--jungla);color:#000;border:3px solid #000;border-radius:18px;padding:16px;box-shadow:6px 6px 0 #000}
+.veredicto img{width:110px}
+.veredicto b{font-family:var(--rotulo);font-weight:400;font-size:30px;display:block;line-height:1.1}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.check label{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;background:#0b0b0b;border:2px solid #333;border-radius:12px;padding:10px 12px;cursor:pointer;font-size:15.5px}
+.check input{width:22px;height:22px;accent-color:var(--jungla);margin:2px 0 0}
+.check label:has(input:checked){border-color:var(--menta);background:#0f2a20}
+.check small{display:block;color:var(--tiza2);font-size:13.5px}
+.barra-check{height:22px;background:#000;border:3px solid #000;border-radius:999px;overflow:hidden;margin:10px 0 14px;box-shadow:4px 4px 0 var(--jungla)}
+.barra-check i{display:block;height:100%;width:0;background:var(--candy);transition:width .4s}
+.dns{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:stretch;margin:12px 0}
+.nodo{background:#f6ecd2;color:#1a1209;border:3px solid #000;border-radius:16px;padding:12px;text-align:center;font-size:14.5px;opacity:.45;transition:opacity .3s,transform .3s,box-shadow .3s}
+.nodo b{display:block;font-family:var(--marker);font-weight:400;font-size:17px;color:#b3202a}
+.nodo code{background:#000;color:var(--menta)}
+.nodo.act{opacity:1;transform:translateY(-6px);box-shadow:5px 5px 0 var(--jungla)}
+.dns-form{display:flex;gap:10px;flex-wrap:wrap}
+.dns-form input{flex:1;min-width:200px;font:15px var(--mono);padding:9px 12px;border:3px solid #000;border-radius:10px;background:var(--tiza);color:#111}
+.partes{font-family:var(--mono);font-size:clamp(17px,3vw,28px);display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:12px 0}
+.partes span{padding:4px 10px;border:3px solid #000;border-radius:12px;background:var(--pc);color:#000}
+.partes small{display:block;font-family:var(--marker);font-size:12px}
+.fuente{font-size:13.5px;color:var(--tiza2)}
+.fuente a{color:var(--jungla)}
+
+@media (max-width: 900px){
+  .arbol-wrap,.wiz{grid-template-columns:minmax(0,1fr)}
+  .tuberia,.dns{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 600px){
+  .viaje::before{display:none}
+  .viaje{justify-content:center}
+  .parada img{width:62px;height:62px}
+  .m-side{grid-template-columns:minmax(0,1fr)}
+  .m-side ul{border-right:0}
+  .veredicto{grid-template-columns:70px 1fr}
+  .veredicto img{width:70px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="tags"><span class="sticker">Extras · Zoo del hosting</span><span class="sticker p">GitHub</span><span class="sticker c">Vercel</span><span class="sticker m">Dominio propio</span></div>
+        <h1 class="h-title">SÚBELA A<br>INTERNET<small>Visita guiada al zoo del hosting · entrada gratis</small></h1>
+        <p class="h-lead">Bienvenida al zoo: cada recinto guarda una bestia distinta del hosting, con su placa para que sepas qué come y cómo se doma. Tu web ya funciona… en tu ordenador. Hoy la sacas a la calle: la guardas en <b>GitHub</b>, la publicas en <b>Vercel</b> (o en GitHub Pages, o en Netlify) y, si quieres, le pones <b>tu propio dominio</b>. Cada vez que cambies algo, se actualizará sola.</p>
+        <div class="hero-btns"><a class="btn" href="#viaje">Empezar la visita</a><a class="btn p" href="#github">Ir a GitHub</a><a class="btn y" href="#test">Test</a></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <img class="a1" src="img/zoo/tigre.webp" alt="">
+        <img class="a2" src="img/zoo/loro.webp" alt="">
+        <img class="a3" src="img/zoo/aguila.webp" alt="">
+        <img class="a4" src="img/zoo/tiburon.webp" alt="">
+        <img class="a5" src="img/zoo/flamenco.webp" alt="">
+      </div>
+    </div>
+    <div class="ikasle">
+      <label>Nombre<input type="text" placeholder="Tu nombre" autocomplete="off"></label>
+      <label>Apellidos<input type="text" placeholder="Tus apellidos" autocomplete="off"></label>
+      <label>Curso / grupo<input type="text" placeholder="Ej. 1º A" autocomplete="off"></label>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true"><div id="tk1"></div></div>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img src="img/zoo/loro.webp" alt=""><span>ZOO DEL HOSTING</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">‹</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">›</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<!-- 1 -->
+<section class="sec" id="viaje" data-nav="El viaje" data-prop="aguila"
+  data-fip="Tu web hace un viaje: la <b>carpeta</b> de tu ordenador, la pruebas en <b>localhost</b>, la guardas en <b>GitHub</b>, <b>Vercel</b> la publica en una dirección <code>.vercel.app</code> y, si quieres, un <b>dominio</b> propio le pone nombre bonito.">
+  <div class="sec-head reveal"><div class="sec-num">1</div><div class="sec-title"><h2>El viaje de tu web</h2><br><p>Cinco paradas desde tu ordenador hasta el móvil de cualquiera.</p></div><img class="sec-prop" src="img/zoo/aguila.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>El mapa del zoo: pulsa cada parada</h3>
+    <p>Como en la entrada de cualquier zoo, primero el mapa. Antes de tocar ningún botón, entiende el recorrido. Pulsa las paradas en orden: cada una te cuenta qué pasa ahí, con una analogía de la vida real.</p>
+    <div class="viaje" id="viajeMapa"></div>
+    <div class="parada-info" id="viajeInfo" aria-live="polite"></div>
+  </div>
+
+  <div class="panel w reveal">
+    <h3>Las palabras que vas a oír</h3>
+    <div class="glosario">
+      <div class="palabra"><b>Servidor</b>Un ordenador encendido día y noche que entrega tu web a quien la pide. No tiene pantalla ni teclado: vive en un centro de datos.</div>
+      <div class="palabra" style="--pc:var(--cian)"><b>Hosting</b>El servicio de alquilar sitio en un servidor. Vercel, Netlify y GitHub Pages son hosting (y con plan gratis).</div>
+      <div class="palabra" style="--pc:var(--amarillo)"><b>Desplegar (deploy)</b>Publicar una versión de tu web. «Hacer deploy» = subirla para que se vea en internet.</div>
+      <div class="palabra" style="--pc:var(--menta)"><b>Repositorio</b>Una carpeta en GitHub que además guarda el historial de todos los cambios. Se abrevia «repo».</div>
+      <div class="palabra"><b>Commit</b>Cada «guardado» en GitHub, con un mensaje que explica qué cambiaste.</div>
+      <div class="palabra" style="--pc:var(--cian)"><b>URL</b>La dirección completa de una página: <code>https://pizzeria-chicle.vercel.app/carta.html</code>.</div>
+      <div class="palabra" style="--pc:var(--amarillo)"><b>Dominio</b>La parte con nombre de la URL: <code>pizzeriachicle.es</code>. Se alquila por años.</div>
+      <div class="palabra" style="--pc:var(--menta)"><b>DNS</b>La agenda de internet: convierte el nombre (el dominio) en el número (la IP) del servidor.</div>
+      <div class="palabra"><b>HTTPS</b>La conexión cifrada, el candado de la barra de direcciones. Las tres plataformas te lo dan gratis.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="localhost" data-nav="localhost" data-prop="mono"
+  data-fip="<code>localhost</code> (o <code>127.0.0.1</code>) significa «este mismo ordenador». Live Server lo convierte en un servidor de pruebas en el puerto <code>5500</code>: es la cocina donde pruebas el plato. <b>Solo lo ves tú</b>; para el resto del mundo hay que publicar.">
+  <div class="sec-head alt reveal"><div class="sec-num">2</div><div class="sec-title"><h2>localhost y Live Server</h2><br><p>Tu servidor de pruebas, que ya usas desde el primer bloque.</p></div><img class="sec-prop" src="img/zoo/mono.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>Lo que ya sabes… y lo que significa</h3>
+    <p>Desde el primer bloque abres tus páginas con <b>Live Server</b> en Visual Studio Code (clic derecho → <i>Open with Live Server</i>, o el botón <i>Go Live</i> de abajo a la derecha). No vamos a repetir la instalación. Hoy toca entender <b>qué es esa dirección rara</b> que aparece en el navegador:</p>
+    <p style="text-align:center"><code style="font-size:1.2em">http://127.0.0.1:5500/carta.html</code></p>
+    <ul>
+      <li><b><code>127.0.0.1</code> o <code>localhost</code></b>: es la dirección de «este mismo ordenador». Todos los ordenadores del mundo se llaman así a sí mismos. Por eso, si le pasas ese enlace a un amigo, su ordenador buscará la web… <b>en su propio ordenador</b>, y no la encontrará.</li>
+      <li><b><code>:5500</code></b>: el <b>puerto</b>. Un ordenador puede tener muchos servidores a la vez; cada uno escucha en una «puerta» con número. Live Server usa la 5500 (si está ocupada, la 5501…).</li>
+      <li><b><code>/carta.html</code></b>: el archivo, contado desde la carpeta que abriste en VS Code.</li>
+    </ul>
+    <div class="note truco"><span class="lbl">ANALOGÍA</span><p>localhost es <b>la cocina de tu casa</b>: pruebas el plato, le echas sal, lo vuelves a probar (Live Server recarga solo al guardar). Pero nadie de fuera puede comérselo hasta que abras un restaurante: eso es <b>publicar</b>.</p></div>
+  </div>
+
+  <div class="panel p reveal">
+    <h3>¿Por qué no basta con hacer doble clic en el archivo?</h3>
+    <p>Si haces doble clic en <code>index.html</code>, la barra de direcciones dice algo como <code>file:///C:/Users/ane/web/index.html</code>. Eso no es un servidor: el navegador lee el archivo del disco directamente. Para HTML y CSS sencillos funciona casi igual, pero:</p>
+    <ul>
+      <li>Hay cosas que el navegador <b>bloquea con <code>file:///</code></b> por seguridad (cargar datos o módulos de JavaScript, por ejemplo).</li>
+      <li>Las rutas que empiezan por <code>/</code> apuntan a la raíz del disco <code>C:</code>, no a tu carpeta.</li>
+      <li>No se recarga solo al guardar.</li>
+    </ul>
+    <p>Live Server se parece mucho más a lo que pasará en internet. <b>Si funciona en Live Server, lo normal es que funcione publicado</b>, con una excepción que verás en la siguiente sección: las mayúsculas.</p>
+  </div>
+
+  <div class="panel y reveal">
+    <h3>Truco: verla en tu móvil</h3>
+    <p>Si tu móvil y tu ordenador están en la <b>misma wifi</b>, puedes abrir la web del ordenador desde el móvil cambiando <code>127.0.0.1</code> por la IP de tu ordenador en la red (algo como <code>192.168.1.35:5500</code>). Para eso, en los ajustes de Live Server hay que permitir conexiones de otros equipos y el cortafuegos de Windows tiene que dejarlo pasar. En redes de centros educativos suele estar bloqueado; en casa, prueba. Y si no, para eso tienes el modo móvil de las DevTools.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="carpeta" data-nav="index.html y carpetas" data-prop="bulldog"
+  data-fip="La portada se llama <b><code>index.html</code></b> y está en la raíz. Nombres en minúsculas, sin espacios, sin tildes ni eñes, con guiones. Rutas siempre relativas. Y cuidado: en el servidor <code>Foto.jpg</code> y <code>foto.jpg</code> son <b>dos archivos distintos</b>.">
+  <div class="sec-head alt2 reveal"><div class="sec-num">3</div><div class="sec-title"><h2>Prepara la carpeta</h2><br><p>Renombrar a index.html y montar una web de varias páginas.</p></div><img class="sec-prop" src="img/zoo/bulldog.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>¿Por qué index.html?</h3>
+    <p>Cuando alguien escribe <code>pizzeriachicle.es</code> sin decir qué archivo quiere, el servidor necesita saber qué enseñar. La regla, en casi todos los servidores del mundo, es: <b>«si no me dicen archivo, doy el que se llame <code>index.html</code>»</b>.</p>
+    <ul>
+      <li>Si tu portada se llama <code>portada.html</code> o <code>web-final-v3.html</code>, la dirección principal dará <b>error 404</b> (no encontrado) o una lista de archivos.</li>
+      <li>Si se llama <code>Index.html</code> (con mayúscula), en Windows funciona y en el servidor <b>no</b>.</li>
+      <li>Vale igual para las subcarpetas: <code>carta/index.html</code> se abre con <code>pizzeriachicle.es/carta/</code>. Así salen direcciones limpias, sin <code>.html</code>.</li>
+    </ul>
+    <div class="note truco"><span class="lbl">ANALOGÍA</span><p><code>index.html</code> es el <b>recibidor</b>: si llamas al timbre y no dices a qué habitación vas, te quedas ahí.</p></div>
+  </div>
+
+  <div class="panel c reveal">
+    <h3>Simulador: de archivo a dirección</h3>
+    <p>Este es un proyecto de varias páginas. <b>Pulsa cada archivo</b> y verás la dirección que tendrá publicado en Vercel y en GitHub Pages, y si tiene algún problema. Los nombres en rosa tienen trampa.</p>
+    <div class="arbol-wrap">
+      <ul class="arbol" id="arbol"></ul>
+      <div class="url-res" id="urlRes" aria-live="polite"></div>
+    </div>
+    <h4>¿Es buen nombre de archivo?</h4>
+    <div class="nombre-test"><input id="nomIn" value="Mi Página Final (2).HTML" aria-label="Nombre de archivo para comprobar"><output id="nomOut" for="nomIn"></output></div>
+  </div>
+
+  <div class="panel p reveal">
+    <h3>Las 6 reglas de los nombres</h3>
+    <ol>
+      <li><b>Minúsculas siempre.</b> Los servidores (casi todos Linux) distinguen mayúsculas: <code>Logo.PNG</code> ≠ <code>logo.png</code>. En Windows no se nota… hasta que publicas y desaparecen las imágenes.</li>
+      <li><b>Sin espacios.</b> En la URL se convierten en <code>%20</code> y el validador del W3C los marca como error. Usa guiones: <code>mi-foto.jpg</code>.</li>
+      <li><b>Sin tildes ni eñes.</b> <code>pequeña.jpg</code> se convierte en <code>peque%C3%B1a.jpg</code>. Mejor <code>pequena.jpg</code>.</li>
+      <li><b>Guion medio, no bajo</b> para separar palabras: <code>carta-de-vinos.html</code>. Google lee el guion como separador.</li>
+      <li><b>Nombres que digan qué es</b>: <code>contacto.html</code>, no <code>pagina3.html</code>.</li>
+      <li><b>Sin «final», «v2», «bueno»</b>: el historial ya lo guarda GitHub.</li>
+    </ol>
+  </div>
+
+  <div class="panel reveal">
+    <h3>Estructura de una web de varias páginas</h3>
+    <div class="g2">
+      <div>
+        <textarea class="src" data-lang="html" data-title="ESTRUCTURA · carpeta del proyecto">
+pizzeria-chicle/
+├── index.html
+├── carta.html
+├── contacto.html
+├── css/
+│   └── estilos.css
+├── img/
+│   ├── logo.svg
+│   └── margarita.webp
+└── locales/
+    └── index.html</textarea>
+      </div>
+      <div>
+        <textarea class="src" data-lang="html" data-title="HTML · el menú de TODAS las páginas de la raíz">
+<nav aria-label="Principal">
+  <a href="index.html">Inicio</a>
+  <a href="carta.html">Carta</a>
+  <a href="locales/">Locales</a>
+  <a href="contacto.html">Contacto</a>
+</nav>
+<link rel="stylesheet" href="css/estilos.css">
+<img src="img/logo.svg" alt="Pizzería Chicle"></textarea>
+        <textarea class="src" data-lang="html" data-title="HTML · el mismo menú dentro de locales/index.html">
+<nav aria-label="Principal">
+  <a href="../index.html">Inicio</a>
+  <a href="../carta.html">Carta</a>
+  <a href="./">Locales</a>
+  <a href="../contacto.html">Contacto</a>
+</nav>
+<link rel="stylesheet" href="../css/estilos.css"></textarea>
+      </div>
+    </div>
+    <ul>
+      <li>Un <b>único CSS</b> para todas las páginas, enlazado desde cada una: cambias un color y cambia en toda la web.</li>
+      <li>Las <b>rutas relativas</b> (las que ya conoces, con <code>../</code>) funcionan igual en tu ordenador, en Vercel y en GitHub Pages.</li>
+      <li>Repite la misma cabecera y el mismo pie en todas las páginas; cambia el <code>&lt;title&gt;</code>, la <code>description</code> y el <code>main</code>.</li>
+    </ul>
+    <div class="note ojo"><span class="lbl">ERROR TÍPICO</span><p>Rutas como <code>C:\Users\ane\Desktop\web\img\logo.png</code> o <code>file:///…</code>: en tu ordenador se ve la imagen porque <b>está en tu disco</b>. En internet nadie tiene tu disco. Y las barras siempre <code>/</code>, nunca <code>\</code>.</p></div>
+  </div>
+</section>
+
+<div class="parte reveal"><b>ZONA 1 · GITHUB + VERCEL</b><span>El almacén con historial y el escaparate abierto 24 horas</span></div>
+
+<!-- 4 -->
+<section class="sec" id="github" data-nav="Repositorio en GitHub" data-prop="gato"
+  data-fip="En GitHub: <b>+ → New repository</b>, nombre en minúsculas con guiones, <b>Public</b>, <b>Create</b>. Sube el <b>contenido</b> de tu carpeta (que <code>index.html</code> quede en la raíz) y pulsa <b>Commit changes</b>. Para trabajar en equipo: <b>Settings → Collaborators → Add people</b>.">
+  <div class="sec-head reveal"><div class="sec-num">4</div><div class="sec-title"><h2>Repositorio en GitHub</h2><br><p>Crear el repositorio, subir los archivos e invitar a tus compañeros.</p></div><img class="sec-prop" src="img/zoo/gato.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>¿Qué es GitHub?</h3>
+    <p><b>GitHub</b> es una web donde se guardan proyectos de código. Cada proyecto es un <b>repositorio</b>: una carpeta en la nube que, además de los archivos, guarda <b>todo el historial</b>. Cada vez que guardas cambios (un <b>commit</b>) queda apuntado quién cambió qué, cuándo y por qué. Si rompes algo, puedes volver atrás.</p>
+    <div class="note truco"><span class="lbl">ANALOGÍA</span><p>GitHub es una <b>despensa con cámara de vigilancia</b>: guarda los ingredientes de tu web y graba cada vez que alguien mete o saca algo. Pero <b>no cocina</b>: para servir la web al público necesitas un restaurante (Vercel, Netlify o GitHub Pages).</p></div>
+    <p>GitHub funciona con <b>Git</b>, un programa que se usa desde la terminal. Git tiene su propio bloque más adelante; hoy lo haremos todo <b>desde la web de GitHub</b>, con botones, sin instalar nada.</p>
+  </div>
+
+  <div class="panel w reveal">
+    <h3>Paso a paso (simulado)</h3>
+    <p>Estas pantallas imitan las de GitHub. El botón que hay que pulsar está marcado con un contorno que late. Usa «Siguiente» y «Anterior». GitHub cambia de diseño de vez en cuando, así que los botones pueden moverse un poco: busca siempre <b>las mismas palabras</b>.</p>
+    <div class="wiz" id="wizGh"></div>
+  </div>
+
+  <div class="panel p reveal">
+    <h3>Los tres despistes que más se repiten</h3>
+    <ul>
+      <li><b>Subir la carpeta en vez de su contenido.</b> Si arrastras la carpeta <code>pizzeria-chicle</code> entera, el <code>index.html</code> queda en <code>pizzeria-chicle/index.html</code> y la portada no se encuentra. Entra en la carpeta, selecciona <b>todo lo de dentro</b> (<kbd>Ctrl</kbd> + <kbd>A</kbd>) y arrastra eso.</li>
+      <li><b>Mensajes de commit inútiles.</b> «cambios», «asdf», «ya». Escribe lo que hiciste: «Añade página de contacto», «Arregla el menú en móvil». Dentro de un mes lo agradecerás.</li>
+      <li><b>Subir secretos.</b> Un repositorio público lo ve <b>todo el mundo</b>, historial incluido. Nunca subas contraseñas, claves ni datos personales. Si se te cuela una, cámbiala: borrar el archivo no la borra del historial.</li>
+    </ul>
+  </div>
+
+  <div class="panel c reveal">
+    <h3>Invitar colaboradores</h3>
+    <p>Para hacer un proyecto en equipo, todos tienen que poder subir cambios al mismo repositorio:</p>
+    <ol>
+      <li>En el repositorio, pestaña <b>Settings</b> (la rueda dentada, arriba a la derecha).</li>
+      <li>En el menú de la izquierda, <b>Collaborators</b> (dentro del apartado <i>Access</i>). GitHub puede pedirte la contraseña otra vez.</li>
+      <li><b>Add people</b> → escribe el <b>nombre de usuario</b> o el email de GitHub de tu compañera → elige su nombre en la lista → <b>Add … to this repository</b>.</li>
+      <li>Ella recibe un email y un aviso en GitHub: tiene que <b>aceptar la invitación</b>. Hasta que no la acepte, no puede subir nada.</li>
+    </ol>
+    <div class="note ojo"><span class="lbl">OJO</span><p>Si dos personas cambian <b>el mismo archivo a la vez</b> desde la web, el segundo commit puede pisar al primero. Repartíos el trabajo por archivos (tú <code>carta.html</code>, yo <code>contacto.html</code>) y avisaos antes de tocar los compartidos, como el CSS.</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="vercel" data-nav="Vercel y despliegue" data-prop="tiburon"
+  data-fip="Vercel: <b>Continue with GitHub</b> → <b>Add New… → Project</b> → <b>Import</b> tu repositorio → Framework Preset <b>Other</b> → <b>Deploy</b>. Desde ese momento, <b>cada commit en la rama main se publica solo</b> en unos segundos.">
+  <div class="sec-head alt reveal"><div class="sec-num">5</div><div class="sec-title"><h2>Vercel y el despliegue automático</h2><br><p>Vincular el repositorio y olvidarte de volver a subir nada a mano.</p></div><img class="sec-prop" src="img/zoo/tiburon.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>¿Qué hace Vercel?</h3>
+    <p><b>Vercel</b> es una plataforma de hosting. Se conecta a tu repositorio de GitHub, coge los archivos y los pone en servidores repartidos por todo el mundo (una <b>CDN</b>: así tu web carga rápido igual en Bilbao que en Tokio). Te da una dirección gratis del estilo <code>pizzeria-chicle.vercel.app</code> y HTTPS automático.</p>
+    <p>Su plan gratuito se llama <b>Hobby</b> y es para proyectos personales, sin fines comerciales: perfecto para clase y para tu portafolio.</p>
+  </div>
+
+  <div class="panel w reveal">
+    <h3>Paso a paso (simulado)</h3>
+    <div class="wiz" id="wizVc"></div>
+  </div>
+
+  <div class="panel y reveal">
+    <h3>El despliegue automático, en directo</h3>
+    <p>Esta es la magia: ya no tienes que «subir la web» nunca más. Pulsa el botón y mira el recorrido de un cambio.</p>
+    <div class="tuberia" id="tuberia">
+      <div class="tubo"><img src="img/zoo/loro.webp" alt=""><b>1 · Cambias</b><small>Editas <code>carta.html</code> en GitHub (o lo subes de nuevo) y haces commit.</small></div>
+      <div class="tubo"><img src="img/zoo/gato.webp" alt=""><b>2 · GitHub avisa</b><small>GitHub le dice a Vercel: «hay un commit nuevo en main».</small></div>
+      <div class="tubo"><img src="img/zoo/tigre.webp" alt=""><b>3 · Vercel construye</b><small>Copia los archivos y prepara la nueva versión.</small></div>
+      <div class="tubo"><img src="img/zoo/aguila.webp" alt=""><b>4 · ¡Publicada!</b><small>La dirección de siempre ya enseña la versión nueva.</small></div>
+    </div>
+    <p style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button class="btn sm" type="button" id="tubBtn">Hacer un commit</button><span id="tubTxt" aria-live="polite"></span></p>
+    <ul>
+      <li><b>Rama main = producción</b>: lo que ve todo el mundo en tu dirección principal.</li>
+      <li><b>Otras ramas = vistas previas (preview)</b>: Vercel les da una dirección propia para probar sin tocar la web «de verdad». Las ramas son cosa del bloque de Git.</li>
+      <li>En la pestaña <b>Deployments</b> de Vercel ves cada versión publicada. Si una sale mal, puedes volver a una anterior.</li>
+    </ul>
+  </div>
+
+  <div class="panel p reveal">
+    <h3>Si algo sale mal</h3>
+    <div class="tabla-wrap">
+      <table class="tabla">
+        <thead><tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr></thead>
+        <tbody>
+          <tr><td>404: NOT_FOUND en la portada</td><td>No hay <code>index.html</code> en la raíz (subiste la carpeta, o se llama distinto).</td><td>Que <code>index.html</code> esté arriba del todo en el repositorio.</td></tr>
+          <tr><td>La web sale sin estilos</td><td>La ruta del CSS está mal o tiene mayúsculas distintas.</td><td>Revisa <code>href="css/estilos.css"</code> letra a letra.</td></tr>
+          <tr><td>Faltan imágenes</td><td><code>Foto.JPG</code> en el disco y <code>foto.jpg</code> en el HTML.</td><td>Renombra todo a minúsculas y vuelve a subir.</td></tr>
+          <tr><td>No me deja importar el repositorio</td><td>El repositorio es de una <b>organización</b> de GitHub: el plan Hobby solo conecta repositorios de tu cuenta personal.</td><td>Crea el repositorio en tu cuenta, o usa GitHub Pages.</td></tr>
+          <tr><td>He cambiado algo y no se ve</td><td>El navegador enseña la versión guardada en memoria (caché).</td><td><kbd>Ctrl</kbd> + <kbd>F5</kbd>, o mira en <i>Deployments</i> si el despliegue terminó.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="parte reveal"><b>ZONA 2 · OTRAS ESPECIES</b><span>GitHub Pages, Netlify y cómo elegir</span></div>
+
+<!-- 6 -->
+<section class="sec" id="pages" data-nav="GitHub Pages" data-prop="pantera"
+  data-fip="GitHub Pages publica directamente desde el repositorio: <b>Settings → Pages → Deploy from a branch → main / (root) → Save</b>. Tu web queda en <code>usuario.github.io/repositorio/</code>. Con la cuenta gratuita, el repositorio tiene que ser <b>público</b>.">
+  <div class="sec-head alt2 reveal"><div class="sec-num">6</div><div class="sec-title"><h2>GitHub Pages</h2><br><p>Publicar sin salir de GitHub (así está publicada la plataforma de este curso).</p></div><img class="sec-prop" src="img/zoo/pantera.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>La opción sin intermediarios</h3>
+    <p><b>GitHub Pages</b> es el hosting de la propia GitHub: no necesitas otra cuenta. Es exactamente lo que usa la plataforma de este curso, que vive en <code>igorhermoso1.github.io/Formaci-n_Juritecnia/</code>. Fíjate en la forma de la dirección:</p>
+    <div class="partes"><span style="--pc:var(--jungla)">igorhermoso1<small>tu usuario</small></span><span style="--pc:var(--tiza)">.github.io<small>de GitHub</small></span><span style="--pc:var(--amarillo)">/Formaci-n_Juritecnia/<small>el repositorio</small></span></div>
+    <p>Si llamas a tu repositorio exactamente <code>tu-usuario.github.io</code>, la web queda en la raíz: <code>tu-usuario.github.io</code>, sin nada detrás. Solo puede haber uno así por cuenta.</p>
+  </div>
+
+  <div class="panel w reveal">
+    <h3>Paso a paso (simulado)</h3>
+    <div class="wiz" id="wizPg"></div>
+  </div>
+
+  <div class="panel p reveal">
+    <h3>La trampa de la barra inicial</h3>
+    <p>En una web de GitHub Pages de proyecto, la raíz de tu web <b>no</b> es la raíz del dominio: es <code>/nombre-del-repo/</code>. Por eso:</p>
+    <div class="g2">
+      <textarea class="src" data-lang="html" data-title="HTML · se rompe en GitHub Pages">
+<link rel="stylesheet" href="/css/estilos.css">
+<a href="/carta.html">Carta</a></textarea>
+      <textarea class="src" data-lang="html" data-title="HTML · funciona en todas partes">
+<link rel="stylesheet" href="css/estilos.css">
+<a href="carta.html">Carta</a></textarea>
+    </div>
+    <p>La barra del principio significa «desde la raíz del dominio», que sería <code>usuario.github.io/css/estilos.css</code>… donde no hay nada. Con <b>rutas relativas</b> no hay problema en ningún sitio.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="netlify" data-nav="Netlify" data-prop="flamenco"
+  data-fip="Netlify tiene un truco único: <b>Netlify Drop</b>, arrastrar la carpeta y listo, sin GitHub. También se puede conectar a GitHub como Vercel. Su plan gratis funciona con <b>créditos al mes</b>: cada publicación y cada GB servido gasta créditos.">
+  <div class="sec-head reveal"><div class="sec-num">7</div><div class="sec-title"><h2>Netlify</h2><br><p>La alternativa de arrastrar y soltar.</p></div><img class="sec-prop" src="img/zoo/flamenco.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>Dos formas de publicar</h3>
+    <div class="g2">
+      <div class="note menta" style="margin:0"><span class="lbl">DROP</span><p><b>Arrastrar y soltar.</b> Entras en <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">app.netlify.com/drop</a>, arrastras la carpeta de tu web y en segundos tienes una dirección <code>algo.netlify.app</code>. Ideal para enseñar algo rápido. Para que no caduque, hay que crear cuenta. Pega: cada cambio es volver a arrastrar.</p></div>
+      <div class="note truco" style="margin:0"><span class="lbl">GIT</span><p><b>Conectado a GitHub.</b> Igual que Vercel: <i>Add new project → Import an existing project</i>, eliges GitHub y tu repositorio, y cada commit se publica solo.</p></div>
+    </div>
+    <p style="margin-top:16px">Netlify trae además cosas útiles para webs sencillas, como recibir los datos de un formulario sin programar nada (<b>Netlify Forms</b>), que ya conoces del bloque de formularios.</p>
+  </div>
+
+  <div class="panel y reveal">
+    <h3>El plan gratis por créditos</h3>
+    <p>Netlify cambió su plan gratuito a un sistema de <b>créditos</b>: cada mes recibes una cantidad y cada cosa que hace tu web «cuesta» créditos (publicar, servir datos, recibir visitas…). El plan gratis tiene <b>límite duro</b>: no se puede recargar ni te cobran de más; los créditos vuelven al empezar el mes siguiente. Las cifras concretas, en la comparativa de la siguiente sección.</p>
+    <div class="note zine"><span class="lbl">CUENTA</span><p>Con los precios de hoy, si solo publicaras, los créditos de un mes darían para unas 20 publicaciones. Por eso, si vas a hacer muchos cambios pequeños, mejor <b>agruparlos</b> en menos commits… o usar Vercel o GitHub Pages para clase.</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="comparar" data-nav="Comparativa" data-prop="serpiente"
+  data-fip="Para clase y portafolio: <b>Vercel</b> (despliegue automático y vistas previas) o <b>GitHub Pages</b> (sin otra cuenta, repositorio público). <b>Netlify Drop</b> para algo rápido sin GitHub. Las cifras cambian: <b>compruébalas siempre en la web oficial</b>.">
+  <div class="sec-head alt reveal"><div class="sec-num">8</div><div class="sec-title"><h2>Comparativa de plataformas gratis</h2><br><p>Cifras comprobadas en las webs oficiales, con fecha.</p></div><img class="sec-prop" src="img/zoo/serpiente.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>Cara a cara</h3>
+    <div class="tabla-wrap">
+      <table class="tabla">
+        <thead><tr><th>&nbsp;</th><th>Vercel (Hobby)</th><th>GitHub Pages (Free)</th><th>Netlify (Free)</th></tr></thead>
+        <tbody>
+          <tr><td>Precio</td><td>0 €</td><td>0 €</td><td>0 €</td></tr>
+          <tr><td>Dirección gratis</td><td><code>nombre.vercel.app</code></td><td><code>usuario.github.io/repo</code></td><td><code>nombre.netlify.app</code></td></tr>
+          <tr><td>¿Necesita GitHub?</td><td>Sí (o GitLab / Bitbucket)</td><td>Sí, vive dentro</td><td>No, con Drop</td></tr>
+          <tr><td>Publica solo al hacer commit</td><td>Sí</td><td>Sí</td><td>Sí (si lo conectas)</td></tr>
+          <tr><td>Vistas previas por rama</td><td>Sí</td><td>No</td><td>Sí</td></tr>
+          <tr><td>Tráfico al mes</td><td>100 GB (Fast Data Transfer)</td><td>100 GB (límite «blando»)</td><td>Por créditos: 20 créditos por GB</td></tr>
+          <tr><td>Publicaciones</td><td>100 al día</td><td>10 construcciones por hora (límite «blando»)</td><td>15 créditos cada publicación</td></tr>
+          <tr><td>Tamaño</td><td>Subidas de hasta 100 MB</td><td>Web publicada de hasta 1 GB</td><td>Sin cifra propia: cuenta lo que se transfiere</td></tr>
+          <tr><td>Créditos al mes</td><td>—</td><td>—</td><td>300 (límite duro, no se acumulan)</td></tr>
+          <tr><td>Si te pasas</td><td>Esperas 30 días para esa función</td><td>GitHub puede avisarte o limitarte</td><td>Límite duro: sin recarga hasta el mes siguiente</td></tr>
+          <tr><td>Repositorio privado</td><td>Sí</td><td>No en la cuenta gratuita</td><td>Sí</td></tr>
+          <tr><td>Dominio propio + HTTPS</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+          <tr><td>Uso comercial</td><td>No: solo personal</td><td>No pensado para tiendas ni negocios</td><td>Revisa sus condiciones</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fuente">Consultado el 13 de noviembre de 2026 en las páginas oficiales: <a href="https://vercel.com/docs/plans/hobby" target="_blank" rel="noopener noreferrer">Vercel Hobby</a>, <a href="https://vercel.com/docs/limits" target="_blank" rel="noopener noreferrer">límites de Vercel</a>, <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits" target="_blank" rel="noopener noreferrer">límites de GitHub Pages</a> y <a href="https://www.netlify.com/pricing/" target="_blank" rel="noopener noreferrer">precios de Netlify</a>.</p>
+    <div class="note ojo"><span class="lbl">IMPORTANTE</span><p>Estas cifras <b>no son fijas</b>: las plataformas cambian sus planes gratuitos cada pocos meses (Netlify, por ejemplo, pasó hace poco a los créditos). Antes de elegir para un proyecto importante, entra en los enlaces de arriba y compruébalas. Para una web de clase, cualquiera de las tres va sobrada: 100 GB son <b>cientos de miles de visitas</b> a una web ligera.</p></div>
+    <p>Existen más opciones gratuitas parecidas (Cloudflare Pages, Render, Surge…). Funcionan con la misma idea: carpeta o repositorio dentro, dirección pública fuera.</p>
+  </div>
+
+  <div class="panel c reveal">
+    <h3>¿Cuál me conviene? Responde y te lo digo</h3>
+    <div class="elige" id="elige"></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="dominio" data-nav="Dominio propio" data-prop="rinoceronte"
+  data-fip="Un dominio se <b>alquila por años</b> en un registrador. Luego, en la configuración DNS, apuntas el dominio a tu plataforma con los registros que ella te dé (<b>A</b> para <code>pizzeriachicle.es</code>, <b>CNAME</b> para <code>www</code>). HTTPS llega solo. Y apunta en el calendario cuándo renovar.">
+  <div class="sec-head alt2 reveal"><div class="sec-num">9</div><div class="sec-title"><h2>Dominio propio</h2><br><p>De pizzeria-chicle.vercel.app a pizzeriachicle.es.</p></div><img class="sec-prop" src="img/zoo/rinoceronte.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>¿Qué es un dominio?</h3>
+    <p>Los servidores se encuentran por un número, la <b>dirección IP</b> (algo como <code>203.0.113.7</code>). Nadie se aprende números, así que existen los <b>dominios</b>: nombres fáciles que apuntan a esos números.</p>
+    <div class="partes"><span style="--pc:var(--amarillo)">www<small>subdominio</small></span><span style="--pc:var(--jungla)">pizzeriachicle<small>el nombre</small></span><span style="--pc:var(--cian)">.es<small>extensión (TLD)</small></span></div>
+    <ul>
+      <li>El dominio <b>no se compra: se alquila</b> por años en un <b>registrador</b> (una empresa autorizada). Los <code>.es</code> los gestiona Red.es, pero se contratan a través de cualquier registrador.</li>
+      <li>Un <code>.com</code> o un <code>.es</code> cuesta del orden de <b>10 a 20 € al año</b>; algunas extensiones de moda son bastante más caras. El primer año suele tener oferta: mira el precio de <b>renovación</b>.</li>
+      <li>Si te olvidas de renovarlo, <b>caduca</b> y cualquiera puede quedárselo. Activa la renovación automática.</li>
+      <li>Las tres plataformas permiten usar tu dominio <b>gratis</b>: lo que pagas es solo el dominio.</li>
+    </ul>
+  </div>
+
+  <div class="panel c reveal">
+    <h3>El DNS: la agenda del teléfono</h3>
+    <p>Cuando escribes un dominio, tu navegador no sabe dónde está. Pregunta al <b>DNS</b>, que es como la agenda del móvil: tú buscas «Mamá» y el móvil marca el número. Escribe un dominio y pulsa «Buscar»:</p>
+    <div class="dns-form"><input id="dnsIn" value="pizzeriachicle.es" aria-label="Dominio a buscar"><button class="btn sm" type="button" id="dnsBtn">Buscar</button></div>
+    <div class="dns" id="dns">
+      <div class="nodo"><b>1 · Tu navegador</b>«¿Dónde está <code class="dnsN">pizzeriachicle.es</code>?»</div>
+      <div class="nodo"><b>2 · El DNS</b>Mira la agenda del dominio: hay un registro <b>A</b>.</div>
+      <div class="nodo"><b>3 · La respuesta</b>«Está en <code>203.0.113.7</code>» (la IP del servidor).</div>
+      <div class="nodo"><b>4 · El servidor</b>Tu plataforma recibe la visita y entrega el <code>index.html</code>.</div>
+    </div>
+    <p class="fuente">La IP del ejemplo es de las reservadas para documentación: no existe de verdad.</p>
+  </div>
+
+  <div class="panel w reveal">
+    <h3>Conectar el dominio a tu plataforma</h3>
+    <ol>
+      <li><b>En la plataforma</b> añade el dominio:
+        <ul>
+          <li>Vercel: proyecto → <b>Settings → Domains</b> → escribe el dominio → <b>Add</b>.</li>
+          <li>GitHub Pages: <b>Settings → Pages → Custom domain</b> → escribe el dominio → <b>Save</b>.</li>
+          <li>Netlify: <b>Domain management → Add a domain</b>.</li>
+        </ul>
+      </li>
+      <li>La plataforma te enseña <b>qué registros DNS</b> tienes que crear. Normalmente:
+        <ul>
+          <li>Un registro <b>A</b> para el dominio «desnudo» (<code>pizzeriachicle.es</code>), que apunta a una IP.</li>
+          <li>Un registro <b>CNAME</b> para <code>www</code>, que apunta a otro nombre (por ejemplo <code>usuario.github.io</code>).</li>
+        </ul>
+      </li>
+      <li><b>En el registrador</b> (donde alquilaste el dominio), abre la <b>zona DNS</b> y crea esos registros copiando los valores <b>exactos</b> que te dio la plataforma.</li>
+      <li><b>Espera.</b> Los cambios de DNS tardan en llegar a todo el mundo: a veces minutos, a veces horas (se habla de hasta 24-48 horas).</li>
+      <li>La plataforma detecta que todo está bien y activa <b>HTTPS</b> sola (con certificados gratuitos de Let's Encrypt). En GitHub Pages, marca además <b>Enforce HTTPS</b>.</li>
+    </ol>
+    <div class="note ojo"><span class="lbl">OJO</span><p>No copies valores de DNS de tutoriales ni de esta página: <b>cópialos siempre de tu plataforma</b>, que son los que valen para tu proyecto y pueden cambiar.</p></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="lista" data-nav="Antes de publicar" data-prop="rana"
+  data-fip="Antes de dar la dirección a nadie: abre la web publicada <b>desde el móvil</b>, pulsa todos los enlaces, mira que salgan todas las imágenes y pasa el validador del W3C. Si algo falla, arreglas, haces commit y en un minuto está corregido.">
+  <div class="sec-head reveal"><div class="sec-num">10</div><div class="sec-title"><h2>Antes de publicar</h2><br><p>La lista que repasan los profesionales antes de enseñar una web.</p></div><img class="sec-prop" src="img/zoo/rana.webp" alt=""></div>
+
+  <div class="panel reveal">
+    <h3>Tu lista de comprobación</h3>
+    <p>Marca cada punto cuando lo hayas revisado en tu proyecto. El navegador recuerda lo que marques en este ordenador.</p>
+    <div class="barra-check"><i id="chkBar"></i></div>
+    <ul class="check" id="check"></ul>
+    <p style="margin-top:12px"><button class="btn sm" type="button" id="chkReset">Desmarcar todo</button> <span id="chkTxt" aria-live="polite"></span></p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="sec" id="test" data-nav="Test" data-prop="serpiente">
+  <div class="sec-head alt reveal"><div class="sec-num">11</div><div class="sec-title"><h2>Test final</h2><br><p>Todas las preguntas juntas. Cada respuesta se corrige al momento y te explica el porqué.</p></div><img class="sec-prop" src="img/zoo/serpiente.webp" alt=""></div>
+  <h3 class="sub-test">Preguntas</h3>
+  <div id="quiz"></div>
+  <h3 class="sub-test">Arregla el problema</h3>
+  <div id="fixes"></div>
+  <div class="score"><span>Aciertos:</span><b id="qScore">0 / 0</b><button class="btn sm y" id="qAll" type="button">Corregir todo</button><button class="btn sm" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+</main>
+
+<div class="ticker p" aria-hidden="true"><div id="tk2"></div></div>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">ZOO DEL HOSTING</div><p>Los rebeldes de Igor · Extras · Juritecnia</p></div>
+    <img src="img/zoo/rinoceronte.webp" alt="">
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const IMG=n=>`img/zoo/${n}.webp`;
+
+/* ---------- cajas de código ---------- */
+function hlHtmlLine(h){
+  return esc(h).replace(/([\w-]+)="([^"]*)"/g,'<span class="p">$1</span>=<span class="v">"$2"</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+}
+function copyText(txt,btn){
+  const done=()=>{const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='¡Copiado!';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();
+}
+function codeBox(lang,src,title){
+  const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang.toUpperCase())}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+  w.set=s=>{s=s.replace(/^\n+|\s+$/g,'');w.src=s;$('pre',w).innerHTML=s.split('\n').map(hlHtmlLine).join('\n');};
+  w.set(src);$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;
+}
+$$('textarea.src').forEach(t=>t.replaceWith(codeBox(t.dataset.lang,t.value,t.dataset.title)));
+
+/* ---------- resumen de cada sección ---------- */
+$$('section.sec[data-fip]').forEach(s=>{const d=el('div','fip reveal');d.innerHTML=`<img src="${IMG(s.dataset.prop)}" alt=""><div><span class="lb">LO QUE DICE LA PLACA</span><p>${s.dataset.fip}</p></div>`;s.appendChild(d);});
+
+/* ---------- menú ---------- */
+{
+ const ul=$('#navUl'),secs=$$('section.sec');
+ secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${String(i+1).padStart(2,'0')}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;
+ $('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ function on(){const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';
+  let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<150)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollLeft=a.offsetLeft-ul.clientWidth/2+a.clientWidth/2;}}}
+ addEventListener('scroll',on,{passive:true});on();
+}
+/* ---------- cintas ---------- */
+{
+ const t1=['ZOO DEL HOSTING','NO DES DE COMER AL SERVIDOR','INDEX.HTML EN LA RAÍZ','MINÚSCULAS SIN ESPACIOS','COMMIT = GUARDAR CON MENSAJE','MAIN = PRODUCCIÓN'];
+ const t2=['LOCALHOST SOLO LO VES TÚ','VERCEL · PAGES · NETLIFY','RUTAS RELATIVAS O MORDISCO','DNS = LA AGENDA','COMPRUEBA LOS LÍMITES','LOS REBELDES DE IGOR'];
+ const f=a=>{const s=a.map(x=>`<span>★ ${esc(x)}</span>`).join('');return s+s;};
+ $('#tk1').innerHTML=f(t1);$('#tk2').innerHTML=f(t2);
+}
+
+/* ---------- el viaje ---------- */
+{
+ const P=[
+  ['bulldog','Tu carpeta','Tu carpeta','Todo empieza en una carpeta de tu ordenador con <code>index.html</code>, las demás páginas, <code>css/</code> e <code>img/</code>. Es tu web, pero de momento solo existe en tu disco duro.','Los ingredientes en la encimera de tu cocina.'],
+  ['mono','localhost','localhost','Con Live Server la abres en <code>http://127.0.0.1:5500</code>: un servidor de pruebas que vive en tu propio ordenador. Recarga solo al guardar. Solo la ves tú.','Probar el plato en casa antes de servirlo.'],
+  ['gato','GitHub','GitHub','Subes la carpeta a un <b>repositorio</b>. Queda guardada en la nube con todo su historial, y tus compañeros pueden colaborar. Pero GitHub (salvo con Pages) no la «sirve» al público.','La despensa con cámara: guarda y apunta cada cambio, pero no cocina.'],
+  ['aguila','Vercel','Vercel','Vercel se conecta a tu repositorio y publica la web en servidores de todo el mundo, en una dirección como <code>pizzeria-chicle.vercel.app</code>. Cada commit nuevo se publica solo.','El restaurante abierto 24 horas que coge los ingredientes de la despensa.'],
+  ['tigre','El mundo','El mundo','Cualquiera, desde cualquier móvil, abre la dirección y ve tu web. Si quieres un nombre propio, alquilas un <b>dominio</b> (<code>pizzeriachicle.es</code>) y lo apuntas a Vercel.','El cartel luminoso con la dirección del restaurante.']];
+ const M=$('#viajeMapa'),I=$('#viajeInfo');let cur=0;
+ P.forEach((p,i)=>{const b=el('button','parada');b.type='button';b.innerHTML=`<img src="${IMG(p[0])}" alt=""><span>${p[1]}</span>`;b.onclick=()=>pinta(i);M.appendChild(b);});
+ function pinta(i){cur=i;const p=P[i];$$('.parada',M).forEach((b,k)=>{b.classList.toggle('on',k===i);b.setAttribute('aria-pressed',k===i);});
+  I.innerHTML=`<h4>Parada ${i+1} · ${p[2]}</h4><p>${p[3]}</p><span class="an">Analogía: ${p[4]}</span><div class="pasos"><button class="btn sm" type="button" ${i?'':'disabled'}>◀ Anterior</button><button class="btn sm y" type="button" ${i<P.length-1?'':'disabled'}>Siguiente ▶</button></div>`;
+  const [a,b]=$$('.pasos button',I);a.onclick=()=>pinta(cur-1);b.onclick=()=>pinta(cur+1);}
+ pinta(0);
+}
+
+/* ---------- de archivo a dirección ---------- */
+{
+ const F=[['pizzeria-chicle/',0,1],['index.html',1],['carta.html',1],['contacto.html',1],['css/',1,1],['estilos.css',2],['img/',1,1],['logo.svg',2],['Margarita.JPG',2],['foto pizza.jpg',2],['locales/',1,1],['index.html',2,0,'locales/'],['Portada.html',1]];
+ const VC='https://pizzeria-chicle.vercel.app/',GP='https://ane-punk.github.io/pizzeria-chicle/';
+ const ul=$('#arbol'),R=$('#urlRes');let dir=[];
+ const problemas=n=>{const p=[];if(/[A-Z]/.test(n))p.push('Tiene <b>mayúsculas</b>: si en el HTML lo escribes distinto, en el servidor no aparece.');if(/\s/.test(n))p.push('Tiene <b>espacios</b>: en la URL salen como <code>%20</code> y el W3C lo marca como error.');if(/[áéíóúñü]/i.test(n))p.push('Tiene <b>tildes o eñes</b>: en la URL salen codificadas (<code>%C3%B1</code>…).');if(/\.(HTML|JPG|PNG)$/.test(n))p.push('La <b>extensión en mayúsculas</b> también cuenta.');if(/^portada\.html$/i.test(n))p.push('Si esta es la portada, debe llamarse <b>index.html</b>: si no, la dirección principal da 404.');if(/_/.test(n))p.push('Mejor <b>guion medio</b> que bajo.');return p;};
+ F.forEach((f,i)=>{const[n,lv,esDir]=f;if(i===0){const li=el('li','',`<span class="dir">📁 ${n}</span>`);ul.appendChild(li);return;}
+  const li=el('li');const b=el('button',esDir?'dir':(problemas(n).length?'mal':''));b.type='button';b.textContent='   '.repeat(lv)+(esDir?'📁 ':'📄 ')+n;
+  if(esDir){dir[lv]=n;b.disabled=false;}
+  const ruta=(lv>1?dir[lv-1]:'')+n;b.dataset.r=esDir?'':ruta;b.dataset.n=n;
+  b.onclick=()=>{$$('button',ul).forEach(x=>x.classList.toggle('on',x===b));
+   if(esDir){R.innerHTML=`<h4>📁 ${esc(ruta)}</h4><p>Es una carpeta. Pulsa un archivo para ver su dirección.</p>`;return;}
+   const limpia=ruta.replace(/(^|\/)index\.html$/,'$1');const enc=s=>encodeURI(s);const p=problemas(n);
+   R.innerHTML=`<h4>📄 ${esc(ruta)}</h4>En Vercel:<span class="u">${esc(VC+enc(limpia))}</span>En GitHub Pages:<span class="u">${esc(GP+enc(limpia))}</span>${/index\.html$/.test(ruta)?'<p>Como se llama <code>index.html</code>, la dirección termina en la carpeta (o en nada): es la página por defecto.</p>':''}${p.length?p.map(x=>`<div class="av">⚠ ${x}</div>`).join(''):'<div class="ok">✔ Buen nombre.</div>'}`;};
+  li.appendChild(b);ul.appendChild(li);});
+ $$('button',ul)[0].click();$$('button',ul).find(b=>b.dataset.n==='carta.html').click();
+ const ni=$('#nomIn'),no=$('#nomOut');
+ const sug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[()]/g,'').replace(/[\s_]+/g,'-').replace(/[^a-z0-9.\-]/g,'').replace(/-+/g,'-').replace(/-\./g,'.');
+ const chk=()=>{const v=ni.value.trim();const p=problemas(v);if(/[()]/.test(v))p.push('Los <b>paréntesis</b> también dan guerra en las URL.');
+  no.innerHTML=!v?'':p.length?`${p.map(x=>'⚠ '+x).join('<br>')}<br>Propuesta: <code>${esc(sug(v))}</code>`:'✔ ¡Buen nombre!';};
+ ni.addEventListener('input',chk);chk();
+}
+
+/* ---------- pantallas paso a paso ---------- */
+function wizard(id,url,pasos){
+ const W=$('#'+id),scr=el('div','pantalla'),txt=el('div','wiz-txt');W.append(scr,txt);let i=0;
+ function pinta(){const p=pasos[i];
+  scr.innerHTML=`<div class="nav-b"><i></i><i></i><i></i><span>${esc(p.url||url)}</span></div><div class="cuerpo">${p.s}</div>`;
+  txt.innerHTML=`<div class="paso">Paso ${i+1} de ${pasos.length}</div><h4>${p.t}</h4>${p.x}<div class="puntos">${pasos.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div><div class="ctr"><button class="btn sm" type="button" ${i?'':'disabled'}>◀ Anterior</button><button class="btn sm y" type="button" ${i<pasos.length-1?'':'disabled'}>Siguiente ▶</button></div>`;
+  const [a,b]=$$('.ctr button',txt);a.onclick=()=>{i--;pinta();};b.onclick=()=>{i++;pinta();};}
+ pinta();
+}
+const GH='<div class="top"><span>🐙 GitHub</span><span>ane-punk ▾</span></div>';
+wizard('wizGh','github.com',[
+ {t:'Crea tu cuenta',url:'github.com/signup',s:GH+'<h5>Únete a GitHub</h5><span class="fl">Email</span><span class="m-in">ane@correo.com</span><span class="fl">Username</span><span class="m-in resalta">ane-punk</span><span class="m-btn">Continue</span>',x:'<p>Entra en <b>github.com</b> y pulsa <b>Sign up</b>. Elige bien el <b>nombre de usuario</b>: saldrá en tus direcciones (<code>ane-punk.github.io</code>) y en tu portafolio. Minúsculas, sin espacios, algo profesional.</p><p>Activa la verificación en dos pasos cuando te lo pida: protege tu cuenta.</p>'},
+ {t:'Nuevo repositorio',s:'<div class="top"><span>🐙 GitHub</span><span class="resalta" style="padding:0 6px">+ ▾</span></div><div class="m-card"><span>New repository</span><b>←</b></div><div class="m-card" style="opacity:.5"><span>Import repository</span></div><div class="m-card" style="opacity:.5"><span>New organization</span></div>',x:'<p>Arriba a la derecha, el botón <b>+</b> → <b>New repository</b>. También puedes ir directamente a <code>github.com/new</code>.</p>'},
+ {t:'Ponle nombre y hazlo público',url:'github.com/new',s:GH+'<h5>Create a new repository</h5><span class="fl">Repository name *</span><span class="m-in resalta">pizzeria-chicle</span><span class="fl">Description</span><span class="m-in">Web de la pizzería para el proyecto de clase</span><div class="m-radio sel">Public</div><div class="m-radio">Private</div><span class="m-btn">Create repository</span>',x:'<p><b>Nombre</b>: minúsculas y guiones; será parte de la dirección.</p><p><b>Public</b>: lo puede ver cualquiera. Es lo normal para un portafolio y obligatorio para GitHub Pages gratis. <b>Private</b>: solo tú y quien invites.</p><p>Pulsa <b>Create repository</b>.</p>'},
+ {t:'Sube tus archivos',url:'github.com/ane-punk/pizzeria-chicle/upload/main',s:GH+'<h5>pizzeria-chicle</h5><div class="m-drop resalta">Drag files here to add them to your repository<br><small>or choose your files</small></div><div class="m-files">index.html · carta.html · contacto.html · css/ · img/ · locales/</div>',x:'<p>En el repositorio vacío, pulsa el enlace <b>uploading an existing file</b> (o, si ya tiene algo, <b>Add file → Upload files</b>).</p><p>Abre tu carpeta en el explorador, selecciona <b>todo lo de dentro</b> y arrástralo. Las subcarpetas se suben con su estructura.</p>'},
+ {t:'Guarda con un commit',url:'github.com/ane-punk/pizzeria-chicle/upload/main',s:GH+'<h5>Commit changes</h5><span class="m-in resalta">Primera versión de la web</span><span class="fl">Add an optional extended description…</span><span class="m-in"></span><span class="m-btn">Commit changes</span>',x:'<p>Abajo, escribe un <b>mensaje</b> que diga qué has hecho y pulsa <b>Commit changes</b>. Ese es tu primer commit: queda en el historial para siempre.</p>'},
+ {t:'¡Ya está en GitHub!',url:'github.com/ane-punk/pizzeria-chicle',s:GH+'<h5>ane-punk / pizzeria-chicle</h5><div class="m-files">📁 css<br>📁 img<br>📁 locales<br>📄 carta.html<br>📄 contacto.html<br>📄 <b class="resalta">index.html</b></div><p style="margin:10px 0 0;font-size:13px">1 commit · Primera versión de la web</p>',x:'<p>Comprueba que <b><code>index.html</code> está en la raíz</b>, en la misma lista que las carpetas, y no dentro de otra carpeta.</p><p>Para cambiar algo luego: abre el archivo, pulsa el <b>lápiz</b> (Edit), cambia y haz <b>Commit changes</b>. O vuelve a subir el archivo: se sustituye.</p>'}]);
+const VCT='<div class="top v"><span>▲ Vercel</span><span>ane-punk\'s projects</span></div>';
+wizard('wizVc','vercel.com',[
+ {t:'Entra con GitHub',url:'vercel.com/signup',s:VCT+'<h5>Let\'s create your account</h5><div class="m-radio sel">Hobby · I\'m working on personal projects</div><div class="m-radio">Pro</div><span class="m-btn negro resalta" style="display:block;text-align:center">Continue with GitHub</span>',x:'<p>En <b>vercel.com</b> pulsa <b>Sign Up</b>, elige el plan <b>Hobby</b> (gratis) y entra con <b>Continue with GitHub</b>. Así Vercel queda conectado a tus repositorios.</p><p>GitHub te preguntará si das permiso a Vercel: es lo que le deja leer tus repositorios y publicar cuando hagas commit.</p>'},
+ {t:'Nuevo proyecto',url:'vercel.com/dashboard',s:VCT+'<div class="m-row" style="justify-content:space-between"><h5 style="margin:0">Overview</h5><span class="m-btn negro resalta" style="margin:0">Add New… ▾</span></div><div class="m-card"><span><b>Project</b></span><b>←</b></div><div class="m-card" style="opacity:.5"><span>Domain</span></div>',x:'<p>En el panel, <b>Add New…</b> → <b>Project</b>.</p>'},
+ {t:'Importa el repositorio',url:'vercel.com/new',s:VCT+'<h5>Import Git Repository</h5><div class="m-card"><span>🐙 pizzeria-chicle · hace 2 min</span><span class="m-btn negro resalta" style="margin:0">Import</span></div><div class="m-card" style="opacity:.5"><span>🐙 practicas-css</span><span class="m-btn gris" style="margin:0">Import</span></div>',x:'<p>Verás la lista de tus repositorios de GitHub. Pulsa <b>Import</b> en el de la web.</p><p>¿No aparece? Pulsa <i>Adjust GitHub App Permissions</i> y dale permiso a ese repositorio.</p>'},
+ {t:'Configura y despliega',url:'vercel.com/new/import',s:VCT+'<h5>Configure Project</h5><span class="fl">Project Name</span><span class="m-in">pizzeria-chicle</span><span class="fl">Framework Preset</span><span class="m-in resalta">Other</span><span class="fl">Root Directory</span><span class="m-in">./</span><span class="m-btn negro" style="display:block;text-align:center">Deploy</span>',x:'<p><b>Project Name</b>: será tu dirección (<code>pizzeria-chicle.vercel.app</code>). Si ya existe, Vercel le añade algo detrás.</p><p><b>Framework Preset</b>: <b>Other</b>, porque tu web es HTML y CSS sin herramientas. <b>Root Directory</b>: <code>./</code> si <code>index.html</code> está en la raíz.</p><p>Pulsa <b>Deploy</b>.</p>'},
+ {t:'¡Publicada!',url:'vercel.com/ane-punk/pizzeria-chicle',s:VCT+'<div class="m-ok">🎉 Congratulations! You just deployed a new project to Vercel.</div><div class="m-card"><span>🌐 <b class="resalta">pizzeria-chicle.vercel.app</b></span></div><span class="m-btn negro">Continue to Dashboard</span>',x:'<p>En unos segundos tienes la web en internet. Pulsa la dirección para abrirla y <b>pásasela a quien quieras</b>.</p><p>En el panel del proyecto verás <b>Deployments</b> (cada versión publicada) y <b>Settings → Domains</b> (para el dominio propio).</p>'}]);
+wizard('wizPg','github.com/ane-punk/pizzeria-chicle/settings/pages',[
+ {t:'Abre los ajustes de Pages',s:GH+'<div class="m-side"><ul><li>General</li><li>Collaborators</li><li>Branches</li><li class="sel resalta">Pages</li></ul><div><h5>GitHub Pages</h5><p style="font-size:13px">Publica tu web desde este repositorio.</p></div></div>',x:'<p>En tu repositorio: pestaña <b>Settings</b> → en el menú de la izquierda, <b>Pages</b> (dentro de <i>Code and automation</i>).</p>'},
+ {t:'Elige rama y carpeta',s:GH+'<div class="m-side"><ul><li>General</li><li>Collaborators</li><li class="sel">Pages</li></ul><div><h5>Build and deployment</h5><span class="fl">Source</span><span class="m-in">Deploy from a branch</span><span class="fl">Branch</span><div class="m-row"><span class="m-in resalta" style="width:auto">main ▾</span><span class="m-in" style="width:auto">/ (root) ▾</span><span class="m-btn gris" style="margin:0">Save</span></div></div></div>',x:'<p><b>Source</b>: <i>Deploy from a branch</i>. <b>Branch</b>: <b>main</b> y la carpeta <b>/ (root)</b>. Pulsa <b>Save</b>.</p><p>La otra opción de carpeta, <code>/docs</code>, sirve si guardas la web dentro de una carpeta <code>docs</code>.</p>'},
+ {t:'Espera un minuto… ¡y listo!',s:GH+'<div class="m-side"><ul><li>General</li><li class="sel">Pages</li></ul><div><div class="m-ok">Your site is live at <span class="resalta">https://ane-punk.github.io/pizzeria-chicle/</span></div><span class="m-btn gris">Visit site</span></div></div>',x:'<p>GitHub tarda un poco la primera vez. Recarga la página de ajustes hasta que salga <b>Your site is live at…</b>.</p><p>A partir de ahí, cada commit en <b>main</b> vuelve a publicar la web sola. En la pestaña <b>Actions</b> del repositorio ves cada publicación.</p>'}]);
+
+/* ---------- tubería del despliegue ---------- */
+{
+ const T=$$('#tuberia .tubo'),txt=$('#tubTxt'),b=$('#tubBtn');let corriendo=false;
+ b.onclick=()=>{if(corriendo)return;corriendo=true;T.forEach(t=>t.classList.remove('act','hecho'));let i=0;const msgs=['Commit: «Añade la pizza Diavola»','GitHub avisa a Vercel…','Vercel prepara la versión nueva…','¡Publicada! Recarga tu web y ahí está.'];
+  const paso=()=>{if(i>0)T[i-1].classList.replace('act','hecho');if(i===T.length){corriendo=false;return;}T[i].classList.add('act');txt.textContent=msgs[i];i++;setTimeout(paso,reduce?200:1100);};paso();};
+}
+
+/* ---------- ¿qué plataforma? ---------- */
+{
+ const Q=[['¿Tienes (o quieres tener) cuenta de GitHub?',[['Sí',0],['No, quiero algo rapidísimo',3]]],
+  ['¿Te importa que el código sea público?',[['No, que lo vean',0],['Sí, quiero el repositorio privado',4]]],
+  ['¿Quieres probar cambios en una dirección aparte antes de publicarlos?',[['Sí, me gustaría',2],['No, me da igual',1]]],
+  ['¿Prefieres tenerlo todo en un único sitio, sin más cuentas?',[['Sí, cuantas menos cuentas mejor',1],['Me da igual crear otra cuenta',2]]]];
+ const R={vercel:['aguila','Vercel','Despliegue automático, vistas previas de cada cambio y repositorio público o privado. La opción que usaremos en clase.'],pages:['pantera','GitHub Pages','Todo dentro de GitHub, sin más cuentas. Repositorio público y rutas relativas, y listo.'],netlify:['tiburon','Netlify Drop','Arrastras la carpeta y en segundos tienes dirección. Para algo serio, crea cuenta y conéctalo a GitHub.']};
+ const E=$('#elige');let i=0,pts={vercel:0,pages:0},drop=false;
+ function pinta(){
+  if(drop||i>=Q.length){const k=drop?'netlify':(pts.vercel>=pts.pages?'vercel':'pages');const r=R[k];
+   E.innerHTML=`<div class="veredicto"><img src="${IMG(r[0])}" alt=""><div><b>${r[1]}</b>${r[2]}</div></div><p style="margin-top:14px"><button class="btn sm y" type="button">Volver a empezar</button></p>`;
+   $('button',E).onclick=()=>{i=0;pts={vercel:0,pages:0};drop=false;pinta();};return;}
+  const q=Q[i];E.innerHTML=`<div class="esc">${i+1}/${Q.length} · ${q[0]}</div><div class="ops">${q[1].map((o,k)=>`<button type="button" data-k="${k}">${o[0]}</button>`).join('')}</div>`;
+  $$('.ops button',E).forEach(b=>b.onclick=()=>{const v=q[1][+b.dataset.k][1];if(v===3)drop=true;else if(v===4)pts.vercel+=10;else if(v===2)pts.vercel+=1;else if(v===1)pts.pages+=1;i++;pinta();});}
+ pinta();
+}
+
+/* ---------- DNS ---------- */
+{
+ const N=$$('#dns .nodo'),inp=$('#dnsIn');let t=[];
+ $('#dnsBtn').onclick=()=>{t.forEach(clearTimeout);t=[];const d=inp.value.trim().toLowerCase()||'pizzeriachicle.es';$$('.dnsN').forEach(c=>c.textContent=d);
+  N.forEach(n=>n.classList.remove('act'));N.forEach((n,i)=>t.push(setTimeout(()=>n.classList.add('act'),(reduce?100:800)*i)));};
+}
+
+/* ---------- lista de comprobación ---------- */
+{
+ const L=[['La portada se llama <code>index.html</code> y está en la raíz','Ni dentro de otra carpeta ni con mayúscula.'],['Todos los nombres en minúsculas, sin espacios ni tildes','Archivos y carpetas.'],['Todas las rutas son relativas','Ninguna empieza por <code>C:\\</code>, <code>file:///</code> ni <code>/</code>.'],['Cada página tiene su <code>&lt;title&gt;</code> y su <code>meta description</code>','Únicos y concretos.'],['<code>&lt;html lang="es"&gt;</code> en todas las páginas',''],['Todas las imágenes tienen <code>alt</code>','Y pesan poco (WebP, tamaño razonable).'],['El HTML pasa el validador del W3C sin errores','validator.w3.org'],['La web se ve bien en el móvil','Pruébala en un móvil de verdad, no solo en DevTools.'],['Todos los enlaces funcionan','Pulsa uno por uno, también los del menú y el pie.'],['Se puede usar con el teclado','Tab, skip link, foco visible.'],['No hay contraseñas, claves ni datos personales en el repositorio','Ni en el historial.'],['Los mensajes de commit explican qué cambió','']];
+ const U=$('#check'),bar=$('#chkBar'),tx=$('#chkTxt');let s=[];try{s=JSON.parse(localStorage.getItem('subela-check')||'[]');}catch(e){}
+ L.forEach((l,i)=>{const li=el('li');li.innerHTML=`<label><input type="checkbox" ${s.includes(i)?'checked':''}><span>${l[0]}${l[1]?`<small>${l[1]}</small>`:''}</span></label>`;U.appendChild(li);});
+ const up=()=>{const c=$$('input',U).map((x,i)=>x.checked?i:-1).filter(i=>i>=0);bar.style.width=c.length/L.length*100+'%';tx.textContent=c.length===L.length?'¡Todo revisado! A publicar. 🚀':`${c.length} de ${L.length} revisados`;try{localStorage.setItem('subela-check',JSON.stringify(c));}catch(e){}};
+ U.addEventListener('change',up);$('#chkReset').onclick=()=>{$$('input',U).forEach(x=>x.checked=false);up();};up();
+}
+
+/* ---------- test final ---------- */
+function qBlock(host,list,onScore){const h=$(host);const cards=[];
+ list.forEach((it,i)=>{const c=el('div','q');c.innerHTML=`<div class="qt"><span class="n">${i+1}</span><span>${it.q}</span></div>`;
+  if(it.html)c.appendChild(codeBox('html',it.html,it.ht||'HTML'));
+  const order=it.o.map((_,k)=>k);for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+  order.forEach(k=>{const l=el('label');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${it.o[k]}</span>`;c.appendChild(l);});
+  const ex=el('div','ex',it.e);c.appendChild(ex);
+  c.grade=()=>{$$('label',c).forEach(l=>{l.classList.remove('right','wrong');const inp=$('input',l);if(+inp.value===it.a)l.classList.add('right');else if(inp.checked)l.classList.add('wrong');});ex.classList.add('show');};
+  c.reset=()=>{$$('input',c).forEach(x=>x.checked=false);$$('label',c).forEach(l=>l.classList.remove('right','wrong'));ex.classList.remove('show');};
+  c.right=()=>{const s=$('input:checked',c);return !!s&&+s.value===it.a;};
+  c.addEventListener('change',()=>{c.grade();onScore();});cards.push(c);h.appendChild(c);});return cards;}
+
+const Q=[
+ {q:'¿Qué significa <code>localhost</code> (o <code>127.0.0.1</code>)?',o:['«Este mismo ordenador»','Un servidor de Google','La dirección de tu web publicada'],a:0,e:'Por eso un enlace de localhost no le sirve a nadie más: su ordenador se busca a sí mismo.'},
+ {q:'En <code>http://127.0.0.1:5500/carta.html</code>, ¿qué es <code>5500</code>?',o:['El puerto en el que escucha Live Server','El número de visitas','El tamaño del archivo'],a:0,e:'Cada servidor de un ordenador escucha en una «puerta» con número.'},
+ {q:'¿Por qué la portada debe llamarse <code>index.html</code>?',o:['Porque es el archivo que el servidor entrega cuando no se pide ninguno','Porque Google solo lee ese nombre','Por costumbre, da igual'],a:0,e:'Sin <code>index.html</code>, la dirección principal da error 404.'},
+ {q:'En Windows funciona, pero publicada no sale la imagen <code>Logo.PNG</code> escrita en el HTML como <code>logo.png</code>. ¿Por qué?',o:['Los servidores distinguen mayúsculas y minúsculas','La imagen pesa demasiado','PNG no funciona en internet'],a:0,e:'Para el servidor son dos archivos distintos. Solución: todo en minúsculas.'},
+ {q:'¿Qué nombre de archivo es el mejor?',o:['<code>carta-de-vinos.html</code>','<code>Carta de Vinos.html</code>','<code>carta_vinos_FINAL2.html</code>'],a:0,e:'Minúsculas, sin espacios, guion medio y sin «final».'},
+ {q:'¿Qué es un repositorio?',o:['Una carpeta en GitHub que guarda los archivos y el historial de cambios','Un servidor que publica la web','Un tipo de dominio'],a:0,e:'GitHub guarda; Vercel, Netlify o Pages publican.'},
+ {q:'¿Qué es un commit?',o:['Un guardado de cambios con un mensaje que explica qué cambió','Un error de GitHub','Una página web'],a:0,e:'Cada commit queda en el historial: quién, cuándo y qué.'},
+ {q:'Al subir los archivos a GitHub, ¿qué debes arrastrar?',o:['El contenido de la carpeta, para que <code>index.html</code> quede en la raíz','La carpeta entera','Solo el index.html'],a:0,e:'Si subes la carpeta, el <code>index.html</code> queda un nivel por debajo y la portada no se encuentra.'},
+ {q:'¿Cómo invitas a una compañera a tu repositorio?',o:['Settings → Collaborators → Add people','Le pasas tu contraseña','Haciéndolo privado'],a:0,e:'Ella tiene que aceptar la invitación para poder subir cambios.'},
+ {q:'¿Qué Framework Preset eliges en Vercel para una web de HTML y CSS?',o:['Other','Next.js','React'],a:0,e:'No usas ninguna herramienta que construya la web: los archivos se publican tal cual.'},
+ {q:'Tu web está conectada a Vercel. Cambias <code>carta.html</code> en GitHub y haces commit en main. ¿Qué pasa?',o:['Vercel publica la versión nueva sola en unos segundos','Tienes que volver a pulsar Deploy','Nada hasta el día siguiente'],a:0,e:'Eso es el despliegue automático.'},
+ {q:'¿Qué dirección tendrá en GitHub Pages el repositorio <code>pizzeria</code> de la usuaria <code>ane-punk</code>?',o:['<code>ane-punk.github.io/pizzeria/</code>','<code>pizzeria.github.com</code>','<code>github.com/pizzeria.html</code>'],a:0,e:'usuario.github.io/repositorio/'},
+ {q:'Con la cuenta gratuita de GitHub, ¿qué repositorios puede publicar GitHub Pages?',o:['Los públicos','Los privados','Ninguno'],a:0,e:'Para publicar desde repositorios privados hace falta un plan de pago.'},
+ {q:'¿Qué tiene de especial Netlify Drop?',o:['Publicas arrastrando la carpeta, sin GitHub','Es la única que da HTTPS','No tiene límites'],a:0,e:'Muy rápido para enseñar algo; para trabajar de verdad, mejor conectarlo a GitHub.'},
+ {q:'¿Por qué no hay que aprenderse de memoria los límites de los planes gratuitos?',o:['Porque cambian a menudo: hay que comprobarlos en la web oficial','Porque no existen','Porque son iguales en todas'],a:0,e:'Por eso la comparativa lleva fecha y enlaces a las fuentes.'},
+ {q:'¿Qué hace el DNS?',o:['Traduce el dominio (nombre) a la IP (número) del servidor','Guarda tu web','Cifra la conexión'],a:0,e:'Es la agenda del teléfono de internet.'},
+ {q:'¿Un dominio se compra para siempre?',o:['No: se alquila por años y hay que renovarlo','Sí, se paga una vez','Es gratis siempre'],a:0,e:'Si caduca, cualquiera puede quedárselo.'},
+ {q:'Para conectar un dominio, ¿de dónde copias los registros DNS?',o:['De tu plataforma (Vercel, Pages, Netlify), que te los enseña al añadir el dominio','De cualquier tutorial','Te los inventas'],a:0,e:'Los valores exactos los da la plataforma y pueden cambiar.'}];
+
+const FIXES=[
+ {q:'La web publicada se ve sin estilos.',html:'<link rel="stylesheet" href="C:\\Users\\ane\\Desktop\\web\\css\\estilos.css">',o:['Usa una ruta relativa: <code>css/estilos.css</code>','Sube el CSS a otra web','Cambia <code>stylesheet</code> por <code>style</code>'],a:0,e:'En internet nadie tiene tu disco <code>C:</code>.'},
+ {q:'En GitHub Pages el menú lleva a páginas que no existen.',html:'<a href="/carta.html">Carta</a>',o:['Quita la barra inicial: <code>carta.html</code>','Escribe <code>https://carta.html</code>','Añade <code>target="_blank"</code>'],a:0,e:'Con la barra, apunta a la raíz del dominio, fuera de <code>/nombre-del-repo/</code>.'},
+ {q:'Vercel da 404: NOT_FOUND al abrir la dirección principal.',html:'pizzeria-chicle/\n└── web/\n    ├── Index.html\n    └── carta.html',ht:'ESTRUCTURA',o:['<code>index.html</code> en minúsculas y en la raíz del repositorio','Cambiar el Framework Preset a React','Esperar un día'],a:0,e:'Doble fallo: está dentro de <code>web/</code> y con mayúscula.'},
+ {q:'Esta imagen se ve en tu ordenador pero no publicada.',html:'<img src="img/Foto Pizza.JPG" alt="Pizza margarita">',o:['Renombra el archivo y la ruta a <code>img/foto-pizza.jpg</code>','Quita el <code>alt</code>','Pon la imagen en el CSS'],a:0,e:'Espacios y mayúsculas: dos trampas en un solo nombre.'},
+ {q:'Le pasas este enlace a un amigo y no le abre nada.',html:'http://127.0.0.1:5500/index.html',ht:'ENLACE',o:['Es tu localhost: publica la web y pásale la dirección de Vercel o Pages','Le falta <code>www</code>','Hay que cambiar el puerto a 80'],a:0,e:'localhost en su ordenador es su ordenador.'},
+ {q:'Tu compañero no puede subir archivos al repositorio del grupo.',html:'Settings → Collaborators → «Pending invite»',ht:'GITHUB',o:['Tiene que aceptar la invitación (email o aviso de GitHub)','Hay que hacer el repositorio privado','Tiene que crear otro repositorio'],a:0,e:'Hasta que no la acepta, no es colaborador.'}];
+
+{const sc=$('#qScore');let cards=[];
+ const upd=()=>{const ok=cards.filter(c=>c.right()).length;sc.textContent=`${ok} / ${cards.length}`;};
+ cards=[...qBlock('#quiz',Q,upd),...qBlock('#fixes',FIXES,upd)];
+ $('#qAll').onclick=()=>{cards.forEach(c=>c.grade());upd();};$('#qReset').onclick=()=>{cards.forEach(c=>c.reset());upd();};upd();}
+
+/* ---------- aparición al hacer scroll ---------- */
+if('IntersectionObserver' in window&&!reduce){const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ob.unobserve(e.target);}}),{threshold:.05});$$('.reveal').forEach(x=>ob.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+})();
+</script>
+</body>
+</html>

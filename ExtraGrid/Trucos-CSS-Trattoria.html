@@ -1,0 +1,3331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trucos CSS · Trattoria Punk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Permanent+Marker&family=Special+Elite&family=Archivo:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
+<style>
+
+/* paleta de la guía de Grid; solo cambia el verde ácido por el rojo tomate de la pasta */
+:root{
+  --asfalto:#161617; --panel:#121213; --tiza:#ece6d8; --tiza2:#b9b2a3;
+  --pomodoro:#e8302a; --rosa:#ff2d8a; --cian:#2ee6ff; --amarillo:#ffe14d; --queso:#ffc23c; --tomate:#e2381d; --lila:#9a7fc0;
+  --dirt:'Rubik Dirt','Impact','Arial Black',sans-serif;
+  --marker:'Permanent Marker','Comic Sans MS',cursive;
+  --zine:'Special Elite','Courier New',monospace;
+  --body:'Archivo',system-ui,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --brick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Crect width='120' height='60' fill='%23231d1a'/%3E%3Crect x='1' y='1' width='57' height='27' rx='2' fill='%23743222'/%3E%3Crect x='61' y='1' width='58' height='27' rx='2' fill='%23662b1d'/%3E%3Crect x='-29' y='31' width='58' height='27' rx='2' fill='%235e281c'/%3E%3Crect x='31' y='31' width='57' height='27' rx='2' fill='%237c3a26'/%3E%3Crect x='91' y='31' width='58' height='27' rx='2' fill='%235e281c'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:74px;overflow-x:clip}
+body{margin:0;color:var(--tiza);font-family:var(--body);font-size:17px;line-height:1.7;overflow-x:hidden;
+  background:var(--noise),radial-gradient(circle at 20% 10%,#2f2d2a,transparent 60%),radial-gradient(circle at 90% 60%,#2b2724,transparent 55%),#1b1a19}
+::selection{background:var(--pomodoro);color:#000}
+a{color:var(--pomodoro)}
+b,strong{font-weight:800;color:#fff}
+code{font-family:var(--mono);font-size:.84em;background:#000;color:var(--pomodoro);padding:1px 7px;border-radius:4px;border:1px solid #333;overflow-wrap:anywhere}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px}
+:focus-visible{outline:3px solid var(--amarillo);outline-offset:3px}
+.skip{position:fixed;left:12px;top:-60px;z-index:100;font-family:var(--marker);background:var(--amarillo);color:#000;border:3px solid #000;padding:8px 14px;box-shadow:4px 4px 0 #000;text-decoration:none;transition:top .15s}
+.skip:focus{top:12px}
+
+/* portada */
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(10,10,10,.35),rgba(10,10,10,.75)),var(--noise),var(--brick);background-size:auto,auto,120px 60px;border-bottom:6px solid #000;padding:26px 0 30px}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 40%,rgba(255,45,138,.18),transparent 45%),radial-gradient(circle at 15% 70%,rgba(232,48,42,.16),transparent 40%);pointer-events:none}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center}
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.sticker{display:inline-block;font-family:var(--marker);font-size:15px;line-height:1.1;color:#000;background:var(--amarillo);padding:6px 12px;transform:rotate(-3deg);box-shadow:3px 3px 0 #000;border:2px solid #000}
+.sticker.p{background:var(--rosa);color:#fff;transform:rotate(2deg)}
+.sticker.c{background:var(--pomodoro);transform:rotate(3deg)}
+.h-title{margin:6px 0 0;font-family:var(--dirt);font-weight:400;font-size:clamp(58px,10.5vw,138px);line-height:.86;letter-spacing:.01em;color:var(--pomodoro);text-shadow:4px 4px 0 var(--rosa),8px 8px 0 #000;transform:rotate(-2deg);animation:flick 6s infinite}
+.h-title small{display:block;font-family:var(--marker);font-size:.28em;color:var(--rosa);text-shadow:3px 3px 0 #000;letter-spacing:.02em;margin-top:10px;transform:rotate(1deg)}
+@keyframes flick{0%,92%,96%,100%{opacity:1}93%{opacity:.55}95%{opacity:.8}}
+.h-lead{max-width:560px;font-size:19px;color:#f3eee2;margin:22px 0 18px;background:rgba(0,0,0,.55);padding:12px 16px;border-left:6px solid var(--rosa)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--marker);font-size:18px;text-decoration:none;color:#000;background:var(--pomodoro);border:3px solid #000;padding:10px 20px;box-shadow:5px 5px 0 #000;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 #000}
+.btn.p{background:var(--rosa);color:#fff}.btn.y{background:var(--amarillo)}
+.btn.sm{font-size:14.5px;padding:6px 12px;box-shadow:3px 3px 0 #000;border-width:2px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px}
+@keyframes flota{to{translate:0 -10px}}
+.ikasle{position:relative;z-index:2;margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;background:rgba(0,0,0,.72);border:3px solid #000;outline:2px dashed rgba(232,48,42,.5);outline-offset:-8px;padding:18px 20px}
+.ikasle label{display:flex;flex-direction:column;gap:4px;font-family:var(--marker);font-size:14px;color:var(--amarillo);min-width:0}
+.ikasle input{width:100%;min-width:0;font:600 16px var(--body);padding:9px 12px;border:3px solid #000;background:var(--tiza);color:#111;outline:none;box-shadow:3px 3px 0 #000}
+.ikasle input:focus{background:#fff;box-shadow:3px 3px 0 var(--rosa)}
+
+/* cintas */
+.ticker{background:var(--amarillo);color:#000;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden;white-space:nowrap;transform:rotate(-1deg);margin:0 -10px;position:relative;z-index:3}
+.ticker div{display:inline-block;font-family:var(--marker);font-size:20px;padding:6px 0;animation:tick 40s linear infinite}
+.ticker span{margin:0 22px}
+.ticker.p{background:var(--rosa);color:#fff;transform:rotate(1deg)}
+.ticker.p div{animation-direction:reverse}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* menú */
+.nav{position:sticky;top:0;z-index:50;background:#0b0b0b;border-bottom:3px solid var(--pomodoro);box-shadow:0 6px 0 rgba(0,0,0,.4)}
+.nav .wrap{display:flex;align-items:center;gap:12px;height:62px;position:relative}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--dirt);font-size:24px;color:var(--pomodoro);white-space:nowrap}
+.brand img{width:40px;height:40px;object-fit:contain}
+.nav-links{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 24px),transparent)}
+.nav-links ul{list-style:none;margin:0;padding:0 16px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.nav-links ul::-webkit-scrollbar{display:none}
+.nav-links a{display:block;white-space:nowrap;padding:5px 11px;color:var(--tiza2);text-decoration:none;font-weight:800;font-size:14px;border:2px solid transparent}
+.nav-links a span{font-family:var(--mono);font-size:11px;color:var(--rosa);margin-right:4px}
+.nav-links a:hover{color:#fff;border-color:#333}
+.nav-links a.on{background:var(--pomodoro);color:#000;border-color:#000;transform:rotate(-2deg)}
+.nav-links a.on span{color:#000}
+.nav-arrow{flex:0 0 auto;width:34px;height:34px;border:2px solid var(--pomodoro);background:#000;color:var(--pomodoro);font-weight:900;cursor:pointer}
+.prog{position:absolute;left:0;bottom:-3px;height:3px;width:0;background:var(--rosa);box-shadow:0 0 8px var(--rosa)}
+
+/* secciones */
+main{padding-bottom:40px}
+section.sec{padding:76px 0 8px;position:relative}
+.parte{margin:70px 0 0;padding:30px 24px;text-align:center;background:var(--noise),#000;border:3px solid var(--pomodoro);box-shadow:8px 8px 0 var(--rosa);transform:rotate(-.6deg)}
+.parte b{display:block;font-family:var(--dirt);font-weight:400;font-size:clamp(36px,7vw,72px);line-height:1;color:var(--pomodoro);text-shadow:3px 3px 0 var(--rosa)}
+.parte span{font-family:var(--zine);font-size:18px}
+.sec-head{display:flex;align-items:center;gap:18px;margin-bottom:26px;flex-wrap:wrap;position:relative}
+.sec-num{flex:0 0 auto;width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:var(--rosa);color:#000;font-family:var(--dirt);font-size:44px;border:4px solid #000;box-shadow:5px 5px 0 #000,0 0 0 4px var(--pomodoro);transform:rotate(-6deg)}
+.sec-head.alt .sec-num{background:var(--pomodoro)}
+.sec-head.alt2 .sec-num{background:var(--amarillo)}
+.sec-title{position:relative;min-width:0;flex:1}
+.sec-title h2{display:inline-block;margin:0;font-family:var(--dirt);font-weight:400;font-size:clamp(30px,5vw,54px);line-height:1;color:#000;background:var(--pomodoro);padding:10px 20px 8px;transform:rotate(-1.5deg);box-shadow:6px 6px 0 #000;
+  clip-path:polygon(0 6%,3% 0,40% 4%,70% 0,100% 5%,98% 50%,100% 96%,62% 100%,30% 95%,2% 100%,0 60%)}
+.sec-head.alt .sec-title h2{background:var(--rosa);color:#fff}
+.sec-head.alt2 .sec-title h2{background:var(--amarillo)}
+.sec-title p{margin:16px 0 0;font-family:var(--zine);font-size:18px;color:#f3eee2;max-width:820px;background:rgba(0,0,0,.5);display:inline-block;padding:4px 10px}
+.sec-prop{position:absolute;right:0;top:-46px;width:clamp(90px,13vw,150px);height:auto;rotate:8deg;filter:drop-shadow(4px 5px 0 #000);pointer-events:none}
+
+.panel{position:relative;background:var(--noise),var(--panel);border:3px solid var(--pc,var(--pomodoro));box-shadow:8px 8px 0 #000;padding:28px;margin-bottom:28px}
+.panel.p{--pc:var(--rosa)}.panel.y{--pc:var(--amarillo)}.panel.w{--pc:var(--tiza)}
+.panel::before{content:"";position:absolute;top:-14px;left:40px;width:110px;height:26px;background:rgba(255,225,77,.75);transform:rotate(-4deg);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.panel h3{font-family:var(--marker);font-weight:400;font-size:27px;line-height:1.2;margin:0 0 12px;color:var(--pc,var(--pomodoro))}
+.panel h4{font-family:var(--marker);font-weight:400;font-size:20px;margin:24px 0 8px;color:var(--amarillo)}
+.panel p{margin:0 0 12px}
+.panel ul,.panel ol{margin:0 0 12px;padding-left:24px}
+.panel li{margin-bottom:6px}
+.panel li::marker{color:var(--rosa);font-weight:900}
+.panel.zine{--pc:#000;background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.08) 31px 32px),var(--tiza);color:#1a1209}
+.panel.zine h3,.panel.zine h4{color:#b3123f}
+.panel.zine b,.panel.zine strong{color:#000}
+.panel.zine code{background:#000;color:var(--pomodoro)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.g2>*{min-width:0}
+
+/* notas */
+.note{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;margin:20px 0;padding:14px 18px;border:3px solid #000;box-shadow:5px 5px 0 #000;color:#111;font-size:16px;line-height:1.6}
+.note b,.note strong{color:#000}
+.note code{background:rgba(0,0,0,.85);color:var(--pomodoro);border-color:#000}
+.note p{margin:0}.note p+p{margin-top:6px}
+.note .lbl{font-family:var(--marker);font-size:17px;background:#000;color:#fff;padding:2px 10px;transform:rotate(-4deg);white-space:nowrap;align-self:start}
+.note.ojo{background:var(--rosa);color:#fff;transform:rotate(-.6deg)}.note.ojo b,.note.ojo strong{color:#fff}.note.ojo .lbl{color:var(--amarillo)}
+.note.truco{background:var(--pomodoro);transform:rotate(.5deg)}.note.truco .lbl{color:var(--pomodoro)}
+.note.zine{background:var(--tiza);font-family:var(--zine);transform:rotate(.4deg)}.note.zine .lbl{color:var(--tiza)}
+
+/* código */
+.code{position:relative;margin:14px 0 6px;background:#070707;border:2px solid #000;box-shadow:5px 5px 0 #000;outline:1px solid #2c2c2c;min-width:0}
+.code .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 12px;background:#1d1d1d;border-bottom:2px solid #000}
+.code .bar span{font-family:var(--marker);font-size:14px;color:var(--amarillo)}
+.copy{border:2px solid #000;background:var(--pomodoro);color:#000;font-family:var(--marker);font-size:13px;padding:2px 10px;cursor:pointer;box-shadow:2px 2px 0 #000}
+.copy:hover{background:var(--amarillo)}
+.copy.ok{background:var(--cian)}
+.code pre{margin:0;padding:14px 16px;font-family:var(--mono);font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:#e9e4d8}
+.code .s{color:var(--cian)}.code .p{color:#ff6fae}.code .v{color:var(--amarillo)}.code .c{color:#8fb6d6;font-style:italic}.code .t{color:var(--pomodoro)}
+textarea.src{display:none}
+
+/* ejemplo en vivo */
+.caso{margin:18px 0 26px}
+.caso > h4{margin-top:0}
+.vineta{border:3px solid #000;box-shadow:6px 6px 0 var(--rosa);background:#000;margin-bottom:10px}
+.vineta .barra{display:flex;justify-content:space-between;align-items:center;padding:5px 8px 5px 12px;font-family:var(--marker);font-size:14px;color:var(--amarillo)}
+.vineta iframe{display:block;width:100%;border:0;background:var(--tiza);resize:horizontal}
+.vineta button{font-family:var(--marker);font-size:13px;border:2px solid #000;background:var(--amarillo);padding:2px 10px;cursor:pointer}
+
+
+
+/* resumen de cada sección */
+.fip{display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:center;margin:8px 0 10px;padding:16px 20px;background:linear-gradient(135deg,#d9b27c,#c99a5e);border:3px solid #000;box-shadow:7px 7px 0 #000;transform:rotate(-.6deg);color:#1a1209;position:relative}
+.fip::before{content:"";position:absolute;inset:6px;border:2px dashed rgba(0,0,0,.35);pointer-events:none}
+.fip img{width:96px;height:auto;filter:drop-shadow(3px 3px 0 #000);transform:rotate(-10deg)}
+.fip .lb{display:inline-block;font-family:var(--dirt);font-size:18px;color:#fff;background:var(--tomate);border:2px solid #000;padding:2px 10px;transform:rotate(-2deg);box-shadow:3px 3px 0 #000;margin-bottom:6px}
+.fip p{margin:0;font-family:var(--zine);font-size:19px;line-height:1.45;color:#1a1209}
+.fip code{background:#000;color:var(--pomodoro);border-color:#000;font-size:.8em}
+
+/* tabla chuleta */
+.tabla-wrap{overflow-x:auto;border:3px solid #000;box-shadow:6px 6px 0 #000}
+.tabla{width:100%;min-width:640px;border-collapse:collapse;background:#0b0b0b;font-size:15px}
+.tabla th{background:var(--pomodoro);color:#000;font-family:var(--marker);font-weight:400;font-size:16px;text-align:left;padding:8px 12px}
+.tabla td{padding:8px 12px;border-top:1px solid #2a2a2a;vertical-align:top}
+.tabla td:first-child{font-family:var(--mono);font-size:13.5px;color:var(--amarillo);white-space:nowrap}
+.tabla tr.grp td{font-family:var(--marker);font-size:17px;color:var(--rosa);background:#151515}
+
+/* test */
+.q{background:#0b0b0b;border:2px solid #333;padding:16px 18px;margin-bottom:12px}
+.q .qt{display:flex;gap:12px;font-weight:800;margin-bottom:8px;line-height:1.5}
+.q .qt .n{flex:0 0 34px;height:34px;display:grid;place-items:center;background:var(--amarillo);color:#000;font-family:var(--dirt);border:2px solid #000;transform:rotate(-6deg)}
+.q label{display:flex;align-items:center;gap:10px;padding:7px 12px;cursor:pointer;border:2px solid transparent;font-size:16px}
+.q label:hover{background:#151515}
+.q input{accent-color:var(--rosa);width:17px;height:17px;flex:0 0 auto}
+.q label.right{border-color:var(--pomodoro);background:rgba(232,48,42,.12)}
+.q label.wrong{border-color:var(--rosa);background:rgba(255,45,138,.12)}
+.q .ex{display:none;margin-top:8px;background:var(--tiza);color:#111;padding:8px 12px;font-size:15px;border:2px solid #000}
+.q .ex b{color:#000}.q .ex code{background:#000;color:var(--pomodoro)}
+.q .ex.show{display:block}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--rosa);color:#fff;border:3px solid #000;box-shadow:6px 6px 0 #000;padding:14px 18px;position:sticky;bottom:10px;z-index:5}
+.score b{font-family:var(--dirt);font-size:34px;color:#000}
+.sub-test{font-family:var(--marker);font-weight:400;font-size:26px;color:var(--amarillo);margin:28px 0 12px}
+
+footer{margin-top:60px;background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.85)),var(--brick);background-size:auto,120px 60px;border-top:6px solid #000}
+footer .wrap{padding:40px 16px 60px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .ft{font-family:var(--dirt);font-size:clamp(28px,5vw,48px);color:var(--pomodoro);text-shadow:3px 3px 0 var(--rosa);transform:rotate(-2deg)}
+footer p{margin:6px 0 0;font-family:var(--zine);color:var(--tiza)}
+footer img{width:170px;height:auto;rotate:-6deg;filter:drop-shadow(4px 5px 0 #000)}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width: 900px){
+  .hero-grid,.g2{grid-template-columns:minmax(0,1fr)}
+  .ikasle{grid-template-columns:1fr 1fr 1fr}
+}
+@media (max-width: 600px){
+  .ikasle{grid-template-columns:minmax(0,1fr)}
+  .sec-prop{display:none}
+  .fip{grid-template-columns:64px 1fr;padding:12px}
+  .fip img{width:64px}
+  .fip p{font-size:16.5px}
+  .panel{padding:20px 16px}
+  .nav .brand span{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .h-title,.pegatinas img,.ticker div,.mancha{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+
+/* ============== TRATTORIA PUNK: la capa italiana ============== */
+:root{
+  --italic:'Playfair Display',Georgia,serif;
+  --mantel:linear-gradient(90deg,rgba(232,48,42,.55) 50%,transparent 0) 0 0/44px 44px,linear-gradient(rgba(232,48,42,.55) 50%,transparent 0) 0 0/44px 44px,#f4ede0;
+  --papel:#f6efdf;
+}
+/* portada: mantel de cuadros con pizarra encima */
+.hero{background:linear-gradient(180deg,rgba(10,10,10,.15),rgba(10,10,10,.55)),var(--noise),var(--mantel);border-bottom:6px solid #000;padding:34px 0 30px}
+.hero::after{background:radial-gradient(circle at 75% 35%,rgba(0,0,0,.25),transparent 50%)}
+.pizarra{position:relative;background:var(--noise),radial-gradient(circle at 30% 20%,#2f3633,#1d2220 70%);border:14px solid #6b4423;outline:3px solid #000;box-shadow:12px 12px 0 #000;padding:28px 30px 24px;transform:rotate(-1.2deg)}
+.pizarra::before{content:"TRATTORIA PUNK · DAL 1994";position:absolute;top:-34px;left:24px;font:400 15px var(--marker);background:var(--amarillo);color:#000;border:2px solid #000;padding:4px 12px;transform:rotate(-3deg);box-shadow:3px 3px 0 #000}
+.pizarra .h-title{color:var(--pomodoro);text-shadow:4px 4px 0 var(--amarillo),8px 8px 0 #000;transform:none}
+.pizarra .h-title small{color:var(--tiza);text-shadow:2px 2px 0 #000;font-family:var(--italic);font-style:italic;font-weight:900;letter-spacing:0}
+.pizarra .h-lead{background:none;border-left:4px dashed var(--amarillo);font-family:var(--zine);color:var(--tiza);margin:20px 0 18px}
+.pegatinas{position:relative;height:460px}
+.pegatinas img{position:absolute;filter:drop-shadow(5px 7px 0 #000);animation:bambolea 5s ease-in-out infinite alternate}
+.pegatinas .p1{width:52%;left:22%;top:16%;rotate:-6deg}
+.pegatinas .p2{width:34%;left:0;top:0;rotate:-14deg;animation-delay:-1s}
+.pegatinas .p3{width:30%;right:2%;top:0;rotate:10deg;animation-delay:-2s}
+.pegatinas .p4{width:28%;left:2%;bottom:0;rotate:8deg;animation-delay:-3s}
+.pegatinas .p5{width:30%;right:0;bottom:2%;rotate:-8deg;animation-delay:-4s}
+@keyframes bambolea{to{translate:0 -10px;rotate:var(--r2,2deg)}}
+
+/* separador de platos: la carta del restaurante */
+.plato{position:relative;margin:80px 0 0;padding:30px 24px 26px;text-align:center;background:var(--noise),var(--mantel);border:4px solid #000;box-shadow:8px 8px 0 #000}
+.plato::before{content:"";position:absolute;inset:14px;border:2px dashed rgba(0,0,0,.35);pointer-events:none}
+.plato b{display:inline-block;font:italic 900 clamp(40px,7vw,78px)/1 var(--italic);color:#fff;background:#111;padding:6px 26px 12px;transform:rotate(-2deg);box-shadow:6px 6px 0 var(--pomodoro)}
+.plato span{display:block;margin-top:14px;font-family:var(--marker);font-size:19px;color:#111}
+
+/* cabecera de cada sección: entrada de la carta */
+.sec-head .curso{display:block;font:italic 700 17px var(--italic);color:var(--amarillo);margin:0 0 6px}
+.sec-num{background:var(--pomodoro);box-shadow:5px 5px 0 #000,0 0 0 4px var(--amarillo)}
+
+/* ficha de receta: papel con mancha de tomate */
+.panel.receta{--pc:#000;background:var(--noise),var(--papel);color:#2a1a10;border:3px solid #000}
+.panel.receta::after{content:"";position:absolute;right:28px;top:22px;width:90px;height:70px;border-radius:46% 54% 60% 40%/50% 40% 60% 50%;background:radial-gradient(circle at 40% 40%,rgba(232,48,42,.35),rgba(232,48,42,.12) 60%,transparent 70%);pointer-events:none}
+.panel.receta h3{color:#b3201a}
+.panel.receta h4{color:#7a1f0e}
+.panel.receta b,.panel.receta strong{color:#000}
+.panel.receta code{background:#1a1a1a;color:#ffb3ad;border-color:#000}
+.panel.receta li::marker{color:var(--pomodoro)}
+.panel.receta .tabla{background:#fffaf0;color:#2a1a10}
+.panel.receta .tabla td{border-top-color:#e5d8bd}
+.panel.receta .tabla td:first-child{color:#b3201a}
+
+/* comanda: nota en forma de ticket */
+.comanda{position:relative;margin:22px 0;padding:16px 18px 18px;background:#fffdf6;color:#1a1a1a;border:2px solid #000;box-shadow:5px 5px 0 #000;font-family:var(--zine);font-size:16px;line-height:1.55;
+  -webkit-mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) 0 0/18px 100% repeat-x;mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) 0 0/18px 100% repeat-x}
+.comanda b.tt{display:block;font:400 18px var(--marker);color:var(--pomodoro);margin-bottom:4px}
+.comanda code{background:#111;color:#ffb3ad}
+.comanda b{color:#000}
+
+/* recetario: 50 fichas */
+.recetario{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:24px}
+.ricetta{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;padding:16px;background:var(--noise),var(--papel);color:#2a1a10;border:3px solid #000;box-shadow:6px 6px 0 #000}
+.ricetta:nth-child(4n+1){transform:rotate(-.5deg)}.ricetta:nth-child(4n+3){transform:rotate(.5deg)}
+.ricetta h4{margin:0;font:400 20px/1.2 var(--marker);color:#b3201a}
+.ricetta h4 span{display:inline-block;margin-right:8px;padding:0 8px;background:#111;color:var(--amarillo);font:700 14px/1.6 var(--mono);transform:rotate(-3deg)}
+.ricetta p{margin:0;font-size:15px;line-height:1.5}
+.ricetta b{color:#000}
+.ricetta code{background:#1a1a1a;color:#ffb3ad;border-color:#000}
+.ricetta .vineta{box-shadow:4px 4px 0 var(--pomodoro)}
+.ricetta details>summary{cursor:pointer;font:400 16px var(--marker);color:#7a1f0e}
+.ricetta details[open]>summary{margin-bottom:6px}
+.familia-rec{margin:46px 0 18px;display:flex;align-items:center;gap:14px}
+.familia-rec img{width:84px;height:auto;filter:drop-shadow(3px 4px 0 #000);rotate:-8deg}
+.familia-rec h3{margin:0;font:italic 900 clamp(28px,4vw,40px)/1 var(--italic);color:var(--tiza)}
+.familia-rec h3 small{display:block;font:400 16px var(--marker);color:var(--amarillo);margin-top:4px}
+
+/* resumen: sello de la trattoria */
+.fip{background:var(--noise),var(--mantel);color:#111}
+.fip>div{background:#fffdf6;border:2px solid #000;padding:10px 14px}
+.fip .lb{background:var(--pomodoro)}
+
+.mancha{position:absolute;pointer-events:none;width:120px;opacity:.9;filter:drop-shadow(4px 5px 0 #000)}
+footer{background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.65)),var(--mantel)}
+footer .ft{color:#fff;text-shadow:3px 3px 0 var(--pomodoro),6px 6px 0 #000}
+footer p{color:#fff;background:#111;padding:4px 10px;display:inline-block}
+@media (max-width: 900px){.pegatinas{height:340px}}
+@media (max-width: 600px){.pizarra{padding:20px 16px;border-width:10px}.plato b{font-size:36px}.familia-rec img{width:60px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="pizarra">
+        <div class="tags"><span class="sticker">Extras · CSS</span><span class="sticker p">Sin JavaScript</span><span class="sticker c">50 recetas</span></div>
+        <h1 class="h-title">TRUCCHI<br>CSS<small>La carta de la trattoria punk</small></h1>
+        <p class="h-lead">Hoy en el menú: márgenes y rellenos bien hechos, el modelo de caja, overflow, tablas, inline-block, contadores, @property, listas que aparecen solas y las recetas de maquetación de siempre. De postre, <b>50 efectos</b> listos para copiar. Todo con HTML y CSS, sin una sola línea de JavaScript.</p>
+        <div class="hero-btns"><a class="btn" href="#margin">Abrir la carta</a><a class="btn p" href="#recetario">Ir a las 50 recetas</a><a class="btn y" href="#test">Test</a></div>
+      </div>
+      <div class="pegatinas" aria-hidden="true">
+        <img class="p1" src="img/cocina/espaguetis.webp" alt="">
+        <img class="p2" src="img/cocina/chef.webp" alt="">
+        <img class="p3" src="img/cocina/tomate.webp" alt="">
+        <img class="p4" src="img/cocina/salsa.webp" alt="">
+        <img class="p5" src="img/cocina/cafetera.webp" alt="">
+      </div>
+    </div>
+    <div class="ikasle">
+      <label>Nombre<input type="text" placeholder="Tu nombre" autocomplete="off"></label>
+      <label>Apellidos<input type="text" placeholder="Tus apellidos" autocomplete="off"></label>
+      <label>Curso / grupo<input type="text" placeholder="Ej. 1º A" autocomplete="off"></label>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true"><div id="tk1"></div></div>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img src="img/cocina/chef.webp" alt=""><span>TRATTORIA</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">‹</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">›</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<div class="plato reveal"><b>Antipasti</b><span>Los básicos que separan una maqueta casera de una de restaurante</span></div>
+
+<!-- 1 -->
+<section class="sec" id="margin" data-nav="Margin y padding" data-prop="masa"
+  data-fip="<code>box-sizing: border-box</code> hace que el <code>padding</code> y el borde queden <b>dentro</b> del <code>width</code>. Los porcentajes de margin y padding se calculan siempre sobre el <b>ancho</b> del padre.">
+  <div class="sec-head reveal"><div class="sec-num">1</div><div class="sec-title"><span class="curso">Antipasto n.º 1</span><h2>Margin y padding, bien hechos</h2><br><p>La masa de toda maqueta. Ya sabes qué son; aquí van los detalles que dan problemas.</p></div><img class="sec-prop" src="img/cocina/masa.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Repaso en una frase</h3>
+    <p>El <b>padding</b> es el relleno <b>dentro</b> de la caja (se pinta con su fondo) y el <b>margin</b> es el espacio <b>fuera</b> (siempre transparente). El orden del atajo es el de las agujas del reloj: <b>arriba, derecha, abajo, izquierda</b>. Lo tienes explicado paso a paso en «Textos y macedonia»; aquí vamos a los detalles.</p>
+
+    <h4>1 · El problema del ancho: box-sizing</h4>
+    <p>Por defecto, si a una caja de <code>width: 200px</code> le pones <code>padding: 20px</code> y un borde de 5px, mide <b>250px</b>: el relleno y el borde se <b>suman</b> al ancho. Con <code>box-sizing: border-box</code> el ancho incluye relleno y borde: mide 200px pase lo que pase. Por eso casi todas las webs lo ponen a todos los elementos.</p>
+    <div class="caso" data-h="230">
+      <h4>Las dos cajas tienen width: 200px</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="caja normal">content-box</div>
+<div class="caja borde">border-box</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+body {                                  /* la página */
+  display: block;                       /* una caja debajo de otra */
+}
+.caja {                                 /* las dos cajas */
+  width: 200px;                         /* el mismo ancho para las dos */
+  padding: 20px;                        /* relleno */
+  margin-bottom: 14px;                  /* separación */
+  border: 5px solid #000000;            /* borde */
+  font: 700 16px monospace;             /* texto */
+}
+.normal {                               /* la primera */
+  box-sizing: content-box;              /* por defecto: mide 200 + 40 + 10 = 250px */
+  background: #ffe14d;                  /* amarilla */
+}
+.borde {                                /* la segunda */
+  box-sizing: border-box;               /* el padding y el borde van dentro: mide 200px */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* texto blanco */
+}
+</textarea>
+    </div>
+
+    <h4>2 · Los porcentajes miran el ancho</h4>
+    <p>Un <code>padding</code> o un <code>margin</code> en <code>%</code> se calcula sobre el <b>ancho del padre</b>, también los de arriba y abajo. <code>padding-top: 10%</code> no es el 10 % del alto, es el 10 % del ancho. Hoy, para mantener una forma, usa <code>aspect-ratio</code> (lo viste en imágenes).</p>
+
+    <h4>3 · margin: auto empuja dentro de Flex</h4>
+    <p>En una fila de Flex, un hijo con <code>margin-left: auto</code> se queda con <b>todo el espacio libre</b> a su izquierda: se va al otro extremo. Es el truco de los menús con el logo a un lado y los enlaces al otro.</p>
+    <div class="caso" data-h="140">
+      <h4>Barra de navegación con un solo margin</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<nav class="barra">
+  <b>Trattoria</b>
+  <a class="empuja" href="#">Carta</a>
+  <a href="#">Reservas</a>
+</nav>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.barra {                                /* la barra */
+  display: flex;                        /* hijos en fila */
+  align-items: center;                  /* centrados en vertical */
+  gap: 18px;                            /* separación entre enlaces */
+  width: 100%;                          /* todo el ancho */
+  padding: 12px 18px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  font: 700 17px system-ui, sans-serif; /* texto */
+}
+.barra b {                              /* el logo */
+  color: #e8302a;                       /* rojo tomate */
+}
+.barra a {                              /* los enlaces */
+  color: #ece6d8;                       /* tiza */
+  text-decoration: none;                /* sin subrayado */
+}
+.empuja {                               /* el primer enlace */
+  margin-left: auto;                    /* se come el espacio libre: los enlaces van a la derecha */
+}
+</textarea>
+    </div>
+
+    <h4>4 · El truco del detective: outline</h4>
+    <p>¿No sabes por qué una caja se sale o de dónde sale un hueco? Pon un contorno a <b>todo</b>. Usa <code>outline</code> y no <code>border</code>: el contorno no ocupa espacio, así que no cambia la maqueta mientras investigas.</p>
+    <div class="caso" data-h="200">
+      <h4>Ver todas las cajas de golpe</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<article class="plato">
+  <h3>Carbonara</h3>
+  <p>Huevo, guanciale y queso. Nunca nata.</p>
+  <a href="#">Pedir</a>
+</article>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+* {                                     /* todos los elementos */
+  outline: 2px dashed #e8302a;          /* contorno rojo: no ocupa sitio ni mueve nada */
+}
+.plato {                                /* la tarjeta */
+  width: 260px;                         /* ancho */
+  padding: 16px;                        /* relleno */
+  background: #ffffff;                  /* blanca */
+  font-family: system-ui, sans-serif;   /* tipo de letra */
+}
+</textarea>
+    </div>
+    <div class="comanda"><b class="tt">Comanda de la cocina</b>Quita el <code>* { outline: … }</code> en cuanto encuentres el fallo: es una herramienta de depuración, no de diseño. En DevTools tienes lo mismo pasando el ratón por el panel <b>Elements</b>.</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="caja" data-nav="Reset y colapso" data-prop="chef"
+  data-fip="Un <b>reset</b> borra los estilos del navegador; <b>normalize</b> los iguala entre navegadores. Los márgenes verticales <b>colapsan</b> (gana el mayor) salvo dentro de Flex, Grid o un padre con <code>display: flow-root</code>.">
+  <div class="sec-head alt reveal"><div class="sec-num">2</div><div class="sec-title"><span class="curso">Antipasto n.º 2</span><h2>Modelo de caja: reset y colapso</h2><br><p>Antes de cocinar, se limpia la cocina.</p></div><img class="sec-prop" src="img/cocina/chef.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>¿Por qué un h1 tiene margen si yo no se lo he puesto?</h3>
+    <p>Cada navegador trae su propia hoja de estilos: los <code>h1</code> tienen márgenes, el <code>body</code> tiene 8px de margen, las listas tienen relleno… y no son exactamente iguales en Chrome, Firefox y Safari. Hay dos formas de empezar desde una base conocida:</p>
+    <div class="tabla-wrap" style="margin:14px 0"><table class="tabla">
+      <tr><th>Estrategia</th><th>Qué hace</th><th>Cuándo</th></tr>
+      <tr><td>reset</td><td>borra márgenes y rellenos de todo: partes de cero</td><td>cuando lo diseñas todo tú</td></tr>
+      <tr><td>normalize.css</td><td>no borra, <b>iguala</b>: todos los navegadores muestran lo mismo</td><td>cuando quieres mantener los estilos por defecto razonables</td></tr>
+    </table></div>
+    <div class="caso" data-h="270">
+      <h4>Un reset moderno (para pegar al principio de tu CSS)</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<h1>Menú del día</h1>
+<ul>
+  <li>Antipasto</li>
+  <li>Primo</li>
+</ul>
+<img src="img/cocina/tomate.webp" alt="Lata de tomate">
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+*,                                      /* comparte las reglas con el selector de abajo */
+*::before,                              /* comparte las reglas con el selector de abajo */
+*::after {                              /* todos los elementos y sus pseudoelementos */
+  box-sizing: border-box;               /* el padding y el borde dentro del ancho */
+  margin: 0;                            /* sin márgenes heredados del navegador */
+  padding: 0;                           /* sin rellenos heredados del navegador */
+}
+body {                                  /* la página */
+  display: block;                       /* una cosa debajo de otra */
+  line-height: 1.5;                     /* interlineado cómodo para leer */
+}
+img {                                   /* las imágenes */
+  display: block;                       /* sin el hueco de abajo de las imágenes en línea */
+  max-width: 100%;                      /* nunca más anchas que su caja */
+  height: auto;                         /* sin deformarse */
+  width: 90px;                          /* tamaño del ejemplo */
+}
+ul {                                    /* las listas */
+  list-style: none;                     /* sin viñetas (si las quieres, vuelve a ponerlas) */
+}
+</textarea>
+    </div>
+    <div class="comanda"><b class="tt">normalize.css</b>Se añade con un enlace antes de tu CSS: <code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"&gt;</code>. Después, tus estilos.</div>
+
+    <h4>El colapso de márgenes</h4>
+    <p>Los márgenes <b>verticales</b> de cajas en flujo normal se funden: <b>no se suman, gana el mayor</b>. Pasa en tres casos:</p>
+    <ol>
+      <li><b>Hermanos:</b> el <code>margin-bottom</code> de uno y el <code>margin-top</code> del siguiente.</li>
+      <li><b>Padre e hijo:</b> el <code>margin-top</code> del primer hijo «se escapa» por encima del padre (el padre baja con él).</li>
+      <li><b>Caja vacía:</b> su margen de arriba y el de abajo se funden en uno.</li>
+    </ol>
+    <div class="caso" data-h="260">
+      <h4>El margen del hijo se escapa del padre</h4>
+      <p>Las dos cajas rojas tienen un hijo con <code>margin-top: 30px</code>. En la primera, el margen sale fuera y la caja roja baja. En la segunda, <code>display: flow-root</code> lo mantiene dentro.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="padre">
+  <p class="hijo">Se escapa</p>
+</div>
+<div class="padre contiene">
+  <p class="hijo">Se queda dentro</p>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+body {                                  /* la página */
+  display: block;                       /* flujo normal: aquí es donde colapsan */
+}
+.padre {                                /* las cajas rojas */
+  background: #e8302a;                  /* rojo tomate */
+  margin-bottom: 20px;                  /* separación entre ejemplos */
+}
+.hijo {                                 /* el párrafo de dentro */
+  margin: 30px 0 0;                     /* 30px arriba */
+  padding: 10px;                        /* relleno */
+  background: #ffe14d;                  /* amarillo */
+  font: 700 16px system-ui, sans-serif; /* texto */
+}
+.contiene {                             /* la segunda caja roja */
+  display: flow-root;                   /* crea un bloque nuevo: los márgenes de dentro no escapan */
+}
+</textarea>
+    </div>
+    <div class="note truco"><span class="lbl">Fin del problema</span><p>Dentro de un contenedor con <code>display: flex</code> o <code>display: grid</code> los márgenes <b>nunca colapsan</b>. Y si separas los hijos con <code>gap</code> en lugar de márgenes, te olvidas del tema para siempre.</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="overflow" data-nav="Overflow" data-prop="espaguetis"
+  data-fip="<code>overflow</code> decide qué pasa con lo que no cabe: se ve (<code>visible</code>), se corta (<code>hidden</code>/<code>clip</code>), o aparece una barra (<code>auto</code> solo si hace falta, <code>scroll</code> siempre).">
+  <div class="sec-head alt2 reveal"><div class="sec-num">3</div><div class="sec-title"><span class="curso">Antipasto n.º 3</span><h2>Overflow: lo que no cabe en el plato</h2><br><p>Demasiados espaguetis para un plato tan pequeño.</p></div><img class="sec-prop" src="img/cocina/espaguetis.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Cinco valores</h3>
+    <div class="tabla-wrap" style="margin:6px 0 16px"><table class="tabla">
+      <tr><th>Valor</th><th>Qué pasa con lo que sobra</th></tr>
+      <tr><td>visible</td><td>se sale de la caja y se ve encima de lo demás (por defecto)</td></tr>
+      <tr><td>hidden</td><td>se corta; se puede mover con código, pero el usuario no ve barra</td></tr>
+      <tr><td>clip</td><td>se corta del todo (como hidden, pero ni siquiera se puede desplazar)</td></tr>
+      <tr><td>auto</td><td>aparece una barra de desplazamiento <b>solo si hace falta</b></td></tr>
+      <tr><td>scroll</td><td>la barra está <b>siempre</b>, haga falta o no</td></tr>
+    </table></div>
+    <p>Puedes controlar cada eje por separado: <code>overflow-x</code> (horizontal) y <code>overflow-y</code> (vertical).</p>
+    <div class="caso" data-h="340">
+      <h4>Los cinco platos, el mismo texto</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="plato visible">visible: la pasta se sale del plato y pisa lo de al lado.</div>
+<div class="plato hidden">hidden: la pasta que no cabe se corta y no se ve.</div>
+<div class="plato auto">auto: aparece una barra porque hace falta, y puedes desplazarte.</div>
+<div class="plato scroll">scroll: la barra siempre está, aunque no haga falta.</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.plato {                                /* las cuatro cajas */
+  width: 120px;                         /* ancho fijo */
+  height: 90px;                         /* alto fijo: el texto no cabe */
+  padding: 8px;                         /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde negro */
+  font: 15px/1.4 system-ui, sans-serif; /* texto */
+}
+.visible { overflow: visible; }         /* se sale */
+.hidden  { overflow: hidden; }          /* se corta */
+.auto    { overflow: auto; }            /* barra si hace falta */
+.scroll  { overflow: scroll; }          /* barra siempre */
+</textarea>
+    </div>
+    <div class="caso" data-h="180">
+      <h4>Una fila que se desplaza en horizontal (overflow-x)</h4>
+      <p>El patrón de las filas de categorías en el móvil: los elementos no bajan de línea y la fila se desplaza de lado.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="categorias">
+  <a href="#">Pizzas</a><a href="#">Pastas</a><a href="#">Risottos</a><a href="#">Ensaladas</a><a href="#">Postres</a><a href="#">Bebidas</a><a href="#">Cafés</a>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.categorias {                           /* la fila */
+  display: flex;                        /* en fila */
+  gap: 10px;                            /* separación */
+  width: 100%;                          /* todo el ancho disponible */
+  overflow-x: auto;                     /* desplazamiento horizontal si no caben */
+  padding-bottom: 8px;                  /* sitio para la barra */
+}
+.categorias a {                         /* cada categoría */
+  flex: none;                           /* no se encoge: mantiene su ancho */
+  padding: 10px 16px;                   /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* texto blanco */
+  border: 2px solid #000000;            /* borde negro */
+  font: 700 16px system-ui, sans-serif; /* texto */
+  text-decoration: none;                /* sin subrayado */
+}
+</textarea>
+    </div>
+    <div class="note ojo"><span class="lbl">Ojo</span><p>No pongas <code>overflow-x: hidden</code> en el <code>body</code> para «arreglar» que la página se mueva de lado en el móvil: escondes el síntoma, no la causa. Busca qué elemento es demasiado ancho (con el truco del <code>outline</code>) y arréglalo.</p></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="tablas" data-nav="Tablas" data-prop="mantel"
+  data-fip="Tabla bonita en 4 pasos: <code>border-collapse: collapse</code>, relleno en las celdas, filas alternas con <code>tr:nth-child(even)</code> y un contenedor con <code>overflow-x: auto</code> para el móvil.">
+  <div class="sec-head reveal"><div class="sec-num">4</div><div class="sec-title"><span class="curso">Antipasto n.º 4</span><h2>Tablas con CSS</h2><br><p>La carta de precios: limpia en el ordenador y sin romperse en el móvil.</p></div><img class="sec-prop" src="img/cocina/mantel.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>De tabla fea a carta de restaurante</h3>
+    <ol>
+      <li><code>border-collapse: collapse</code>: une los bordes de las celdas en una sola línea (por defecto, cada celda tiene su borde y quedan dobles).</li>
+      <li><code>padding</code> en <code>th</code> y <code>td</code>: aire dentro de cada celda.</li>
+      <li><code>tr:nth-child(even)</code>: las filas pares de otro color (el efecto «cebra»), que ayuda a seguir la fila con la vista.</li>
+      <li>La tabla dentro de un <code>div</code> con <code>overflow-x: auto</code>: en el móvil la tabla se desplaza de lado en vez de romper la página.</li>
+    </ol>
+    <div class="caso" data-h="320">
+      <h4>La carta de la trattoria</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="tabla-movil">
+  <table class="carta">
+    <caption>Pizzas de la casa</caption>
+    <thead>
+      <tr><th>Pizza</th><th>Ingredientes</th><th>Precio</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Margarita</td><td>Tomate, mozzarella, albahaca</td><td>9 €</td></tr>
+      <tr><td>Diavola</td><td>Tomate, mozzarella, salami picante</td><td>11 €</td></tr>
+      <tr><td>Punk</td><td>Todo lo que quede en la nevera</td><td>12 €</td></tr>
+      <tr><td>Quattro formaggi</td><td>Mozzarella, gorgonzola, parmesano, fontina</td><td>12 €</td></tr>
+    </tbody>
+  </table>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.tabla-movil {                          /* el contenedor */
+  width: 100%;                          /* todo el ancho */
+  overflow-x: auto;                     /* en pantallas estrechas, la tabla se desplaza de lado */
+}
+.carta {                                /* la tabla */
+  width: 100%;                          /* ocupa todo el contenedor */
+  min-width: 460px;                     /* por debajo de esto, mejor desplazar que aplastar */
+  border-collapse: collapse;            /* bordes de las celdas unidos en una línea */
+  background: #ffffff;                  /* blanca */
+  font: 15px system-ui, sans-serif;     /* texto */
+}
+.carta caption {                        /* el título de la tabla */
+  padding: 8px;                         /* relleno */
+  font: 900 20px system-ui, sans-serif; /* grande */
+  text-align: left;                     /* a la izquierda */
+}
+.carta th,                              /* comparte las reglas con el selector de abajo */
+.carta td {                             /* todas las celdas */
+  padding: 10px 12px;                   /* aire dentro */
+  border-bottom: 1px solid #dddddd;     /* línea fina entre filas */
+  text-align: left;                     /* texto a la izquierda */
+}
+.carta th {                             /* las cabeceras */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+}
+.carta tbody tr:nth-child(even) {       /* las filas pares del cuerpo */
+  background: #fdeceb;                  /* rosado: efecto cebra */
+}
+.carta tbody tr:hover {                 /* la fila bajo el ratón */
+  background: #ffe14d;                  /* amarilla */
+}
+.carta td:last-child {                  /* la columna del precio */
+  text-align: right;                    /* números a la derecha */
+  font-weight: 700;                     /* en negrita */
+}
+</textarea>
+    </div>
+    <div class="note truco"><span class="lbl">Recuerda</span><p>Las tablas son para <b>datos</b> (precios, horarios, notas), nunca para maquetar una página: para eso tienes Flex y Grid. Usa <code>&lt;caption&gt;</code>, <code>&lt;thead&gt;</code> y <code>&lt;th&gt;</code>: los lectores de pantalla las leen mucho mejor.</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="inline" data-nav="inline-block" data-prop="ajo"
+  data-fip="<code>inline-block</code> va en la misma línea que el texto (como <code>inline</code>) pero acepta <code>width</code>, <code>height</code>, <code>padding</code> y <code>margin</code> verticales (como <code>block</code>).">
+  <div class="sec-head alt reveal"><div class="sec-num">5</div><div class="sec-title"><span class="curso">Antipasto n.º 5</span><h2>display: inline-block</h2><br><p>Lo mejor de dos mundos: va en la línea del texto y se deja medir.</p></div><img class="sec-prop" src="img/cocina/ajo.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>block, inline e inline-block</h3>
+    <div class="tabla-wrap" style="margin:6px 0 16px"><table class="tabla">
+      <tr><th>display</th><th>¿En la misma línea?</th><th>¿Acepta width y height?</th><th>¿Margin y padding verticales?</th></tr>
+      <tr><td>block</td><td>No: ocupa toda la fila</td><td>Sí</td><td>Sí</td></tr>
+      <tr><td>inline</td><td>Sí</td><td>No (los ignora)</td><td>No empujan a las líneas de alrededor</td></tr>
+      <tr><td>inline-block</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+    </table></div>
+    <div class="caso" data-h="230">
+      <h4>Etiquetas dentro de un párrafo</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<p class="texto">Esta pizza es <span class="etiqueta inline">picante</span> y también <span class="etiqueta bloque-linea">vegetariana</span>, perfecta para compartir.</p>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.texto {                                /* el párrafo */
+  max-width: 420px;                     /* ancho */
+  font: 18px/1.6 system-ui, sans-serif; /* texto */
+}
+.etiqueta {                             /* las dos etiquetas */
+  width: 130px;                         /* ancho: solo funcionará en inline-block */
+  padding: 8px 10px;                    /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* texto blanco */
+  border: 2px solid #000000;            /* borde negro */
+  text-align: center;                   /* centrado */
+}
+.inline {                               /* la primera */
+  display: inline;                      /* ignora el width y su padding vertical pisa las líneas */
+}
+.bloque-linea {                         /* la segunda */
+  display: inline-block;                /* en la línea, pero respeta el width y empuja las líneas */
+  background: #161617;                  /* asfalto, para distinguirla */
+}
+</textarea>
+    </div>
+    <div class="caso" data-h="200">
+      <h4>El hueco fantasma entre inline-blocks</h4>
+      <p>Entre dos elementos <code>inline-block</code> aparece un hueco de unos 4px: es el <b>espacio en blanco</b> (el salto de línea) que hay entre ellos en el HTML, que se trata como un espacio de texto.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="fila">
+  <span class="pieza">1</span>
+  <span class="pieza">2</span>
+  <span class="pieza">3</span>
+</div>
+<div class="fila sin-hueco">
+  <span class="pieza">1</span>
+  <span class="pieza">2</span>
+  <span class="pieza">3</span>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.fila {                                 /* cada fila */
+  margin: 10px;                         /* separación */
+}
+.pieza {                                /* cada pieza */
+  display: inline-block;                /* en línea, con tamaño */
+  width: 70px;                          /* ancho */
+  padding: 14px 0;                      /* alto */
+  background: #ffe14d;                  /* amarillo */
+  border: 2px solid #000000;            /* borde negro */
+  text-align: center;                   /* número centrado */
+  font: 900 20px system-ui, sans-serif; /* número */
+}
+.sin-hueco {                            /* la segunda fila */
+  display: flex;                        /* con Flex no hay espacios de texto entre hijos */
+}
+</textarea>
+    </div>
+    <div class="comanda"><b class="tt">¿Cuándo lo uso hoy?</b>Para alinear cosas pequeñas dentro del texto: etiquetas, insignias, botones en mitad de un párrafo, o para que <code>transform</code> funcione en un <code>span</code>. Para filas y rejillas de cajas, Flex y Grid son mejores.</div>
+  </div>
+</section>
+
+<div class="plato reveal"><b>Primi</b><span>Trucos con números: contar, animar variables y escalonar</span></div>
+
+<!-- 6 -->
+<section class="sec" id="contadores" data-nav="Contadores" data-prop="tomate"
+  data-fip="Tres piezas: <code>counter-reset</code> crea el contador en el padre, <code>counter-increment</code> lo sube en cada hijo y <code>counter()</code> lo escribe dentro de un <code>content</code>.">
+  <div class="sec-head reveal"><div class="sec-num">6</div><div class="sec-title"><span class="curso">Primo n.º 1</span><h2>Contadores CSS</h2><br><p>CSS sabe contar: pasos de una receta, capítulos… e incluso casillas marcadas.</p></div><img class="sec-prop" src="img/cocina/tomate.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Un contador en tres pasos</h3>
+    <ol>
+      <li><code>counter-reset: paso;</code> en el <b>padre</b>: crea un contador llamado <code>paso</code> que empieza en 0.</li>
+      <li><code>counter-increment: paso;</code> en cada <b>hijo</b>: suma 1 cada vez que aparece.</li>
+      <li><code>content: counter(paso);</code> en un <code>::before</code> o <code>::after</code>: escribe el número.</li>
+    </ol>
+    <div class="caso" data-h="290">
+      <h4>Los pasos de la receta, numerados con estilo</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="receta">
+  <p class="paso">Hierve agua con mucha sal.</p>
+  <p class="paso">Echa los espaguetis y remueve.</p>
+  <p class="paso">Mezcla con la salsa de tomate.</p>
+  <p class="paso">Sirve con albahaca fresca.</p>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.receta {                               /* el padre */
+  counter-reset: paso;                  /* 1 · crea el contador "paso" (empieza en 0) */
+  width: 340px;                         /* ancho */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.paso {                                 /* cada paso */
+  counter-increment: paso;              /* 2 · suma 1 en cada paso */
+  display: flex;                        /* número y texto en fila */
+  align-items: center;                  /* centrados en vertical */
+  gap: 12px;                            /* separación */
+  margin: 0 0 10px;                     /* separación entre pasos */
+}
+.paso::before {                         /* el número */
+  content: counter(paso);               /* 3 · escribe el valor del contador */
+  flex: none;                           /* no se encoge */
+  width: 38px;                          /* tamaño del círculo */
+  height: 38px;                         /* tamaño del círculo */
+  display: grid;                        /* para centrar el número */
+  place-items: center;                  /* número centrado */
+  border-radius: 50%;                   /* redondo */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  font: 900 18px system-ui, sans-serif; /* número grande */
+}
+</textarea>
+    </div>
+    <h4>Estilos de número y contadores anidados</h4>
+    <p><code>counter(paso, upper-roman)</code> escribe I, II, III…; también hay <code>lower-alpha</code> (a, b, c), <code>decimal-leading-zero</code> (01, 02)… Y con <code>counters(nombre, ".")</code> los contadores anidados se escriben juntos: 1.1, 1.2, 2.1…</p>
+    <div class="caso" data-h="270">
+      <h4>Índice con apartados 1.1, 1.2…</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<ol class="indice">
+  <li>Antipasti
+    <ol>
+      <li>Bruschetta</li>
+      <li>Burrata</li>
+    </ol>
+  </li>
+  <li>Primi
+    <ol>
+      <li>Carbonara</li>
+    </ol>
+  </li>
+</ol>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.indice,                                /* comparte las reglas con el selector de abajo */
+.indice ol {                            /* la lista y sus sublistas */
+  counter-reset: apartado;              /* cada lista empieza su propio contador */
+  list-style: none;                     /* quitamos los números automáticos */
+  padding-left: 22px;                   /* sangría */
+  font: 17px/1.7 system-ui, sans-serif; /* texto */
+}
+.indice li {                            /* cada elemento */
+  counter-increment: apartado;          /* suma 1 */
+}
+.indice li::before {                    /* el número delante */
+  content: counters(apartado, ".") ". "; /* todos los niveles unidos con puntos: 1.2. */
+  color: #e8302a;                       /* rojo tomate */
+  font-weight: 900;                     /* negrita */
+}
+</textarea>
+    </div>
+    <div class="caso" data-h="230">
+      <h4>Truco sin JavaScript: contar las casillas marcadas</h4>
+      <p>El contador solo suma en las casillas <code>:checked</code>, y el total se escribe en un elemento que va <b>después</b> de todas ellas.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="pedido">
+  <label><input type="checkbox"> Mozzarella</label>
+  <label><input type="checkbox"> Champiñones</label>
+  <label><input type="checkbox"> Aceitunas</label>
+  <label><input type="checkbox"> Albahaca</label>
+  <p class="total">Ingredientes elegidos: </p>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.pedido {                               /* el formulario */
+  counter-reset: elegidos;              /* contador a 0 */
+  display: grid;                        /* uno debajo de otro */
+  gap: 6px;                             /* separación */
+  font: 17px system-ui, sans-serif;     /* texto */
+}
+.pedido input:checked {                 /* solo las casillas marcadas… */
+  counter-increment: elegidos;          /* …suman 1 */
+}
+.total::after {                         /* detrás del texto del total */
+  content: counter(elegidos);           /* escribe cuántas hay marcadas */
+  margin-left: 6px;                     /* separación */
+  padding: 2px 10px;                    /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  font-weight: 900;                     /* negrita */
+}
+.total {                                /* el párrafo del total */
+  margin: 8px 0 0;                      /* separación */
+  font-weight: 700;                     /* negrita */
+}
+</textarea>
+    </div>
+    <div class="note ojo"><span class="lbl">Ojo</span><p>El contador solo puede escribirse en elementos que van <b>después</b> de los que cuentan. Por eso el total está al final. Y el número va en <code>content</code>: los lectores de pantalla lo leen, pero no se puede copiar ni seleccionar como texto normal.</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="property" data-nav="@property" data-prop="cafetera"
+  data-fip="<code>@property</code> registra una variable con su <b>tipo</b> (<code>&lt;angle&gt;</code>, <code>&lt;percentage&gt;</code>, <code>&lt;color&gt;</code>…). Así el navegador puede animarla o hacer una transición suave.">
+  <div class="sec-head alt reveal"><div class="sec-num">7</div><div class="sec-title"><span class="curso">Primo n.º 2</span><h2>@property: variables que se animan</h2><br><p>El temporizador del horno, con una variable que avanza sola.</p></div><img class="sec-prop" src="img/cocina/cafetera.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Por qué una variable normal no se anima</h3>
+    <p>Para el navegador, <code>--progreso: 30%</code> es solo un texto: no sabe que es un porcentaje, así que no puede calcular 31 %, 32 %… y al animarla salta de golpe. Con <code>@property</code> le dices el <b>tipo</b> y entonces sí lo interpola.</p>
+    <div class="tabla-wrap" style="margin:14px 0"><table class="tabla">
+      <tr><th>Parte</th><th>Significa</th></tr>
+      <tr><td>@property --progreso</td><td>el nombre de la variable</td></tr>
+      <tr><td>syntax: "&lt;percentage&gt;"</td><td>su tipo: <code>&lt;number&gt;</code>, <code>&lt;integer&gt;</code>, <code>&lt;length&gt;</code>, <code>&lt;angle&gt;</code>, <code>&lt;color&gt;</code>…</td></tr>
+      <tr><td>inherits: false</td><td>si los hijos heredan su valor</td></tr>
+      <tr><td>initial-value: 0%</td><td>el valor de partida (obligatorio)</td></tr>
+    </table></div>
+    <div class="caso" data-h="230">
+      <h4>Temporizador del horno: un anillo que se llena</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="horno">Pizza</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@property --progreso {                  /* registramos la variable --progreso */
+  syntax: "<percentage>";               /* es un porcentaje */
+  inherits: false;                      /* no se hereda */
+  initial-value: 0%;                    /* empieza en 0 % */
+}
+@keyframes hornear {                    /* guion "hornear" */
+  to { --progreso: 100%; }              /* la variable llega al 100 % */
+}
+.horno {                                /* el temporizador */
+  width: 150px;                         /* tamaño */
+  height: 150px;                        /* tamaño */
+  display: grid;                        /* para centrar el texto */
+  place-items: center;                  /* texto centrado */
+  border-radius: 50%;                   /* redondo */
+  background:                           /* dos capas de fondo: */
+    radial-gradient(#ffffff 58%, transparent 59%),                    /* círculo blanco en el centro */
+    conic-gradient(#e8302a var(--progreso), #ece6d8 var(--progreso)); /* anillo: rojo hasta --progreso */
+  border: 3px solid #000000;            /* borde negro */
+  font: 900 22px system-ui, sans-serif; /* texto */
+  animation: hornear 4s linear infinite; /* el anillo se llena en 4 s, una y otra vez */
+}
+</textarea>
+    </div>
+    <div class="caso" data-h="180">
+      <h4>Una transición sobre una variable: el degradado gira al pasar el ratón</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="boton">Pásame el ratón</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@property --angulo {                    /* registramos --angulo */
+  syntax: "<angle>";                    /* es un ángulo */
+  inherits: false;                      /* no se hereda */
+  initial-value: 90deg;                 /* empieza en 90 grados */
+}
+.boton {                                /* el botón */
+  padding: 16px 26px;                   /* relleno */
+  border: 3px solid #000000;            /* borde negro */
+  color: #ffffff;                       /* texto blanco */
+  font: 800 18px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+  background: linear-gradient(var(--angulo), #e8302a, #ff2d8a, #ffc23c); /* el ángulo sale de la variable */
+  transition: --angulo 0.8s ease;       /* se puede hacer transición de la variable porque tiene tipo */
+}
+.boton:hover {                          /* con el ratón encima… */
+  --angulo: 270deg;                     /* …el degradado gira media vuelta, suave */
+}
+</textarea>
+    </div>
+    <div class="note truco"><span class="lbl">Sin miedo</span><p>Funciona en Chrome, Edge, Safari y Firefox desde 2024. Si un navegador no lo entiende, la variable cambia de golpe en lugar de suave, pero nada se rompe.</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="sibling" data-nav="sibling-index()" data-prop="vino"
+  data-fip="<code>sibling-index()</code> devuelve la posición de un elemento entre sus hermanos (1, 2, 3…). Con <code>calc()</code> da un retraso distinto a cada uno sin escribir <code>--i</code> en el HTML. Ponlo dentro de <code>@supports</code>.">
+  <div class="sec-head alt2 reveal"><div class="sec-num">8</div><div class="sec-title"><span class="curso">Primo n.º 3</span><h2>sibling-index(): listas que aparecen poco a poco</h2><br><p>Cada plato llega a la mesa un poco después que el anterior.</p></div><img class="sec-prop" src="img/cocina/vino.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>El truco de siempre y el truco nuevo</h3>
+    <p>Para que los elementos de una lista aparezcan en cascada, cada uno necesita un retraso distinto. Hasta ahora lo hacíamos escribiendo su número en el HTML (<code>style="--i: 2"</code>) y multiplicando. La función nueva <code>sibling-index()</code> <b>calcula ese número sola</b>: el primer hermano vale 1, el segundo 2…</p>
+    <div class="caso" data-h="250">
+      <h4>Versión clásica: con --i (funciona en todos los navegadores)</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<ul class="menu-dia">
+  <li style="--i: 0">Bruschetta</li>
+  <li style="--i: 1">Carbonara</li>
+  <li style="--i: 2">Saltimbocca</li>
+  <li style="--i: 3">Tiramisú</li>
+</ul>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes servir {                     /* guion "servir" */
+  from { opacity: 0; translate: -30px 0; } /* invisible y a la izquierda */
+  to   { opacity: 1; translate: 0 0; }     /* visible y en su sitio */
+}
+.menu-dia {                             /* la lista */
+  width: 260px;                         /* ancho */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin relleno */
+  list-style: none;                     /* sin viñetas */
+}
+.menu-dia li {                          /* cada plato */
+  margin-bottom: 8px;                   /* separación */
+  padding: 10px 14px;                   /* relleno */
+  background: #ffffff;                  /* blanco */
+  border-left: 8px solid #e8302a;       /* marca roja */
+  font: 700 17px system-ui, sans-serif; /* texto */
+  animation: servir 0.5s ease-out both; /* both: invisible mientras espera */
+  animation-delay: calc(var(--i) * 0.2s); /* el número viene del HTML */
+}
+</textarea>
+    </div>
+    <div class="caso" data-h="250">
+      <h4>Versión nueva: sibling-index() dentro de @supports</h4>
+      <p>El HTML queda limpio, sin <code>--i</code>. Si el navegador no conoce <code>sibling-index()</code>, todos aparecen a la vez: el contenido <b>siempre se ve</b>.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<ul class="menu-dia">
+  <li>Bruschetta</li>
+  <li>Carbonara</li>
+  <li>Saltimbocca</li>
+  <li>Tiramisú</li>
+</ul>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes servir {                     /* guion "servir" */
+  from { opacity: 0; translate: -30px 0; } /* invisible y a la izquierda */
+  to   { opacity: 1; translate: 0 0; }     /* visible y en su sitio */
+}
+.menu-dia {                             /* la lista */
+  width: 260px;                         /* ancho */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin relleno */
+  list-style: none;                     /* sin viñetas */
+}
+.menu-dia li {                          /* cada plato */
+  margin-bottom: 8px;                   /* separación */
+  padding: 10px 14px;                   /* relleno */
+  background: #ffffff;                  /* blanco */
+  border-left: 8px solid #e8302a;       /* marca roja */
+  font: 700 17px system-ui, sans-serif; /* texto */
+  animation: servir 0.5s ease-out both; /* la entrada, para todos los navegadores */
+}
+@supports (animation-delay: calc(sibling-index() * 1s)) { /* solo si el navegador entiende sibling-index()… */
+  .menu-dia li {                        /* …cada plato… */
+    animation-delay: calc((sibling-index() - 1) * 0.2s); /* …espera según su posición: 0s, 0.2s, 0.4s… */
+  }
+}
+@media (prefers-reduced-motion: reduce) { /* si se pide menos movimiento… */
+  .menu-dia li {                        /* …los platos… */
+    animation: none;                    /* …aparecen sin animación */
+  }
+}
+</textarea>
+    </div>
+    <div class="comanda"><b class="tt">Compatibilidad (2026)</b><code>sibling-index()</code> y su compañera <code>sibling-count()</code> (cuántos hermanos hay en total) funcionan en Chrome y Edge desde la versión 138. Safari y Firefox todavía no: por eso siempre dentro de <code>@supports</code> y con una versión que funcione sin ellas.</div>
+  </div>
+</section>
+
+<div class="plato reveal"><b>Secondi</b><span>Las recetas de maquetación que pide todo cliente</span></div>
+
+<!-- 9 -->
+<section class="sec" id="centrar" data-nav="Centrar de 5 formas" data-prop="pizza"
+  data-fip="La forma moderna y corta: padre con <code>display: grid</code> y <code>place-items: center</code>. Las demás sirven cuando ya estás en Flex, en flujo normal o con <code>position</code>.">
+  <div class="sec-head reveal"><div class="sec-num">9</div><div class="sec-title"><span class="curso">Secondo n.º 1</span><h2>Centrar de 5 formas</h2><br><p>La pregunta más famosa de CSS, contestada cinco veces.</p></div><img class="sec-prop" src="img/cocina/pizza.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Cinco recetas para el mismo plato</h3>
+    <div class="tabla-wrap" style="margin:6px 0 16px"><table class="tabla">
+      <tr><th>Receta</th><th>Dónde se escribe</th><th>Úsala cuando…</th></tr>
+      <tr><td>1 · grid + place-items</td><td>padre</td><td>quieres lo más corto (la favorita)</td></tr>
+      <tr><td>2 · flex + justify + align</td><td>padre</td><td>el padre ya es Flex por otro motivo</td></tr>
+      <tr><td>3 · margin: auto</td><td>hijo (padre Flex o Grid)</td><td>solo un hijo debe centrarse</td></tr>
+      <tr><td>4 · absolute + inset: 0 + margin: auto</td><td>hijo con tamaño</td><td>el hijo flota sobre otra cosa</td></tr>
+      <tr><td>5 · absolute + 50 % + translate</td><td>hijo</td><td>el hijo flota y no sabes su tamaño</td></tr>
+    </table></div>
+    <div class="caso" data-h="420">
+      <h4>Las cinco a la vez</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="mesa m1"><span class="plato">1</span></div>
+<div class="mesa m2"><span class="plato">2</span></div>
+<div class="mesa m3"><span class="plato">3</span></div>
+<div class="mesa m4"><span class="plato">4</span></div>
+<div class="mesa m5"><span class="plato">5</span></div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.mesa {                                 /* cada contenedor */
+  position: relative;                   /* referencia para las recetas 4 y 5 */
+  width: 120px;                         /* ancho */
+  height: 120px;                        /* alto: hay sitio para centrar */
+  background: #161617;                  /* asfalto */
+  border: 3px solid #000000;            /* borde */
+}
+.plato {                                /* lo que centramos */
+  width: 46px;                          /* tamaño */
+  height: 46px;                         /* tamaño */
+  display: grid;                        /* para centrar el número dentro */
+  place-items: center;                  /* número centrado */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  font: 900 20px system-ui, sans-serif; /* número */
+}
+/* 1 · Grid: el padre centra a su hijo */
+.m1 {                                   /* contenedor 1 */
+  display: grid;                        /* rejilla */
+  place-items: center;                  /* centrado en los dos ejes */
+}
+/* 2 · Flex: dos propiedades en el padre */
+.m2 {                                   /* contenedor 2 */
+  display: flex;                        /* fila */
+  justify-content: center;              /* centrado horizontal */
+  align-items: center;                  /* centrado vertical */
+}
+/* 3 · margin auto: el hijo se centra solo */
+.m3 {                                   /* contenedor 3 */
+  display: flex;                        /* Flex (también vale Grid) */
+}
+.m3 .plato {                            /* su hijo */
+  margin: auto;                         /* los márgenes automáticos se reparten el espacio */
+}
+/* 4 · absolute + inset 0 + margin auto */
+.m4 .plato {                            /* el hijo */
+  position: absolute;                   /* flota dentro de .mesa */
+  inset: 0;                             /* pegado a los cuatro lados… */
+  margin: auto;                         /* …y los márgenes lo llevan al centro (necesita tamaño) */
+}
+/* 5 · absolute + 50% + translate */
+.m5 .plato {                            /* el hijo */
+  position: absolute;                   /* flota dentro de .mesa */
+  top: 50%;                             /* su esquina, a mitad de alto */
+  left: 50%;                            /* su esquina, a mitad de ancho */
+  transform: translate(-50%, -50%);     /* retrocede la mitad de su propio tamaño */
+}
+</textarea>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="hero" data-nav="Hero a pantalla completa" data-prop="chef"
+  data-fip="Portada a pantalla completa: <code>min-height: 100dvh</code> (mejor que <code>100vh</code> en el móvil), fondo con <code>background-size: cover</code>, una capa oscura para que se lea el texto y el contenido centrado con Grid.">
+  <div class="sec-head alt reveal"><div class="sec-num">10</div><div class="sec-title"><span class="curso">Secondo n.º 2</span><h2>Hero a pantalla completa</h2><br><p>La portada que ocupa justo toda la pantalla al entrar.</p></div><img class="sec-prop" src="img/cocina/chef.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>Los cuatro ingredientes</h3>
+    <ol>
+      <li><b>Alto de pantalla:</b> <code>min-height: 100dvh</code>. La unidad <code>dvh</code> descuenta las barras del navegador del móvil, que con <code>vh</code> tapaban el final de la portada. Pon antes <code>100vh</code> como respaldo para navegadores antiguos.</li>
+      <li><b>Fondo:</b> una imagen con <code>background-size: cover</code> y <code>background-position: center</code>.</li>
+      <li><b>Capa para leer:</b> un degradado oscuro encima de la imagen (en el mismo <code>background</code>).</li>
+      <li><b>Centrado:</b> <code>display: grid</code> + <code>place-items: center</code>.</li>
+    </ol>
+    <div class="caso" data-h="340">
+      <h4>Portada de la trattoria (la viñeta hace de pantalla)</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<header class="portada">
+  <div class="contenido">
+    <h1>Trattoria Punk</h1>
+    <p>Pizza, pasta y ruido desde 1994</p>
+    <a href="#carta">Ver la carta</a>
+  </div>
+</header>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+body {                                  /* la página */
+  margin: 0;                            /* sin márgenes: la portada toca los bordes */
+  padding: 0;                           /* sin relleno */
+  display: block;                       /* flujo normal */
+}
+.portada {                              /* la portada */
+  min-height: 100vh;                    /* respaldo para navegadores antiguos */
+  min-height: 100dvh;                   /* alto de pantalla real, también en el móvil */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* contenido en el centro */
+  padding: 20px;                        /* aire en pantallas pequeñas */
+  text-align: center;                   /* texto centrado */
+  color: #ffffff;                       /* texto blanco */
+  background:                           /* dos capas: */
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.75)), /* capa oscura para leer */
+    url(img/cocina/espaguetis.webp) center / 260px repeat,      /* la "foto" de fondo */
+    #e8302a;                                                    /* color de respaldo */
+}
+.contenido h1 {                         /* el título */
+  margin: 0;                            /* sin márgenes */
+  font: 900 clamp(32px, 8vw, 64px)/1 system-ui, sans-serif; /* grande y fluido */
+}
+.contenido p {                          /* el subtítulo */
+  margin: 8px 0 18px;                   /* separación */
+  font: 18px system-ui, sans-serif;     /* texto */
+}
+.contenido a {                          /* el botón */
+  display: inline-block;                /* para darle relleno */
+  padding: 12px 22px;                   /* relleno */
+  background: #ffe14d;                  /* amarillo */
+  color: #000000;                       /* texto negro */
+  border: 3px solid #000000;            /* borde */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  text-decoration: none;                /* sin subrayado */
+}
+</textarea>
+    </div>
+    <div class="note ojo"><span class="lbl">Fotos de verdad</span><p>Con una fotografía usa <code>background-size: cover</code> en vez de repetirla: la imagen cubre toda la portada recortando lo que sobra. Y elige una imagen ligera (WebP): es lo primero que se descarga.</p></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="sec" id="footer" data-nav="Sticky footer" data-prop="cannoli"
+  data-fip="Pie siempre abajo: el <code>body</code> con <code>min-height: 100dvh</code>, <code>display: grid</code> y <code>grid-template-rows: auto 1fr auto</code>. El <code>main</code> se estira y empuja el pie.">
+  <div class="sec-head alt2 reveal"><div class="sec-num">11</div><div class="sec-title"><span class="curso">Secondo n.º 3</span><h2>Sticky footer: el pie siempre abajo</h2><br><p>Aunque la página tenga poco contenido, el pie no sube a mitad de pantalla.</p></div><img class="sec-prop" src="img/cocina/cannoli.webp" alt=""></div>
+  <div class="panel receta reveal">
+    <h3>El problema</h3>
+    <p>En una página con poco contenido (un «gracias por tu reserva»), el pie de página se queda pegado al texto, a mitad de pantalla, y debajo queda un hueco feo. Queremos que el pie esté <b>abajo del todo</b> cuando hay poco contenido y que <b>baje con la página</b> cuando hay mucho. Ojo: no es <code>position: sticky</code> ni <code>fixed</code>, es una receta de Grid.</p>
+    <div class="caso" data-h="320">
+      <h4>Página corta: el pie no sube</h4>
+<textarea class="src" data-lang="html" data-title="HTML">
+<header class="cabecera">Trattoria Punk</header>
+<main class="principal">¡Gracias por tu reserva!</main>
+<footer class="pie">Trattoria Punk · Desde 1994</footer>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+body {                                  /* la página */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin relleno */
+  min-height: 100vh;                    /* respaldo para navegadores antiguos */
+  min-height: 100dvh;                   /* al menos toda la pantalla */
+  display: grid;                        /* rejilla de tres filas */
+  grid-template-rows: auto 1fr auto;    /* cabecera a su medida · main estirable · pie a su medida */
+  place-items: stretch;                 /* cada zona ocupa su fila entera */
+}
+.cabecera,                              /* comparte las reglas con el selector de abajo */
+.pie {                                  /* cabecera y pie */
+  padding: 16px 20px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ece6d8;                       /* tiza */
+  font: 700 17px system-ui, sans-serif; /* texto */
+}
+.principal {                            /* el contenido */
+  padding: 20px;                        /* relleno */
+  background: #ffffff;                  /* blanco */
+  font: 20px system-ui, sans-serif;     /* texto */
+}
+.pie {                                  /* el pie */
+  background: #e8302a;                  /* rojo tomate, para verlo bien */
+  color: #ffffff;                       /* blanco */
+}
+</textarea>
+    </div>
+    <div class="note truco"><span class="lbl">Por qué funciona</span><p><code>1fr</code> hace que la fila del <code>main</code> se coma todo el alto que sobra. Si el contenido es largo, la fila crece y el pie baja con ella. Lo mismo se puede hacer con Flex: <code>body { display: flex; flex-direction: column; }</code> y <code>main { flex: 1; }</code>.</p></div>
+  </div>
+</section>
+
+<div class="plato reveal"><b>Dolci</b><span>La dispensa: 50 recetas de efectos, solo HTML y CSS</span></div>
+
+<!-- 12 -->
+<section class="sec" id="recetario" data-nav="Recetario: 50 efectos" data-prop="cannoli"
+  data-fip="Cada receta funciona sola: copia su HTML y su CSS, cambia colores y medidas, y si ya usas el mismo nombre de clase o de <code>@keyframes</code>, cámbialo en los dos sitios.">
+  <div class="sec-head reveal"><div class="sec-num">12</div><div class="sec-title"><span class="curso">Il ricettario</span><h2>Recetario: 50 efectos</h2><br><p>Tarjetas que se voltean, menús, carruseles sin salto, botones, galerías, formularios y más. Sin JavaScript.</p></div><img class="sec-prop" src="img/cocina/cannoli.webp" alt=""></div>
+  <div class="comanda"><b class="tt">Cómo usar el recetario</b>Mira el resultado (pasa el ratón o haz clic donde se indica), abre <b>«Ver la receta»</b> y copia el HTML y el CSS. Todo el CSS está comentado línea a línea. Si añades animaciones a tu web, recuerda el bloque <code>@media (prefers-reduced-motion: reduce)</code>.</div>
+
+  <div class="familia-rec"><img src="img/cocina/pizza.webp" alt=""><h3>Tarjetas<small>Recetas 1 a 8</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>01</span>Tarjeta que se voltea</h4>
+  <p><b>Para:</b> mostrar dos caras de algo. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="escena">
+  <div class="tarjeta">
+    <div class="cara frente">MENÚ</div>
+    <div class="cara dorso">Pizza · Pasta · Vino</div>
+  </div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.escena {                               /* el padre */
+  perspective: 800px;                   /* profundidad del giro */
+}
+.tarjeta {                              /* la tarjeta que gira */
+  position: relative;                   /* referencia para las caras */
+  width: 180px;                         /* ancho */
+  height: 130px;                        /* alto */
+  transform-style: preserve-3d;         /* las caras viven en 3D */
+  transition: transform 0.7s ease;      /* giro suave */
+}
+.escena:hover .tarjeta {                /* con el ratón encima… */
+  transform: rotateY(180deg);           /* …media vuelta */
+}
+.cara {                                 /* las dos caras */
+  position: absolute;                   /* una encima de otra */
+  inset: 0;                             /* ocupan toda la tarjeta */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* texto centrado */
+  padding: 10px;                        /* relleno */
+  border: 3px solid #000000;            /* borde negro */
+  text-align: center;                   /* texto centrado */
+  font: 800 18px system-ui, sans-serif; /* texto */
+  backface-visibility: hidden;          /* no se ve la espalda */
+}
+.frente {                               /* delante */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+}
+.dorso {                                /* detrás */
+  background: #ffe14d;                  /* amarillo */
+  transform: rotateY(180deg);           /* empieza girada */
+}
+</textarea>
+</article>
+
+<article class="ricetta" data-h="250">
+  <h4><span>02</span>Tarjeta que se eleva</h4>
+  <p><b>Para:</b> rejillas de platos o productos. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<article class="plato">
+  <img src="img/cocina/espaguetis.webp" alt="Espaguetis">
+  <h3>Spaghetti</h3>
+</article>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.plato {                                /* la tarjeta */
+  width: 170px;                         /* ancho */
+  padding: 12px;                        /* relleno */
+  background: #ffffff;                  /* blanca */
+  border: 3px solid #000000;            /* borde negro */
+  box-shadow: 4px 4px 0 #000000;        /* sombra sólida */
+  text-align: center;                   /* centrado */
+  transition: transform 0.25s ease, box-shadow 0.25s ease; /* cambios suaves */
+}
+.plato:hover {                          /* con el ratón encima… */
+  transform: translate(-4px, -6px);     /* …sube */
+  box-shadow: 10px 12px 0 #e8302a;      /* …y la sombra se aleja en rojo */
+}
+.plato img {                            /* la imagen */
+  width: 100%;                          /* todo el ancho */
+  height: auto;                         /* sin deformar */
+}
+.plato h3 {                             /* el título */
+  margin: 6px 0 0;                      /* separación */
+  font: 800 18px system-ui, sans-serif; /* texto */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>03</span>Inclinación 3D</h4>
+  <p><b>Para:</b> destacar una tarjeta especial. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="escena"><div class="ficha">Pizza del mes</div></div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.escena {                               /* el padre */
+  perspective: 600px;                   /* profundidad */
+}
+.ficha {                                /* la tarjeta */
+  width: 200px;                         /* ancho */
+  padding: 40px 16px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ffc23c;                       /* queso */
+  border: 3px solid #e8302a;            /* borde rojo */
+  text-align: center;                   /* centrado */
+  font: 900 20px system-ui, sans-serif; /* texto */
+  transition: transform 0.4s ease;      /* giro suave */
+}
+.escena:hover .ficha {                  /* con el ratón encima… */
+  transform: rotateX(14deg) rotateY(-16deg) scale(1.05); /* …se inclina hacia ti */
+}
+</textarea>
+</article>
+
+<article class="ricetta" data-h="250">
+  <h4><span>04</span>Capa con texto que sube</h4>
+  <p><b>Para:</b> galerías y portfolios. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<figure class="foto">
+  <img src="img/cocina/pizza.webp" alt="Pizza">
+  <figcaption>Diavola · 11 €</figcaption>
+</figure>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.foto {                                 /* el marco */
+  position: relative;                   /* referencia para la capa */
+  width: 180px;                         /* ancho */
+  margin: 0;                            /* sin márgenes de figure */
+  overflow: hidden;                     /* la capa escondida no se ve */
+  background: #ffe14d;                  /* fondo amarillo */
+  border: 3px solid #000000;            /* borde negro */
+}
+.foto img {                             /* la imagen */
+  display: block;                       /* sin hueco debajo */
+  width: 100%;                          /* todo el ancho */
+  height: auto;                         /* sin deformar */
+}
+.foto figcaption {                      /* la capa de texto */
+  position: absolute;                   /* encima de la imagen */
+  inset: auto 0 0 0;                    /* pegada abajo, de lado a lado */
+  padding: 12px;                        /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  font: 800 16px system-ui, sans-serif; /* texto */
+  transform: translateY(100%);          /* escondida debajo */
+  transition: transform 0.35s ease;     /* sube suave */
+}
+.foto:hover figcaption {                /* con el ratón encima… */
+  transform: translateY(0);             /* …la capa sube */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>05</span>Borde de degradado que gira</h4>
+  <p><b>Para:</b> el plan o el plato estrella. Usa <code>@property</code>.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="estrella">Menú degustación</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@property --giro {                      /* registramos --giro */
+  syntax: "<angle>";                    /* es un ángulo */
+  inherits: false;                      /* no se hereda */
+  initial-value: 0deg;                  /* empieza en 0 */
+}
+@keyframes girar-borde {                /* guion "girar-borde" */
+  to { --giro: 360deg; }                /* vuelta completa */
+}
+.estrella {                             /* la tarjeta */
+  padding: 30px 34px;                   /* relleno */
+  border: 5px solid transparent;        /* borde transparente: deja ver el degradado */
+  font: 900 20px system-ui, sans-serif; /* texto */
+  background:                           /* dos capas: */
+    linear-gradient(#ffffff, #ffffff) padding-box,                                 /* blanco dentro */
+    conic-gradient(from var(--giro), #e8302a, #ffc23c, #ff2d8a, #e8302a) border-box; /* degradado en el borde */
+  animation: girar-borde 3s linear infinite; /* gira sin parar */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>06</span>Abanico de cartas</h4>
+  <p><b>Para:</b> enseñar una colección. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="abanico">
+  <div class="carta c1"></div>
+  <div class="carta c2"></div>
+  <div class="carta c3"></div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.abanico {                              /* el contenedor */
+  position: relative;                   /* referencia para las cartas */
+  width: 100px;                         /* ancho de una carta */
+  height: 140px;                        /* alto de una carta */
+}
+.carta {                                /* cada carta */
+  position: absolute;                   /* todas apiladas */
+  inset: 0;                             /* en el mismo sitio */
+  border: 3px solid #000000;            /* borde negro */
+  transform-origin: bottom center;      /* giran desde abajo, como en la mano */
+  transition: transform 0.4s ease;      /* abren suave */
+}
+.c1 { background: #e8302a; }            /* roja */
+.c2 { background: #ffffff; }            /* blanca */
+.c3 { background: #2e8b57; }            /* verde albahaca */
+.abanico:hover .c1 {                    /* con el ratón encima, la primera… */
+  transform: rotate(-20deg) translateX(-24px); /* …a la izquierda */
+}
+.abanico:hover .c3 {                    /* …y la tercera… */
+  transform: rotate(20deg) translateX(24px);   /* …a la derecha */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>07</span>Reflejo que cruza</h4>
+  <p><b>Para:</b> tarjetas regalo o cupones. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="cupon">-20 % en pasta</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.cupon {                                /* la tarjeta */
+  position: relative;                   /* referencia para el reflejo */
+  overflow: hidden;                     /* el reflejo no se sale */
+  width: 220px;                         /* ancho */
+  padding: 40px 16px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ffc23c;                       /* queso */
+  border: 3px solid #e8302a;            /* borde rojo */
+  text-align: center;                   /* centrado */
+  font: 900 22px system-ui, sans-serif; /* texto */
+}
+.cupon::after {                         /* el reflejo */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* encima */
+  top: -50%;                            /* más alto que la tarjeta… */
+  bottom: -50%;                         /* …para cubrirla en diagonal */
+  left: -60%;                           /* empieza fuera */
+  width: 40%;                           /* franja de luz */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); /* luz */
+  transform: rotate(25deg);             /* en diagonal */
+  transition: left 0.7s ease;           /* cruza suave */
+}
+.cupon:hover::after {                   /* con el ratón encima… */
+  left: 130%;                           /* …el reflejo cruza */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>08</span>Tarjeta de precio destacada</h4>
+  <p><b>Para:</b> tablas de precios: la del centro, más grande y con etiqueta.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="precios">
+  <div class="plan">Pequeña<b>8 €</b></div>
+  <div class="plan top">Familiar<b>14 €</b></div>
+  <div class="plan">Mediana<b>11 €</b></div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.precios {                              /* la fila */
+  display: flex;                        /* planes en fila */
+  align-items: center;                  /* centrados en vertical */
+  gap: 6px;                             /* separación */
+}
+.plan {                                 /* cada plan */
+  position: relative;                   /* referencia para la etiqueta */
+  display: grid;                        /* nombre y precio en columna */
+  gap: 4px;                             /* separación */
+  padding: 18px 8px;                    /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde negro */
+  text-align: center;                   /* centrado */
+  font: 700 14px system-ui, sans-serif; /* texto */
+}
+.plan b {                               /* el precio */
+  font-size: 24px;                      /* grande */
+}
+.top {                                  /* el destacado */
+  transform: scale(1.12);               /* más grande */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  z-index: 1;                           /* por encima de los de al lado */
+}
+.top::before {                          /* la etiqueta */
+  content: "¡La más pedida!";           /* texto */
+  position: absolute;                   /* encima de la tarjeta */
+  top: -14px;                           /* sobresale por arriba */
+  left: 50%;                            /* centrada… */
+  translate: -50% 0;                    /* …de verdad */
+  padding: 2px 8px;                     /* relleno */
+  background: #ffe14d;                  /* amarilla */
+  color: #000000;                       /* texto negro */
+  border: 2px solid #000000;            /* borde */
+  font-size: 11px;                      /* pequeña */
+  white-space: nowrap;                  /* una línea */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/chef.webp" alt=""><h3>Menús<small>Recetas 9 a 15</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>09</span>Menú desplegable</h4>
+  <p><b>Para:</b> submenús. Pasa el ratón o llega con Tab.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<nav class="desplegable">
+  <button>Carta ▾</button>
+  <ul>
+    <li><a href="#">Pizzas</a></li>
+    <li><a href="#">Pastas</a></li>
+    <li><a href="#">Postres</a></li>
+  </ul>
+</nav>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.desplegable {                          /* el menú */
+  position: relative;                   /* referencia para la lista */
+  font: 700 16px system-ui, sans-serif; /* texto */
+  margin-bottom: 120px;                 /* sitio para que se vea la lista abierta */
+}
+.desplegable button {                   /* el botón */
+  padding: 10px 18px;                   /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  color: #ffffff;                       /* blanco */
+  border: 3px solid #000000;            /* borde */
+  font: inherit;                        /* misma letra */
+}
+.desplegable ul {                       /* la lista */
+  position: absolute;                   /* flota debajo del botón */
+  top: 100%;                            /* justo debajo */
+  left: 0;                              /* alineada a la izquierda */
+  margin: 0;                            /* sin márgenes */
+  padding: 6px 0;                       /* relleno */
+  list-style: none;                     /* sin viñetas */
+  min-width: 160px;                     /* ancho mínimo */
+  background: #ffffff;                  /* blanca */
+  border: 3px solid #000000;            /* borde */
+  opacity: 0;                           /* invisible… */
+  visibility: hidden;                   /* …y no se puede pulsar */
+  translate: 0 -8px;                    /* algo más arriba */
+  transition: opacity 0.2s, translate 0.2s, visibility 0.2s; /* aparece suave */
+}
+.desplegable:hover ul,                  /* comparte las reglas con el selector de abajo */
+.desplegable:focus-within ul {          /* con el ratón o con el foco dentro… */
+  opacity: 1;                           /* …visible */
+  visibility: visible;                  /* …y pulsable */
+  translate: 0 0;                       /* …en su sitio */
+}
+.desplegable a {                        /* cada enlace */
+  display: block;                       /* toda la fila es pulsable */
+  padding: 8px 14px;                    /* relleno */
+  color: #000000;                       /* negro */
+  text-decoration: none;                /* sin subrayado */
+}
+.desplegable a:hover {                  /* enlace bajo el ratón */
+  background: #ffe14d;                  /* amarillo */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>10</span>Hamburguesa que abre un panel</h4>
+  <p><b>Para:</b> el menú del móvil. Haz clic en las tres rayas.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="movil">
+  <input type="checkbox" id="abrir-menu" class="interruptor">
+  <label for="abrir-menu" class="hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+  <nav class="panel">
+    <a href="#">Inicio</a>
+    <a href="#">Carta</a>
+    <a href="#">Reservas</a>
+  </nav>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.movil {                                /* la "pantalla" */
+  position: relative;                   /* referencia para el panel */
+  width: 240px;                         /* ancho */
+  height: 200px;                        /* alto */
+  overflow: hidden;                     /* el panel escondido no se ve */
+  background: #ece6d8;                  /* tiza */
+  border: 3px solid #000000;            /* borde */
+}
+.interruptor {                          /* la casilla real */
+  position: absolute;                   /* existe (teclado)… */
+  opacity: 0;                           /* …pero no se ve */
+}
+.hamburguesa {                          /* el botón de tres rayas */
+  position: absolute;                   /* arriba a la derecha */
+  top: 10px;                            /* separación de arriba */
+  right: 10px;                          /* separación de la derecha */
+  z-index: 2;                           /* por encima del panel */
+  display: grid;                        /* rayas en columna */
+  gap: 5px;                             /* separación entre rayas */
+  cursor: pointer;                      /* manita */
+}
+.hamburguesa span {                     /* cada raya */
+  width: 30px;                          /* largo */
+  height: 4px;                          /* grosor */
+  background: #000000;                  /* negra */
+  transition: transform 0.3s, opacity 0.3s; /* cambios suaves */
+}
+.panel {                                /* el menú lateral */
+  position: absolute;                   /* dentro de la pantalla */
+  inset: 0 auto 0 0;                    /* pegado a la izquierda, de arriba abajo */
+  width: 70%;                           /* ancho del panel */
+  display: grid;                        /* enlaces en columna */
+  align-content: start;                 /* arriba */
+  gap: 10px;                            /* separación */
+  padding: 50px 16px;                   /* relleno */
+  background: #e8302a;                  /* rojo tomate */
+  translate: -100% 0;                   /* escondido a la izquierda */
+  transition: translate 0.35s ease;     /* entra suave */
+}
+.panel a {                              /* cada enlace */
+  color: #ffffff;                       /* blanco */
+  font: 800 18px system-ui, sans-serif; /* texto */
+  text-decoration: none;                /* sin subrayado */
+}
+.interruptor:checked ~ .panel {         /* con la casilla marcada… */
+  translate: 0 0;                       /* …el panel entra */
+}
+.interruptor:checked + .hamburguesa span:nth-child(1) { /* raya de arriba */
+  transform: translateY(9px) rotate(45deg);   /* baja y se inclina */
+}
+.interruptor:checked + .hamburguesa span:nth-child(2) { /* raya del medio */
+  opacity: 0;                           /* desaparece */
+}
+.interruptor:checked + .hamburguesa span:nth-child(3) { /* raya de abajo */
+  transform: translateY(-9px) rotate(-45deg); /* sube y se inclina al revés: una X */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>11</span>Acordeón de preguntas</h4>
+  <p><b>Para:</b> preguntas frecuentes. Haz clic en una pregunta.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<details class="pregunta">
+  <summary>¿Tenéis opción sin gluten?</summary>
+  <p>Sí: toda la carta se puede hacer con masa sin gluten.</p>
+</details>
+<details class="pregunta">
+  <summary>¿Hay que reservar?</summary>
+  <p>Los fines de semana, sí.</p>
+</details>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes abrir {                      /* guion "abrir" */
+  from { opacity: 0; translate: 0 -6px; } /* arriba e invisible */
+  to   { opacity: 1; translate: 0 0; }    /* en su sitio */
+}
+.pregunta {                             /* cada pregunta */
+  width: 300px;                         /* ancho */
+  margin-bottom: 8px;                   /* separación */
+  padding: 10px 14px;                   /* relleno */
+  background: #ffffff;                  /* blanca */
+  border: 3px solid #000000;            /* borde */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.pregunta summary {                     /* la pregunta visible */
+  cursor: pointer;                      /* manita */
+  font-weight: 800;                     /* negrita */
+  list-style: none;                     /* sin el triángulo por defecto */
+}
+.pregunta summary::after {              /* nuestro símbolo */
+  content: "+";                         /* un más */
+  float: right;                         /* a la derecha */
+  color: #e8302a;                       /* rojo */
+  transition: rotate 0.3s;              /* gira suave */
+}
+.pregunta[open] summary::after {        /* con la pregunta abierta… */
+  rotate: 45deg;                        /* …el + se convierte en × */
+}
+.pregunta[open] p {                     /* la respuesta, al abrir… */
+  margin: 8px 0 0;                      /* separación */
+  animation: abrir 0.3s ease-out;       /* …entra suave */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>12</span>Pestañas con radios</h4>
+  <p><b>Para:</b> cambiar de contenido sin recargar. Haz clic en las pestañas.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="pestanas">
+  <input type="radio" name="tab" id="t1" checked><label for="t1">Pizza</label>
+  <input type="radio" name="tab" id="t2"><label for="t2">Pasta</label>
+  <input type="radio" name="tab" id="t3"><label for="t3">Postre</label>
+  <div class="contenido c1">Margarita, diavola y la punk.</div>
+  <div class="contenido c2">Carbonara y amatriciana.</div>
+  <div class="contenido c3">Tiramisú y cannoli.</div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.pestanas {                             /* el conjunto */
+  width: 300px;                         /* ancho */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.pestanas input {                       /* los radios reales */
+  position: absolute;                   /* existen (teclado)… */
+  opacity: 0;                           /* …pero no se ven */
+}
+.pestanas label {                       /* cada pestaña */
+  display: inline-block;                /* en fila, con relleno */
+  padding: 8px 14px;                    /* relleno */
+  background: #ece6d8;                  /* tiza */
+  border: 3px solid #000000;            /* borde */
+  border-bottom: 0;                     /* sin borde abajo: se une al contenido */
+  font-weight: 800;                     /* negrita */
+  cursor: pointer;                      /* manita */
+}
+.pestanas input:checked + label {       /* la pestaña activa */
+  background: #e8302a;                  /* roja */
+  color: #ffffff;                       /* blanca */
+}
+.pestanas input:focus-visible + label { /* foco con teclado */
+  outline: 3px solid #ffc23c;           /* visible */
+}
+.contenido {                            /* cada panel de contenido */
+  display: none;                        /* escondido */
+  padding: 16px;                        /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde */
+}
+#t1:checked ~ .c1,                      /* comparte las reglas con el selector de abajo */
+#t2:checked ~ .c2,                      /* comparte las reglas con el selector de abajo */
+#t3:checked ~ .c3 {                     /* el panel de la pestaña marcada… */
+  display: block;                       /* …se muestra */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>13</span>Menú con subrayado que crece</h4>
+  <p><b>Para:</b> la barra de navegación. Pasa el ratón por los enlaces.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<nav class="menu">
+  <a href="#">Inicio</a>
+  <a href="#">Carta</a>
+  <a href="#">Contacto</a>
+</nav>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.menu {                                 /* la barra */
+  display: flex;                        /* enlaces en fila */
+  gap: 24px;                            /* separación */
+  padding: 14px 20px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+}
+.menu a {                               /* cada enlace */
+  position: relative;                   /* referencia para la línea */
+  color: #ece6d8;                       /* tiza */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  text-decoration: none;                /* sin subrayado normal */
+}
+.menu a::after {                        /* la línea */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* debajo del texto */
+  left: 0;                              /* de un lado… */
+  right: 0;                             /* …al otro */
+  bottom: -6px;                         /* 6px por debajo */
+  height: 3px;                          /* grosor */
+  background: #e8302a;                  /* rojo tomate */
+  scale: 0 1;                           /* sin ancho (crece desde el centro) */
+  transition: scale 0.3s ease;          /* crece suave */
+}
+.menu a:hover::after {                  /* con el ratón encima… */
+  scale: 1 1;                           /* …la línea se completa */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>14</span>Menú lateral fuera de pantalla</h4>
+  <p><b>Para:</b> carritos o filtros que entran desde un lado. Haz clic en el botón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="pantalla">
+  <input type="checkbox" id="carrito" class="interruptor">
+  <label for="carrito" class="abrir">Ver pedido</label>
+  <aside class="lateral">
+    <label for="carrito" class="cerrar">×</label>
+    <p>1 × Margarita</p>
+    <p>2 × Tiramisú</p>
+  </aside>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.pantalla {                             /* la "pantalla" */
+  position: relative;                   /* referencia para el panel */
+  width: 280px;                         /* ancho */
+  height: 200px;                        /* alto */
+  overflow: hidden;                     /* el panel escondido no se ve */
+  background: #ece6d8;                  /* tiza */
+  border: 3px solid #000000;            /* borde */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.interruptor {                          /* la casilla real */
+  position: absolute;                   /* existe… */
+  opacity: 0;                           /* …pero no se ve */
+}
+.abrir {                                /* el botón */
+  display: inline-block;                /* con relleno */
+  margin: 14px;                         /* separación */
+  padding: 8px 14px;                    /* relleno */
+  background: #e8302a;                  /* rojo */
+  color: #ffffff;                       /* blanco */
+  border: 3px solid #000000;            /* borde */
+  font-weight: 800;                     /* negrita */
+  cursor: pointer;                      /* manita */
+}
+.lateral {                              /* el panel */
+  position: absolute;                   /* dentro de la pantalla */
+  inset: 0 0 0 auto;                    /* pegado a la derecha */
+  width: 65%;                           /* ancho */
+  padding: 16px;                        /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ece6d8;                       /* tiza */
+  translate: 100% 0;                    /* escondido a la derecha */
+  transition: translate 0.35s ease;     /* entra suave */
+}
+.cerrar {                               /* la cruz */
+  float: right;                         /* a la derecha */
+  font-size: 26px;                      /* grande */
+  line-height: 1;                       /* sin espacio extra */
+  cursor: pointer;                      /* manita */
+}
+.interruptor:checked ~ .lateral {       /* con la casilla marcada… */
+  translate: 0 0;                       /* …el panel entra */
+}
+</textarea>
+</article>
+
+<article class="ricetta" data-h="260">
+  <h4><span>15</span>Mega menú en rejilla</h4>
+  <p><b>Para:</b> webs con muchas secciones. Pasa el ratón por «Carta».</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<nav class="mega">
+  <span class="titulo">Carta ▾</span>
+  <div class="caja">
+    <div><b>Pizzas</b><a href="#">Margarita</a><a href="#">Diavola</a></div>
+    <div><b>Pastas</b><a href="#">Carbonara</a><a href="#">Pesto</a></div>
+    <div><b>Postres</b><a href="#">Tiramisú</a><a href="#">Cannoli</a></div>
+  </div>
+</nav>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.mega {                                 /* el menú */
+  position: relative;                   /* referencia para la caja */
+  width: 250px;                         /* tan ancho como la caja: así no se sale por la derecha */
+  margin-bottom: 130px;                 /* sitio para verla abierta */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.titulo {                               /* lo que se ve siempre */
+  display: inline-block;                /* con relleno */
+  padding: 10px 16px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ffc23c;                       /* queso */
+  font-weight: 800;                     /* negrita */
+}
+.caja {                                 /* el panel grande */
+  position: absolute;                   /* flota debajo */
+  top: 100%;                            /* justo debajo */
+  left: 0;                              /* a la izquierda */
+  display: grid;                        /* rejilla… */
+  grid-template-columns: repeat(3, 1fr); /* …de tres columnas */
+  gap: 10px;                            /* separación */
+  width: 250px;                         /* ancho */
+  padding: 14px;                        /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde */
+  opacity: 0;                           /* invisible */
+  visibility: hidden;                   /* no pulsable */
+  transition: opacity 0.2s, visibility 0.2s; /* aparece suave */
+}
+.mega:hover .caja,                      /* comparte las reglas con el selector de abajo */
+.mega:focus-within .caja {              /* con el ratón o el foco… */
+  opacity: 1;                           /* …visible */
+  visibility: visible;                  /* …y pulsable */
+}
+.caja div {                             /* cada columna */
+  display: grid;                        /* enlaces en columna */
+  gap: 4px;                             /* separación */
+  font-size: 14px;                      /* letra algo más pequeña */
+}
+.caja b {                               /* el título de la columna */
+  color: #e8302a;                       /* rojo */
+}
+.caja a {                               /* cada enlace */
+  color: #000000;                       /* negro */
+  text-decoration: none;                /* sin subrayado */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/espaguetis.webp" alt=""><h3>Carruseles y scroll<small>Recetas 16 a 21</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>16</span>Carrusel infinito sin salto</h4>
+  <p><b>Para:</b> galerías que pasan solas. El secreto: el contenido duplicado, <code>margin</code> en vez de <code>gap</code> y mover <b>-50 %</b>.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="carrusel">
+  <div class="pista">
+    <div class="grupo">
+      <img src="img/cocina/pizza.webp" alt="Pizza">
+      <img src="img/cocina/espaguetis.webp" alt="Espaguetis">
+      <img src="img/cocina/cannoli.webp" alt="Cannoli">
+      <img src="img/cocina/vino.webp" alt="Vino">
+    </div>
+    <div class="grupo" aria-hidden="true">
+      <img src="img/cocina/pizza.webp" alt="">
+      <img src="img/cocina/espaguetis.webp" alt="">
+      <img src="img/cocina/cannoli.webp" alt="">
+      <img src="img/cocina/vino.webp" alt="">
+    </div>
+  </div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes desplazar {                  /* guion "desplazar" */
+  to { transform: translateX(-50%); }   /* avanza la mitad: lo que mide un grupo */
+}
+.carrusel {                             /* el marco */
+  width: 100%;                          /* todo el ancho */
+  overflow: hidden;                     /* esconde lo que sale por los lados */
+  background: #ffe14d;                  /* amarillo */
+  border: 3px solid #000000;            /* borde */
+}
+.pista {                                /* la tira que se mueve */
+  display: flex;                        /* los dos grupos en fila */
+  width: max-content;                   /* mide lo que su contenido */
+  animation: desplazar 12s linear infinite; /* velocidad constante y sin fin */
+}
+.grupo {                                /* cada copia */
+  display: flex;                        /* imágenes en fila */
+}
+.grupo img {                            /* cada imagen */
+  width: 100px;                         /* tamaño */
+  height: 100px;                        /* tamaño */
+  object-fit: contain;                  /* sin deformar */
+  margin-right: 20px;                   /* separación con margen: así no hay salto */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>17</span>Logos con bordes difuminados</h4>
+  <p><b>Para:</b> «Nuestros proveedores». Se para al pasar el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="logos">
+  <ul class="cinta">
+    <li>MOZZARELLA</li><li>PARMIGIANO</li><li>BASILICO</li><li>POMODORO</li>
+    <li aria-hidden="true">MOZZARELLA</li><li aria-hidden="true">PARMIGIANO</li><li aria-hidden="true">BASILICO</li><li aria-hidden="true">POMODORO</li>
+  </ul>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes desplazar {                  /* guion "desplazar" */
+  to { transform: translateX(-50%); }   /* una copia entera */
+}
+.logos {                                /* el marco */
+  width: 100%;                          /* todo el ancho */
+  overflow: hidden;                     /* esconde lo que sale */
+  padding: 14px 0;                      /* relleno */
+  background: #ffffff;                  /* blanco */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); /* bordes difuminados (Safari) */
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);         /* bordes difuminados */
+}
+.cinta {                                /* la lista */
+  display: flex;                        /* en fila */
+  width: max-content;                   /* mide lo que su contenido */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin relleno */
+  list-style: none;                     /* sin viñetas */
+  animation: desplazar 14s linear infinite; /* despacio y sin fin */
+}
+.cinta li {                             /* cada logo */
+  padding: 0 24px;                      /* separación con padding: bucle perfecto */
+  color: #e8302a;                       /* rojo */
+  font: 900 18px system-ui, sans-serif; /* "logo" de texto */
+  letter-spacing: 2px;                  /* letras separadas */
+}
+.logos:hover .cinta {                   /* con el ratón encima… */
+  animation-play-state: paused;         /* …se detiene */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>18</span>Slider con scroll-snap</h4>
+  <p><b>Para:</b> pasar fotos con el dedo o la rueda: cada una se para justo en su sitio.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="slider">
+  <div class="slide s1">Pizza</div>
+  <div class="slide s2">Pasta</div>
+  <div class="slide s3">Postre</div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.slider {                               /* el contenedor */
+  display: flex;                        /* diapositivas en fila */
+  width: 280px;                         /* ancho: una diapositiva */
+  overflow-x: auto;                     /* desplazamiento horizontal */
+  scroll-snap-type: x mandatory;        /* al soltar, siempre se para en una diapositiva */
+  border: 3px solid #000000;            /* borde */
+}
+.slide {                                /* cada diapositiva */
+  flex: 0 0 100%;                       /* cada una ocupa todo el ancho */
+  height: 150px;                        /* alto */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* texto centrado */
+  scroll-snap-align: center;            /* se alinea por su centro */
+  color: #ffffff;                       /* blanco */
+  font: 900 26px system-ui, sans-serif; /* texto grande */
+}
+.s1 { background: #e8302a; }            /* roja */
+.s2 { background: #2e8b57; }            /* verde */
+.s3 { background: #161617; }            /* negra */
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>19</span>Carrusel con botones</h4>
+  <p><b>Para:</b> diapositivas con puntos para elegir. Haz clic en los puntos.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="galeria">
+  <input type="radio" name="foto" id="f1" checked>
+  <input type="radio" name="foto" id="f2">
+  <input type="radio" name="foto" id="f3">
+  <div class="ventana">
+    <div class="tira">
+      <div class="foto">Margarita</div><div class="foto">Diavola</div><div class="foto">Punk</div>
+    </div>
+  </div>
+  <div class="puntos"><label for="f1"></label><label for="f2"></label><label for="f3"></label></div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.galeria {                              /* el conjunto */
+  width: 260px;                         /* ancho */
+}
+.galeria input {                        /* los radios reales */
+  position: absolute;                   /* existen… */
+  opacity: 0;                           /* …pero no se ven */
+}
+.ventana {                              /* el marco */
+  overflow: hidden;                     /* solo se ve una foto */
+  border: 3px solid #000000;            /* borde */
+}
+.tira {                                 /* las tres fotos en fila */
+  display: flex;                        /* en fila */
+  width: 300%;                          /* tres veces el ancho del marco */
+  transition: translate 0.5s ease;      /* desliza suave */
+}
+.foto {                                 /* cada foto */
+  width: 100%;                          /* un tercio de la tira = el marco */
+  height: 140px;                        /* alto */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* texto centrado */
+  background: #e8302a;                  /* roja */
+  color: #ffffff;                       /* blanco */
+  font: 900 24px system-ui, sans-serif; /* texto */
+}
+.foto:nth-child(2) { background: #ffc23c; color: #000000; } /* la segunda, queso */
+.foto:nth-child(3) { background: #161617; }                 /* la tercera, negra */
+#f2:checked ~ .ventana .tira { translate: -33.333% 0; }     /* segundo punto: una foto a la izquierda */
+#f3:checked ~ .ventana .tira { translate: -66.666% 0; }     /* tercer punto: dos fotos */
+.puntos {                               /* los puntos */
+  display: flex;                        /* en fila */
+  justify-content: center;              /* centrados */
+  gap: 8px;                             /* separación */
+  margin-top: 8px;                      /* separación */
+}
+.puntos label {                         /* cada punto */
+  width: 16px;                          /* tamaño */
+  height: 16px;                         /* tamaño */
+  border-radius: 50%;                   /* redondo */
+  background: #cccccc;                  /* gris */
+  border: 2px solid #000000;            /* borde */
+  cursor: pointer;                      /* manita */
+}
+#f1:checked ~ .puntos label[for="f1"],  /* comparte las reglas con el selector de abajo */
+#f2:checked ~ .puntos label[for="f2"],  /* comparte las reglas con el selector de abajo */
+#f3:checked ~ .puntos label[for="f3"] { /* el punto de la foto visible */
+  background: #e8302a;                  /* rojo */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>20</span>Carrusel vertical sin salto</h4>
+  <p><b>Para:</b> pedidos o reseñas que suben solos.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="pedidos">
+  <ul class="columna">
+    <li>Mesa 4 · Carbonara</li><li>Mesa 7 · Diavola</li><li>Mesa 2 · Tiramisú</li>
+    <li aria-hidden="true">Mesa 4 · Carbonara</li><li aria-hidden="true">Mesa 7 · Diavola</li><li aria-hidden="true">Mesa 2 · Tiramisú</li>
+  </ul>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes subir {                      /* guion "subir" */
+  to { transform: translateY(-50%); }   /* sube una copia entera */
+}
+.pedidos {                              /* el marco */
+  width: 240px;                         /* ancho */
+  height: 140px;                        /* alto: la ventana */
+  overflow: hidden;                     /* esconde lo que sale */
+  background: #161617;                  /* asfalto */
+  border: 3px solid #e8302a;            /* borde rojo */
+}
+.columna {                              /* la lista */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin relleno */
+  list-style: none;                     /* sin viñetas */
+  animation: subir 8s linear infinite;  /* sube sin fin */
+}
+.columna li {                           /* cada pedido */
+  padding: 12px 14px;                   /* relleno (nunca gap) */
+  border-bottom: 1px dashed #555555;    /* separador */
+  color: #ffc23c;                       /* queso */
+  font: 700 15px monospace;             /* letra de ticket */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>21</span>Fila con barra de scroll a juego</h4>
+  <p><b>Para:</b> listas horizontales con barra bonita. Desplázala.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="fila">
+  <img src="img/cocina/ajo.webp" alt="Ajo">
+  <img src="img/cocina/queso.webp" alt="Queso">
+  <img src="img/cocina/tomate.webp" alt="Tomate">
+  <img src="img/cocina/masa.webp" alt="Masa">
+  <img src="img/cocina/salsa.webp" alt="Salsa">
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.fila {                                 /* la fila */
+  display: flex;                        /* en fila */
+  gap: 14px;                            /* separación */
+  width: 280px;                         /* ancho */
+  padding: 10px;                        /* relleno */
+  overflow-x: auto;                     /* desplazamiento horizontal */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde */
+  scrollbar-width: thin;                /* barra fina (estándar) */
+  scrollbar-color: #e8302a #ece6d8;     /* color de la barra y del carril */
+}
+.fila img {                             /* cada imagen */
+  flex: none;                           /* no se encoge */
+  width: 90px;                          /* tamaño */
+  height: 90px;                         /* tamaño */
+  object-fit: contain;                  /* sin deformar */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/salsa.webp" alt=""><h3>Botones<small>Recetas 22 a 29</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>22</span>Relleno que barre</h4>
+  <p><b>Para:</b> botones con borde. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="barrer">Reservar mesa</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.barrer {                               /* el botón */
+  position: relative;                   /* referencia para el relleno */
+  isolation: isolate;                   /* capa propia: el relleno queda dentro */
+  overflow: hidden;                     /* el relleno no se sale */
+  padding: 14px 24px;                   /* relleno */
+  background: transparent;              /* sin fondo */
+  color: #e8302a;                       /* texto rojo */
+  border: 3px solid #e8302a;            /* borde rojo */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+  transition: color 0.3s;               /* el texto cambia suave */
+}
+.barrer::before {                       /* el relleno */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* ocupa todo el botón */
+  inset: 0;                             /* de borde a borde */
+  z-index: -1;                          /* detrás del texto */
+  background: #e8302a;                  /* rojo */
+  scale: 0 1;                           /* sin ancho */
+  transform-origin: left;               /* crece desde la izquierda */
+  transition: scale 0.3s ease;          /* crece suave */
+}
+.barrer:hover {                         /* con el ratón encima… */
+  color: #ffffff;                       /* …texto blanco */
+}
+.barrer:hover::before {                 /* …y el relleno… */
+  scale: 1 1;                           /* …ocupa todo */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>23</span>Halo que respira</h4>
+  <p><b>Para:</b> el botón más importante de la página.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="halo">Pedir ahora</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes halo {                       /* guion "halo" */
+  from { box-shadow: 0 0 0 0 rgba(232, 48, 42, 0.7); }  /* sin halo */
+  to   { box-shadow: 0 0 0 16px rgba(232, 48, 42, 0); } /* halo grande y transparente */
+}
+.halo {                                 /* el botón */
+  padding: 14px 26px;                   /* relleno */
+  background: #e8302a;                  /* rojo */
+  color: #ffffff;                       /* blanco */
+  border: 3px solid #000000;            /* borde */
+  border-radius: 999px;                 /* forma de píldora */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+  animation: halo 1.6s ease-out infinite; /* el halo sale una y otra vez */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>24</span>Botón que se hunde</h4>
+  <p><b>Para:</b> sensación de botón físico. Púlsalo.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="hundir">¡Al horno!</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.hundir {                               /* el botón */
+  padding: 14px 26px;                   /* relleno */
+  background: #ffc23c;                  /* queso */
+  color: #000000;                       /* negro */
+  border: 3px solid #000000;            /* borde */
+  box-shadow: 0 7px 0 #000000;          /* sombra sólida: el grosor del botón */
+  font: 900 18px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+  transition: translate 0.08s, box-shadow 0.08s; /* cambio muy rápido */
+}
+.hundir:active {                        /* mientras se pulsa… */
+  translate: 0 7px;                     /* …baja */
+  box-shadow: 0 0 0 #000000;            /* …y pierde el grosor */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>25</span>Flecha que avanza</h4>
+  <p><b>Para:</b> «Siguiente» o «Ver carta». Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<a class="flecha" href="#">Ver la carta <span>→</span></a>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes empujar {                    /* guion "empujar" */
+  50% { translate: 6px 0; }             /* a mitad, un poco a la derecha */
+}
+.flecha {                               /* el enlace */
+  display: inline-flex;                 /* texto y flecha en fila */
+  gap: 8px;                             /* separación */
+  padding: 12px 22px;                   /* relleno */
+  background: #161617;                  /* asfalto */
+  color: #ffffff;                       /* blanco */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  text-decoration: none;                /* sin subrayado */
+}
+.flecha span {                          /* la flecha */
+  display: inline-block;                /* para poder moverla */
+  color: #e8302a;                       /* roja */
+}
+.flecha:hover span {                    /* con el ratón encima… */
+  animation: empujar 0.6s ease-in-out infinite; /* …empuja */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>26</span>Borde que se dibuja</h4>
+  <p><b>Para:</b> botones elegantes sin relleno. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="dibujar">Ver menú</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.dibujar {                              /* el botón */
+  position: relative;                   /* referencia para las líneas */
+  padding: 14px 26px;                   /* relleno */
+  background: transparent;              /* sin fondo */
+  border: 0;                            /* sin borde: lo dibujamos */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+}
+.dibujar::before,                       /* comparte las reglas con el selector de abajo */
+.dibujar::after {                       /* las dos líneas en L */
+  content: "";                          /* pseudoelementos vacíos */
+  position: absolute;                   /* sobre el botón */
+  width: 0;                             /* sin ancho */
+  height: 0;                            /* sin alto */
+  border: 3px solid transparent;        /* bordes invisibles */
+}
+.dibujar::before { top: 0; left: 0; }   /* la primera, desde arriba a la izquierda */
+.dibujar::after { bottom: 0; right: 0; } /* la segunda, desde abajo a la derecha */
+.dibujar:hover::before,                 /* comparte las reglas con el selector de abajo */
+.dibujar:hover::after {                 /* con el ratón encima, las dos… */
+  width: 100%;                          /* …crecen a lo ancho */
+  height: 100%;                         /* …y a lo alto */
+  transition: width 0.25s, height 0.25s 0.25s; /* primero el ancho, luego el alto */
+}
+.dibujar:hover::before {                /* la primera se pinta… */
+  border-top-color: #e8302a;            /* …arriba */
+  border-right-color: #e8302a;          /* …y a la derecha */
+}
+.dibujar:hover::after {                 /* la segunda se pinta… */
+  border-bottom-color: #e8302a;         /* …abajo */
+  border-left-color: #e8302a;           /* …y a la izquierda */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>27</span>Degradado vivo</h4>
+  <p><b>Para:</b> botones de portada con color.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="vivo">Únete al club</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes fluir {                      /* guion "fluir" */
+  0%, 100% { background-position: 0% 50%; }  /* izquierda del degradado */
+  50%      { background-position: 100% 50%; } /* derecha del degradado */
+}
+.vivo {                                 /* el botón */
+  padding: 14px 30px;                   /* relleno */
+  color: #ffffff;                       /* blanco */
+  border: 3px solid #000000;            /* borde */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+  background: linear-gradient(90deg, #e8302a, #ff2d8a, #ffc23c, #e8302a); /* cuatro colores */
+  background-size: 300% 100%;           /* tres veces el botón */
+  animation: fluir 5s ease infinite;    /* el color fluye */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>28</span>Onda al pulsar</h4>
+  <p><b>Para:</b> respuesta visual al clic. Mantén pulsado.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="onda">Añadir al pedido</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes ola {                        /* guion "ola" */
+  from { scale: 0; opacity: 0.6; }      /* onda diminuta */
+  to   { scale: 4; opacity: 0; }        /* onda enorme e invisible */
+}
+.onda {                                 /* el botón */
+  position: relative;                   /* referencia para la onda */
+  overflow: hidden;                     /* la onda no se sale */
+  padding: 14px 24px;                   /* relleno */
+  background: #2e8b57;                  /* verde albahaca */
+  color: #ffffff;                       /* blanco */
+  border: 3px solid #000000;            /* borde */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+}
+.onda::after {                          /* la onda */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* centrada */
+  left: calc(50% - 30px);               /* centrada en horizontal (mide 60px) */
+  top: calc(50% - 30px);                /* centrada en vertical */
+  width: 60px;                          /* tamaño base */
+  height: 60px;                         /* tamaño base */
+  border-radius: 50%;                   /* redonda */
+  background: #ffffff;                  /* blanca */
+  opacity: 0;                           /* invisible en reposo */
+}
+.onda:active::after {                   /* al pulsar… */
+  animation: ola 0.6s ease-out;         /* …sale la onda */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>29</span>Brillo que cruza el botón</h4>
+  <p><b>Para:</b> llamar la atención sin molestar.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<button class="brillo">Oferta del día</button>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes cruzar {                     /* guion "cruzar" */
+  0%, 70% { translate: -150% 0; }       /* esperando fuera, a la izquierda */
+  100%    { translate: 350% 0; }        /* ha cruzado */
+}
+.brillo {                               /* el botón */
+  position: relative;                   /* referencia para el brillo */
+  overflow: hidden;                     /* no se sale */
+  padding: 14px 26px;                   /* relleno */
+  background: #ffc23c;                  /* queso */
+  border: 3px solid #000000;            /* borde */
+  font: 800 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+}
+.brillo::after {                        /* el brillo */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* encima */
+  inset: 0 auto 0 0;                    /* de arriba abajo, a la izquierda */
+  width: 30%;                           /* franja de luz */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent); /* luz */
+  transform: skewX(-20deg);             /* inclinada */
+  animation: cruzar 3s ease-in-out infinite; /* cruza cada 3 s */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/tomate.webp" alt=""><h3>Imágenes y galerías<small>Recetas 30 a 35</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>30</span>Zoom dentro del marco</h4>
+  <p><b>Para:</b> galerías: la imagen crece sin salirse. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<figure class="marco"><img src="img/cocina/queso.webp" alt="Queso"></figure>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.marco {                                /* el marco */
+  width: 180px;                         /* ancho */
+  height: 160px;                        /* alto */
+  margin: 0;                            /* sin márgenes de figure */
+  overflow: hidden;                     /* recorta lo que crece */
+  background: #2e8b57;                  /* verde */
+  border: 3px solid #000000;            /* borde */
+}
+.marco img {                            /* la imagen */
+  width: 100%;                          /* todo el ancho */
+  height: 100%;                         /* todo el alto */
+  object-fit: contain;                  /* sin deformar */
+  transition: scale 0.5s ease;          /* zoom suave */
+}
+.marco:hover img {                      /* con el ratón sobre el marco… */
+  scale: 1.3;                           /* …la imagen crece */
+}
+</textarea>
+</article>
+
+<article class="ricetta" data-h="240">
+  <h4><span>31</span>De gris a color</h4>
+  <p><b>Para:</b> logos de clientes, equipos. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<img class="gris" src="img/cocina/vino.webp" alt="Copa de vino">
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.gris {                                 /* la imagen */
+  width: 140px;                         /* tamaño */
+  height: auto;                         /* sin deformar */
+  filter: grayscale(1);                 /* en blanco y negro */
+  transition: filter 0.4s ease;         /* el color vuelve suave */
+}
+.gris:hover {                           /* con el ratón encima… */
+  filter: grayscale(0);                 /* …recupera el color */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>32</span>Zoom lento (Ken Burns)</h4>
+  <p><b>Para:</b> fondos de portada que parecen vídeo.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="ventana"><div class="fondo"></div></div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes acercar {                    /* guion "acercar" */
+  from { scale: 1; }                    /* plano general */
+  to   { scale: 1.4; }                  /* más cerca */
+}
+.ventana {                              /* el marco */
+  width: 260px;                         /* ancho */
+  height: 150px;                        /* alto */
+  overflow: hidden;                     /* recorta lo que crece */
+  border: 3px solid #000000;            /* borde */
+}
+.fondo {                                /* la "foto" */
+  width: 100%;                          /* todo el ancho */
+  height: 100%;                         /* todo el alto */
+  background: url(img/cocina/mantel.webp) center / 120px, #ffffff; /* imagen de fondo */
+  animation: acercar 10s ease-in-out infinite alternate; /* muy lento, va y vuelve */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>33</span>Ampliar una foto (lightbox con :target)</h4>
+  <p><b>Para:</b> ver una imagen en grande. Pulsa la miniatura y luego la ×.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<a class="miniatura" href="#grande"><img src="img/cocina/cannoli.webp" alt="Cannoli"></a>
+<div class="lightbox" id="grande">
+  <a class="cerrar" href="#">×</a>
+  <img src="img/cocina/cannoli.webp" alt="Cannoli en grande">
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.miniatura img {                        /* la miniatura */
+  width: 90px;                          /* pequeña */
+  height: auto;                         /* sin deformar */
+  border: 3px solid #000000;            /* borde */
+  background: #ffffff;                  /* fondo blanco */
+}
+.lightbox {                             /* la capa grande */
+  position: fixed;                      /* fija, sobre toda la página */
+  inset: 0;                             /* ocupa toda la pantalla */
+  display: none;                        /* escondida */
+  place-items: center;                  /* imagen centrada */
+  background: rgba(0, 0, 0, 0.8);       /* fondo oscuro */
+}
+.lightbox:target {                      /* cuando la URL termina en #grande… */
+  display: grid;                        /* …se muestra */
+}
+.lightbox img {                         /* la imagen grande */
+  width: min(80%, 260px);               /* grande, sin pasarse */
+  height: auto;                         /* sin deformar */
+}
+.cerrar {                               /* la cruz */
+  position: absolute;                   /* arriba a la derecha */
+  top: 8px;                             /* separación */
+  right: 16px;                          /* separación */
+  color: #ffffff;                       /* blanca */
+  font: 900 36px system-ui, sans-serif; /* grande */
+  text-decoration: none;                /* sin subrayado */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>34</span>Galería acordeón</h4>
+  <p><b>Para:</b> fotos en fila: la que señalas se ensancha. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="acordeon">
+  <div class="panel p1">Pizza</div>
+  <div class="panel p2">Pasta</div>
+  <div class="panel p3">Vino</div>
+  <div class="panel p4">Café</div>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.acordeon {                             /* la fila */
+  display: flex;                        /* paneles en fila */
+  gap: 6px;                             /* separación */
+  width: 300px;                         /* ancho */
+  height: 150px;                        /* alto */
+}
+.panel {                                /* cada panel */
+  flex: 1;                              /* todos igual de anchos */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* texto centrado */
+  overflow: hidden;                     /* el texto no se sale cuando es estrecho */
+  border: 3px solid #000000;            /* borde */
+  color: #ffffff;                       /* blanco */
+  font: 800 15px system-ui, sans-serif; /* texto */
+  transition: flex 0.4s ease;           /* ensancha suave */
+}
+.panel:hover {                          /* el panel bajo el ratón… */
+  flex: 4;                              /* …cuatro veces más ancho que los demás */
+}
+.p1 { background: #e8302a; }            /* rojo */
+.p2 { background: #ffc23c; color: #000000; } /* queso */
+.p3 { background: #7a1f3d; }            /* vino */
+.p4 { background: #3b2a20; }            /* café */
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>35</span>Revelado circular</h4>
+  <p><b>Para:</b> descubrir una imagen. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="revelar"><img src="img/cocina/espaguetis.webp" alt="Espaguetis"></div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.revelar {                              /* el marco */
+  width: 170px;                         /* ancho */
+  height: 170px;                        /* alto */
+  background: #161617;                  /* negro */
+  border: 3px solid #000000;            /* borde */
+}
+.revelar img {                          /* la imagen */
+  width: 100%;                          /* todo el ancho */
+  height: 100%;                         /* todo el alto */
+  object-fit: contain;                  /* sin deformar */
+  clip-path: circle(12% at 50% 50%);    /* solo se ve un círculo pequeño */
+  transition: clip-path 0.6s ease;      /* se abre suave */
+}
+.revelar:hover img {                    /* con el ratón encima… */
+  clip-path: circle(75% at 50% 50%);    /* …el círculo crece y la descubre */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/masa.webp" alt=""><h3>Formularios<small>Recetas 36 a 41</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>36</span>Etiqueta flotante</h4>
+  <p><b>Para:</b> formularios limpios: la etiqueta sube al escribir. Escribe en el campo.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<label class="flotante">
+  <input type="text" placeholder=" ">
+  <span>Tu nombre</span>
+</label>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.flotante {                             /* el conjunto */
+  position: relative;                   /* referencia para la etiqueta */
+  display: block;                       /* bloque */
+  width: 260px;                         /* ancho */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.flotante input {                       /* el campo */
+  width: 100%;                          /* todo el ancho */
+  padding: 22px 12px 8px;               /* relleno: sitio arriba para la etiqueta */
+  border: 3px solid #000000;            /* borde */
+  font: inherit;                        /* misma letra */
+}
+.flotante span {                        /* la etiqueta */
+  position: absolute;                   /* encima del campo */
+  left: 12px;                           /* a la izquierda */
+  top: 15px;                            /* en medio del campo */
+  color: #777777;                       /* gris */
+  pointer-events: none;                 /* el clic pasa al campo */
+  transition: top 0.2s, font-size 0.2s, color 0.2s; /* sube suave */
+}
+.flotante input:focus + span,           /* comparte las reglas con el selector de abajo */
+.flotante input:not(:placeholder-shown) + span { /* al escribir o con texto dentro… */
+  top: 4px;                             /* …la etiqueta sube */
+  font-size: 12px;                      /* …se hace pequeña */
+  color: #e8302a;                       /* …y se vuelve roja */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>37</span>Interruptor</h4>
+  <p><b>Para:</b> ajustes de sí o no. Haz clic.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<label class="interruptor">
+  <input type="checkbox">
+  <span class="carril"></span>
+  Extra de queso
+</label>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.interruptor {                          /* la etiqueta */
+  display: flex;                        /* carril y texto en fila */
+  align-items: center;                  /* centrados */
+  gap: 10px;                            /* separación */
+  font: 700 17px system-ui, sans-serif; /* texto */
+  cursor: pointer;                      /* manita */
+}
+.interruptor input {                    /* la casilla real */
+  position: absolute;                   /* existe… */
+  opacity: 0;                           /* …pero no se ve */
+}
+.carril {                               /* el carril */
+  position: relative;                   /* referencia para la bola */
+  width: 54px;                          /* ancho */
+  height: 30px;                         /* alto */
+  background: #cccccc;                  /* gris: apagado */
+  border: 3px solid #000000;            /* borde */
+  border-radius: 999px;                 /* píldora */
+  transition: background 0.3s;          /* color suave */
+}
+.carril::after {                        /* la bola */
+  content: "";                          /* pseudoelemento vacío */
+  position: absolute;                   /* dentro del carril */
+  top: 2px;                             /* separación arriba */
+  left: 2px;                            /* separación izquierda */
+  width: 20px;                          /* tamaño */
+  height: 20px;                         /* tamaño */
+  background: #ffffff;                  /* blanca */
+  border: 2px solid #000000;            /* borde */
+  border-radius: 50%;                   /* redonda */
+  transition: translate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* se desliza con rebote */
+}
+.interruptor input:checked + .carril {  /* encendido */
+  background: #e8302a;                  /* rojo */
+}
+.interruptor input:checked + .carril::after { /* bola encendida */
+  translate: 24px 0;                    /* a la derecha */
+}
+.interruptor input:focus-visible + .carril { /* foco con teclado */
+  outline: 3px solid #ffc23c;           /* visible */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>38</span>Casilla personalizada</h4>
+  <p><b>Para:</b> casillas con el estilo de tu web. Haz clic.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<label class="casilla"><input type="checkbox"> Acepto las normas de la casa</label>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.casilla {                              /* la etiqueta */
+  display: flex;                        /* casilla y texto en fila */
+  align-items: center;                  /* centrados */
+  gap: 10px;                            /* separación */
+  font: 17px system-ui, sans-serif;     /* texto */
+  cursor: pointer;                      /* manita */
+}
+.casilla input {                        /* la casilla */
+  appearance: none;                     /* quita el aspecto del navegador */
+  width: 26px;                          /* tamaño */
+  height: 26px;                         /* tamaño */
+  margin: 0;                            /* sin márgenes */
+  display: grid;                        /* para centrar el check */
+  place-items: center;                  /* check centrado */
+  background: #ffffff;                  /* blanca */
+  border: 3px solid #000000;            /* borde */
+  cursor: pointer;                      /* manita */
+}
+.casilla input::after {                 /* el check */
+  content: "✓";                         /* símbolo */
+  color: #ffffff;                       /* blanco */
+  font: 900 18px system-ui, sans-serif; /* grande */
+  scale: 0;                             /* escondido */
+  transition: scale 0.2s ease;          /* aparece con un pop */
+}
+.casilla input:checked {                /* marcada */
+  background: #e8302a;                  /* roja */
+}
+.casilla input:checked::after {         /* check marcado */
+  scale: 1;                             /* visible */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>39</span>Radios como botones</h4>
+  <p><b>Para:</b> elegir una opción entre pocas. Haz clic.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<fieldset class="tamano">
+  <legend>Tamaño</legend>
+  <label><input type="radio" name="t" checked><span>S</span></label>
+  <label><input type="radio" name="t"><span>M</span></label>
+  <label><input type="radio" name="t"><span>XL</span></label>
+</fieldset>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.tamano {                               /* el grupo */
+  display: flex;                        /* opciones en fila */
+  gap: 0;                               /* pegadas */
+  border: 0;                            /* sin borde de fieldset */
+  padding: 0;                           /* sin relleno */
+  font: 800 17px system-ui, sans-serif; /* texto */
+}
+.tamano legend {                        /* el título */
+  margin-bottom: 6px;                   /* separación */
+}
+.tamano input {                         /* los radios reales */
+  position: absolute;                   /* existen… */
+  opacity: 0;                           /* …pero no se ven */
+}
+.tamano span {                          /* cada botón */
+  display: block;                       /* con relleno */
+  padding: 10px 18px;                   /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde */
+  margin-left: -3px;                    /* bordes pegados sin doblarse */
+  cursor: pointer;                      /* manita */
+}
+.tamano input:checked + span {          /* la opción elegida */
+  background: #e8302a;                  /* roja */
+  color: #ffffff;                       /* blanca */
+}
+.tamano input:focus-visible + span {    /* foco con teclado */
+  outline: 3px solid #ffc23c;           /* visible */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>40</span>Campo que avisa si está mal</h4>
+  <p><b>Para:</b> validar sin JavaScript. Escribe algo que no sea un correo y sal del campo.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<label class="campo">Correo
+  <input type="email" required placeholder="tu@correo.com">
+  <small>Escribe un correo válido</small>
+</label>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes temblar {                    /* guion "temblar" */
+  25% { translate: -6px 0; }            /* izquierda */
+  75% { translate: 6px 0; }             /* derecha */
+}
+.campo {                                /* la etiqueta */
+  display: grid;                        /* texto, campo y aviso en columna */
+  gap: 6px;                             /* separación */
+  width: 260px;                         /* ancho */
+  font: 700 16px system-ui, sans-serif; /* texto */
+}
+.campo input {                          /* el campo */
+  padding: 10px 12px;                   /* relleno */
+  border: 3px solid #000000;            /* borde */
+  font: 16px system-ui, sans-serif;     /* texto */
+}
+.campo small {                          /* el aviso */
+  color: #e8302a;                       /* rojo */
+  visibility: hidden;                   /* escondido */
+}
+.campo input:user-invalid {             /* mal escrito, después de que la persona lo toque */
+  border-color: #e8302a;                /* borde rojo */
+  background: #fdeceb;                  /* fondo rosado */
+  animation: temblar 0.3s 2;            /* tiembla dos veces */
+}
+.campo input:user-invalid + small {     /* el aviso de un campo mal escrito */
+  visibility: visible;                  /* se muestra */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>41</span>Estrellas de valoración</h4>
+  <p><b>Para:</b> puntuar un plato. Haz clic en una estrella.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<fieldset class="estrellas">
+  <input type="radio" name="v" id="e5"><label for="e5">★</label>
+  <input type="radio" name="v" id="e4"><label for="e4">★</label>
+  <input type="radio" name="v" id="e3"><label for="e3">★</label>
+  <input type="radio" name="v" id="e2"><label for="e2">★</label>
+  <input type="radio" name="v" id="e1"><label for="e1">★</label>
+</fieldset>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.estrellas {                            /* el grupo */
+  display: flex;                        /* en fila */
+  flex-direction: row-reverse;          /* al revés: la 1 queda a la izquierda */
+  justify-content: flex-end;            /* alineadas a la izquierda */
+  border: 0;                            /* sin borde */
+  padding: 0;                           /* sin relleno */
+}
+.estrellas input {                      /* los radios reales */
+  position: absolute;                   /* existen… */
+  opacity: 0;                           /* …pero no se ven */
+}
+.estrellas label {                      /* cada estrella */
+  font-size: 40px;                      /* grande */
+  color: #cccccc;                       /* gris */
+  cursor: pointer;                      /* manita */
+  transition: color 0.2s;               /* color suave */
+}
+.estrellas input:checked ~ label,       /* comparte las reglas con el selector de abajo */
+.estrellas label:hover,                 /* comparte las reglas con el selector de abajo */
+.estrellas label:hover ~ label {        /* la elegida o señalada y las de su izquierda */
+  color: #ffc23c;                       /* doradas */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/cannoli.webp" alt=""><h3>Textos<small>Recetas 42 a 46</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>42</span>Máquina de escribir</h4>
+  <p><b>Para:</b> titulares de portada.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<p class="escribir">Buon appetito!</p>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes escribir {                   /* guion "escribir" */
+  from { width: 0; }                    /* sin letras */
+  to   { width: 14ch; }                 /* los 14 caracteres */
+}
+@keyframes cursor {                     /* guion "cursor" */
+  50% { border-color: transparent; }    /* el cursor desaparece a mitad */
+}
+.escribir {                             /* el texto */
+  width: 14ch;                          /* ancho final */
+  margin: 0;                            /* sin márgenes */
+  font: 700 26px monospace;             /* monoespaciada: cada letra mide 1ch */
+  white-space: nowrap;                  /* una línea */
+  overflow: hidden;                     /* esconde lo no escrito */
+  border-right: 3px solid #e8302a;      /* el cursor */
+  animation:                            /* dos animaciones: */
+    escribir 2s steps(14) both,         /* una letra por paso */
+    cursor 0.7s step-end infinite;      /* el cursor parpadea */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>43</span>Texto con degradado que fluye</h4>
+  <p><b>Para:</b> titulares llamativos.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<h2 class="salsa">Salsa secreta</h2>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes fluir {                      /* guion "fluir" */
+  to { background-position: 200% 0; }   /* desplaza el degradado */
+}
+.salsa {                                /* el título */
+  margin: 0;                            /* sin márgenes */
+  font: 900 40px system-ui, sans-serif; /* grande y grueso */
+  background: linear-gradient(90deg, #e8302a, #ffc23c, #2e8b57, #e8302a); /* acaba igual que empieza */
+  background-size: 200% 100%;           /* el doble de ancho */
+  -webkit-background-clip: text;        /* el fondo solo en las letras (Safari) */
+  background-clip: text;                /* el fondo solo en las letras */
+  color: transparent;                   /* letras transparentes */
+  animation: fluir 4s linear infinite;  /* el color fluye */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>44</span>Subrayado que crece</h4>
+  <p><b>Para:</b> enlaces dentro del texto. Pasa el ratón.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<p class="texto">Mira nuestra <a class="enlace" href="#">carta de vinos</a> antes de pedir.</p>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.texto {                                /* el párrafo */
+  margin: 0;                            /* sin márgenes */
+  font: 20px system-ui, sans-serif;     /* texto */
+}
+.enlace {                               /* el enlace */
+  color: #e8302a;                       /* rojo */
+  text-decoration: none;                /* sin subrayado normal */
+  background: linear-gradient(#e8302a, #e8302a) no-repeat left bottom; /* una línea de color… */
+  background-size: 0% 3px;              /* …sin ancho y de 3px de alto */
+  transition: background-size 0.3s ease; /* crece suave */
+}
+.enlace:hover {                         /* con el ratón encima… */
+  background-size: 100% 3px;            /* …la línea ocupa todo el enlace */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>45</span>Interferencia (glitch)</h4>
+  <p><b>Para:</b> webs gamberras o de música.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<p class="glitch" data-texto="PUNK">PUNK</p>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes salto-a {                    /* guion de la copia roja */
+  0%, 100% { translate: 0 0; }          /* en su sitio */
+  25%      { translate: -4px -2px; }    /* salto */
+  50%      { translate: 3px 1px; }      /* otro salto */
+}
+@keyframes salto-b {                    /* guion de la copia amarilla */
+  0%, 100% { translate: 0 0; }          /* en su sitio */
+  30%      { translate: 4px 2px; }      /* salto contrario */
+  60%      { translate: -3px 0; }       /* otro salto */
+}
+.glitch {                               /* el texto original */
+  position: relative;                   /* referencia para las copias */
+  margin: 0;                            /* sin márgenes */
+  font: 900 56px system-ui, sans-serif; /* grande */
+  color: #161617;                       /* negro */
+}
+.glitch::before,                        /* comparte las reglas con el selector de abajo */
+.glitch::after {                        /* las dos copias */
+  content: attr(data-texto);            /* copian el texto del atributo */
+  position: absolute;                   /* encima del original */
+  inset: 0;                             /* en el mismo sitio */
+}
+.glitch::before {                       /* copia de arriba */
+  color: #e8302a;                       /* roja */
+  clip-path: inset(0 0 55% 0);          /* solo la mitad de arriba */
+  animation: salto-a 1.4s steps(1) infinite; /* saltos secos */
+}
+.glitch::after {                        /* copia de abajo */
+  color: #ffc23c;                       /* amarilla */
+  clip-path: inset(55% 0 0 0);          /* solo la mitad de abajo */
+  animation: salto-b 1.4s steps(1) infinite; /* saltos secos */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>46</span>Rotulador fosforito</h4>
+  <p><b>Para:</b> destacar la frase clave.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<p class="frase">La pasta se cuece <mark class="marca">al dente</mark>, nunca de más.</p>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes pintar {                     /* guion "pintar" */
+  from { background-size: 0% 45%; }     /* sin pintar */
+  to   { background-size: 100% 45%; }   /* pintado */
+}
+.frase {                                /* el párrafo */
+  margin: 0;                            /* sin márgenes */
+  font: 22px system-ui, sans-serif;     /* texto */
+}
+.marca {                                /* lo resaltado */
+  color: inherit;                       /* mismo color que el texto */
+  background: linear-gradient(#ffc23c, #ffc23c) no-repeat 0 85%; /* bloque de color abajo */
+  animation: pintar 1s ease-out 0.4s both; /* espera y pinta */
+}
+</textarea>
+</article>
+
+  </div>
+
+  <div class="familia-rec"><img src="img/cocina/mantel.webp" alt=""><h3>Decoración e interfaz<small>Recetas 47 a 50</small></h3></div>
+  <div class="recetario">
+
+<article class="ricetta">
+  <h4><span>47</span>Bocadillo de ayuda (tooltip)</h4>
+  <p><b>Para:</b> explicar un icono. Pasa el ratón o llega con Tab.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<span class="ayuda">
+  <button type="button" aria-describedby="t1">🌶</button>
+  <span class="tip" id="t1" role="tooltip">Muy picante</span>
+</span>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.ayuda {                                /* el envoltorio */
+  position: relative;                   /* referencia para colocar el bocadillo */
+  display: inline-block;                /* tan ancho como el botón */
+  margin-top: 50px;                     /* sitio para el bocadillo */
+}
+.ayuda button {                         /* el botón */
+  padding: 8px 12px;                    /* relleno */
+  background: #ffffff;                  /* blanco */
+  border: 3px solid #000000;            /* borde */
+  font-size: 22px;                      /* icono grande */
+  cursor: help;                         /* cursor de ayuda */
+}
+.tip {                                  /* el bocadillo */
+  position: absolute;                   /* flota sobre el botón */
+  bottom: calc(100% + 8px);             /* justo encima, con 8px de aire */
+  left: 50%;                            /* centrado… */
+  translate: -50% 0;                    /* …de verdad */
+  padding: 6px 10px;                    /* relleno */
+  white-space: nowrap;                  /* una línea */
+  background: #161617;                  /* negro */
+  color: #ffffff;                       /* blanco */
+  font: 700 14px system-ui, sans-serif; /* texto */
+  opacity: 0;                           /* escondido */
+  pointer-events: none;                 /* no molesta al ratón */
+  transition: opacity 0.2s;             /* aparece suave */
+}
+.ayuda:hover .tip,                      /* comparte las reglas con el selector de abajo */
+.ayuda:focus-within .tip {              /* con el ratón encima o el foco en el botón… */
+  opacity: 1;                           /* …se ve */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>48</span>Cinta de esquina</h4>
+  <p><b>Para:</b> marcar novedades en una tarjeta.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="novedad">
+  <span class="cinta">NUEVA</span>
+  Pizza de calabaza
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.novedad {                              /* la tarjeta */
+  position: relative;                   /* referencia para la cinta */
+  overflow: hidden;                     /* corta la cinta en la esquina */
+  width: 220px;                         /* ancho */
+  padding: 50px 16px;                   /* relleno */
+  background: #ffffff;                  /* blanca */
+  border: 3px solid #000000;            /* borde */
+  text-align: center;                   /* centrado */
+  font: 800 18px system-ui, sans-serif; /* texto */
+}
+.cinta {                                /* la cinta */
+  position: absolute;                   /* en la esquina */
+  top: 16px;                            /* separación de arriba */
+  right: -38px;                         /* sobresale a la derecha */
+  width: 140px;                         /* largo de la cinta */
+  padding: 4px 0;                       /* relleno */
+  background: #e8302a;                  /* roja */
+  color: #ffffff;                       /* blanca */
+  font-size: 13px;                      /* texto pequeño */
+  rotate: 45deg;                        /* en diagonal */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>49</span>Cargador: pizza que gira</h4>
+  <p><b>Para:</b> mientras se prepara el pedido.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="cargando" role="status" aria-label="Preparando tu pedido">
+  <img src="img/cocina/pizza.webp" alt="">
+  <p>Preparando tu pedido…</p>
+</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+@keyframes girar {                      /* guion "girar" */
+  to { rotate: 360deg; }                /* una vuelta */
+}
+.cargando {                             /* el conjunto */
+  display: grid;                        /* imagen y texto en columna */
+  justify-items: center;                /* centrados */
+  gap: 8px;                             /* separación */
+  font: 700 16px system-ui, sans-serif; /* texto */
+}
+.cargando img {                         /* la pizza */
+  width: 80px;                          /* tamaño */
+  height: auto;                         /* sin deformar */
+  animation: girar 1.4s linear infinite; /* gira a velocidad constante */
+}
+.cargando p {                           /* el texto */
+  margin: 0;                            /* sin márgenes */
+}
+</textarea>
+</article>
+
+<article class="ricetta">
+  <h4><span>50</span>Fondo de mantel de cuadros</h4>
+  <p><b>Para:</b> fondos con sabor a trattoria, sin imágenes: dos degradados cruzados.</p>
+<textarea class="src" data-lang="html" data-title="HTML">
+<div class="mantel">Tavola calda</div>
+</textarea>
+<textarea class="src" data-lang="css" data-title="CSS">
+.mantel {                               /* la caja */
+  width: 260px;                         /* ancho */
+  height: 150px;                        /* alto */
+  display: grid;                        /* para centrar */
+  place-items: center;                  /* texto centrado */
+  border: 3px solid #000000;            /* borde */
+  font: italic 900 26px Georgia, serif; /* letrero */
+  background:                           /* tres capas: */
+    linear-gradient(90deg, rgba(232, 48, 42, 0.5) 50%, transparent 0) 0 0 / 30px 30px, /* bandas verticales */
+    linear-gradient(rgba(232, 48, 42, 0.5) 50%, transparent 0) 0 0 / 30px 30px,       /* bandas horizontales */
+    #ffffff;                                                                          /* fondo blanco */
+}
+</textarea>
+</article>
+
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="sec" id="test" data-nav="Test" data-prop="vino"
+  data-fip="Antes de pedir ayuda, revisa tres cosas: ¿box-sizing? ¿Qué overflow tiene el padre? ¿Va la propiedad en el padre o en el hijo?">
+  <div class="sec-head reveal"><div class="sec-num">13</div><div class="sec-title"><span class="curso">Il conto</span><h2>Test final</h2><br><p>La cuenta, por favor: todas las preguntas juntas, con su explicación.</p></div></div>
+  <div class="panel w reveal">
+    <h3 class="sub-test" style="margin-top:0">Preguntas</h3>
+    <div id="quiz"></div>
+    <h3 class="sub-test">Arregla el código</h3>
+    <div id="fixes"></div>
+    <div class="score"><span style="font-family:var(--marker);font-size:20px">Puntuación:</span><b id="qScore">0</b><button class="btn sm" id="qAll" type="button" style="margin-left:auto">Corregir todo</button><button class="btn sm y" id="qReset" type="button">Empezar de nuevo</button></div>
+  </div>
+</section>
+
+</main>
+
+<div class="ticker p" aria-hidden="true"><div id="tk2"></div></div>
+<footer>
+  <div class="wrap">
+    <div><div class="ft">GRAZIE MILLE</div><p>La cocina cierra, el CSS no.</p></div>
+    <img src="img/cocina/cafetera.webp" alt="">
+    <a class="btn y" href="#inicio">Volver arriba</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- cajas de código ---------- */
+function hlDecl(d){return d.replace(/([\w-]+)(\s*):(\s*)([^;]*)(;?)/g,(m,p,a,b,v,sc)=>'<span class="p">'+esc(p)+'</span>'+a+':'+b+'<span class="v">'+esc(v)+'</span>'+sc);}
+function hlCssLine(line){
+  let code=line,com='';const i=line.indexOf('/*');if(i>=0){code=line.slice(0,i);com=line.slice(i);}
+  let out;
+  if(code.indexOf('{')>=0){const j=code.indexOf('{');const after=code.slice(j+1);out='<span class="s">'+esc(code.slice(0,j))+'</span>{'+(after.indexOf(':')>=0?hlDecl(after.replace('}',''))+(after.indexOf('}')>=0?'}':''):esc(after));}
+  else if(/^\s*\}/.test(code))out=esc(code);
+  else if(/^\s*[\w-]+\s*:/.test(code))out=hlDecl(code);
+  else out=esc(code);
+  return out+(com?'<span class="c">'+esc(com)+'</span>':'');
+}
+function hlHtmlLine(h){
+  return esc(h).replace(/([\w-]+)="([^"]*)"/g,'<span class="p">$1</span>=<span class="v">"$2"</span>').replace(/(&lt;\/?)([\w-]+)/g,'$1<span class="t">$2</span>');
+}
+const render=(lang,src)=>src.split('\n').map(l=>lang==='html'?hlHtmlLine(l):hlCssLine(l)).join('\n');
+function copyText(txt,btn){
+  const done=()=>{const o=btn.dataset.o||btn.textContent;btn.dataset.o=o;btn.textContent='¡Copiado!';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},1300);};
+  const fb=()=>{const t=el('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,fb);else fb();
+}
+function codeBox(lang,src,title){
+  const w=el('div','code');w.innerHTML=`<div class="bar"><span>${esc(title||lang.toUpperCase())}</span><button class="copy" type="button">Copiar</button></div><pre></pre>`;
+  w.set=s=>{s=s.replace(/^\n+|\s+$/g,'');w.src=s;$('pre',w).innerHTML=render(lang,s);};
+  w.set(src);$('.copy',w).onclick=e=>copyText(w.src,e.currentTarget);return w;
+}
+
+/* ---------- ejemplos en vivo: mini página con el mismo HTML y CSS que se muestran ---------- */
+const BASE='*{box-sizing:border-box}html,body{height:100%}body{margin:0;padding:16px;display:flex;flex-wrap:wrap;align-items:center;align-content:center;justify-content:center;gap:12px;background:#ece6d8;color:#1a1209;font:16px/1.5 system-ui,sans-serif}';
+/* las rutas img/ se hacen absolutas y la base pasa a about:srcdoc: así las imágenes cargan y los enlaces #ancla se quedan dentro de la viñeta */
+const IMG=new URL('img/',location.href).href;
+const abs=s=>s.replace(/(["'(\s])img\//g,'$1'+IMG);
+let n=0;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.play();io.unobserve(e.target);}}),{rootMargin:'200px 0px'});
+function vineta(h,css,alto){
+  const v=el('div','vineta');v.innerHTML='<div class="barra"><span>Resultado en vivo</span><button type="button">↻ Recargar</button></div>';
+  const f=el('iframe');f.title='Resultado del ejemplo';f.style.height=alto+'px';v.appendChild(f);
+  v.play=()=>{f.srcdoc=`<!doctype html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}\n${abs(css)}</style></head><body>${abs(h)}<!--${++n}--></body></html>`;};
+  $('button',v).onclick=v.play;io.observe(v);return v;
+}
+$$('.caso').forEach(c=>{
+  const h=$('textarea[data-lang=html]',c).value,css=$('textarea[data-lang=css]',c).value;
+  c.insertBefore(vineta(h,css,+c.dataset.h||200),$('textarea',c));
+  const par=el('div','g2');$$('textarea',c).forEach(t=>par.appendChild(t));c.appendChild(par);});
+$$('.ricetta').forEach(r=>{
+  const ta=$$('textarea',r),h=ta[0].value,css=ta[1].value;
+  const d=el('details');d.appendChild(el('summary','','Ver la receta (HTML + CSS)'));ta.forEach(t=>d.appendChild(t));
+  r.append(vineta(h,css,+r.dataset.h||200),d);});
+$$('textarea.src').forEach(t=>t.replaceWith(codeBox(t.dataset.lang,t.value,t.dataset.title)));
+
+/* ---------- consejo al final de cada sección ---------- */
+$$('section.sec[data-fip]').forEach(s=>{const d=el('div','fip reveal');d.innerHTML=`<img src="img/cocina/${s.dataset.prop}.webp" alt=""><div><span class="lb">CONSEJO DE LA NONNA</span><p>${s.dataset.fip}</p></div>`;s.appendChild(d);});
+
+/* ---------- menú ---------- */
+{
+ const ul=$('#navUl'),secs=$$('section.sec');
+ secs.forEach((s,i)=>{const li=el('li');li.innerHTML=`<a href="#${s.id}"><span>${String(i+1).padStart(2,'0')}</span>${esc(s.dataset.nav)}</a>`;ul.appendChild(li);});
+ const links=$$('a',ul);let last=-1;
+ $('#navL').onclick=()=>ul.scrollBy({left:-260,behavior:'smooth'});$('#navR').onclick=()=>ul.scrollBy({left:260,behavior:'smooth'});
+ function on(){const dh=document.documentElement.scrollHeight-innerHeight;$('#prog').style.width=(dh>0?scrollY/dh*100:0)+'%';
+  let c=-1;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<150)c=i;});
+  if(c!==last){last=c;links.forEach((a,i)=>a.classList.toggle('on',i===c));if(c>=0){const a=links[c];ul.scrollLeft=a.offsetLeft-ul.clientWidth/2+a.clientWidth/2;}}}
+ addEventListener('scroll',on,{passive:true});on();
+}
+/* ---------- cintas ---------- */
+{
+ const t1=['TRATTORIA PUNK','BOX-SIZING: BORDER-BOX','OVERFLOW-X: AUTO','TR:NTH-CHILD(EVEN)','COUNTER-RESET · COUNTER-INCREMENT','@PROPERTY AL DENTE'];
+ const t2=['PLACE-ITEMS: CENTER','100DVH > 100VH','AUTO 1FR AUTO','50 RECETAS SIN JS','MARGIN, NO GAP, EN LOS CARRUSELES','BUON APPETITO'];
+ const f=a=>{const s=a.map(x=>`<span>★ ${esc(x)}</span>`).join('');return s+s;};
+ $('#tk1').innerHTML=f(t1);$('#tk2').innerHTML=f(t2);
+}
+
+/* ---------- test final ---------- */
+function qBlock(host,list,onScore){const h=$(host);const cards=[];
+ list.forEach((it,i)=>{const c=el('div','q');c.innerHTML=`<div class="qt"><span class="n">${i+1}</span><span>${it.q}</span></div>`;
+  if(it.html)c.appendChild(codeBox('html',it.html,'HTML'));if(it.code)c.appendChild(codeBox('css',it.code,'CSS'));
+  const order=it.o.map((_,k)=>k);for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+  order.forEach(k=>{const l=el('label');l.innerHTML=`<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${it.o[k]}</span>`;c.appendChild(l);});
+  const ex=el('div','ex',it.e);c.appendChild(ex);
+  c.grade=()=>{$$('label',c).forEach(l=>{l.classList.remove('right','wrong');const inp=$('input',l);if(+inp.value===it.a)l.classList.add('right');else if(inp.checked)l.classList.add('wrong');});ex.classList.add('show');};
+  c.reset=()=>{$$('input',c).forEach(x=>x.checked=false);$$('label',c).forEach(l=>l.classList.remove('right','wrong'));ex.classList.remove('show');};
+  c.right=()=>{const s=$('input:checked',c);return !!s&&+s.value===it.a;};
+  c.addEventListener('change',()=>{c.grade();onScore();});cards.push(c);h.appendChild(c);});return cards;}
+
+const Q=[
+ {q:'Una caja de <code>width: 200px</code>, <code>padding: 20px</code> y borde de 5px, con <code>box-sizing: content-box</code>. ¿Cuánto mide de ancho?',o:['250px','200px','220px'],a:0,e:'200 + 20 + 20 + 5 + 5 = 250. Con <code>border-box</code> mediría 200.'},
+ {q:'Un <code>padding-top: 10%</code>, ¿de qué es el 10 %?',o:['Del ancho del padre','Del alto del padre','Del alto de la propia caja'],a:0,e:'Los porcentajes de margin y padding se calculan siempre sobre el ancho.'},
+ {q:'En una fila de Flex, ¿qué hace <code>margin-left: auto</code> en un hijo?',o:['Lo empuja al otro extremo','Lo centra en vertical','No hace nada en Flex'],a:0,e:'Se come el espacio libre que tiene a su izquierda.'},
+ {q:'¿Qué diferencia hay entre un reset y normalize.css?',o:['El reset borra los estilos del navegador; normalize los iguala entre navegadores','Son lo mismo','normalize borra y el reset iguala'],a:0,e:'Uno parte de cero; el otro mantiene estilos razonables e iguales en todos.'},
+ {q:'Dos párrafos seguidos: uno con <code>margin-bottom: 20px</code> y otro con <code>margin-top: 30px</code>. ¿Qué hueco queda en flujo normal?',o:['30px','50px','20px'],a:0,e:'Los márgenes verticales colapsan: gana el mayor.'},
+ {q:'¿Qué evita que el margen del primer hijo «se escape» por encima del padre?',o:['<code>display: flow-root</code> en el padre','<code>overflow: visible</code>','<code>margin: 0 auto</code>'],a:0,e:'<code>flow-root</code> crea un bloque nuevo que contiene los márgenes.'},
+ {q:'¿Qué valor de <code>overflow</code> enseña la barra solo cuando hace falta?',o:['auto','scroll','visible'],a:0,e:'<code>scroll</code> la enseña siempre; <code>auto</code>, solo si el contenido no cabe.'},
+ {q:'¿Cómo evitas que una tabla ancha rompa la página en el móvil?',o:['Metiéndola en un contenedor con <code>overflow-x: auto</code>','Poniendo <code>body { overflow-x: hidden }</code>','Reduciendo la letra a 8px'],a:0,e:'La tabla se desplaza de lado dentro de su contenedor.'},
+ {q:'¿Qué hace <code>border-collapse: collapse</code>?',o:['Une los bordes de las celdas en una sola línea','Esconde los bordes','Hace la tabla más estrecha'],a:0,e:'Sin él, cada celda tiene su propio borde y se ven dobles.'},
+ {q:'¿Qué filas pinta <code>tbody tr:nth-child(even)</code>?',o:['Las pares','Las impares','Solo la primera'],a:0,e:'<code>even</code> = pares; <code>odd</code> = impares.'},
+ {q:'¿Qué consigue <code>display: inline-block</code>?',o:['Ir en la línea del texto y aceptar width, height y márgenes verticales','Ocupar toda la fila','Esconder el elemento'],a:0,e:'Es una mezcla de <code>inline</code> y <code>block</code>.'},
+ {q:'¿Dónde se escribe <code>counter-reset</code>?',o:['En el padre que contiene los elementos que se cuentan','En cada hijo','En el <code>::before</code>'],a:0,e:'El padre crea el contador; los hijos lo incrementan.'},
+ {q:'¿Por qué hay que registrar una variable con <code>@property</code> para animarla?',o:['Porque sin tipo el navegador no puede calcular los valores intermedios','Porque las variables no funcionan en @keyframes','Porque si no, no se hereda'],a:0,e:'Una variable sin registrar es texto: cambia de golpe.'},
+ {q:'¿Qué devuelve <code>sibling-index()</code> en el tercer <code>li</code> de una lista?',o:['3','2','0.3'],a:0,e:'Empieza a contar en 1. Por eso en el retraso se resta 1.'},
+ {q:'¿Por qué <code>sibling-index()</code> va dentro de <code>@supports</code>?',o:['Porque aún no funciona en todos los navegadores y así hay una versión para los demás','Porque es obligatorio para cualquier función','Porque solo funciona en móvil'],a:0,e:'En 2026 solo lo entienden Chrome y Edge.'},
+ {q:'¿Cuál es la forma más corta de centrar un hijo en vertical y en horizontal?',o:['Padre con <code>display: grid</code> y <code>place-items: center</code>','<code>text-align: center</code>','<code>margin: 0 auto</code>'],a:0,e:'Dos líneas en el padre.'},
+ {q:'¿Por qué <code>100dvh</code> es mejor que <code>100vh</code> para una portada en el móvil?',o:['Porque descuenta las barras del navegador del móvil','Porque es más rápido','Porque funciona sin Grid'],a:0,e:'Con <code>vh</code> las barras tapaban el final de la portada.'},
+ {q:'¿Qué <code>grid-template-rows</code> hace un sticky footer?',o:['auto 1fr auto','1fr 1fr 1fr','auto auto auto'],a:0,e:'El <code>1fr</code> del main se come el espacio libre y empuja el pie abajo.'},
+ {q:'En un carrusel infinito, ¿por qué se separan las imágenes con <code>margin</code> y no con <code>gap</code>?',o:['Porque con gap la mitad de la tira no coincide con una copia y se nota el salto','Porque gap no funciona en Flex','Porque margin es más moderno'],a:0,e:'Con 8 elementos hay 7 huecos: se pierde medio hueco en cada vuelta.'}];
+
+const FIXES=[
+ {q:'Las dos columnas de 50 % no caben en la misma fila.',html:'<div class="col">A</div>\n<div class="col">B</div>',code:'.col {\n  display: inline-block;\n  width: 50%;\n  padding: 20px;\n}',o:['Falta <code>box-sizing: border-box</code> (y el hueco de inline-block suma unos píxeles: mejor Flex)','Falta <code>float: right</code>','Hay que poner <code>width: 100%</code>'],a:0,e:'El padding se suma al 50 % y no caben.'},
+ {q:'La tabla rompe la página en el móvil.',html:'<table class="precios">…</table>',code:'.precios {\n  min-width: 600px;\n  border-collapse: collapse;\n}',o:['Meter la tabla en un <code>div</code> con <code>overflow-x: auto</code>','Quitar <code>border-collapse</code>','Poner <code>display: inline-block</code>'],a:0,e:'El contenedor permite desplazar la tabla de lado.'},
+ {q:'Los bordes de la tabla se ven dobles.',html:'<table class="carta">…</table>',code:'.carta td {\n  border: 1px solid #000;\n}',o:['Falta <code>border-collapse: collapse</code> en la tabla','Hay que quitar el borde','Falta <code>padding</code>'],a:0,e:'Sin él, cada celda dibuja su propio borde.'},
+ {q:'Los números de los pasos salen todos como «1».',html:'<div class="receta">\n  <p class="paso">Uno</p>\n  <p class="paso">Dos</p>\n</div>',code:'.paso {\n  counter-reset: paso;\n  counter-increment: paso;\n}\n.paso::before {\n  content: counter(paso);\n}',o:['El <code>counter-reset</code> va en el padre (<code>.receta</code>), no en cada paso','Falta <code>counter()</code>','Hay que usar <code>counters()</code>'],a:0,e:'Si cada paso reinicia el contador, todos valen 1.'},
+ {q:'La lista aparece entera de golpe en Firefox.',html:'<ul class="lista">\n  <li>Uno</li>\n  <li>Dos</li>\n</ul>',code:'.lista li {\n  animation: entrar 0.5s both;\n  animation-delay: calc(sibling-index() * 0.2s);\n}',o:['Es lo esperado: Firefox aún no entiende <code>sibling-index()</code>; ponlo en <code>@supports</code> y usa <code>--i</code> como alternativa','Falta <code>infinite</code>','<code>calc()</code> no admite funciones'],a:0,e:'Sin soporte, la línea se ignora y todos aparecen a la vez (pero se ven).'},
+ {q:'El pie de página se queda a mitad de pantalla.',html:'<body>\n  <header>…</header>\n  <main>…</main>\n  <footer>…</footer>\n</body>',code:'body {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n}',o:['Falta <code>min-height: 100dvh</code> en el body','Hay que poner <code>position: fixed</code> al pie','Falta <code>gap</code>'],a:0,e:'Sin un alto mínimo, el <code>1fr</code> no tiene espacio que repartir.'},
+ {q:'La caja no se centra con la técnica 4.',html:'<div class="mesa">\n  <span class="plato">1</span>\n</div>',code:'.mesa {\n  position: relative;\n  height: 200px;\n}\n.plato {\n  position: absolute;\n  inset: 0;\n  margin: auto;\n}',o:['El hijo necesita <code>width</code> y <code>height</code>: si no, se estira hasta los cuatro lados','Falta <code>display: grid</code> en el plato','Hay que poner <code>margin: 0 auto</code>'],a:0,e:'Con <code>inset: 0</code> y sin tamaño, ocupa todo el padre y no hay nada que centrar.'},
+ {q:'El carrusel da un tirón cada vez que vuelve al principio.',html:'<div class="pista">… (contenido duplicado) …</div>',code:'.pista {\n  display: flex;\n  gap: 20px;\n  width: max-content;\n  animation: desplazar 10s linear infinite;\n}',o:['Cambia el <code>gap</code> por <code>margin-right: 20px</code> en cada elemento','Pon <code>ease-in-out</code>','Quita el contenido duplicado'],a:0,e:'Con <code>gap</code> la mitad de la tira no mide justo una copia.'}];
+
+{const sc=$('#qScore');let cards=[];
+ const upd=()=>{const ok=cards.filter(c=>c.right()).length;sc.textContent=`${ok} / ${cards.length}`;};
+ cards=[...qBlock('#quiz',Q,upd),...qBlock('#fixes',FIXES,upd)];
+ $('#qAll').onclick=()=>{cards.forEach(c=>c.grade());upd();};$('#qReset').onclick=()=>{cards.forEach(c=>c.reset());upd();};upd();}
+
+/* ---------- aparición al hacer scroll ---------- */
+if('IntersectionObserver' in window&&!reduce){const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ob.unobserve(e.target);}}),{threshold:.05});$$('.reveal').forEach(x=>ob.observe(x));}
+else $$('.reveal').forEach(x=>x.classList.add('in'));
+})();
+</script>
+</body>
+</html>
