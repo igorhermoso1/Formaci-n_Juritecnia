@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deploy · el metro de la web</title>
+<meta name="description" content="Todo lo que rodea a una web publicada: cómo viaja una petición, frontend y backend, CDN, entornos, secretos, Supabase (tablas, RLS, usuarios, archivos), funciones serverless, servicios, rendimiento, seguridad, legalidad y costes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>El metro<br>de la <em>web</em></h1>
+    <div class="bajada">
+      <p>Hacer una web es la mitad del trabajo. La otra mitad es <b>todo lo que la rodea</b>: dónde vive, cómo llega al móvil de alguien, dónde guarda los datos de un formulario, cómo se protegen, cuánto cuesta y qué dice la ley. A todo eso se le llama <b>deploy</b> (despliegue). Este plano tiene seis líneas y veintiuna estaciones. Todas están conectadas: <b>sigue las correspondencias</b> y nunca te perderás.</p>
+      <div class="tarjeta-ruta"><b>Cómo usar este plano</b><ol><li><b>Plano</b>: entiende qué es cada pieza y cómo se conectan.</li><li><b>Manual</b>: móntalo tú, de cero, en las páginas <a href="01-entorno.html">01</a> a <a href="09-proyecto.html">09</a>.</li><li>Solo necesitas saber HTML y CSS y haber visto <a href="../Formularios/Formularios-HTML.html">los formularios</a>.</li></ol></div>
+    </div>
+    <div class="btns"><a class="btn l1" href="#orientacion"><span class="pto"></span>Empezar el viaje</a><a class="btn claro" href="#supabase">Ir a Supabase</a><a class="btn claro" href="#final">Proyecto final</a></div>
+    <div class="ikasle">
+      <label>Nombre<input type="text" placeholder="Tu nombre" autocomplete="off"></label>
+      <label>Apellidos<input type="text" placeholder="Tus apellidos" autocomplete="off"></label>
+      <label>Curso / grupo<input type="text" placeholder="Ej. 1º A" autocomplete="off"></label>
+    </div>
+
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <figure class="plano" aria-label="Plano del bloque: seis líneas y veintiuna estaciones">
+      <div class="cab"><span>Plano de la red</span><span class="leyenda"><span class="l1">Fundamentos</span><span class="l2">Alojamiento y red</span><span class="l3">Datos · Supabase</span><span class="l4">Seguridad</span><span class="l5">Servicios</span><span class="l6">Producción</span></span></div>
+      <svg viewBox="0 95 1300 375" role="img" aria-labelledby="planoT">
+        <title id="planoT">Plano del metro del deploy. Pulsa una estación para ir a ella.</title>
+        <path class="ln" stroke="var(--l1)" d="M540 235 H150"/>
+        <path class="ln" stroke="var(--l4)" d="M600 213 V150 H380"/>
+        <path class="ln" stroke="var(--l2)" d="M640 213 L700 150 H990"/>
+        <path class="ln" stroke="var(--l3)" d="M660 235 H1100 Q1140 235 1140 275 V420"/>
+        <path class="ln" stroke="var(--l5)" d="M560 257 L500 320 H240"/>
+        <path class="ln" stroke="var(--l6)" d="M640 257 L700 320 H1040 V420 H700" />
+        <circle class="tren" r="5" fill="var(--tinta)" stroke="#fff" stroke-width="2" style="offset-path:path('M540 235 H150')"/>
+        <circle class="tren" r="5" fill="var(--tinta)" stroke="#fff" stroke-width="2" style="offset-path:path('M660 235 H1100 Q1140 235 1140 275 V420');animation-duration:12s"/>
+        <circle class="tren" r="5" fill="var(--tinta)" stroke="#fff" stroke-width="2" style="offset-path:path('M640 257 L700 320 H1040 V420 H700');animation-duration:14s;animation-delay:-5s"/>
+        <a class="hub" href="#orientacion"><rect x="530" y="211" width="140" height="48" rx="24"/><text x="600" y="241" text-anchor="middle">01 · DEPLOY</text></a>
+        <a class="est l1" href="#peticion"><circle cx="450" cy="235" r="10"/><text x="450" y="210" text-anchor="middle">La petición</text><text class="n" x="450" y="268" text-anchor="middle">02</text></a>
+        <a class="est l1" href="#capas"><circle cx="330" cy="235" r="10"/><text x="330" y="210" text-anchor="middle">Front y back</text><text class="n" x="330" y="268" text-anchor="middle">03</text></a>
+        <a class="est l1" href="#arquitecturas"><circle cx="210" cy="235" r="10"/><text x="210" y="210" text-anchor="middle">Arquitecturas</text><text class="n" x="210" y="268" text-anchor="middle">04</text></a>
+        <a class="est l2" href="#cdn"><circle cx="780" cy="150" r="10"/><text x="780" y="125" text-anchor="middle">CDN y caché</text><text class="n" x="780" y="183" text-anchor="middle">05</text></a>
+        <a class="est l2" href="#entornos"><circle cx="900" cy="150" r="10"/><text x="900" y="125" text-anchor="middle">Despliegues</text><text class="n" x="900" y="183" text-anchor="middle">06</text></a>
+        <a class="est l4" href="#secretos"><circle cx="470" cy="150" r="10"/><text x="470" y="125" text-anchor="middle">Secretos</text><text class="n" x="470" y="183" text-anchor="middle">07</text></a>
+        <a class="est l3" href="#supabase"><circle cx="740" cy="235" r="10"/><text x="740" y="268" text-anchor="middle">Supabase</text><text class="n" x="740" y="212" text-anchor="middle">08</text></a>
+        <a class="est l3" href="#proyecto"><circle cx="840" cy="235" r="10"/><text x="840" y="268" text-anchor="middle">Crear proyecto</text><text class="n" x="840" y="212" text-anchor="middle">09</text></a>
+        <a class="est l3" href="#tablas"><circle cx="940" cy="235" r="10"/><text x="940" y="268" text-anchor="middle">Tablas</text><text class="n" x="940" y="212" text-anchor="middle">10</text></a>
+        <a class="est l3" href="#rls"><circle cx="1040" cy="235" r="10"/><text x="1040" y="268" text-anchor="middle">RLS</text><text class="n" x="1040" y="212" text-anchor="middle">11</text></a>
+        <a class="est l3" href="#usuarios"><circle cx="1140" cy="320" r="10"/><text x="1162" y="325">Usuarios y archivos</text><text class="n" x="1118" y="325" text-anchor="end">12</text></a>
+        <a class="est l3" href="#conectar"><circle cx="1140" cy="410" r="10"/><text x="1162" y="415">Conectar la web</text><text class="n" x="1118" y="415" text-anchor="end">13</text></a>
+        <a class="est l5" href="#funciones"><circle cx="420" cy="320" r="10"/><text x="420" y="352" text-anchor="middle">Funciones</text><text class="n" x="420" y="300" text-anchor="middle">14</text></a>
+        <a class="est l5" href="#servicios"><circle cx="300" cy="320" r="10"/><text x="300" y="352" text-anchor="middle">Servicios</text><text class="n" x="300" y="300" text-anchor="middle">15</text></a>
+        <a class="est l6" href="#rendimiento"><circle cx="760" cy="320" r="10"/><text x="760" y="352" text-anchor="middle">Rendimiento</text><text class="n" x="760" y="300" text-anchor="middle">16</text></a>
+        <a class="est l6" href="#legal"><circle cx="870" cy="320" r="10"/><text x="870" y="352" text-anchor="middle">Seguridad y ley</text><text class="n" x="870" y="300" text-anchor="middle">17</text></a>
+        <a class="est l6" href="#costes"><circle cx="980" cy="320" r="10"/><text x="980" y="352" text-anchor="middle">Costes</text><text class="n" x="980" y="300" text-anchor="middle">18</text></a>
+        <a class="est l6" href="#final"><circle cx="1040" cy="420" r="10"/><text x="1040" y="452" text-anchor="middle">Proyecto final</text><text class="n" x="1062" y="410">19</text></a>
+        <a class="est l6" href="#glosario"><circle cx="900" cy="420" r="10"/><text x="900" y="452" text-anchor="middle">Glosario</text><text class="n" x="900" y="400" text-anchor="middle">20</text></a>
+        <a class="est l6" href="#test"><circle cx="760" cy="420" r="10"/><text x="760" y="452" text-anchor="middle">Test</text><text class="n" x="760" y="400" text-anchor="middle">21</text></a>
+      </svg>
+    </figure>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Estaciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>08</i><span>Deploy</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<!-- 01 -->
+<section class="sec l1" id="orientacion" data-nav="Qué es el deploy">
+  <div class="letrero rv"><div class="badge">01</div><div><p class="kick">Estación central · todas las líneas</p><h2>¿Qué es el deploy?</h2><p class="lead">La palabra que más vas a oír cuando una web sale de tu ordenador. Y la que menos se explica.</p>
+    <div class="corresp">Correspondencias <a class="l1" href="#peticion"><i>02</i>La petición</a><a class="l3" href="#supabase"><i>08</i>Supabase</a><a class="l6" href="#final"><i>19</i>Proyecto final</a><a class="ext man" href="02-publicar.html"><i>▶</i>Manual 02 · Publica tu web</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>De «funciona en mi ordenador» a «funciona para todo el mundo»</h3>
+    <p><b>Deploy</b> (en castellano, <i>despliegue</i>) es el proceso de llevar tu web desde tu ordenador hasta un sitio donde cualquiera pueda usarla, y de mantenerla viva allí. En la práctica, un deploy tiene dos mitades. La primera es <b>publicar</b>: GitHub guarda los archivos y Vercel los sirve al mundo (páginas <a href="02-publicar.html">02</a> y <a href="03-produccion.html">03</a> del manual). La segunda es <b>todo lo que rodea</b> a la web publicada:</p>
+    <ul>
+      <li><b>Entender el viaje</b>: qué pasa entre que alguien escribe tu dirección y ve tu página.</li>
+      <li><b>Saber qué hay detrás</b>: frontend, backend, base de datos, y por qué casi nunca necesitas montar un servidor propio.</li>
+      <li><b>Guardar datos de verdad</b>: con <b>Supabase</b>, los mensajes de un formulario dejan de perderse y se guardan en una base de datos.</li>
+      <li><b>Proteger</b>: claves, secretos y reglas de acceso, para que nadie lea ni borre lo que no debe.</li>
+      <li><b>Mantener</b>: que sea rápida, legal, segura y que no te cueste dinero por sorpresa.</li>
+    </ul>
+    <div class="analogia"><span class="ico">🚇</span><p>Piensa en este bloque como la <b>red de metro de una ciudad</b>. Tu web es un pasajero. Hay líneas para moverse (la red), estaciones donde se guardan cosas (los datos), torniquetes que controlan quién pasa (la seguridad) y servicios en los andenes (correo, pagos, estadísticas). Cada estación tiene un letrero de <b>correspondencias</b>: así ves qué conecta con qué.</p></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Las seis líneas</h3>
+    <div class="arq">
+      <div class="caja l1"><small>Línea 1</small><b>Fundamentos</b><p>Cómo viaja una petición, qué es frontend y backend y qué formas hay de montar una web hoy.</p></div>
+      <div class="caja l2"><small>Línea 2</small><b>Alojamiento y red</b><p>CDN, caché y los tres entornos: tu ordenador, la vista previa y producción.</p></div>
+      <div class="caja l4"><small>Línea 4</small><b>Seguridad</b><p>Secretos y variables de entorno: qué se puede publicar y qué jamás.</p></div>
+      <div class="caja l3"><small>Línea 3</small><b>Datos · Supabase</b><p>Base de datos, tablas, reglas de acceso, usuarios, archivos y cómo se conecta la web.</p></div>
+      <div class="caja l5"><small>Línea 5</small><b>Servicios</b><p>Funciones serverless y los servicios que rodean a una web: correo, pagos, analítica…</p></div>
+      <div class="caja l6"><small>Línea 6</small><b>Producción</b><p>Rendimiento, seguridad, la ley (RGPD), costes y el proyecto final que lo une todo.</p></div>
+    </div>
+    <div class="nota l1"><span class="lbl">Cómo encaja</span><p>Este bloque va <b>antes</b> de Git (bloque 09) y JavaScript (bloque 10). Todo lo que se hace con botones lo aprenderás aquí. Las pocas líneas de JavaScript que aparecen (para conectar la web con Supabase) van marcadas como <b>avance</b>: las entenderás del todo en el bloque 10.</p></div>
+  </div>
+<div class="panel raya l3 rv" id="manual" style="margin-top:22px">
+    <h3>Del plano al manual: móntalo tú</h3>
+    <p>Este plano explica <b>qué es</b> cada pieza y cómo se conectan. Para <b>montarlo de verdad</b>, paso a paso y comprobando cada cosa, sigue el manual. Cada página tiene misiones con casillas (tu avance se guarda), un recuadro «Comprueba que funciona» y otro «Si algo falla».</p>
+    <h4>Deploy: publicar y producción</h4>
+    <div class="arq" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <a class="caja l1" href="01-entorno.html" style="text-decoration:none;color:inherit"><small>01</small><b>Monta tu taller</b><p>Navegador, VS Code, carpeta del proyecto, contraseñas y cuentas.</p></a>
+      <a class="caja l2" href="02-publicar.html" style="text-decoration:none;color:inherit"><small>02</small><b>Publica tu web</b><p>GitHub, Vercel, despliegue automático, vistas previas y volver atrás.</p></a>
+      <a class="caja l2" href="03-produccion.html" style="text-decoration:none;color:inherit"><small>03</small><b>Producción en Vercel</b><p>404 propia, vercel.json, cabeceras de seguridad, dominio y analítica.</p></a>
+    </div>
+    <h4>Unidad Supabase: los datos</h4>
+    <div class="arq" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+      <a class="caja l3" href="04-supabase-inicio.html" style="text-decoration:none;color:inherit"><small>04</small><b>Puesta en marcha</b><p>Proyecto, panel y claves.</p></a>
+      <a class="caja l3" href="05-supabase-tablas.html" style="text-decoration:none;color:inherit"><small>05</small><b>Tablas</b><p>Diseñar y crear datos.</p></a>
+      <a class="caja l3" href="06-supabase-sql.html" style="text-decoration:none;color:inherit"><small>06</small><b>Consultas SQL</b><p>Consola real y retos.</p></a>
+      <a class="caja l4" href="07-supabase-seguridad.html" style="text-decoration:none;color:inherit"><small>07</small><b>Seguridad</b><p>RLS, usuarios y archivos.</p></a>
+      <a class="caja l3" href="08-supabase-web.html" style="text-decoration:none;color:inherit"><small>08</small><b>Conecta tu web</b><p>El libro de visitas real.</p></a>
+    </div>
+    <h4>El proyecto</h4>
+    <div class="arq" style="grid-template-columns:minmax(0,1fr)">
+      <a class="caja l6" href="09-proyecto.html" style="text-decoration:none;color:inherit"><small>09</small><b>De cero a producción</b><p>Todo junto en siete fases: entorno de pruebas y de producción, privacidad, README, rúbrica y mantenimiento.</p></a>
+    </div>
+  </div>
+</section>
+
+<div class="cambio l1 rv"><span class="bad">1</span><div><b>Línea 1 · Fundamentos</b><span>Lo que pasa por debajo cada vez que alguien abre una web</span></div></div>
+
+<!-- 02 -->
+<section class="sec l1" id="peticion" data-nav="La petición">
+  <div class="letrero rv"><div class="badge">02</div><div><p class="kick">Línea 1 · Fundamentos</p><h2>El viaje de una petición</h2><p class="lead">Escribes una dirección, pulsas Intro y en medio segundo aparece una página. Han pasado siete cosas.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="01-entorno.html#navegador"><i>▶</i>Manual 01 · DevTools</a> <a class="l2" href="#cdn"><i>05</i>CDN y caché</a><a class="l6" href="#rendimiento"><i>16</i>Rendimiento</a><a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#dominio"><i>↗</i>DNS y dominio</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Cliente y servidor</h3>
+    <p>Toda la web funciona con una conversación de dos: el <b>cliente</b> (el navegador, que <b>pide</b>) y el <b>servidor</b> (un ordenador que <b>responde</b>). El idioma en el que hablan se llama <b>HTTP</b>; con el candado (cifrado), <b>HTTPS</b>. Cada pregunta del navegador es una <b>petición</b> (<i>request</i>) y cada contestación, una <b>respuesta</b> (<i>response</i>).</p>
+    <div class="analogia"><span class="ico">🍽️</span><p>Es un restaurante: tú (el navegador) pides a la camarera «la carta, por favor» (petición) y ella vuelve con la carta (respuesta). Luego pides el primer plato, el segundo, el pan… Una web normal hace <b>decenas de peticiones</b>: el HTML, luego cada CSS, cada imagen, cada fuente.</p></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Simulador: sigue la petición paso a paso</h3>
+    <div class="ctrl"><input type="text" id="simUrl" value="https://pizzeria-chicle.vercel.app/carta.html" aria-label="Dirección que escribes"><button class="btn sm" type="button" id="simSig">Siguiente paso ▶</button><button class="btn sm claro" type="button" id="simRe">Reiniciar</button></div>
+    <div class="sim">
+      <ol class="pasos-sim" id="simPasos"></ol>
+      <div class="pantalla-sim" id="simPant" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Los códigos de estado: el semáforo de cada respuesta</h3>
+    <p>Cada respuesta lleva un número de tres cifras que dice qué ha pasado. La primera cifra es la familia: <b>2</b> = bien, <b>3</b> = ve a otro sitio, <b>4</b> = el error es tuyo (del cliente), <b>5</b> = el error es del servidor. Pulsa cada uno:</p>
+    <div class="chips" id="codigos"></div>
+    <div class="cod-estado" id="codTxt" aria-live="polite"></div>
+    <div class="nota l1"><span class="lbl">Míralo tú</span><p>En cualquier web: <kbd>F12</kbd> → pestaña <b>Red</b> (<i>Network</i>) → recarga. Verás cada petición, su código y cuánto tardó. Es la herramienta número uno para entender un deploy que falla.</p></div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="sec l1" id="capas" data-nav="Front y back">
+  <div class="letrero rv"><div class="badge">03</div><div><p class="kick">Línea 1 · Fundamentos</p><h2>Frontend, backend y base de datos</h2><p class="lead">Las tres capas de cualquier aplicación web. Hasta ahora has trabajado en la primera.</p>
+    <div class="corresp">Correspondencias <a class="l1" href="#arquitecturas"><i>04</i>Arquitecturas</a><a class="l3" href="#supabase"><i>08</i>Supabase</a><a class="l5" href="#funciones"><i>14</i>Funciones</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>El restaurante completo</h3>
+    <div class="restaurante">
+      <div class="l1"><span class="ico">🪑</span><small>Lo que ves</small><b>Frontend</b><p>La sala: mesas, carta, decoración. Es <b>HTML, CSS y JavaScript</b> que se ejecuta en el navegador de cada visitante. Todo lo que hay en el frontend <b>se puede ver</b> (pulsa <kbd>Ctrl</kbd>+<kbd>U</kbd> en cualquier web).</p></div>
+      <div class="l5"><span class="ico">👩‍🍳</span><small>Lo que procesa</small><b>Backend</b><p>La cocina: recibe los pedidos, decide, comprueba, calcula. Se ejecuta en un <b>servidor</b>, y el visitante <b>no puede verlo</b>. Ahí van las cosas secretas: contraseñas, pagos, envío de correos.</p></div>
+      <div class="l3"><span class="ico">🗄️</span><small>Lo que recuerda</small><b>Base de datos</b><p>La despensa y el libro de reservas: guarda la información de forma ordenada y permanente (mensajes, usuarios, pedidos) para que siga ahí mañana.</p></div>
+    </div>
+    <p style="margin-top:16px">Una web <b>estática</b> (las que has hecho hasta ahora) es solo sala: el HTML ya está escrito y se sirve igual a todo el mundo. En cuanto quieres <b>guardar</b> algo (un mensaje, un usuario, un pedido), necesitas despensa y, a menudo, cocina.</p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Juego: ¿en qué capa vive?</h3>
+    <p>Para cada cosa, elige dónde pasa o dónde se guarda.</p>
+    <div class="juego" id="capasJuego"></div>
+    <p class="marcador" id="capasMarca"></p>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="sec l1" id="arquitecturas" data-nav="Arquitecturas">
+  <div class="letrero rv"><div class="badge">04</div><div><p class="kick">Línea 1 · Fundamentos</p><h2>Cuatro formas de montar una web hoy</h2><p class="lead">Y la respuesta a la gran pregunta: ¿tengo que aprender PHP?</p>
+    <div class="corresp">Correspondencias <a class="l3" href="#supabase"><i>08</i>Supabase</a><a class="l5" href="#funciones"><i>14</i>Funciones</a><a class="l6" href="#costes"><i>18</i>Costes</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>De la más sencilla a la más completa</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Arquitectura</th><th>Cómo funciona</th><th>Ejemplos</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Estática</td><td>Archivos HTML, CSS e imágenes ya hechos. El hosting solo los entrega.</td><td>Tu portafolio en Vercel o GitHub Pages</td><td>Webs informativas, portafolios, landings. Gratis y rapidísimo.</td></tr>
+        <tr><td>2 · Estática + servicios (BaaS)</td><td>La web sigue siendo estática, pero habla con un servicio que hace de despensa y de portero: base de datos, usuarios, archivos.</td><td>Tu web + <b>Supabase</b> (o Firebase)</td><td><b>El camino de este bloque.</b> Formularios que guardan, zonas con usuarios, listas que se actualizan.</td></tr>
+        <tr><td>3 · Estática + funciones serverless</td><td>Además, pequeñas piezas de código que se ejecutan en el servidor solo cuando alguien las llama.</td><td>Vercel Functions, Supabase Edge Functions</td><td>Cuando hace falta un secreto: enviar correos, cobrar, llamar a una API privada.</td></tr>
+        <tr><td>4 · Servidor clásico</td><td>Un programa en el servidor fabrica cada página en el momento (PHP, Node, Python…), normalmente con su propia base de datos.</td><td>WordPress (PHP + MySQL), tiendas grandes</td><td>Proyectos grandes, CMS existentes. Hay que mantener el servidor.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente">BaaS = <i>Backend as a Service</i>, «backend como servicio»: alguien ya ha construido la cocina y tú la alquilas.</p>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>¿Y PHP?</h3>
+    <p>PHP es el lenguaje de servidor más extendido del mundo: según W3Techs, lo usa el <b>68,1 %</b> de las webs cuyo lenguaje de servidor se conoce (dato de noviembre de 2026). La razón principal se llama <b>WordPress</b>, el gestor de contenidos que mueve una parte enorme de internet.</p>
+    <p>Entonces, ¿hay que aprenderlo? Para lo que vais a construir, <b>no</b>:</p>
+    <ul>
+      <li>PHP necesita un <b>servidor que lo ejecute</b> (un hosting con PHP). Vercel y GitHub Pages, donde publicáis, sirven webs estáticas, no PHP.</li>
+      <li>Lo que la gente hacía con PHP (guardar un formulario, tener usuarios) hoy se resuelve con <b>Supabase</b> desde una web estática, sin mantener servidor.</li>
+      <li>Si algún día trabajas con WordPress, lo que sí te servirá es todo lo que sabes de HTML y CSS: los temas de WordPress son HTML y CSS con PHP alrededor.</li>
+    </ul>
+    <div class="nota l1"><span class="lbl">En una frase</span><p>PHP es historia viva y conviene saber que existe. Vuestro camino moderno es <b>web estática + Supabase + funciones cuando haga falta</b>.</p></div>
+  </div>
+</section>
+
+<div class="cambio l2 rv"><span class="bad">2</span><div><b>Línea 2 · Alojamiento y red</b><span>Por qué tu web carga rápido en Bilbao y en Tokio, y los tres sitios donde vive</span></div></div>
+
+<!-- 05 -->
+<section class="sec l2" id="cdn" data-nav="CDN y caché">
+  <div class="letrero rv"><div class="badge">05</div><div><p class="kick">Línea 2 · Alojamiento y red</p><h2>CDN, caché y edge</h2><p class="lead">Lo que Vercel hace sin que lo veas cada vez que publicas.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="03-produccion.html"><i>▶</i>Manual 03 · Producción</a> <a class="l1" href="#peticion"><i>02</i>La petición</a><a class="l6" href="#rendimiento"><i>16</i>Rendimiento</a><a class="l6" href="#costes"><i>18</i>Costes</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Copias de tu web por todo el mundo</h3>
+    <p>Si tu web viviera en un único servidor en Madrid, a alguien en Japón cada petición le haría cruzar medio planeta. Una <b>CDN</b> (<i>Content Delivery Network</i>, red de distribución de contenido) guarda <b>copias de tus archivos en cientos de ciudades</b>. Cada visitante recibe la copia más cercana. Vercel, Netlify y GitHub Pages ya tienen la suya: por eso tu web vuela sin que configures nada.</p>
+    <div class="analogia"><span class="ico">🏪</span><p>Es una cadena de supermercados: en vez de que todo el país vaya a la fábrica a por leche, hay una tienda en cada barrio con el mismo producto.</p></div>
+    <h4>Caché: guardar para no volver a pedir</h4>
+    <p>La <b>caché</b> es una copia guardada «por si acaso». Hay caché en la CDN y caché en el navegador de cada visitante. Por eso, a veces, publicas un cambio y no lo ves: tu navegador te enseña la copia vieja. Solución: <kbd>Ctrl</kbd> + <kbd>F5</kbd> (recarga forzada) o esperar.</p>
+    <h4>Edge: el borde de la red</h4>
+    <p>«Edge» es el nombre de esos servidores repartidos por el mundo, los más cercanos a cada persona. Cuando leas «edge functions», piensa: código que se ejecuta en el servidor más cercano al visitante (estación <a href="#funciones">14</a>).</p>
+  </div>
+
+  <div class="panel oscuro rv">
+    <h3>Lo que esto significa para ti</h3>
+    <ul>
+      <li>Las <b>imágenes pesadas</b> se copian por todo el mundo y gastan el tráfico mensual de tu plan: optimízalas (WebP, tamaño justo). Estación <a href="#rendimiento" style="color:#7cc4ff">16</a> y <a href="#costes" style="color:#7cc4ff">18</a>.</li>
+      <li>Si cambias un archivo y «no se actualiza», casi siempre es <b>caché</b>, no un error.</li>
+      <li>Los datos que cambian (mensajes, usuarios) <b>no</b> van en la CDN: van en la base de datos (línea 3).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="sec l2" id="entornos" data-nav="Despliegues y entornos">
+  <div class="letrero rv"><div class="badge">06</div><div><p class="kick">Línea 2 · Alojamiento y red</p><h2>Despliegues y entornos</h2><p class="lead">Qué pasa por dentro cuando se publica, y los tres sitios donde vive tu web a la vez.</p>
+    <div class="corresp">Correspondencias <a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l3" href="#proyecto"><i>09</i>Crear proyecto</a><a class="ext" href="02-publicar.html"><i>▶</i>Manual 02 · Publica tu web</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>El despliegue por dentro</h3>
+    <div class="arq">
+      <div class="caja l1"><small>1 · Commit</small><b>GitHub</b><p>Guardas un cambio con su mensaje.</p></div>
+      <div class="caja l5"><small>2 · Build</small><b>Vercel prepara</b><p>Copia los archivos y monta la versión.</p></div>
+      <div class="caja l2"><small>3 · Deploy</small><b>Versión fija</b><p>Una foto completa de tu web, con su propia dirección única.</p></div>
+      <div class="caja l6"><small>4 · Alias</small><b>Producción</b><p>Tu dominio pasa a apuntar a esa foto.</p></div>
+    </div>
+    <ul>
+      <li><b>Cada despliegue es inmutable</b>: no se sobrescribe nada; las versiones anteriores siguen existiendo.</li>
+      <li><b>Producción es un cartel que se mueve</b>: publicar es mover el dominio a la versión nueva; <b>volver atrás</b> (Instant Rollback) es moverlo a la anterior.</li>
+      <li><b>Si un despliegue falla, la web no se rompe</b>: el dominio sigue en la última versión buena.</li>
+    </ul>
+    <p>Todo esto lo montas y lo pruebas en la <a href="02-publicar.html">página 02</a>: despliegue automático, registros, vistas previas y vuelta atrás.</p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Los tres entornos</h3>
+    <div class="arq" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="caja l1"><small>1 · Local</small><b>Tu ordenador</b><p><code>localhost</code> con Live Server. Rompes, pruebas, vuelves a romper. Nadie lo ve.</p></div>
+      <div class="caja l4"><small>2 · Vista previa</small><b>Preview</b><p>Una copia publicada con dirección propia para enseñar o probar un cambio <b>antes</b> de que llegue a todos. Vercel crea una por cada rama distinta de <code>main</code>.</p></div>
+      <div class="caja l3"><small>3 · Producción</small><b>La web real</b><p>La dirección que conoce todo el mundo. Lo que hay en la rama <code>main</code>. Aquí no se experimenta.</p></div>
+    </div>
+    <div class="analogia"><span class="ico">🎭</span><p>Es un teatro: <b>local</b> es ensayar en casa, <b>preview</b> es el ensayo general con el decorado puesto y unos pocos invitados, y <b>producción</b> es el estreno con el público pagando entrada.</p></div>
+    <h4>El flujo completo de un cambio</h4>
+    <ol>
+      <li>Cambias el código en tu ordenador y lo pruebas con Live Server (local).</li>
+      <li>Lo subes a GitHub en una rama aparte (las ramas son del bloque 09, Git) → Vercel crea una <b>preview</b> con su propia dirección.</li>
+      <li>Lo revisas tú o tu equipo en esa dirección.</li>
+      <li>Lo juntas con <code>main</code> → Vercel publica en <b>producción</b>.</li>
+    </ol>
+    <p>Mientras no uséis ramas, trabajaréis directamente en <code>main</code>: cada commit va a producción, como en la <a href="02-publicar.html#auto">página 02 del manual</a>. Por eso conviene probar bien en local antes de subir.</p>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>Cada entorno, sus propios datos</h3>
+    <p>Los profesionales nunca prueban con los datos reales. Con Supabase, lo ideal es tener <b>un proyecto para pruebas y otro para producción</b> (el plan gratuito permite dos proyectos activos, justo lo necesario). Así, si una prueba borra la tabla, no se pierden los mensajes de verdad.</p>
+  </div>
+</section>
+
+<div class="cambio l4 rv"><span class="bad">4</span><div><b>Línea 4 · Seguridad</b><span>La línea más corta y la más importante: qué se puede publicar y qué jamás</span></div></div>
+
+<!-- 07 -->
+<section class="sec l4" id="secretos" data-nav="Secretos">
+  <div class="letrero rv"><div class="badge">07</div><div><p class="kick">Línea 4 · Seguridad</p><h2>Secretos y variables de entorno</h2><p class="lead">La regla de oro del deploy: lo que está en el frontend lo puede leer cualquiera.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="07-supabase-seguridad.html"><i>▶</i>Manual 07 · Seguridad</a> <a class="l3" href="#rls"><i>11</i>RLS</a><a class="l5" href="#funciones"><i>14</i>Funciones</a><a class="l6" href="#legal"><i>17</i>Seguridad y ley</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Claves públicas y claves secretas</h3>
+    <p>Los servicios (Supabase, pagos, correo, mapas…) te dan <b>claves</b>: textos largos que identifican tu proyecto. Hay dos tipos y no se pueden confundir:</p>
+    <div class="g2">
+      <div class="nota l3" style="margin:0"><span class="lbl">Pública</span><p>Hecha para ir en la web. Cualquiera puede verla (está en tu HTML). Solo da acceso a lo que tus <b>reglas</b> permitan. Ejemplo: la clave publicable de Supabase (<code>sb_publishable_…</code>).</p></div>
+      <div class="nota l1" style="margin:0"><span class="lbl">Secreta</span><p>Da acceso total. <b>Jamás</b> en el HTML, ni en el repositorio, ni en una captura. Solo en el servidor. Ejemplo: la clave secreta de Supabase (<code>sb_secret_…</code>) o la contraseña de la base de datos.</p></div>
+    </div>
+    <div class="nota l4"><span class="lbl">Muy importante</span><p>Si una clave secreta llega a GitHub, <b>dala por robada</b>, aunque borres el archivo enseguida: queda en el historial y hay robots que rastrean GitHub buscando claves. Lo único que sirve es <b>revocarla</b> (anularla) en el servicio y crear otra.</p></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Variables de entorno</h3>
+    <p>Una <b>variable de entorno</b> es un valor que se guarda <b>fuera del código</b>, en la configuración de la plataforma, y que el código lee al construirse o al ejecutarse en el servidor. Sirve para dos cosas: que los secretos no estén en el repositorio y que cada entorno (estación <a href="#entornos">06</a>) tenga sus propios valores.</p>
+    <ul>
+      <li>En tu ordenador se guardan en un archivo <code>.env</code> (o <code>.env.local</code>), que <b>nunca se sube</b>: se añade a <code>.gitignore</code> (lo verás en el bloque 09, Git).</li>
+      <li>En Vercel: proyecto → <b>Settings → Environment Variables</b>. Eliges en qué entornos se usa cada una: <i>Production</i>, <i>Preview</i>, <i>Development</i>.</li>
+      <li>Un cambio en las variables <b>no afecta a lo ya publicado</b>: hay que volver a desplegar (<i>Redeploy</i>).</li>
+    </ul>
+    <textarea class="src" data-lang="env" data-title=".env · en tu ordenador, nunca en GitHub">
+# claves del proyecto de pruebas de Supabase
+SUPABASE_URL=https://abcdefghijklmnop.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxxxxxxxxxxxxxxx
+SUPABASE_SECRET_KEY=sb_secret_xxxxxxxxxxxxxxxx</textarea>
+    <textarea class="src" data-lang="env" data-title=".gitignore · la lista de lo que Git no debe subir">
+.env
+.env.local</textarea>
+  </div>
+
+  <div class="panel oscuro rv">
+    <h3>La trampa de las webs estáticas</h3>
+    <p>Las variables de entorno de Vercel llegan al <b>proceso de construcción</b> y a las <b>funciones del servidor</b>. Una web estática de HTML y CSS no tiene ninguna de las dos cosas: el navegador <b>no puede leer</b> esas variables. Esto tiene dos consecuencias que lo ordenan todo:</p>
+    <ol>
+      <li>La <b>clave publicable</b> de Supabase se escribe directamente en tu código de la web. Está bien: está hecha para eso, y lo que la protege son las reglas RLS (estación <a href="#rls" style="color:#7cc4ff">11</a>).</li>
+      <li>La <b>clave secreta</b> solo puede vivir en una variable de entorno de una <b>función serverless</b> (estación <a href="#funciones" style="color:#7cc4ff">14</a>). Si una tarea necesita la clave secreta, necesita una función.</li>
+    </ol>
+  </div>
+
+  <div class="panel rv">
+    <h3>Juego: ¿se puede publicar?</h3>
+    <p>Para cada dato, decide si puede ir en el HTML de tu web (público) o si es secreto.</p>
+    <div class="juego" id="secJuego"></div>
+    <p class="marcador" id="secMarca"></p>
+  </div>
+</section>
+
+<div class="cambio l3 rv"><span class="bad">3</span><div><b>Línea 3 · Datos con Supabase</b><span>Por fin, una web que recuerda: base de datos, reglas, usuarios y archivos</span></div></div>
+
+<!-- 08 -->
+<section class="sec l3" id="supabase" data-nav="Supabase">
+  <div class="letrero rv"><div class="badge">08</div><div><p class="kick">Línea 3 · Datos</p><h2>Supabase: el backend que se alquila</h2><p class="lead">Base de datos, usuarios, archivos y reglas de acceso, listos para usar desde una web estática.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="04-supabase-inicio.html"><i>▶</i>Manual 04 · Supabase</a> <a class="l1" href="#arquitecturas"><i>04</i>Arquitecturas</a><a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l6" href="#costes"><i>18</i>Costes</a><a class="ext" href="../Formularios/Formularios-HTML.html"><i>↗</i>Formularios HTML</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>El problema que resuelve</h3>
+    <p>Hiciste formularios en la parte 1 de Formularios. Pero, ¿adónde iban los datos? A ningún sitio, o a un servicio como Formspree que te los manda por correo. Si quieres <b>guardarlos</b>, <b>enseñarlos</b> en la web (un libro de visitas, una lista de inscritos) o tener <b>usuarios</b> que inicien sesión, necesitas una base de datos y alguien que controle quién entra. Montarlo tú significa alquilar un servidor, instalar una base de datos, programar el backend, mantenerlo y protegerlo. <b>Supabase lo trae hecho.</b></p>
+    <div class="analogia"><span class="ico">🏢</span><p>Supabase es un <b>edificio de oficinas con todo incluido</b>: archivo (base de datos), recepción con lista de empleados (usuarios), almacén (archivos) y un vigilante que mira la lista de normas antes de dejar pasar a nadie (RLS). Tú solo alquilas tu planta.</p></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Lo que trae cada proyecto</h3>
+    <div class="arq">
+      <div class="caja l3"><small>Database</small><b>Base de datos</b><p>Una base de datos <b>PostgreSQL</b> completa, de las más usadas del mundo. Datos en tablas, como una hoja de cálculo con superpoderes.</p></div>
+      <div class="caja l2"><small>Data API</small><b>API automática</b><p>Cada tabla se puede leer y escribir desde la web sin programar backend: Supabase crea la «ventanilla» sola.</p></div>
+      <div class="caja l4"><small>Auth</small><b>Usuarios</b><p>Registro, inicio de sesión con correo, enlace mágico o cuentas de Google y GitHub.</p></div>
+      <div class="caja l5"><small>Storage</small><b>Archivos</b><p>Fotos, PDF, avatares… en «cubos» (<i>buckets</i>) públicos o privados.</p></div>
+      <div class="caja l1"><small>Row Level Security</small><b>Reglas por fila</b><p>Las normas que dicen quién puede leer, escribir o borrar cada fila. La pieza clave de la seguridad.</p></div>
+      <div class="caja l6"><small>Realtime</small><b>Tiempo real</b><p>La web se entera al instante cuando cambia un dato (chats, marcadores en directo).</p></div>
+      <div class="caja l5"><small>Edge Functions</small><b>Funciones</b><p>Código propio en el servidor para lo que necesite un secreto (estación <a href="#funciones">14</a>).</p></div>
+      <div class="caja l2"><small>Dashboard</small><b>Panel</b><p>Todo se gestiona desde la web de Supabase con botones. Casi todo lo de esta línea se hace sin código.</p></div>
+    </div>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>El plan gratuito</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Recurso</th><th>Plan Free</th><th>Qué significa para una web de clase</th></tr></thead>
+      <tbody>
+        <tr><td>Proyectos activos</td><td>2</td><td>Uno de pruebas y otro de producción (estación <a href="#entornos">06</a>).</td></tr>
+        <tr><td>Base de datos</td><td>500 MB por proyecto</td><td>Cientos de miles de mensajes de texto.</td></tr>
+        <tr><td>Archivos (Storage)</td><td>1 GB</td><td>Unos cientos de fotos optimizadas.</td></tr>
+        <tr><td>Tráfico de salida</td><td>5 GB (más 5 GB desde caché)</td><td>Suficiente si no sirves imágenes enormes desde Supabase.</td></tr>
+        <tr><td>Usuarios activos al mes</td><td>50.000</td><td>Una clase entera… y muchas más.</td></tr>
+        <tr><td>Edge Functions</td><td>500.000 llamadas</td><td>De sobra para enviar avisos o correos.</td></tr>
+        <tr><td>Pausa</td><td>Tras 1 semana sin uso</td><td>Si nadie usa el proyecto en una semana, se duerme. Se reactiva desde el panel.</td></tr>
+        <tr><td>Copias de seguridad</td><td>No incluidas</td><td>Exporta tus datos de vez en cuando si te importan (estación <a href="#legal">17</a>).</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente">Consultado el 17 de noviembre de 2026 en <a href="https://supabase.com/pricing" target="_blank" rel="noopener noreferrer">supabase.com/pricing</a>. Las cifras cambian: compruébalas antes de un proyecto importante.</p>
+    <p>Alternativas con la misma idea: <b>Firebase</b> (de Google, base de datos no relacional), <b>Appwrite</b> o <b>PocketBase</b>. Elegimos Supabase porque usa PostgreSQL (lo que se usa en la empresa), tiene un panel muy claro y un plan gratuito generoso.</p>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="sec l3" id="proyecto" data-nav="Crear proyecto">
+  <div class="letrero rv"><div class="badge">09</div><div><p class="kick">Línea 3 · Datos</p><h2>Crear tu proyecto en Supabase</h2><p class="lead">Cinco minutos y sin tarjeta de crédito.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="04-supabase-inicio.html#crear"><i>▶</i>Manual 04 · Crear el proyecto</a> <a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l3" href="#tablas"><i>10</i>Tablas</a><a class="l6" href="#legal"><i>17</i>Datos en Europa</a></div></div></div>
+
+  <div class="panel raya rv">
+    <h3>Hazlo en el manual</h3>
+    <p>La creación del proyecto, paso a paso y con pantallas, está en la <a href="04-supabase-inicio.html#crear">página 04 · Supabase: puesta en marcha</a>, junto con un recorrido por todo el panel y los ajustes que importan.</p>
+  </div>
+
+  <div class="panel oscuro rv">
+    <h3>Tres datos que vas a necesitar</h3>
+    <ul>
+      <li><b>Project URL</b> (<code>https://xxxx.supabase.co</code>): la dirección de tu edificio. Pública.</li>
+      <li><b>Publishable key</b> (<code>sb_publishable_…</code>): la llave de la puerta principal. Pública: va en tu web.</li>
+      <li><b>Secret key</b> y <b>contraseña de la base de datos</b>: las llaves maestras. Secretas: en tu gestor de contraseñas y, si hacen falta, en variables de entorno de una función.</li>
+    </ul>
+    <p>Puede que veas también unas claves antiguas llamadas <code>anon</code> y <code>service_role</code> (textos larguísimos que empiezan por <code>eyJ</code>). Son las versiones viejas de la publicable y la secreta, y Supabase las retira a finales de 2026: usa las nuevas.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sec l3" id="tablas" data-nav="Tablas">
+  <div class="letrero rv"><div class="badge">10</div><div><p class="kick">Línea 3 · Datos</p><h2>Tablas, filas y columnas</h2><p class="lead">Diseñar dónde se guarda cada dato es la mitad del trabajo de un backend.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="05-supabase-tablas.html"><i>▶</i>Manual 05 · Tablas</a> <a class="l3" href="#rls"><i>11</i>RLS</a><a class="l3" href="#conectar"><i>13</i>Conectar la web</a><a class="ext" href="../Formularios/Formularios-HTML.html"><i>↗</i>Formularios HTML</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Una base de datos es un archivador de hojas de cálculo</h3>
+    <ul>
+      <li>Una <b>tabla</b> es una hoja: <code>mensajes</code>, <code>inscripciones</code>, <code>productos</code>.</li>
+      <li>Cada <b>columna</b> es un dato con un <b>tipo</b> fijo: texto, número, fecha, sí/no.</li>
+      <li>Cada <b>fila</b> es un registro: un mensaje concreto, una inscripción concreta.</li>
+      <li>Cada fila tiene un <b>identificador único</b>, la clave primaria (<code>id</code>), como el DNI de esa fila.</li>
+    </ul>
+    <p>La clave para diseñar una tabla está en el formulario que la va a rellenar: <b>cada campo del formulario es una columna</b>. Si tu formulario tiene <code>name="nombre"</code> y <code>name="mensaje"</code>, tu tabla tendrá las columnas <code>nombre</code> y <code>mensaje</code>.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Tipo en Supabase</th><th>Para qué</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>int8 / uuid</td><td>Identificadores (los pone Supabase solo)</td><td><code>1</code>, <code>2</code>, <code>3</code>…</td></tr>
+        <tr><td>text</td><td>Texto de cualquier longitud</td><td>Nombre, mensaje, correo</td></tr>
+        <tr><td>int4 / numeric</td><td>Números enteros o con decimales</td><td>Edad, precio</td></tr>
+        <tr><td>bool</td><td>Sí o no</td><td>¿Acepta el boletín?</td></tr>
+        <tr><td>timestamptz</td><td>Fecha y hora (con zona horaria)</td><td><code>created_at</code>: cuándo se creó la fila</td></tr>
+        <tr><td>date</td><td>Solo fecha</td><td>Fecha de la actividad</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>Hazlo en el manual</h3>
+    <p>En la <a href="05-supabase-tablas.html">página 05 · Supabase: tablas</a> diseñas y creas las tablas <code>temas</code> y <code>mensajes</code> (con botones y con SQL), las relacionas e importas datos. En la <a href="06-supabase-sql.html">página 06</a> practicas SQL en una consola real.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="sec l3" id="rls" data-nav="RLS">
+  <div class="letrero rv"><div class="badge">11</div><div><p class="kick">Línea 3 · Datos · y Línea 4 · Seguridad</p><h2>RLS: el portero de cada fila</h2><p class="lead">La estación más importante del bloque. Sin ella, tu base de datos es una puerta abierta.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="07-supabase-seguridad.html"><i>▶</i>Manual 07 · Seguridad</a> <a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l3" href="#usuarios"><i>12</i>Usuarios</a><a class="l6" href="#legal"><i>17</i>Seguridad y ley</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>¿Por qué la clave publicable no es peligrosa?</h3>
+    <p>Recuerda (estación <a href="#secretos">07</a>): la clave publicable va en tu HTML y cualquiera puede copiarla. Entonces, ¿qué impide que alguien la use para borrar todos tus mensajes? <b>Las reglas RLS</b> (<i>Row Level Security</i>, seguridad a nivel de fila).</p>
+    <p>Cada petición que llega a Supabase trae una clave, y Supabase la traduce a un <b>papel</b> (rol):</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Quién llama</th><th>Papel</th><th>¿Se le aplican las reglas?</th></tr></thead>
+      <tbody>
+        <tr><td>Clave publicable, sin iniciar sesión</td><td><code>anon</code> (anónimo)</td><td>Sí</td></tr>
+        <tr><td>Clave publicable, con sesión iniciada</td><td><code>authenticated</code></td><td>Sí</td></tr>
+        <tr><td>Clave secreta</td><td><code>service_role</code></td><td><b>No: se salta todas las reglas</b>. Por eso es secreta.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Con RLS activado y <b>sin ninguna regla</b>, la respuesta a todo es «no»: nadie puede leer ni escribir con la clave publicable. Luego abres solo las puertas que necesites, una a una. Es como un local con todas las puertas cerradas por defecto, donde el portero tiene una lista: «los anónimos pueden <i>dejar</i> mensajes», «todos pueden <i>leer</i> mensajes», «nadie puede <i>borrar</i>».</p>
+  </div>
+
+  <div class="panel rv">
+    <h3>Simulador: tú eres el portero</h3>
+    <p>Activa o desactiva el RLS, marca las reglas, elige quién llama y prueba cada acción sobre la tabla <code>mensajes</code>. Abajo aparece el SQL de las reglas que has marcado.</p>
+    <div class="rls">
+      <div>
+        <fieldset><legend>Seguridad de la tabla</legend><label><input type="checkbox" id="rlsOn" checked><span>RLS activado en <code>mensajes</code></span></label></fieldset>
+        <fieldset><legend>Reglas (policies)</legend>
+          <label><input type="checkbox" data-p="leer" checked><span>Cualquiera (anon y authenticated) puede <b>leer</b> mensajes</span></label>
+          <label><input type="checkbox" data-p="escribir" checked><span>Cualquiera (anon) puede <b>añadir</b> un mensaje</span></label>
+          <label><input type="checkbox" data-p="borrar"><span>Solo un usuario con sesión puede <b>borrar</b> sus propios mensajes</span></label>
+        </fieldset>
+        <fieldset><legend>Quién llama</legend>
+          <div class="chips" id="rlsQuien"><button class="chip" type="button" data-r="anon" aria-pressed="true">Visitante (publicable)</button><button class="chip" type="button" data-r="authenticated" aria-pressed="false">Usuario con sesión</button><button class="chip" type="button" data-r="service_role" aria-pressed="false">Clave secreta</button></div>
+        </fieldset>
+        <div class="chips" id="rlsAcc"><button class="btn sm" type="button" data-a="leer">Leer mensajes</button><button class="btn sm" type="button" data-a="escribir">Añadir mensaje</button><button class="btn sm" type="button" data-a="borrar">Borrar un mensaje</button></div>
+      </div>
+      <div class="puerta">
+        <table><thead><tr><th>id</th><th>nombre</th><th>mensaje</th></tr></thead><tbody id="rlsFilas"></tbody></table>
+        <div id="rlsVer" aria-live="polite"></div>
+      </div>
+    </div>
+    <div id="rlsSql"></div>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>Las reglas del libro de visitas</h3>
+    <p>Para el proyecto final necesitas dos reglas: que cualquiera pueda <b>leer</b> y que cualquiera pueda <b>añadir</b>. Nadie puede editar ni borrar desde la web (lo harás tú desde el panel). En Supabase: <b>Authentication → Policies</b> (o en la tabla, <b>Add RLS policy</b>), o en el SQL Editor:</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · reglas del libro de visitas">
+-- permisos básicos: los visitantes pueden leer y añadir (las reglas afinan después)
+grant select, insert on table public.mensajes to anon;
+
+-- regla 1: cualquiera puede leer los mensajes
+create policy "Lectura pública de mensajes"
+on public.mensajes for select
+to anon, authenticated
+using ( true );
+
+-- regla 2: cualquiera puede añadir un mensaje (la tabla ya limita la longitud)
+create policy "Cualquiera puede dejar un mensaje"
+on public.mensajes for insert
+to anon
+with check ( true );</textarea>
+    <div class="nota l4"><span class="lbl">Ojo</span><p>«Cualquiera puede añadir» también vale para un robot que añada mil mensajes basura. Para una web de clase está bien; en una web real se añade una protección antispam (un captcha como Cloudflare Turnstile) o se exige iniciar sesión (estación <a href="#usuarios">12</a>).</p></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="sec l3" id="usuarios" data-nav="Usuarios y archivos">
+  <div class="letrero rv"><div class="badge">12</div><div><p class="kick">Línea 3 · Datos</p><h2>Usuarios y archivos</h2><p class="lead">Auth para saber quién es quién; Storage para guardar fotos y documentos.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="07-supabase-seguridad.html#urls"><i>▶</i>Manual 07 · Usuarios</a> <a class="l3" href="#rls"><i>11</i>RLS</a><a class="l6" href="#legal"><i>17</i>RGPD</a><a class="l6" href="#costes"><i>18</i>Costes</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Auth: la recepción del edificio</h3>
+    <p>Supabase Auth guarda los usuarios en su propia tabla protegida y se encarga de lo difícil: guardar las contraseñas cifradas, enviar el correo de confirmación, recuperar la contraseña. Formas de entrar (en <b>Authentication → Sign In / Providers</b>):</p>
+    <ul>
+      <li><b>Correo y contraseña</b>: la clásica, con correo de confirmación.</li>
+      <li><b>Enlace mágico</b> (<i>magic link</i>): te llega un enlace al correo y entras sin contraseña.</li>
+      <li><b>Cuentas de terceros</b> (OAuth): «Entrar con Google», «con GitHub»… Requiere configurar una app en ese servicio.</li>
+    </ul>
+    <p>Cuando alguien inicia sesión, sus peticiones pasan de <code>anon</code> a <code>authenticated</code>, y en las reglas puedes usar <code>auth.uid()</code>, el identificador de esa persona. Así se escribe «cada uno solo puede borrar lo suyo»:</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · cada usuario borra solo lo suyo (requiere una columna autor)">
+-- la tabla necesita saber quién escribió cada fila
+alter table public.mensajes add column autor uuid default auth.uid();
+
+-- solo el autor puede borrar su mensaje
+create policy "Cada uno borra lo suyo"
+on public.mensajes for delete
+to authenticated
+using ( autor = auth.uid() );</textarea>
+  </div>
+
+  <div class="panel rv">
+    <h3>Storage: el almacén</h3>
+    <p>Los archivos (fotos, PDF, avatares) no van en las tablas: van en <b>Storage</b>, organizados en <b>cubos</b> (<i>buckets</i>):</p>
+    <div class="g2">
+      <div class="nota l3" style="margin:0"><span class="lbl">Público</span><p>Cualquiera con el enlace ve el archivo. Para fotos de una galería o imágenes de productos.</p></div>
+      <div class="nota l1" style="margin:0"><span class="lbl">Privado</span><p>Solo quien cumpla una regla (como en RLS) puede ver o subir. Para DNI, contratos o fotos personales.</p></div>
+    </div>
+    <p style="margin-top:12px">Lo que sabes de imágenes sigue valiendo: sube <b>WebP</b> de tamaño razonable. Cada descarga gasta del tráfico gratuito (5 GB al mes, estación <a href="#costes">18</a>). Para imágenes fijas de tu web (logo, fondos), mejor en tu repositorio, servidas por la CDN de Vercel (estación <a href="#cdn">05</a>).</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="sec l3" id="conectar" data-nav="Conectar la web">
+  <div class="letrero rv"><div class="badge">13</div><div><p class="kick">Línea 3 · Datos · enlace con el bloque 10</p><h2>Conectar tu web con Supabase</h2><p class="lead">El puente entre lo que sabes (HTML y CSS) y lo que viene (JavaScript).</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="08-supabase-web.html"><i>▶</i>Manual 08 · Conecta tu web</a> <a class="l3" href="#tablas"><i>10</i>Tablas</a><a class="l3" href="#rls"><i>11</i>RLS</a><a class="l6" href="#final"><i>19</i>Proyecto final</a><a class="ext" href="../Formularios/Formularios-CSS.html"><i>↗</i>Formularios CSS</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Las tres piezas del libro de visitas</h3>
+    <div class="arq" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="caja l1"><small>HTML y CSS</small><b>La sala</b><p>El formulario y la lista: lo que ya dominas (Formularios, partes 1 y 2).</p></div>
+      <div class="caja l4"><small>config.js</small><b>La dirección y la llave</b><p>La URL del proyecto y la clave <b>publicable</b>: puede estar en la web porque la protegen las reglas RLS.</p></div>
+      <div class="caja l3"><small>app.js</small><b>El mensajero</b><p>Unas líneas de JavaScript que leen y guardan en Supabase (avance del bloque 10).</p></div>
+    </div>
+    <ul>
+      <li>Los campos del formulario se llaman igual que las columnas (<code>name="mensaje"</code> → columna <code>mensaje</code>).</li>
+      <li>Lo que escribe la gente se muestra siempre como <b>texto</b> (<code>textContent</code>), nunca como HTML: así nadie puede inyectar código.</li>
+      <li>Supabase siempre responde con datos <b>o</b> con un error: el mensajero mira el error primero.</li>
+    </ul>
+  </div>
+  <div class="panel raya rv">
+    <h3>Hazlo en el manual</h3>
+    <p>El libro de visitas completo, con todo el código explicado línea a línea, pruebas, guía de errores y publicación, está en la <a href="08-supabase-web.html">página 08 · Supabase: conecta tu web</a>.</p>
+  </div>
+</section>
+
+<div class="cambio l5 rv"><span class="bad">5</span><div><b>Línea 5 · Servicios</b><span>Cuando hace falta un secreto, y todo lo que se enchufa alrededor de una web</span></div></div>
+
+<!-- 14 -->
+<section class="sec l5" id="funciones" data-nav="Funciones">
+  <div class="letrero rv"><div class="badge">14</div><div><p class="kick">Línea 5 · Servicios</p><h2>Funciones serverless</h2><p class="lead">Un trocito de backend que solo existe mientras alguien lo llama.</p>
+    <div class="corresp">Correspondencias <a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l1" href="#arquitecturas"><i>04</i>Arquitecturas</a><a class="l5" href="#servicios"><i>15</i>Servicios</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>¿Cuándo necesitas una?</h3>
+    <p>La regla sale de la estación <a href="#secretos">07</a>: <b>si una tarea necesita una clave secreta, no puede hacerse en el navegador</b>. Ejemplos:</p>
+    <ul>
+      <li>Enviar un correo de confirmación (la clave del servicio de correo es secreta).</li>
+      <li>Cobrar con tarjeta (la clave secreta de la pasarela de pago).</li>
+      <li>Hacer algo con permisos de administrador en Supabase (la clave secreta).</li>
+      <li>Llamar a una API privada (de inteligencia artificial, de un ERP…) o tareas programadas («cada lunes, borra los mensajes de más de un año»).</li>
+    </ul>
+    <p>«Serverless» no significa que no haya servidor: significa que <b>no tienes que mantenerlo</b>. Escribes la función, la plataforma la ejecuta cuando llega una petición y se apaga al terminar. Solo «existe» unos milisegundos.</p>
+    <div class="analogia"><span class="ico">🛎️</span><p>Es un <b>servicio de habitaciones</b>: no tienes un cocinero en tu cuarto todo el día. Llamas, alguien prepara lo que pides con los ingredientes de la cocina (los secretos), te lo sube y se va.</p></div>
+  </div>
+
+  <div class="panel rv">
+    <h3>Dónde viven</h3>
+    <div class="g2">
+      <div class="nota l2" style="margin:0;display:block"><p><b>Vercel Functions</b>: archivos dentro de una carpeta <code>api/</code> de tu repositorio. Vercel los convierte en funciones y lee los secretos de sus variables de entorno. Encaja con lo que ya publicas en Vercel.</p></div>
+      <div class="nota l3" style="margin:0;display:block"><p><b>Supabase Edge Functions</b>: funciones dentro de tu proyecto de Supabase, cerca de tu base de datos. Se escriben en TypeScript (JavaScript con tipos). 500.000 llamadas al mes gratis.</p></div>
+    </div>
+    <textarea class="src" data-lang="js" data-title="api/hola.js · una función de Vercel (avance del bloque 10)">
+// responde a una petición GET en https://tu-web.vercel.app/api/hola
+export function GET(request) {
+  // aquí podrías leer un secreto: process.env.SUPABASE_SECRET_KEY
+  return Response.json({ mensaje: "Hola desde el servidor" });
+}</textarea>
+    <div class="nota l5"><span class="lbl">El flujo completo</span><p>Navegador → <code>/api/enviar-correo</code> (tu función, con el secreto en una variable de entorno) → servicio de correo. El navegador nunca ve la clave: solo ve la respuesta «enviado».</p></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="sec l5" id="servicios" data-nav="Servicios">
+  <div class="letrero rv"><div class="badge">15</div><div><p class="kick">Línea 5 · Servicios</p><h2>El ecosistema alrededor de una web</h2><p class="lead">No se programa todo: se conectan servicios especializados.</p>
+    <div class="corresp">Correspondencias <a class="l5" href="#funciones"><i>14</i>Funciones</a><a class="l6" href="#legal"><i>17</i>Cookies y RGPD</a><a class="ext" href="../Formularios/Formularios-HTML.html"><i>↗</i>Formspree y Netlify Forms</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Necesidad → servicio → cómo se conecta</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Necesidad</th><th>Servicios conocidos</th><th>Cómo encaja en la red</th></tr></thead>
+      <tbody>
+        <tr><td>Recibir un formulario por correo</td><td>Formspree, Netlify Forms</td><td>Sin backend: el <code>action</code> del formulario apunta al servicio. Lo viste en la parte 1 de Formularios.</td></tr>
+        <tr><td>Guardar y mostrar datos</td><td>Supabase, Firebase</td><td>Línea 3 completa.</td></tr>
+        <tr><td>Enviar correos (confirmaciones, avisos)</td><td>Resend, Brevo, SendGrid</td><td>Desde una función (14), con la clave en una variable de entorno (07).</td></tr>
+        <tr><td>Cobrar</td><td>Stripe, PayPal, Redsys (bancos españoles)</td><td>La página de pago la pone el servicio; la parte secreta va en una función (14). No cobran cuota fija: se quedan una comisión por cada pago.</td></tr>
+        <tr><td>Estadísticas de visitas</td><td>Vercel Web Analytics, Plausible, Google Analytics</td><td>Un script en tu HTML. Ojo con las cookies y el RGPD (17).</td></tr>
+        <tr><td>Antispam en formularios</td><td>Cloudflare Turnstile, hCaptcha</td><td>Un widget en el formulario que se comprueba en el servidor (11 y 14).</td></tr>
+        <tr><td>Imágenes optimizadas</td><td>Cloudinary, ImageKit</td><td>Te dan cada imagen en el tamaño y formato justos (16).</td></tr>
+        <tr><td>Gestor de contenidos (que otra persona edite textos)</td><td>WordPress (con PHP), Sanity, Decap CMS</td><td>Arquitectura 4 o «headless» (04).</td></tr>
+        <tr><td>Saber si tu web se cae</td><td>UptimeRobot, Better Stack</td><td>Visitan tu web cada pocos minutos y te avisan si falla (02, códigos 5xx).</td></tr>
+        <tr><td>Saber si hay errores en la web</td><td>Sentry</td><td>Un script que te informa de los errores que ven tus visitantes.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente">Casi todos tienen plan gratuito para proyectos pequeños, pero sus límites cambian: compruébalos en su web antes de elegir. Los nombres son ejemplos, no recomendaciones comerciales.</p>
+    <div class="nota l5"><span class="lbl">Regla de oro</span><p>Antes de añadir un servicio, pregúntate: ¿qué datos de mis visitantes recibe?, ¿dónde los guarda?, ¿qué pasa si deja de existir mañana? Cada servicio es una dependencia más.</p></div>
+  </div>
+</section>
+
+<div class="cambio l6 rv"><span class="bad">6</span><div><b>Línea 6 · Producción</b><span>Rápida, segura, legal y sin sustos en la factura</span></div></div>
+
+<!-- 16 -->
+<section class="sec l6" id="rendimiento" data-nav="Rendimiento">
+  <div class="letrero rv"><div class="badge">16</div><div><p class="kick">Línea 6 · Producción</p><h2>Rendimiento: las Core Web Vitals</h2><p class="lead">Tres números con los que Google mide si una web es agradable de usar.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="03-produccion.html#calidad"><i>▶</i>Manual 03 · Revisión de calidad</a> <a class="l2" href="#cdn"><i>05</i>CDN</a><a class="l1" href="#peticion"><i>02</i>La petición</a><a class="ext" href="../ExtraGrid/HTML-Semantico-Lolipop.html#seo"><i>↗</i>SEO</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Las tres métricas</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Métrica</th><th>Qué mide</th><th>Bien</th><th>Cómo se mejora (lo que ya sabes)</th></tr></thead>
+      <tbody>
+        <tr><td>LCP</td><td>Cuánto tarda en verse lo más grande de la pantalla (la foto principal, el titular).</td><td>≤ 2,5 s</td><td>Imágenes WebP de tamaño justo, no cargar en diferido la imagen de arriba, pocas fuentes.</td></tr>
+        <tr><td>INP</td><td>Cuánto tarda la página en reaccionar cuando pulsas algo.</td><td>≤ 200 ms</td><td>Poco JavaScript pesado. Las webs de HTML y CSS suelen ir sobradas.</td></tr>
+        <tr><td>CLS</td><td>Cuánto «salta» el contenido mientras carga.</td><td>≤ 0,1</td><td>Poner <code>width</code> y <code>height</code> (o <code>aspect-ratio</code>) a imágenes y vídeos; reservar el hueco de los anuncios.</td></tr>
+      </tbody>
+    </table></div>
+    <h4>Cómo medirlas</h4>
+    <ul>
+      <li><b>Lighthouse</b>: <kbd>F12</kbd> → pestaña <b>Lighthouse</b> → <i>Analyze page load</i>. Te da notas de rendimiento, accesibilidad, buenas prácticas y SEO, con consejos.</li>
+      <li><b>PageSpeed Insights</b> (<a href="https://pagespeed.web.dev/" target="_blank" rel="noopener noreferrer">pagespeed.web.dev</a>): lo mismo, desde fuera, y con datos de visitantes reales si tu web tiene tráfico.</li>
+      <li>Mide siempre la <b>web publicada</b> en producción, en modo incógnito y pensando en móvil: así la verá la mayoría.</li>
+    </ul>
+  </div>
+
+  <div class="panel rv">
+    <h3>Semáforo: ¿qué tal va tu web?</h3>
+    <p>Mete los valores que te dé Lighthouse.</p>
+    <div class="g3" id="cwv"></div>
+    <div class="cod-estado" id="cwvTxt" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="sec l6" id="legal" data-nav="Seguridad y ley">
+  <div class="letrero rv"><div class="badge">17</div><div><p class="kick">Línea 6 · Producción · y Línea 4 · Seguridad</p><h2>Seguridad y ley</h2><p class="lead">En cuanto guardas el nombre o el correo de alguien, entras en el terreno del RGPD.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="03-produccion.html#vercel-json"><i>▶</i>Manual 03 · Cabeceras de seguridad</a> <a class="l4" href="#secretos"><i>07</i>Secretos</a><a class="l3" href="#rls"><i>11</i>RLS</a><a class="l3" href="#proyecto"><i>09</i>Región UE</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>Seguridad: la lista mínima</h3>
+    <ol>
+      <li><b>HTTPS siempre.</b> Vercel, Netlify y GitHub Pages lo activan solos (con dominio propio también).</li>
+      <li><b>Ningún secreto en el frontend ni en GitHub</b> (estación <a href="#secretos">07</a>).</li>
+      <li><b>RLS activado en todas las tablas</b> y reglas mínimas (estación <a href="#rls">11</a>).</li>
+      <li><b>Validar en el servidor</b>, no solo en el formulario (estación <a href="#tablas">10</a>).</li>
+      <li><b>Mostrar lo que escribe la gente como texto</b>, nunca como HTML (estación <a href="#conectar">13</a>): evita que alguien inyecte código.</li>
+      <li><b>Verificación en dos pasos</b> en GitHub, Vercel y Supabase. Quien entra en tu cuenta, entra en tu web.</li>
+      <li><b>Copias de seguridad</b>: el plan gratis de Supabase no las incluye. Exporta tus tablas (Table Editor → <i>Export to CSV</i>) de vez en cuando.</li>
+    </ol>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>La ley, en lo básico</h3>
+    <p>Esto es una orientación para entender qué piden las normas, no asesoramiento legal. Si una web es de una empresa real, hay que consultarlo con alguien especializado.</p>
+    <ul>
+      <li><b>RGPD</b> (Reglamento General de Protección de Datos, europeo) y <b>LOPDGDD</b> (la ley española): un nombre, un correo o una IP son <b>datos personales</b>. Si los recoges, tienes que decir para qué, durante cuánto tiempo, quién los guarda y cómo pedir que se borren. Eso es la <b>política de privacidad</b>, enlazada junto al formulario.</li>
+      <li><b>Recoge solo lo necesario</b> (minimización): si para el libro de visitas basta con un nombre, no pidas el correo.</li>
+      <li><b>Dónde se guardan</b>: al crear el proyecto de Supabase, elige una región de la <b>Unión Europea</b>. Simplifica mucho el cumplimiento.</li>
+      <li><b>LSSI-CE</b>: si la web tiene actividad económica, necesita un <b>aviso legal</b> con los datos de quien está detrás.</li>
+      <li><b>Cookies</b>: las técnicas (necesarias para que funcione la web) no necesitan permiso. Las de analítica o publicidad, sí: de ahí los avisos de cookies. Hay herramientas de estadísticas que funcionan sin cookies y evitan el aviso.</li>
+      <li><b>Accesibilidad</b>: en España y en la UE es obligatoria para las administraciones y, cada vez más, para empresas que venden online. Lo que aprendiste en <a href="../ExtraGrid/HTML-Semantico-Lolipop.html">HTML que habla</a> va por aquí.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="sec l6" id="costes" data-nav="Costes">
+  <div class="letrero rv"><div class="badge">18</div><div><p class="kick">Línea 6 · Producción</p><h2>Costes y límites</h2><p class="lead">Todo lo de este bloque cabe en planes gratuitos… si sabes dónde están los límites.</p>
+    <div class="corresp">Correspondencias <a class="ext man" href="03-produccion.html#limites"><i>▶</i>Manual 03 · Límites</a> <a class="l3" href="#supabase"><i>08</i>Plan de Supabase</a><a class="l2" href="#cdn"><i>05</i>Tráfico y CDN</a><a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#comparar"><i>↗</i>Comparativa de hosting</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>La red completa, en plan gratuito</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Pieza</th><th>Servicio</th><th>Límite que más se nota</th><th>Si te pasas</th></tr></thead>
+      <tbody>
+        <tr><td>Código</td><td>GitHub (gratis)</td><td>Repositorios públicos y privados sin límite práctico para una web</td><td>—</td></tr>
+        <tr><td>Hosting</td><td>Vercel Hobby</td><td>100 GB de tráfico al mes · solo uso personal, no comercial</td><td>Esa función se para hasta que pasan 30 días</td></tr>
+        <tr><td>Hosting (alternativa)</td><td>GitHub Pages</td><td>100 GB al mes (límite blando) · repositorio público</td><td>GitHub puede avisarte o limitarte</td></tr>
+        <tr><td>Datos</td><td>Supabase Free</td><td>2 proyectos · 500 MB de base de datos · 1 GB de archivos · 5 GB de tráfico</td><td>Te avisa; para crecer hay que pasar a un plan de pago</td></tr>
+        <tr><td>Datos</td><td>Supabase Free</td><td><b>Pausa tras 1 semana sin uso</b></td><td>Se reactiva desde el panel, pero la web deja de guardar mientras tanto</td></tr>
+        <tr><td>Dominio</td><td>Cualquier registrador</td><td>No hay plan gratis: unos 10-20 € al año</td><td>Si no renuevas, lo pierdes</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente">Datos comprobados el 17 de noviembre de 2026 en las páginas oficiales de <a href="https://supabase.com/pricing" target="_blank" rel="noopener noreferrer">Supabase</a> y <a href="https://vercel.com/docs/plans/hobby" target="_blank" rel="noopener noreferrer">Vercel</a>, y en <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits" target="_blank" rel="noopener noreferrer">GitHub Pages</a>.</p>
+    <div class="nota l6"><span class="lbl">Para proyectos de clase</span><p>La pausa de Supabase es la trampa más típica: entregas el proyecto, nadie lo usa en una semana y el día de la presentación «no guarda». Entra en el panel la víspera y comprueba que el proyecto está activo.</p></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="sec l6" id="final" data-nav="Proyecto final">
+  <div class="letrero rv"><div class="badge">19</div><div><p class="kick">Fin de trayecto · todas las líneas</p><h2>Proyecto final: el libro de visitas</h2><p class="lead">Una web estática publicada en Vercel que guarda y muestra mensajes en Supabase. Todo el plano en un solo proyecto.</p>
+    <div class="corresp">Correspondencias <a class="l3" href="#conectar"><i>13</i>Conectar la web</a><a class="l3" href="#rls"><i>11</i>RLS</a><a class="ext" href="09-proyecto.html"><i>▶</i>Manual 09 · De cero a producción</a></div></div></div>
+
+  <div class="panel rv">
+    <h3>La arquitectura</h3>
+    <div class="arq">
+      <div class="caja l1"><small>Frontend</small><b>index.html + CSS</b><p>El formulario y la lista (estación 13), con el estilo de Formularios CSS.</p></div>
+      <div class="caja l2"><small>Código y hosting</small><b>GitHub → Vercel</b><p>Cada commit se publica solo (manual 02 y 03).</p></div>
+      <div class="caja l3"><small>Datos</small><b>Supabase</b><p>Tabla <code>mensajes</code> en región UE, con RLS y dos reglas (10 y 11).</p></div>
+      <div class="caja l6"><small>Calidad</small><b>Producción</b><p>Lighthouse, política de privacidad y proyecto activo (16-18).</p></div>
+    </div>
+  </div>
+
+  <div class="panel raya rv">
+    <h3>Tu hoja de ruta</h3>
+    <p>El proyecto completo, en siete fases con casillas, rúbrica de evaluación y plantillas, está en la <a href="09-proyecto.html">página 09 · De cero a producción</a>.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="sec l6" id="glosario" data-nav="Glosario">
+  <div class="letrero rv"><div class="badge">20</div><div><p class="kick">Consulta</p><h2>Glosario de la red</h2><p class="lead">Todas las palabras del bloque, con su línea de color.</p></div></div>
+  <div class="panel rv">
+    <div class="ctrl"><input type="text" id="glosBusca" placeholder="Buscar: CDN, RLS, serverless…" aria-label="Buscar en el glosario"></div>
+    <div class="glos" id="glos"></div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="sec l6" id="test" data-nav="Test">
+  <div class="letrero rv"><div class="badge">21</div><div><p class="kick">Última estación</p><h2>Test final</h2><p class="lead">Todas las preguntas juntas. Cada respuesta se corrige al momento y te dice en qué estación repasar.</p></div></div>
+  <h3 class="sub-test">Preguntas</h3>
+  <div id="quiz"></div>
+  <h3 class="sub-test">Encuentra el fallo</h3>
+  <div id="fixes"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">El metro de la web</div><p>Bloque 08 · Deploy · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+(function(){
+"use strict";
+const {$,$$,el,esc,codeBox,juego,wizard,lado,test}=M;
+
+/* ---------- 02 · simulador de petición ---------- */
+{const P=$('#simPasos'),T=$('#simPant'),U=$('#simUrl');let i=0;
+ const pasos=u=>{let host='tu-web.es',ruta='/';try{const x=new URL(u);host=x.hostname;ruta=x.pathname||'/';}catch(e){}
+  return [['Escribes la dirección','El navegador separa el protocolo, el dominio y la ruta.',`<span class="g">// lo que has escrito</span>\nprotocolo  <span class="y">https</span>\ndominio    <span class="y">${esc(host)}</span>\nruta       <span class="y">${esc(ruta)}</span>`],
+  ['DNS: ¿dónde está?','El navegador pregunta a la agenda de internet qué IP tiene el dominio.',`<span class="g">// pregunta al DNS</span>\n¿${esc(host)}?\n<span class="t">→ 203.0.113.7</span>  <span class="g">(IP de ejemplo)</span>\n\n<span class="g">La primera vez tarda unos milisegundos; luego se recuerda (caché).</span>`],
+  ['Conexión segura (TLS)','Navegador y servidor se saludan y acuerdan un cifrado: el candado del HTTPS.',`<span class="g">// apretón de manos</span>\nnavegador → hola, ¿hablamos cifrado?\nservidor  → sí, este es mi certificado\nnavegador → <span class="t">certificado válido ✔</span>\n<span class="t">🔒 conexión cifrada</span>`],
+  ['La petición','El navegador pide la página con el método GET.',`<span class="y">GET</span> ${esc(ruta)} HTTP/2\nHost: ${esc(host)}\nAccept: text/html\nAccept-Language: es-ES`],
+  ['La CDN responde','El servidor más cercano (estación 05) tiene una copia y responde.',`HTTP/2 <span class="t">200 OK</span>\ncontent-type: text/html; charset=utf-8\ncache-control: public, max-age=0\nx-vercel-cache: <span class="t">HIT</span>  <span class="g">// servido desde la caché</span>\n\n&lt;!DOCTYPE html&gt;…`],
+  ['Más peticiones','El navegador lee el HTML y pide todo lo que enlaza: CSS, imágenes, fuentes…',`<span class="y">GET</span> /css/estilos.css   <span class="t">200</span>  12 kB\n<span class="y">GET</span> /img/logo.svg      <span class="t">200</span>   3 kB\n<span class="y">GET</span> /img/pizza.webp    <span class="t">200</span>  48 kB\n<span class="y">GET</span> /img/Foto.JPG      <span class="r">404</span>  <span class="g">// ¡mayúsculas! (Súbela a internet)</span>`],
+  ['Se pinta la página','El navegador monta el HTML, aplica el CSS y dibuja. Si hay JavaScript, lo ejecuta.',`<span class="t">✔ página visible</span>\n\nLCP (lo más grande se ve):   1,4 s  <span class="t">bien</span>\nCLS (saltos al cargar):       0,02  <span class="t">bien</span>\n<span class="g">// estación 16 · rendimiento</span>`]];};
+ function pinta(){const ps=pasos(U.value);P.innerHTML=ps.map((p,k)=>`<li class="${k<=i?'on':''} ${k===i?'ahora':''}"><b>${k+1} · ${p[0]}</b><small>${p[1]}</small></li>`).join('');T.innerHTML=ps[i][2];$('#simSig').disabled=i>=ps.length-1;}
+ $('#simSig').onclick=()=>{i++;pinta();};$('#simRe').onclick=()=>{i=0;pinta();};U.addEventListener('input',pinta);pinta();}
+
+/* ---------- 02 · códigos de estado ---------- */
+{const C=[['200','OK','Todo bien: aquí tienes lo que pediste.'],['301','Moved Permanently','Esto se ha mudado para siempre a otra dirección (redirección). Útil al cambiar de dominio: no pierdes las visitas ni el SEO.'],['304','Not Modified','No ha cambiado desde la última vez: usa tu copia de la caché (estación 05).'],['403','Forbidden','Sé lo que pides, pero no tienes permiso. Ejemplo: un archivo privado de Storage (estación 12).'],['404','Not Found','No existe. El clásico: un nombre con mayúsculas, una ruta mal escrita o una portada que no se llama index.html.'],['429','Too Many Requests','Demasiadas peticiones seguidas: el servicio te frena. Aparece al pasarte de los límites (estación 18).'],['500','Internal Server Error','El servidor ha fallado al procesar tu petición. El error está en el backend o en una función (estación 14).'],['503','Service Unavailable','El servicio no está disponible ahora mismo: caído, en mantenimiento o… un proyecto de Supabase en pausa (estación 18).']];
+ const box=$('#codigos'),t=$('#codTxt');C.forEach((c,k)=>{const b=el('button','chip',c[0]);b.type='button';b.setAttribute('aria-pressed',k===0);b.onclick=()=>{$$('.chip',box).forEach(x=>x.setAttribute('aria-pressed',x===b));t.innerHTML=`<b>${c[0]}</b><code>${c[1]}</code><br>${c[2]}`;};box.appendChild(b);});
+ t.innerHTML=`<b>200</b><code>OK</code><br>${C[0][2]}`;}
+
+/* ---------- juegos de clasificar ---------- */
+juego('#capasJuego','#capasMarca',['Frontend','Backend','Base de datos'],[
+ ['El color del botón «Enviar»','Frontend','Es CSS: se ejecuta en el navegador.'],
+ ['La lista de mensajes del libro de visitas, guardada para siempre','Base de datos','Lo que debe seguir ahí mañana va en la despensa.'],
+ ['Comprobar la contraseña de un usuario','Backend','Nunca en el navegador: allí cualquiera podría saltárselo.'],
+ ['El menú que se despliega al pasar el ratón','Frontend','HTML y CSS en el navegador.'],
+ ['Cobrar 20 € con tarjeta','Backend','Necesita la clave secreta de la pasarela de pago.'],
+ ['Los datos de cada usuario registrado','Base de datos','Una tabla de usuarios.'],
+ ['Avisar de que el correo no tiene @ antes de enviar','Frontend','Es la validación del formulario (comodidad). La de verdad se repite en el servidor.'],
+ ['Enviar un correo de bienvenida','Backend','Usa la clave secreta del servicio de correo, en una función.']]);
+juego('#secJuego','#secMarca',['Público','Secreto'],[
+ ['La URL del proyecto de Supabase (https://xxxx.supabase.co)','Público','Es la dirección, no una llave.'],
+ ['La clave publicable de Supabase (sb_publishable_…)','Público','Hecha para el navegador. La protegen las reglas RLS.'],
+ ['La clave secreta de Supabase (sb_secret_…)','Secreto','Se salta todas las reglas: acceso total.'],
+ ['La contraseña de la base de datos','Secreto','Da acceso directo a todos los datos.'],
+ ['El ID de medición de tu herramienta de analítica','Público','Va en el script del HTML; solo sirve para enviar visitas.'],
+ ['La clave secreta de Stripe (sk_live_…)','Secreto','Permite cobrar y devolver dinero en tu nombre.'],
+ ['Un token de acceso personal de GitHub','Secreto','Quien lo tenga puede escribir en tus repositorios.'],
+ ['La clave publicable de Stripe (pk_live_…)','Público','Diseñada para el navegador, como la publicable de Supabase.']]);
+
+/* ---------- 11 · simulador RLS ---------- */
+{let quien='anon';const filas=[[1,'Ane','¡Qué web más bonita!'],[2,'Mikel','Volveré pronto.'],[3,'Irati','Me encanta el diseño.']];
+ const T=$('#rlsFilas'),V=$('#rlsVer'),sqlBox=codeBox('sql','','SQL · las reglas que has marcado');$('#rlsSql').appendChild(sqlBox);
+ const on=()=>$('#rlsOn').checked,pol=p=>$(`[data-p="${p}"]`).checked;
+ const pinta=()=>{T.innerHTML=filas.map(f=>`<tr><td>${f[0]}</td><td>${esc(f[1])}</td><td>${esc(f[2])}</td></tr>`).join('')||'<tr><td colspan="3">(tabla vacía)</td></tr>';
+  const s=['-- las reglas del simulador',on()?'alter table public.mensajes enable row level security;':'alter table public.mensajes disable row level security;  -- ¡peligro!'];
+  if(on()){if(pol('leer'))s.push('','create policy "Leer mensajes"','on public.mensajes for select','to anon, authenticated','using ( true );');
+   if(pol('escribir'))s.push('','create policy "Añadir mensajes"','on public.mensajes for insert','to anon','with check ( true );');
+   if(pol('borrar'))s.push('','create policy "Borrar lo propio"','on public.mensajes for delete','to authenticated','using ( autor = auth.uid() );');}
+  sqlBox.set(s.join('\n'));};
+ function prueba(a){let ok,por;
+  if(quien==='service_role'){ok=true;por='La <b>clave secreta</b> se salta todas las reglas. Por eso jamás puede estar en la web.';}
+  else if(!on()){ok=true;por='Con el <b>RLS desactivado</b> no hay portero: cualquiera con la clave publicable (que está en tu HTML) puede hacerlo. Así se filtran y se borran bases de datos.';}
+  else if(a==='leer'){ok=pol('leer');por=ok?'Hay una regla de lectura para <code>anon</code> y <code>authenticated</code>.':'RLS activado y ninguna regla de lectura: la respuesta es una lista vacía.';}
+  else if(a==='escribir'){ok=pol('escribir')&&quien==='anon'||false;por=pol('escribir')?(quien==='anon'?'Hay una regla de inserción para <code>anon</code>.':'La regla de inserción es solo para <code>anon</code>; para un usuario con sesión haría falta incluir también <code>authenticated</code>.'):'Ninguna regla deja añadir filas.';}
+  else{ok=pol('borrar')&&quien==='authenticated';por=pol('borrar')?(quien==='authenticated'?'El usuario tiene sesión y la regla le deja borrar <b>sus</b> mensajes (si es el autor).':'La regla de borrado exige sesión iniciada: un visitante anónimo no puede.'):'Ninguna regla deja borrar: perfecto para un libro de visitas.';}
+  if(ok){if(a==='escribir')filas.push([filas.length?filas[filas.length-1][0]+1:1,'Visitante','Hola desde el simulador']);if(a==='borrar'&&filas.length)filas.pop();}
+  pinta();const qn={anon:'un visitante (clave publicable)',authenticated:'un usuario con sesión',service_role:'la clave secreta'}[quien],an={leer:'leer',escribir:'añadir un mensaje',borrar:'borrar un mensaje'}[a];
+  V.innerHTML=`<div class="veredicto ${ok?'si':'no'}"><b>${ok?'✔ Permitido':'✕ Denegado'}</b> · ${qn} intenta ${an}.<br>${por}</div>`;}
+ $$('#rlsQuien .chip').forEach(b=>b.onclick=()=>{quien=b.dataset.r;$$('#rlsQuien .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+ $$('#rlsAcc button').forEach(b=>b.onclick=()=>prueba(b.dataset.a));$$('.rls input').forEach(i=>i.addEventListener('change',pinta));pinta();}
+
+/* ---------- 16 · semáforo de Core Web Vitals ---------- */
+{const M=[['lcp','LCP (segundos)',2.5,4,1.8,0.1],['inp','INP (milisegundos)',200,500,150,10],['cls','CLS',0.1,0.25,0.05,0.01]];const G=$('#cwv');
+ M.forEach(m=>{const l=el('label','tarjeta-ruta');l.innerHTML=`<b>${m[1]}</b><input type="number" min="0" step="${m[5]}" value="${m[4]}" data-k="${m[0]}" style="width:100%;font:700 22px var(--h);padding:6px 10px;border:1px solid var(--linea);border-radius:10px">`;G.appendChild(l);});
+ const up=()=>{const r=M.map(m=>{const v=+$(`[data-k=${m[0]}]`).value;return [m[0].toUpperCase(),v<=m[2]?'bien':v<=m[3]?'mejorable':'mal'];});
+  const col={bien:'var(--ok)',mejorable:'#b88400',mal:'var(--mal)'};
+  $('#cwvTxt').innerHTML=r.map(x=>`<b style="color:${col[x[1]]}">${x[0]}: ${x[1]}</b>`).join(' · ')+'<br>'+(r.every(x=>x[1]==='bien')?'Tu web aprueba las tres. Para Google, la experiencia es buena.':'Revisa la tabla de arriba: cada métrica tiene sus remedios.');};
+ G.addEventListener('input',up);up();}
+
+/* ---------- 20 · glosario ---------- */
+{const G=[['l1','Deploy (despliegue)','Llevar la web a un sitio público y mantenerla allí.'],['l1','Cliente','El que pide: el navegador.'],['l1','Servidor','El ordenador que responde a las peticiones.'],['l1','HTTP / HTTPS','El idioma de la web; con S, cifrado.'],['l1','Petición y respuesta','Cada pregunta del navegador y cada contestación del servidor.'],['l1','Código de estado','El número de cada respuesta: 200, 404, 500…'],['l1','Frontend','Lo que se ejecuta en el navegador: HTML, CSS, JavaScript.'],['l1','Backend','Lo que se ejecuta en el servidor y nadie ve.'],['l1','Base de datos','Donde se guarda la información de forma permanente.'],['l1','Web estática','Archivos ya hechos que se entregan igual a todos.'],['l1','BaaS','Backend como servicio: base de datos, usuarios y archivos alquilados (Supabase).'],['l1','PHP','Lenguaje de servidor clásico; el de WordPress.'],['l2','CDN','Red de servidores que guarda copias de tu web por el mundo.'],['l2','Caché','Copia guardada para no volver a pedir.'],['l2','Edge','Los servidores más cercanos a cada visitante.'],['l2','Producción','La web real que ve todo el mundo (rama main).'],['l2','Preview','Copia publicada para probar un cambio antes de producción.'],['l4','Clave publicable','Clave pensada para ir en la web; la protegen las reglas.'],['l4','Clave secreta','Acceso total; solo en el servidor.'],['l4','Variable de entorno','Valor guardado fuera del código, en la plataforma.'],['l4','.env','Archivo local con variables de entorno; nunca se sube.'],['l3','Supabase','Plataforma de backend: PostgreSQL, Auth, Storage, Realtime y funciones.'],['l3','PostgreSQL','La base de datos que usa Supabase.'],['l3','Tabla, fila, columna','Hoja, registro y dato de una base de datos.'],['l3','Clave primaria','Identificador único de cada fila (id).'],['l3','SQL','El idioma para hablar con las bases de datos.'],['l3','RLS','Row Level Security: reglas que deciden quién puede hacer qué con cada fila.'],['l3','Policy (regla)','Cada norma de RLS: leer, insertar, actualizar o borrar.'],['l3','anon / authenticated','Los papeles de quien llama sin sesión y con sesión.'],['l3','service_role','El papel de la clave secreta: se salta las reglas.'],['l3','Auth','El sistema de usuarios de Supabase.'],['l3','Storage / bucket','Almacén de archivos y cada uno de sus cubos.'],['l5','Serverless','Código en el servidor que no tienes que mantener: se ejecuta al llamarlo.'],['l5','Función (Vercel / Edge)','Trocito de backend para tareas con secretos.'],['l5','API','La ventanilla por la que un programa pide cosas a otro.'],['l6','Core Web Vitals','LCP, INP y CLS: cómo de agradable es la web.'],['l6','Lighthouse','Herramienta de las DevTools que puntúa tu web.'],['l6','RGPD','Reglamento europeo de protección de datos.'],['l6','LSSI-CE','Ley española de servicios de la sociedad de la información: aviso legal.']];
+ const box=$('#glos'),q=$('#glosBusca');G.forEach(g=>{const d=el('div',g[0]);d.innerHTML=`<b>${esc(g[1])}</b>${esc(g[2])}`;d.dataset.t=(g[1]+' '+g[2]).toLowerCase();box.appendChild(d);});
+ const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+ q.addEventListener('input',()=>{const v=norm(q.value.trim());$$('div',box).forEach(d=>d.hidden=!!v&&!norm(d.dataset.t).includes(v));});}
+
+/* ---------- 21 · test ---------- */
+const Q=[
+ {q:'¿Qué es el deploy?',o:['Llevar la web a un sitio público y mantenerla allí, con todo lo que la rodea','Escribir el CSS','Comprar un ordenador más potente'],a:0,e:'Estación 01.'},
+ {q:'¿Qué hace el DNS cuando escribes una dirección?',o:['Traduce el dominio a la IP del servidor','Cifra la conexión','Pinta la página'],a:0,e:'Estación 02.'},
+ {q:'Un archivo da error 404. ¿Qué significa?',o:['No existe en esa ruta (mayúsculas, nombre mal escrito…)','El servidor ha fallado','No tienes permiso'],a:0,e:'Estación 02. 500 es error del servidor; 403, sin permiso.'},
+ {q:'¿Dónde debe comprobarse una contraseña?',o:['En el backend (servidor)','En el CSS','En el HTML'],a:0,e:'Estación 03: en el navegador cualquiera podría saltárselo.'},
+ {q:'¿Qué arquitectura usa este bloque para el libro de visitas?',o:['Web estática + Supabase (BaaS)','Servidor PHP propio','Solo HTML sin guardar nada'],a:0,e:'Estación 04.'},
+ {q:'¿Por qué no se enseña PHP en este curso?',o:['Porque Vercel y GitHub Pages sirven webs estáticas y lo que hacía PHP hoy se resuelve con servicios como Supabase','Porque ya no lo usa nadie','Porque es ilegal'],a:0,e:'Estación 04: sigue siendo muy usado, sobre todo por WordPress.'},
+ {q:'¿Para qué sirve una CDN?',o:['Para servir copias de tu web desde el servidor más cercano a cada visitante','Para guardar contraseñas','Para escribir SQL'],a:0,e:'Estación 05.'},
+ {q:'Publicas un cambio y no lo ves. ¿Lo primero que pruebas?',o:['Ctrl + F5: probablemente es la caché','Borrar el repositorio','Cambiar de hosting'],a:0,e:'Estación 05.'},
+ {q:'¿Qué es una preview?',o:['Una copia publicada para probar un cambio antes de llevarlo a producción','La web real','Una captura de pantalla'],a:0,e:'Estación 06.'},
+ {q:'¿Qué clave de Supabase puede ir en el HTML de tu web?',o:['La publicable (sb_publishable_…)','La secreta (sb_secret_…)','La contraseña de la base de datos'],a:0,e:'Estación 07: la publicable está hecha para el navegador.'},
+ {q:'Una clave secreta se ha subido a GitHub. ¿Qué haces?',o:['Revocarla en el servicio y crear otra nueva','Borrar el archivo y listo','Hacer el repositorio privado y olvidarlo'],a:0,e:'Estación 07: queda en el historial; hay que anularla.'},
+ {q:'¿Puede una web estática de HTML leer una variable de entorno de Vercel en el navegador?',o:['No: solo llegan a la construcción y a las funciones','Sí, siempre','Solo en móvil'],a:0,e:'Estación 07: por eso la clave secreta necesita una función.'},
+ {q:'¿Qué base de datos usa Supabase?',o:['PostgreSQL','Excel','MySQL de WordPress'],a:0,e:'Estación 08.'},
+ {q:'¿Qué pasa con un proyecto gratuito de Supabase que nadie usa en una semana?',o:['Se pausa','Se borra para siempre','Empieza a cobrar'],a:0,e:'Estaciones 08 y 18: se reactiva desde el panel.'},
+ {q:'¿Por qué elegir una región de la UE al crear el proyecto?',o:['Cercanía a los visitantes y simplificar el RGPD','Porque es obligatorio para el plan gratis','Por el idioma del panel'],a:0,e:'Estaciones 09 y 17.'},
+ {q:'Tu formulario tiene name="nombre" y name="mensaje". ¿Qué columnas necesita la tabla?',o:['nombre y mensaje (además de id y created_at)','Una sola columna llamada formulario','Las que quieras: da igual'],a:0,e:'Estación 10: cada campo es una columna.'},
+ {q:'Con RLS activado y ninguna regla, ¿qué devuelve una lectura con la clave publicable?',o:['Nada: todo está cerrado hasta que creas reglas','Todos los datos','Un error 500'],a:0,e:'Estación 11.'},
+ {q:'¿Qué papel tiene una petición con la clave secreta?',o:['service_role, que se salta todas las reglas','anon','authenticated'],a:0,e:'Estación 11.'},
+ {q:'¿Qué usarías para que «cada usuario solo borre lo suyo»?',o:['Una regla con auth.uid() comparada con la columna del autor','Un color distinto por usuario','Quitar el RLS'],a:0,e:'Estación 12.'},
+ {q:'¿Por qué el mensajero usa textContent y no innerHTML para los mensajes?',o:['Para que el texto de la gente nunca se ejecute como código','Porque es más bonito','Porque innerHTML no existe'],a:0,e:'Estaciones 13 y 17.'},
+ {q:'¿Cuándo necesitas una función serverless?',o:['Cuando una tarea necesita una clave secreta (correo, pagos…)','Para cambiar un color','Para todas las webs'],a:0,e:'Estación 14.'},
+ {q:'¿Qué mide el CLS?',o:['Cuánto salta el contenido al cargar','Cuánto tarda el servidor','El número de visitas'],a:0,e:'Estación 16: width y height en las imágenes lo arreglan.'},
+ {q:'Tu formulario guarda el nombre y el correo de la gente. ¿Qué necesitas?',o:['Una política de privacidad que explique qué guardas, para qué y cómo borrarlo','Nada, es una web pequeña','Un aviso de cookies obligatorio'],a:0,e:'Estación 17: son datos personales (RGPD).'},
+ {q:'¿Qué límite del plan Hobby de Vercel importa si la web es de un negocio?',o:['Que solo permite uso personal, no comercial','Que no admite CSS','Que solo deja 1 visita al día'],a:0,e:'Estación 18.'}];
+const FIX=[
+ {q:'Este código está en la web pública. ¿Qué falla?',lang:'js',title:'JavaScript en la web',code:'const db = supabase.createClient(\n  "https://xxxx.supabase.co",\n  "sb_secret_a1b2c3d4"\n);',o:['Usa la clave secreta en el navegador: hay que usar la publicable y revocar la secreta','Falta un punto y coma','La URL debe ir sin https'],a:0,e:'Estaciones 07 y 11: la secreta se salta las reglas.'},
+ {q:'Nadie puede leer los mensajes desde la web. ¿Qué falta?',code:'alter table public.mensajes enable row level security;\n-- (no hay ninguna policy)',o:['Una regla (policy) de lectura para anon','Desactivar RLS','Borrar la tabla'],a:0,e:'Estación 11: RLS sin reglas = todo cerrado.'},
+ {q:'¿Qué problema tiene esta regla en un libro de visitas?',code:'create policy "Todo permitido"\non public.mensajes for all\nto anon\nusing ( true );',o:['Permite a cualquiera editar y borrar todos los mensajes','Ninguno, es perfecta','Le falta un color'],a:0,e:'Estación 11: abre solo lo necesario (select e insert).'},
+ {q:'¿Qué falla en este .gitignore si en la carpeta hay un archivo .env con secretos?',lang:'env',title:'.gitignore',code:'node_modules\n.DS_Store',o:['No incluye .env: los secretos se subirán a GitHub','Nada','Sobra node_modules'],a:0,e:'Estación 07.'},
+ {q:'El día de la presentación el libro no guarda y la consola dice 503. ¿Causa más probable?',lang:'env',title:'Consola',code:'POST https://xxxx.supabase.co/rest/v1/mensajes 503 (Service Unavailable)',o:['El proyecto gratuito de Supabase está en pausa por inactividad','El CSS está mal','Falta el favicon'],a:0,e:'Estaciones 02 y 18.'},
+ {q:'¿Qué falla en esta forma de mostrar los mensajes?',lang:'js',title:'JavaScript',code:'lista.innerHTML += "<li>" + fila.mensaje + "</li>";',o:['Si alguien escribe código en su mensaje, se ejecutará: hay que usar textContent','Falta CSS','innerHTML es más lento y ya está'],a:0,e:'Estaciones 13 y 17: inyección de código (XSS).'}];
+test(Q,FIX);
+})();
+</script>
+</body>
+</html>

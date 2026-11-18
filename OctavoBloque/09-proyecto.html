@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · De cero a producción · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 9: el proyecto completo por fases, de la carpeta vacía a la web en producción con Supabase: entornos de pruebas y producción, política de privacidad, README, calidad, entrega, rúbrica y mantenimiento.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>09 · De cero a<br><em>producción</em></h1>
+    <div class="bajada">
+      <p>Todo el bloque en un solo proyecto, ordenado como lo haría un equipo profesional: <b>siete fases</b>, cada paso enlazado a la página que lo explica. Úsala como guía para tu proyecto final y como lista de comprobación antes de entregar. Al acabar tendrás una web pública con base de datos, entorno de pruebas separado, política de privacidad y documentación.</p>
+      <div class="tarjeta-ruta"><b>Las fases</b><ol><li>Taller</li><li>Web en local</li><li>Publicada</li><li>Backend de pruebas</li><li>Conectada</li><li>Producción</li><li>Entrega y mantenimiento</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>3-5 horas en total</b></span><span>Dificultad: <b>proyecto final</b></span><span>Necesitas: <b>todo el manual</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>09</i><span>Proyecto</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l1" id="mapa" data-nav="El mapa del proyecto">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">Visión general</p><h2>El mapa del proyecto</h2><p class="lead">Cómo se conectan todas las piezas cuando el proyecto está terminado.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html"><i>↗</i>El plano</a><a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Entornos</a></div></div></div>
+  <div class="panel rv">
+    <div class="arq">
+      <div class="caja l1"><small>Tu ordenador</small><b>Local</b><p>VS Code + Live Server en <code>127.0.0.1:5500</code>, conectado al proyecto de Supabase de <b>pruebas</b>.</p></div>
+      <div class="caja l2"><small>Código</small><b>GitHub</b><p>El repositorio con la web, los scripts SQL y el README. Nada secreto.</p></div>
+      <div class="caja l6"><small>Producción</small><b>Vercel</b><p>La web pública en <code>.vercel.app</code> (o tu dominio), conectada al proyecto de Supabase de <b>producción</b>.</p></div>
+      <div class="caja l3"><small>Datos</small><b>Supabase × 2</b><p><code>…-pruebas</code> para romper sin miedo; el de producción, con los datos reales.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec l1" id="f1" data-nav="Fase 1 · Taller">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Fase 1 · 1 h</p><h2>El taller</h2><p class="lead">Herramientas, cuentas y carpeta.</p></div></div>
+  <ol class="mision rv" data-id="f1">
+    <li>Navegador actualizado y sé usar Console y Network. <a href="01-entorno.html#navegador">Página 01 →</a></li>
+    <li>VS Code con Live Server, Prettier y guardado automático. <a href="01-entorno.html#vscode">Página 01 →</a></li>
+    <li>Gestor de contraseñas y 2FA en GitHub y Supabase. <a href="01-entorno.html#seguridad">Página 01 →</a></li>
+    <li>Carpeta <code>libro-de-visitas</code> con su estructura, <code>.env.example</code> y <code>.gitignore</code>. <a href="01-entorno.html#carpeta">Página 01 →</a></li>
+  </ol>
+</section>
+
+<section class="sec l1" id="f2" data-nav="Fase 2 · Web local">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Fase 2 · 45 min</p><h2>La web en local</h2><p class="lead">El aspecto completo antes de conectar nada.</p></div></div>
+  <ol class="mision rv" data-id="f2">
+    <li><code>index.html</code> con el formulario y la lista, <code>lang="es"</code>, <code>title</code> y <code>meta description</code>. <a href="08-supabase-web.html#html">Página 08 →</a></li>
+    <li><code>css/estilos.css</code> con foco visible, estados de envío y diseño para móvil. <a href="../Formularios/Formularios-CSS.html">Formularios CSS →</a></li>
+    <li>HTML semántico y validado en el W3C sin errores. <a href="../ExtraGrid/HTML-Semantico-Lolipop.html#validar">HTML que habla →</a></li>
+  </ol>
+</section>
+
+<section class="sec l2" id="f3" data-nav="Fase 3 · Publicada">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Fase 3 · 30 min</p><h2>Publicada</h2><p class="lead">Aunque todavía no guarde nada, que ya esté en internet.</p></div></div>
+  <ol class="mision rv" data-id="f3">
+    <li>Repositorio público en GitHub con el contenido de la carpeta (<code>index.html</code> en la raíz). <a href="02-publicar.html#github">Página 02 →</a></li>
+    <li>Proyecto en Vercel importado desde el repositorio (Framework Preset: Other). <a href="02-publicar.html#vercel">Página 02 →</a></li>
+    <li>Anoto mi dirección <code>.vercel.app</code>: la necesitaré en la fase 6.</li>
+  </ol>
+</section>
+
+<section class="sec l3" id="f4" data-nav="Fase 4 · Backend de pruebas">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Fase 4 · 1 h</p><h2>El backend de pruebas</h2><p class="lead">Supabase listo, seguro y documentado en scripts.</p></div></div>
+  <ol class="mision rv" data-id="f4">
+    <li>Proyecto <code>libro-de-visitas-pruebas</code> en una región de la UE; contraseña en el gestor. <a href="04-supabase-inicio.html#crear">Página 04 →</a></li>
+    <li>Tablas <code>temas</code> y <code>mensajes</code> con RLS, reglas <code>check</code> y relación. <a href="05-supabase-tablas.html#sql">Página 05 →</a></li>
+    <li>Reglas de lectura e inserción probadas con el rol <code>anon</code>. <a href="07-supabase-seguridad.html#probar">Página 07 →</a></li>
+    <li><code>supabase/estructura.sql</code> y <code>supabase/seguridad.sql</code> guardados en la carpeta del proyecto.</li>
+  </ol>
+</section>
+
+<section class="sec l3" id="f5" data-nav="Fase 5 · Conectada">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Fase 5 · 1 h</p><h2>Conectada</h2><p class="lead">La web lee y escribe en el proyecto de pruebas.</p></div></div>
+  <ol class="mision rv" data-id="f5">
+    <li><code>config.js</code> con la URL y la clave publicable de pruebas; <code>app.js</code> funcionando. <a href="08-supabase-web.html#app">Página 08 →</a></li>
+    <li>Pruebas hechas: 200 y 201 en Network, HTML de la gente mostrado como texto, textos largos rechazados. <a href="08-supabase-web.html#local">Página 08 →</a></li>
+    <li>Sé resolver los errores típicos con la guía de depuración. <a href="08-supabase-web.html#depurar">Página 08 →</a></li>
+  </ol>
+</section>
+
+<section class="sec l6" id="f6" data-nav="Fase 6 · Producción">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Fase 6 · 1 h</p><h2>Producción</h2><p class="lead">Un segundo proyecto con los datos reales, y la web que elige sola a cuál conectarse.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Entornos</a><a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>La ley</a><a class="ext" href="Deploy-Metro.html#rendimiento"><i>↗</i>Lighthouse</a></div></div></div>
+  <div class="panel rv">
+    <h3>Una web, dos proyectos</h3>
+    <p>Tu web es estática: no puede leer variables de entorno de Vercel (lo viste en <a href="Deploy-Metro.html#secretos">el plano</a>). La solución sencilla: que <code>config.js</code> mire en qué dirección se está ejecutando. En tu ordenador usa el proyecto de pruebas; publicada, el de producción. Las dos claves son publicables, así que pueden estar en el código.</p>
+    <textarea class="src" data-lang="js" data-title="js/config.js · versión final con dos entornos">
+// ¿estamos en el ordenador (Live Server) o publicados?
+const EN_LOCAL = ["127.0.0.1", "localhost"].includes(location.hostname);
+
+// proyecto de PRUEBAS para trabajar en local; de PRODUCCIÓN para la web publicada
+const SUPABASE_URL = EN_LOCAL
+  ? "https://PROYECTO-PRUEBAS.supabase.co"
+  : "https://PROYECTO-PRODUCCION.supabase.co";
+
+const SUPABASE_KEY = EN_LOCAL
+  ? "sb_publishable_CLAVE_PRUEBAS"
+  : "sb_publishable_CLAVE_PRODUCCION";</textarea>
+  </div>
+  <div class="panel rv">
+    <h3>Política de privacidad mínima</h3>
+    <p>Guardas el nombre que escribe la gente: es un dato personal. Esta plantilla cubre lo básico para un proyecto de clase (para una web real, consulta con quien sepa de protección de datos).</p>
+    <textarea class="src" data-lang="html" data-title="privacidad.html · contenido del <main>">
+<main class="libro">
+  <h1>Política de privacidad</h1>
+  <p><b>Quién es responsable:</b> [tu nombre], proyecto educativo de [centro]. Contacto: [tu correo].</p>
+  <p><b>Qué datos guardamos:</b> el nombre y el mensaje que escribes en el libro de visitas, y la fecha.</p>
+  <p><b>Para qué:</b> solo para mostrarlos en esta web.</p>
+  <p><b>Dónde:</b> en una base de datos de Supabase alojada en la Unión Europea.</p>
+  <p><b>Cuánto tiempo:</b> hasta el final del curso, o antes si pides que se borren.</p>
+  <p><b>Tus derechos:</b> puedes pedir ver, corregir o borrar tu mensaje escribiendo a [tu correo].</p>
+  <p><a href="index.html">Volver al libro de visitas</a></p>
+</main></textarea>
+  </div>
+  <ol class="mision rv" data-id="f6">
+    <li>Crea el segundo proyecto, <code>libro-de-visitas</code>, también en la UE. <a href="04-supabase-inicio.html#pausa">Página 04 →</a></li>
+    <li>En su SQL Editor ejecuta <code>estructura.sql</code> y después <code>seguridad.sql</code>: en un minuto tiene las mismas tablas y reglas.</li>
+    <li>Actualiza <code>config.js</code> con la versión de dos entornos y las claves publicables de cada proyecto.</li>
+    <li>En el proyecto de <b>producción</b>, URL Configuration: Site URL y Redirect URLs con tu dirección de Vercel. <a href="07-supabase-seguridad.html#urls">Página 07 →</a></li>
+    <li>Crea <code>privacidad.html</code> con la plantilla (rellena los corchetes) y enlázala junto al formulario.</li>
+    <li>Sube los cambios y comprueba: en local los mensajes van a pruebas; en la web publicada, a producción.</li>
+    <li>Pasa <b>Lighthouse</b> a la web publicada (modo móvil): rendimiento y accesibilidad en verde. <a href="Deploy-Metro.html#rendimiento">Plano 16 →</a></li>
+    <li>Página <code>404.html</code> propia y <code>vercel.json</code> con direcciones limpias y cabeceras de seguridad. <a href="03-produccion.html#vercel-json">Página 03 →</a></li>
+    <li>Opcional: dominio propio y analítica. <a href="03-produccion.html#dominio">Página 03 →</a></li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> un mensaje firmado en <code>127.0.0.1:5500</code> aparece solo en el Table Editor de pruebas; uno firmado en tu <code>.vercel.app</code>, solo en el de producción.</p></div>
+</section>
+
+<section class="sec l6" id="f7" data-nav="Fase 7 · Entrega">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Fase 7 · 30 min</p><h2>Entrega y mantenimiento</h2><p class="lead">Documentar, revisar y mantener vivo el proyecto.</p></div></div>
+  <div class="panel rv">
+    <h3>README del repositorio</h3>
+    <textarea class="src" data-lang="sh" data-title="README.md · plantilla">
+# Libro de visitas
+
+Web de libro de visitas hecha con HTML, CSS y Supabase.
+
+- Web publicada: https://libro-de-visitas.vercel.app
+- Autor: [tu nombre] · [curso]
+
+## Cómo verla en local
+1. Abrir la carpeta en VS Code.
+2. Go Live (Live Server).
+
+## Estructura
+- index.html · css/estilos.css · js/config.js · js/app.js
+- supabase/estructura.sql y supabase/seguridad.sql: crean la base de datos
+
+## Seguridad
+- Solo se usa la clave publicable de Supabase.
+- Las tablas tienen RLS: los visitantes pueden leer y añadir mensajes, no editar ni borrar.</textarea>
+  </div>
+  <ol class="mision rv" data-id="f7">
+    <li>Escribe el <code>README.md</code> con la plantilla y súbelo.</li>
+    <li>Repasa la <a href="07-supabase-seguridad.html#lista">lista de seguridad</a> de la página 07 en el proyecto de producción.</li>
+    <li>Exporta a CSV las tablas de producción y guarda la copia.</li>
+    <li>Recordatorio semanal: entrar en Supabase (evita la pausa). La víspera de presentar, comprueba que el proyecto está activo.</li>
+    <li>Opcional: un monitor gratuito (UptimeRobot o similar) que visite tu web y te avise si se cae. <a href="Deploy-Metro.html#servicios">Plano 15 →</a></li>
+  </ol>
+</section>
+
+<section class="sec l6" id="rubrica" data-nav="Rúbrica">
+  <div class="letrero rv"><div class="badge">R</div><div><p class="kick">Para el profesor y para ti</p><h2>Rúbrica de evaluación</h2><p class="lead">Qué se mira y qué distingue un trabajo básico de uno excelente.</p></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Criterio</th><th>Básico</th><th>Bien</th><th>Excelente</th></tr></thead>
+      <tbody>
+        <tr><td>Publicación</td><td>La web está en Vercel y carga.</td><td>Repositorio ordenado, nombres correctos, README.</td><td>Dominio propio o despliegues revisados sin errores 404.</td></tr>
+        <tr><td>Datos</td><td>Se guardan y se muestran mensajes.</td><td>Tablas con tipos, <code>check</code> y relación con temas.</td><td>Scripts SQL en el repositorio que recrean la base de datos.</td></tr>
+        <tr><td>Seguridad</td><td>RLS activado.</td><td>Solo las reglas necesarias, probadas con el rol <code>anon</code>.</td><td>Variante con usuarios (<code>auth.uid()</code>) o Security Advisor limpio y justificado.</td></tr>
+        <tr><td>Entornos</td><td>Un solo proyecto de Supabase.</td><td>Proyectos de pruebas y producción.</td><td><code>config.js</code> que elige el entorno solo.</td></tr>
+        <tr><td>Calidad</td><td>Funciona en escritorio.</td><td>Móvil, teclado, estados de envío y error.</td><td>Lighthouse en verde y HTML validado.</td></tr>
+        <tr><td>Legal y documentación</td><td>—</td><td>Política de privacidad enlazada.</td><td>README completo y copia de seguridad.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="sec l5" id="despues" data-nav="Y después">
+  <div class="letrero rv"><div class="badge">→</div><div><p class="kick">Lo que viene</p><h2>Y después, ¿qué?</h2><p class="lead">Este proyecto es la base de los siguientes bloques.</p></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><b>Bloque 09 · Git</b>: subir cambios desde la terminal, ramas y vistas previas de Vercel por rama.</li>
+      <li><b>Bloque 10 · JavaScript</b>: entenderás cada línea de <code>app.js</code> y podrás ampliarlo (editar, paginar, buscar).</li>
+      <li><b>NPM</b>: herramientas de terminal como la CLI de Supabase y de Vercel.</li>
+      <li><b>Ideas para ampliar el libro</b>: subida de fotos (página 07, Storage), tiempo real (<a href="08-supabase-web.html#realtime">08</a>), respuestas del autor, moderación (una columna <code>aprobado</code> y una regla que solo muestre los aprobados).</li>
+    </ul>
+  </div>
+  <h3 class="sub-test">Test final del manual</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">09 · De cero a producción</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'¿Con qué proyecto de Supabase trabaja la web cuando la abres con Live Server?',o:['Con el de pruebas','Con el de producción','Con ninguno'],a:0,e:'Fase 6: config.js mira la dirección.'},
+ {q:'¿Cómo se monta en un minuto el proyecto de producción?',o:['Ejecutando estructura.sql y seguridad.sql en su SQL Editor','Copiando el proyecto con el ratón','Pagando el plan Pro'],a:0,e:'Fase 6.'},
+ {q:'¿Por qué puede haber dos claves en config.js sin peligro?',o:['Porque las dos son publicables y las protege RLS','Porque config.js no se sube','Porque Vercel las oculta'],a:0,e:'Fase 6.'},
+ {q:'¿Qué debe incluir la política de privacidad?',o:['Qué datos guardas, para qué, dónde, cuánto tiempo y cómo pedir su borrado','Solo el nombre de la web','Las claves'],a:0,e:'Fase 6.'},
+ {q:'¿Qué haces la víspera de presentar?',o:['Comprobar que el proyecto de Supabase no está en pausa','Borrar las tablas','Cambiar la clave publicable'],a:0,e:'Fase 7.'},
+ {q:'¿Dónde se configura la dirección .vercel.app para el inicio de sesión?',o:['Authentication → URL Configuration del proyecto de producción','En el README','En el CSS'],a:0,e:'Fase 6.'},
+ {q:'¿Qué archivo explica a otros qué es tu proyecto y cómo usarlo?',o:['README.md','.gitignore','config.js'],a:0,e:'Fase 7.'},
+ {q:'¿Qué distingue un trabajo excelente en seguridad según la rúbrica?',o:['Reglas mínimas probadas y, por ejemplo, la variante con usuarios','Tener muchos colores','No usar RLS'],a:0,e:'Rúbrica.'}]);
+</script>
+</body>
+</html>

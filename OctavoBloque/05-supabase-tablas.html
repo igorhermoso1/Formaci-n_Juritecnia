@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · Supabase: tablas y datos · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 5: diseña tablas a partir de tu formulario, elige tipos de columna, crea la tabla con el Table Editor y con SQL, edita filas, relaciona tablas e importa y exporta CSV.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+<style>
+.dis{display:grid;gap:8px}
+.dis .fila{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.dis input[type=text],.dis select{font:500 15px var(--ui);padding:8px 10px;border:1px solid var(--linea);border-radius:10px;background:#fff;min-width:0}
+.dis label{font:600 13.5px var(--ui);display:flex;gap:6px;align-items:center;white-space:nowrap}
+.dis .quitar{border:1px solid var(--linea);background:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer}
+@media (max-width:620px){.dis .fila{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>05 · Supabase:<br>tablas y <em>datos</em></h1>
+    <div class="bajada">
+      <p>Una base de datos bien diseñada es la mitad de un backend. En esta página diseñarás las tablas del libro de visitas a partir del formulario, las crearás de dos formas (con botones y con SQL), las rellenarás, las relacionarás y aprenderás a sacar y meter datos en bloque.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Diseñar antes de crear</li><li>Tipos y opciones de columna</li><li>Crear la tabla con botones</li><li>Trabajar con filas</li><li>Relacionar tablas</li><li>Importar y exportar CSV</li><li>Todo con SQL</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>60 min</b></span><span>Dificultad: <b>media</b></span><span>Necesitas: <b>el proyecto de la página 04</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <nav class="banda-sb" id="bandaSb" aria-label="Unidad Supabase: 5 partes"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>05</i><span>Tablas</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l3" id="disenar" data-nav="Diseñar">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Antes de tocar el panel</p><h2>Diseñar antes de crear</h2><p class="lead">Del formulario a la tabla: cada campo es una columna.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../Formularios/Formularios-HTML.html"><i>↗</i>Formularios HTML</a><a class="ext" href="Deploy-Metro.html#tablas"><i>↗</i>El plano · tablas</a></div></div></div>
+  <div class="panel rv">
+    <h3>Cuatro preguntas de diseño</h3>
+    <ol>
+      <li><b>¿Qué guardo?</b> Una tabla por «cosa»: <code>mensajes</code>, <code>temas</code>, <code>inscripciones</code>.</li>
+      <li><b>¿Qué datos tiene cada cosa?</b> Los campos del formulario + los que pone el sistema (<code>id</code>, <code>created_at</code>).</li>
+      <li><b>¿De qué tipo es cada dato?</b> Texto, número, fecha, sí/no… (sección 2).</li>
+      <li><b>¿Qué reglas cumple?</b> Obligatorio o no, longitud máxima, valores permitidos, único.</li>
+    </ol>
+    <h4>Normas para los nombres</h4>
+    <ul>
+      <li>Minúsculas, sin espacios ni tildes ni eñes: <code>fecha_nacimiento</code>, no <code>Fecha de nacimiento</code>.</li>
+      <li>Palabras separadas por guion bajo (<i>snake_case</i>): es la costumbre en bases de datos.</li>
+      <li>Tablas en plural (<code>mensajes</code>), columnas en singular (<code>nombre</code>).</li>
+      <li>El nombre de la columna <b>igual que el <code>name</code> del campo</b> del formulario: así, en la página 08, los datos encajan solos.</li>
+    </ul>
+  </div>
+  <div class="panel rv">
+    <h3>Herramienta: del formulario a la tabla</h3>
+    <p>Escribe los campos de tu formulario y obtén el SQL de la tabla, con sus reglas. Sirve para cualquier proyecto (inscripciones, pedidos, encuestas…).</p>
+    <div class="ctrl"><input type="text" id="dTabla" value="mensajes" aria-label="Nombre de la tabla"><button class="btn sm" type="button" id="dAdd">+ Añadir campo</button></div>
+    <div class="dis" id="dis"></div>
+    <div id="dSql"></div>
+  </div>
+</section>
+
+<section class="sec l3" id="tipos" data-nav="Tipos de columna">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">La caja de herramientas</p><h2>Tipos y opciones de columna</h2><p class="lead">Elegir bien el tipo evita la mitad de los errores.</p></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Tipo</th><th>Guarda</th><th>Campo de formulario típico</th></tr></thead>
+      <tbody>
+        <tr><td>text</td><td>Texto de cualquier longitud</td><td><code>text</code>, <code>email</code>, <code>textarea</code>, <code>select</code></td></tr>
+        <tr><td>int8 / bigint</td><td>Número entero grande (ideal para <code>id</code>)</td><td>—</td></tr>
+        <tr><td>int4 / integer</td><td>Número entero</td><td><code>number</code> sin decimales</td></tr>
+        <tr><td>numeric</td><td>Número con decimales exactos (precios)</td><td><code>number step="0.01"</code></td></tr>
+        <tr><td>bool / boolean</td><td>Verdadero o falso</td><td><code>checkbox</code></td></tr>
+        <tr><td>date</td><td>Fecha</td><td><code>date</code></td></tr>
+        <tr><td>timestamptz</td><td>Fecha y hora con zona horaria</td><td><code>datetime-local</code>, <code>created_at</code></td></tr>
+        <tr><td>uuid</td><td>Identificador único universal</td><td>Usuarios de Auth (página 07)</td></tr>
+        <tr><td>jsonb</td><td>Datos con estructura libre</td><td>Avanzado</td></tr>
+      </tbody>
+    </table></div>
+    <h4>Opciones de cada columna en el Table Editor</h4>
+    <ul>
+      <li><b>Primary key</b>: el identificador único de la fila. Ya viene en <code>id</code>.</li>
+      <li><b>Default value</b>: el valor si no se envía nada. Ejemplos: <code>now()</code> (ahora), <code>true</code>, <code>gen_random_uuid()</code>.</li>
+      <li><b>Is Nullable</b>: si se permite vacío (<code>null</code>). Desmárcalo en los obligatorios.</li>
+      <li><b>Is Unique</b>: que no se repita (un correo por inscripción, por ejemplo).</li>
+      <li><b>Check constraint</b>: una regla propia, como «entre 2 y 60 letras». Solo con SQL o en las opciones avanzadas.</li>
+    </ul>
+    <div class="nota l3"><span class="lbl">Validar dos veces</span><p>Las reglas de la tabla repiten lo que hace el formulario con <code>required</code> y <code>maxlength</code>. La del formulario es comodidad; la de la base de datos es la que de verdad protege, porque el HTML se puede saltar.</p></div>
+  </div>
+</section>
+
+<section class="sec l3" id="crear" data-nav="Crear con botones">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 1</p><h2>Crear la tabla con el Table Editor</h2><p class="lead">La tabla <code>mensajes</code> del libro de visitas, sin escribir código.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="07-supabase-seguridad.html"><i>↗</i>RLS</a></div></div></div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="crear">
+    <li>En tu proyecto de pruebas: <b>Table Editor → New table</b>.</li>
+    <li><b>Name</b>: <code>mensajes</code>. <b>Description</b>: «Mensajes del libro de visitas».</li>
+    <li>Comprueba que <b>Enable Row Level Security (RLS)</b> está marcado. Déjalo así siempre.</li>
+    <li>Ya vienen <code>id</code> (int8, primary key) y <code>created_at</code> (timestamptz, default <code>now()</code>). No los toques.</li>
+    <li><b>Add column</b>: <code>nombre</code>, tipo <code>text</code>, desmarca <b>Is Nullable</b> (obligatorio).</li>
+    <li><b>Add column</b>: <code>mensaje</code>, tipo <code>text</code>, desmarca <b>Is Nullable</b>.</li>
+    <li>Pulsa <b>Save</b>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en el Table Editor aparece <code>mensajes</code> con cuatro columnas y la etiqueta de RLS activado. Arriba se ve un aviso tipo «RLS enabled, no policies»: es correcto; las reglas llegan en la página 07.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>Me equivoqué de nombre o de tipo</dt><dd>En la tabla, menú de la columna (flecha junto al nombre) → <b>Edit column</b>. Para la tabla entera: menú ⋯ junto a su nombre → <b>Edit table</b>.</dd>
+    <dt>Desmarqué RLS sin querer</dt><dd><b>Edit table</b> → vuelve a marcar <b>Enable Row Level Security</b>.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l3" id="filas" data-nav="Trabajar con filas">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 2</p><h2>Trabajar con filas</h2><p class="lead">Como en una hoja de cálculo, pero con reglas.</p></div></div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="filas">
+    <li><b>Insert → Insert row</b>: escribe un nombre y un mensaje (deja <code>id</code> y <code>created_at</code> vacíos: se rellenan solos) y <b>Save</b>.</li>
+    <li>Añade tres filas más con nombres distintos.</li>
+    <li>Prueba una regla: inserta una fila con el <code>nombre</code> vacío. Supabase debe rechazarla (es obligatorio).</li>
+    <li>Edita un mensaje con doble clic en la celda; pulsa <kbd>Intro</kbd> para guardar.</li>
+    <li>Ordena por <code>created_at</code> con <b>Sort</b> y filtra con <b>Filter</b> (por ejemplo, <code>nombre</code> es igual a uno de tus nombres).</li>
+    <li>Borra una fila: márcala con la casilla de la izquierda → <b>Delete 1 row</b>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> tienes tres filas, cada una con su <code>id</code> y su fecha automática, y la fila sin nombre no se pudo guardar.</p></div>
+</section>
+
+<section class="sec l3" id="relaciones" data-nav="Relacionar tablas">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 3</p><h2>Relacionar tablas</h2><p class="lead">Cada mensaje pertenece a un tema: una relación «uno a muchos».</p></div></div>
+  <div class="panel rv">
+    <h3>Por qué no escribir el tema en cada mensaje</h3>
+    <p>Podrías guardar el texto «Felicitación» en cada mensaje. Pero si mañana lo cambias a «Felicitaciones», tendrías que editar cien filas, y alguien escribiría «felicitacion» sin tilde. Lo profesional es una tabla <code>temas</code> con cada tema una sola vez, y en <code>mensajes</code> una columna <code>tema_id</code> que <b>apunta</b> al tema. Esa columna se llama <b>clave foránea</b> (<i>foreign key</i>).</p>
+    <div class="esquema"><div><b>temas</b>id · int8 🔑<br>nombre · text</div><div><b>mensajes</b>id · int8 🔑<br>created_at · timestamptz<br>nombre · text<br>mensaje · text<br>tema_id · int8 → temas.id</div></div>
+    <div class="analogia"><span class="ico">🗂️</span><p>Es el número de mesa de un restaurante: el pedido no copia la mesa entera, solo dice «mesa 4». Si cambias el mantel de la mesa 4, cambia para todos los pedidos.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="rel">
+    <li>Crea la tabla <code>temas</code> (RLS marcado) con la columna <code>nombre</code> (text, no nullable, <b>Is Unique</b>).</li>
+    <li>Inserta tres filas: «Felicitación», «Sugerencia», «Saludo».</li>
+    <li>En <code>mensajes</code>, <b>Add column</b>: <code>tema_id</code>, tipo <code>int8</code>, y pulsa <b>Add foreign key relation</b> (el icono de enlace): tabla <code>temas</code>, columna <code>id</code>.</li>
+    <li>En la acción al borrar (<i>On delete</i>), elige <b>Set null</b>: si se borra un tema, los mensajes se quedan sin tema en vez de desaparecer.</li>
+    <li>Edita tus mensajes y asigna a cada uno un <code>tema_id</code>: al pulsar la celda, Supabase te deja elegir de la lista de temas.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en <code>mensajes</code>, la columna <code>tema_id</code> muestra un icono de enlace, y al pasar por una celda ves a qué tema apunta. En la página 06 los juntarás con <code>JOIN</code>.</p></div>
+</section>
+
+<section class="sec l3" id="csv" data-nav="Importar y exportar">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 4</p><h2>Importar y exportar CSV</h2><p class="lead">Meter datos en bloque desde una hoja de cálculo y hacer copias de seguridad.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Copias de seguridad</a></div></div></div>
+  <div class="panel rv">
+    <p><b>CSV</b> es una tabla en texto: cada línea es una fila y las columnas van separadas por comas. Lo exportan Excel, Google Sheets y LibreOffice. La primera línea debe tener los <b>nombres exactos de las columnas</b>.</p>
+    <textarea class="src" data-lang="sh" data-title="temas-extra.csv · guárdalo con este contenido">
+nombre
+Queja
+Pregunta
+Agradecimiento</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="csv">
+    <li>Crea en VS Code un archivo <code>temas-extra.csv</code> con el contenido de arriba (fuera de la carpeta del proyecto, o bórralo después).</li>
+    <li>En <code>temas</code>: <b>Insert → Import data from CSV</b>, arrastra el archivo, revisa la vista previa y pulsa <b>Import data</b>.</li>
+    <li>Exporta <code>mensajes</code>: botón <b>Export</b> (o menú ⋯ de la tabla) → <b>Export to CSV</b>. Ábrelo con tu hoja de cálculo.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> <code>temas</code> tiene seis filas y en tu carpeta de descargas hay un <code>mensajes.csv</code>. Esa exportación es tu copia de seguridad casera (el plan gratis no hace copias automáticas).</p></div>
+</section>
+
+<section class="sec l3" id="sql" data-nav="Todo con SQL">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Misión 5</p><h2>Lo mismo, con SQL</h2><p class="lead">Un script que crea todo de golpe: lo usarás para montar el proyecto de producción en segundos.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="06-supabase-sql.html"><i>↗</i>Aprender SQL</a><a class="ext" href="09-proyecto.html"><i>↗</i>Producción</a></div></div></div>
+  <div class="panel rv">
+    <h3>Por qué SQL además de botones</h3>
+    <p>Los botones son cómodos, pero no dejan rastro. Un script SQL es una <b>receta guardada</b>: lo puedes repetir en otro proyecto (el de producción), compartirlo con tu equipo o guardarlo en el repositorio. Así trabajan los equipos profesionales.</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · estructura completa del libro de visitas">
+-- 1 · tabla de temas
+create table if not exists public.temas (
+  id bigint generated always as identity primary key,   -- identificador automático
+  nombre text not null unique                            -- obligatorio y sin repetir
+);
+
+-- 2 · tabla de mensajes, relacionada con temas
+create table if not exists public.mensajes (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  nombre text not null check (char_length(nombre) between 2 and 60),
+  mensaje text not null check (char_length(mensaje) between 1 and 500),
+  tema_id bigint references public.temas (id) on delete set null
+);
+
+-- 3 · seguridad: RLS activado en las dos (las reglas, en la página 07)
+alter table public.temas enable row level security;
+alter table public.mensajes enable row level security;
+
+-- 4 · datos iniciales
+insert into public.temas (nombre) values ('Felicitación'), ('Sugerencia'), ('Saludo')
+on conflict (nombre) do nothing;</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="sql">
+    <li>Abre <b>SQL Editor → New query</b>.</li>
+    <li>Pega el script, ponle nombre (icono de lápiz junto a «Untitled query»): «Estructura libro de visitas».</li>
+    <li>Pulsa <b>Run</b> (o <kbd>Ctrl</kbd>+<kbd>Intro</kbd>). Como usa <code>if not exists</code> y <code>on conflict do nothing</code>, no rompe lo que ya creaste con botones.</li>
+    <li>Guarda también una copia del script en tu carpeta del proyecto: <code>supabase/estructura.sql</code>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> abajo aparece «Success. No rows returned». En la lista de consultas guardadas está «Estructura libro de visitas» y en tu carpeta, <code>supabase/estructura.sql</code>.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>«relation "temas" already exists»</dt><dd>Te falta el <code>if not exists</code>: copia el script completo de arriba.</dd>
+    <dt>«column "tema_id" of relation "mensajes" does not exist»</dt><dd>Tu tabla <code>mensajes</code> se creó antes sin esa columna. Añádela: <code>alter table public.mensajes add column tema_id bigint references public.temas (id) on delete set null;</code></dd>
+    <dt>Un aviso dice que la consulta es destructiva</dt><dd>Supabase avisa antes de ejecutar <code>drop</code> o <code>delete</code>. Lee siempre qué vas a borrar antes de confirmar.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Datos con forma</h2><p class="lead">Ya tienes tablas, relaciones y un script reutilizable. Ahora, a preguntarles cosas.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">05 · Supabase: tablas y datos</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+(function(){
+const {$,$$,el,esc,codeBox,test}=M;
+/* ---------- del formulario a la tabla ---------- */
+const TIPOS={'text':'Texto','text-email':'Correo','int4':'Número entero','numeric':'Número con decimales','bool':'Casilla (sí/no)','date':'Fecha','timestamptz':'Fecha y hora'};
+const D=$('#dis'),box=codeBox('sql','','SQL · tu tabla');$('#dSql').appendChild(box);
+const limpio=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ñ/g,'n').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'columna';
+function fila(n,t,o,max){const f=el('div','fila');f.innerHTML=`<input type="text" value="${esc(n)}" aria-label="Nombre del campo (name)"><select aria-label="Tipo">${Object.entries(TIPOS).map(([k,v])=>`<option value="${k}"${k===t?' selected':''}>${v}</option>`).join('')}</select><label><input type="checkbox"${o?' checked':''}> Obligatorio</label><button class="quitar" type="button" aria-label="Quitar campo">✕</button>`;
+ f.dataset.max=max||'';$('.quitar',f).onclick=()=>{f.remove();gen();};D.appendChild(f);}
+function gen(){const t=limpio($('#dTabla').value);const L=[`-- tabla generada a partir de tu formulario`,`create table if not exists public.${t} (`,`  id bigint generated always as identity primary key,`,`  created_at timestamptz not null default now(),`];
+ const cols=$$('.fila',D).map(f=>{const n=limpio($('input[type=text]',f).value),tipo=$('select',f).value,ob=$('input[type=checkbox]',f).checked,max=f.dataset.max;
+  let tp=tipo==='text-email'?'text':tipo,extra='';
+  if(tipo==='text'&&max)extra=` check (char_length(${n}) <= ${max})`;
+  if(tipo==='text-email')extra=` check (${n} ~* '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')`;
+  if(tipo==='bool')extra=' default false';
+  return `  ${n} ${tp}${ob?' not null':''}${extra}`;});
+ L.push(cols.join(',\n')+(cols.length?'':'  -- añade campos'),');','',`alter table public.${t} enable row level security;  -- siempre`);
+ box.set(L.join('\n').replace(/,\n\)/,'\n)').replace('default now(),\n  -- añade campos','default now()\n  -- añade campos'));}
+fila('nombre','text',true,60);fila('mensaje','text',true,500);
+$('#dAdd').onclick=()=>{fila('nuevo_campo','text',false);gen();};
+D.addEventListener('input',gen);D.addEventListener('change',gen);$('#dTabla').addEventListener('input',gen);gen();
+
+test([
+ {q:'Tu formulario tiene <code>name="fecha_visita"</code>. ¿Cómo debería llamarse la columna?',o:['fecha_visita','Fecha de la visita','fechaVisita2'],a:0,e:'Sección 1: igual que el name, en minúsculas y con guion bajo.'},
+ {q:'¿Qué tipo usarías para un precio con céntimos?',o:['numeric','text','bool'],a:0,e:'Sección 2.'},
+ {q:'¿Qué opción hace que una columna sea obligatoria?',o:['Desmarcar Is Nullable (not null)','Marcar Is Unique','Poner un default'],a:0,e:'Sección 2.'},
+ {q:'¿Qué hace el default <code>now()</code> en created_at?',o:['Pone la fecha y hora del momento en que se crea la fila','Borra la fila al día siguiente','Nada'],a:0,e:'Misión 1.'},
+ {q:'¿Para qué sirve <code>tema_id</code> en mensajes?',o:['Es una clave foránea que apunta a un tema de la tabla temas','Para guardar el nombre del tema repetido','Para ordenar'],a:0,e:'Misión 3.'},
+ {q:'¿Qué ventaja tiene crear las tablas con un script SQL guardado?',o:['Se puede repetir en otro proyecto (producción) y queda documentado','Ninguna, es más difícil','Que no hace falta RLS'],a:0,e:'Misión 5.'},
+ {q:'El plan gratis no hace copias automáticas. ¿Cómo haces una?',o:['Exportando las tablas a CSV','Haciendo una captura','No se puede'],a:0,e:'Misión 4.'}]);
+})();
+</script>
+</body>
+</html>

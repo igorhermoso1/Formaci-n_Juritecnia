@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Supabase: seguridad · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 7: reglas RLS con el panel y con SQL, probarlas cambiando de rol, usuarios con Supabase Auth, URL Configuration para local y Vercel, reglas por usuario y archivos con Storage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>07 · Seguridad:<br>RLS, usuarios y <em>archivos</em></h1>
+    <div class="bajada">
+      <p>Tus tablas ya existen, pero con RLS activado y sin reglas nadie puede usarlas desde la web. Aquí abrirás <b>solo</b> las puertas necesarias, comprobarás que funcionan, prepararás el inicio de sesión para tu dirección local y la publicada, y montarás un almacén de fotos seguro.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Revisar el estado</li><li>Reglas con el panel</li><li>Reglas con SQL</li><li>Probar las reglas</li><li>Usuarios y direcciones permitidas</li><li>Reglas por usuario</li><li>Archivos (Storage)</li><li>Lista de seguridad</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>70 min</b></span><span>Dificultad: <b>media-alta</b></span><span>Necesitas: <b>las páginas 04 y 05</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <nav class="banda-sb" id="bandaSb" aria-label="Unidad Supabase: 5 partes"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>07</i><span>Seguridad</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l4" id="estado" data-nav="Revisar el estado">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>Revisar el estado de seguridad</h2><p class="lead">Antes de abrir puertas, comprueba que todas están cerradas.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#rls"><i>↗</i>Qué es RLS (y simulador)</a><a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Claves</a></div></div></div>
+  <div class="panel rv">
+    <h3>Recordatorio en tres líneas</h3>
+    <ul>
+      <li>Desde la web se llega con la <b>clave publicable</b>: rol <code>anon</code> (sin sesión) o <code>authenticated</code> (con sesión).</li>
+      <li>Con <b>RLS activado y sin reglas</b>, la respuesta a todo es «no».</li>
+      <li>Cada <b>regla</b> (<i>policy</i>) abre una acción concreta (<code>select</code>, <code>insert</code>, <code>update</code>, <code>delete</code>) para un rol concreto, con una condición.</li>
+    </ul>
+    <p>Si no lo tienes claro, juega primero con el <a href="Deploy-Metro.html#rls">simulador del portero</a> del plano.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="est">
+    <li>Abre <b>Table Editor</b>: <code>mensajes</code> y <code>temas</code> deben mostrar que el RLS está activado.</li>
+    <li>Abre <b>Advisors → Security Advisor</b> y pulsa para actualizar el análisis. Si avisa de «RLS disabled» en alguna tabla, actívalo en esa tabla (<b>Edit table</b>).</li>
+    <li>Lee los avisos «RLS enabled, no policy»: es justo lo que vas a arreglar ahora.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="panel" data-nav="Reglas con el panel">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>Reglas con el panel</h2><p class="lead">Las dos reglas del libro de visitas: todos leen, todos escriben; nadie edita ni borra.</p></div></div>
+  <div class="panel rv">
+    <h3>Las reglas que necesita el proyecto</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Tabla</th><th>Acción</th><th>Para</th><th>Condición</th><th>¿Por qué?</th></tr></thead>
+      <tbody>
+        <tr><td>mensajes</td><td>SELECT</td><td>anon, authenticated</td><td>true (todas las filas)</td><td>Los mensajes se muestran en la web</td></tr>
+        <tr><td>mensajes</td><td>INSERT</td><td>anon</td><td>true (la tabla ya limita la longitud)</td><td>Cualquiera puede firmar</td></tr>
+        <tr><td>temas</td><td>SELECT</td><td>anon, authenticated</td><td>true</td><td>Para elegir tema en el formulario</td></tr>
+        <tr><td>(ninguna)</td><td>UPDATE · DELETE</td><td>—</td><td>—</td><td>Solo tú, desde el panel</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="pan">
+    <li>Abre <b>Authentication → Policies</b> (en algunas versiones, <b>Database → Policies</b>; o, desde la tabla, el botón <b>Add RLS policy</b>).</li>
+    <li>En <code>mensajes</code>, pulsa <b>Create policy</b> (o <i>New policy</i>). Elige la plantilla <b>«Enable read access for all users»</b>: acción <code>SELECT</code>, roles <code>anon</code> y <code>authenticated</code>, expresión <code>true</code>. Revisa y guarda.</li>
+    <li>Otra regla en <code>mensajes</code>: nombre «Cualquiera puede dejar un mensaje», acción <code>INSERT</code>, rol <code>anon</code>, expresión <b>WITH CHECK</b> <code>true</code>. Guarda.</li>
+    <li>En <code>temas</code>, crea una regla de lectura igual que la primera.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en la lista de Policies, <code>mensajes</code> tiene 2 reglas y <code>temas</code> 1. En Security Advisor desaparece el aviso «no policy».</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>¿USING o WITH CHECK?</dt><dd><code>USING</code> decide qué filas <b>existentes</b> se pueden ver, cambiar o borrar. <code>WITH CHECK</code> decide si una fila <b>nueva o modificada</b> es aceptable. Para <code>INSERT</code> solo hay <code>WITH CHECK</code>; para <code>SELECT</code> y <code>DELETE</code>, solo <code>USING</code>.</dd>
+    <dt>No encuentro las plantillas</dt><dd>Escribe la regla en blanco: los campos son los mismos (nombre, acción, roles y expresión). O usa el SQL de la misión 3.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l4" id="sql" data-nav="Reglas con SQL">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>Las mismas reglas con SQL</h2><p class="lead">Un script repetible: para el proyecto de producción y para tu repositorio.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="05-supabase-tablas.html#sql"><i>↗</i>Script de tablas</a><a class="ext" href="04-supabase-inicio.html#ajustes"><i>↗</i>Data API</a></div></div></div>
+  <div class="panel rv">
+    <textarea class="src" data-lang="sql" data-title="SQL · seguridad del libro de visitas (repetible)">
+-- permisos de base: qué puede intentar cada rol (las reglas afinan después)
+grant select on table public.temas to anon, authenticated;
+grant select, insert on table public.mensajes to anon;
+grant select on table public.mensajes to authenticated;
+
+-- borra las reglas si ya existían, para poder ejecutar el script otra vez
+drop policy if exists "Lectura pública de temas" on public.temas;
+drop policy if exists "Lectura pública de mensajes" on public.mensajes;
+drop policy if exists "Cualquiera puede dejar un mensaje" on public.mensajes;
+
+-- regla 1: todos leen los temas
+create policy "Lectura pública de temas"
+on public.temas for select
+to anon, authenticated
+using ( true );
+
+-- regla 2: todos leen los mensajes
+create policy "Lectura pública de mensajes"
+on public.mensajes for select
+to anon, authenticated
+using ( true );
+
+-- regla 3: cualquiera añade un mensaje (la tabla limita la longitud)
+create policy "Cualquiera puede dejar un mensaje"
+on public.mensajes for insert
+to anon
+with check ( true );</textarea>
+    <div class="nota l4"><span class="lbl">¿Por qué grant?</span><p>Las reglas RLS filtran, pero antes el rol necesita <b>permiso</b> sobre la tabla. Si en tu proyecto está activado «Automatically expose new tables» (página 04), ese permiso ya existe y el <code>grant</code> no cambia nada; si está desactivado, sin <code>grant</code> verás el error <code>42501 permission denied for table</code>. Ponerlo siempre hace el script válido en los dos casos.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="sql">
+    <li>En <b>SQL Editor → New query</b>, pega el script y llámalo «Seguridad libro de visitas».</li>
+    <li><b>Run</b>. Como empieza borrando las reglas si existen, no choca con las que creaste en la misión 2.</li>
+    <li>Guarda una copia en tu carpeta: <code>supabase/seguridad.sql</code>, junto a <code>estructura.sql</code>.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="probar" data-nav="Probar las reglas">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4</p><h2>Probar las reglas como un visitante</h2><p class="lead">El SQL Editor puede «ponerse el disfraz» de otro rol. Así compruebas tus reglas sin escribir la web.</p></div></div>
+  <div class="panel rv">
+    <p>Normalmente el SQL Editor trabaja como <code>postgres</code> (administrador, sin reglas). Junto al botón <b>Run</b> hay un selector de <b>rol</b>: elige <code>anon</code> y las consultas se ejecutarán como si vinieran de tu web sin sesión.</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · ejecútalas con el rol anon">
+-- 1 · leer: debe funcionar (regla de lectura)
+select nombre, mensaje from public.mensajes;
+
+-- 2 · añadir: debe funcionar (regla de inserción)
+insert into public.mensajes (nombre, mensaje) values ('Prueba anon', 'Hola desde el rol anon');
+
+-- 3 · borrar: no debe borrar nada (no hay regla de borrado)
+delete from public.mensajes where nombre = 'Prueba anon';
+
+-- 4 · cambiar: tampoco (no hay regla de actualización)
+update public.mensajes set mensaje = 'hackeado';</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="pro">
+    <li>Pega las consultas en una consulta nueva y cambia el selector de rol a <code>anon</code>.</li>
+    <li>Ejecuta la 1 (selecciónala y <b>Run selected</b>, o ejecútalas de una en una): ves los mensajes.</li>
+    <li>Ejecuta la 2: se inserta. Compruébalo en el Table Editor.</li>
+    <li>Ejecuta la 3 y la 4: el resultado dice <b>0 filas</b> afectadas. RLS no da error al borrar o cambiar: simplemente no encuentra filas permitidas.</li>
+    <li>Vuelve el selector a <code>postgres</code> y borra a mano la fila «Prueba anon».</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> como <code>anon</code> puedes leer y añadir, pero borrar y cambiar afectan a 0 filas. Tus mensajes siguen intactos.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>«new row violates row-level security policy for table "mensajes"»</dt><dd>No hay regla de <code>INSERT</code> para ese rol, o su <code>with check</code> no se cumple. Revisa la misión 2 o 3.</dd>
+    <dt>«permission denied for table mensajes» (código 42501)</dt><dd>Falta el <code>grant</code>. Ejecuta la parte de permisos del script de la misión 3.</dd>
+    <dt>No veo el selector de rol</dt><dd>Puede estar en el menú del botón <b>Run</b> o arriba a la derecha del editor. Si tu versión no lo tiene, probarás las reglas desde la web en la página 08.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l4" id="urls" data-nav="Usuarios y direcciones">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 5</p><h2>Usuarios y direcciones permitidas</h2><p class="lead">Prepara el inicio de sesión para que funcione en tu ordenador y en tu web publicada.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#usuarios"><i>↗</i>Auth en el plano</a><a class="ext" href="08-supabase-web.html#login"><i>↗</i>Login en la web</a></div></div></div>
+  <div class="panel rv">
+    <h3>Cómo entra un usuario</h3>
+    <p>Con el <b>enlace mágico</b>, la persona escribe su correo, recibe un enlace y, al pulsarlo, vuelve a tu web con la sesión iniciada. Para que ese «volver» funcione, Supabase necesita saber <b>a qué direcciones puede devolverla</b>: si no está en la lista, la manda a la <i>Site URL</i> o rechaza la redirección. Es una medida de seguridad: evita que alguien use tu proyecto para mandar gente a una web trampa.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Ajuste</th><th>Valor para tu proyecto</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Site URL</td><td><code>https://libro-de-visitas.vercel.app</code> (tu dirección de Vercel)</td><td>La dirección por defecto de los correos de confirmación y recuperación.</td></tr>
+        <tr><td>Redirect URLs</td><td><code>http://127.0.0.1:5500/**</code></td><td>Live Server en tu ordenador.</td></tr>
+        <tr><td>Redirect URLs</td><td><code>http://localhost:5500/**</code></td><td>Por si Live Server abre con «localhost».</td></tr>
+        <tr><td>Redirect URLs</td><td><code>https://libro-de-visitas.vercel.app/**</code></td><td>Tu web publicada.</td></tr>
+        <tr><td>Redirect URLs</td><td><code>https://*-tu-usuario.vercel.app/**</code></td><td>Las vistas previas de Vercel (cambia «tu-usuario» por tu cuenta).</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fuente"><code>**</code> admite cualquier ruta detrás (<code>/carta.html</code>, <code>/a/b</code>); <code>*</code> solo un trozo. En producción, cuanto más exacta la dirección, mejor.</p>
+    <div class="nota l4"><span class="lbl">Correos</span><p>El servicio de correo que trae Supabase de serie está muy limitado y es solo para pruebas: envía pocos correos por hora. Para una web real se configura un servicio propio en <b>Authentication → Emails → SMTP Settings</b> (Resend, Brevo…).</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="urls">
+    <li><b>Authentication → Sign In / Providers</b>: comprueba que <b>Email</b> está activado. Para practicar, puedes desactivar <b>Confirm email</b>; en producción, déjalo activado.</li>
+    <li><b>Authentication → URL Configuration</b>: en <b>Site URL</b> pon tu dirección de Vercel (si aún no la tienes, deja <code>http://127.0.0.1:5500</code> y cámbiala en la página 09).</li>
+    <li>En <b>Redirect URLs</b>, pulsa <b>Add URL</b> y añade las direcciones de la tabla, adaptadas a tu proyecto.</li>
+    <li><b>Authentication → Users → Add user → Send invitation</b> (o <i>Create new user</i>) con tu propio correo, para tener un usuario de prueba.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en <b>Users</b> aparece tu usuario y en URL Configuration están tu dirección local y la de Vercel.</p></div>
+</section>
+
+<section class="sec l3" id="propias" data-nav="Reglas por usuario">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 6 · ampliación</p><h2>Reglas por usuario</h2><p class="lead">«Solo los usuarios con sesión escriben, y cada uno borra solo lo suyo».</p></div></div>
+  <div class="panel rv">
+    <p>La clave es <code>auth.uid()</code>: dentro de una regla, devuelve el identificador del usuario que hace la petición (o nada si es anónimo). Se guarda en cada fila en una columna <code>autor</code> y se compara.</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · libro de visitas con usuarios (variante)">
+-- 1 · cada mensaje recuerda quién lo escribió
+alter table public.mensajes add column if not exists autor uuid default auth.uid();
+
+-- 2 · permisos para usuarios con sesión
+grant insert, delete on table public.mensajes to authenticated;
+
+-- 3 · solo con sesión se puede escribir, y siempre a tu nombre
+drop policy if exists "Cualquiera puede dejar un mensaje" on public.mensajes;
+drop policy if exists "Escribir con sesión" on public.mensajes;
+create policy "Escribir con sesión"
+on public.mensajes for insert
+to authenticated
+with check ( autor = auth.uid() );
+
+-- 4 · cada usuario borra solo sus mensajes
+drop policy if exists "Borrar lo propio" on public.mensajes;
+create policy "Borrar lo propio"
+on public.mensajes for delete
+to authenticated
+using ( autor = auth.uid() );</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 6</b><span>10 minutos · opcional</span></div>
+  <ol class="mision rv" data-id="pro2">
+    <li>Decide si tu libro de visitas será <b>abierto</b> (cualquiera firma) o <b>con usuarios</b> (hay que entrar). Para empezar, abierto es más sencillo.</li>
+    <li>Si eliges «con usuarios», ejecuta este script en el proyecto de pruebas.</li>
+    <li>Prueba con el rol <code>anon</code> a insertar: ahora debe fallar con «new row violates row-level security policy».</li>
+  </ol>
+</section>
+
+<section class="sec l5" id="storage" data-nav="Archivos">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Misión 7 · ampliación</p><h2>Archivos con Storage</h2><p class="lead">Un cubo de fotos donde solo suben los usuarios con sesión, y todo el mundo puede verlas.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#usuarios"><i>↗</i>Storage en el plano</a><a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Límites</a></div></div></div>
+  <div class="panel rv">
+    <p>En un cubo <b>público</b>, cualquiera con el enlace puede <b>ver</b> un archivo, pero <b>subir</b>, cambiar o borrar sigue necesitando reglas. Los archivos viven en la tabla especial <code>storage.objects</code>, y las reglas se escriben sobre ella.</p>
+    <textarea class="src" data-lang="sql" data-title="SQL · regla para subir fotos al cubo «fotos»">
+-- solo los usuarios con sesión pueden subir archivos al cubo «fotos»
+create policy "Subir fotos con sesión"
+on storage.objects for insert
+to authenticated
+with check ( bucket_id = 'fotos' );</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 7</b><span>10 minutos · opcional</span></div>
+  <ol class="mision rv" data-id="sto">
+    <li><b>Storage → New bucket</b>: nombre <code>fotos</code>, marca <b>Public bucket</b>.</li>
+    <li>En las opciones del cubo, limita el tamaño (<b>File size limit</b>: 2 MB) y los tipos (<b>Allowed MIME types</b>: <code>image/webp, image/jpeg, image/png</code>).</li>
+    <li>Sube una foto a mano con <b>Upload file</b> y copia su enlace público (<b>Get URL</b>). Ábrelo en una pestaña de incógnito: se ve.</li>
+    <li>Ejecuta la regla de arriba en el SQL Editor para permitir subidas a usuarios con sesión.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> la foto se ve con su enlace público en incógnito, y el cubo rechaza archivos de más de 2 MB o de otros tipos.</p></div>
+</section>
+
+<section class="sec l6" id="lista" data-nav="Lista de seguridad">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Lista de seguridad</h2><p class="lead">Repásala ahora y antes de cada entrega.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Seguridad y ley</a><a class="ext" href="09-proyecto.html"><i>↗</i>Producción</a></div></div></div>
+  <div class="mision-cab rv"><b>Revisión</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="lista">
+    <li>Todas las tablas de <code>public</code> tienen RLS activado.</li>
+    <li>Cada regla abre solo lo necesario: nada de <code>for all</code> con <code>using (true)</code>.</li>
+    <li>Security Advisor sin avisos rojos.</li>
+    <li>La clave secreta no aparece en ningún archivo de tu carpeta ni en GitHub.</li>
+    <li>Las tablas tienen <code>check</code> que limitan longitudes y valores.</li>
+    <li>URL Configuration solo contiene tus direcciones.</li>
+    <li>Tienes copias de <code>estructura.sql</code> y <code>seguridad.sql</code> en tu carpeta y una exportación CSV reciente.</li>
+  </ol>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">07 · Seguridad</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'Con RLS activado y sin reglas, ¿qué puede hacer la web con la clave publicable?',o:['Nada','Todo','Solo leer'],a:0,e:'Sección 1.'},
+ {q:'¿Qué reglas necesita un libro de visitas abierto?',o:['SELECT para todos e INSERT para anon','ALL para todos','DELETE para anon'],a:0,e:'Misión 2.'},
+ {q:'En una regla de INSERT, ¿qué expresión se usa?',o:['WITH CHECK','USING','ORDER BY'],a:0,e:'Misión 2: USING es para filas existentes.'},
+ {q:'Ves «permission denied for table mensajes» (42501). ¿Qué falta?',o:['El grant de permisos a ese rol','Una columna','Reiniciar el ordenador'],a:0,e:'Misiones 3 y 4.'},
+ {q:'Como anon ejecutas un DELETE y dice «0 filas». ¿Qué significa?',o:['RLS no deja borrar nada: funciona como debe','Se ha roto la tabla','Hay que pagar'],a:0,e:'Misión 4.'},
+ {q:'¿Para qué sirven las Redirect URLs de Authentication?',o:['Para decir a qué direcciones puede volver alguien tras iniciar sesión','Para cambiar el dominio','Para redirigir el tráfico de Vercel'],a:0,e:'Misión 5.'},
+ {q:'¿Qué dirección local añades para Live Server?',o:['http://127.0.0.1:5500/**','http://localhost:3000','file:///C:/'],a:0,e:'Misión 5.'},
+ {q:'¿Qué devuelve <code>auth.uid()</code> dentro de una regla?',o:['El identificador del usuario que hace la petición','La URL del proyecto','La contraseña'],a:0,e:'Misión 6.'},
+ {q:'En un cubo público de Storage, ¿quién puede subir archivos sin reglas?',o:['Nadie: subir siempre necesita una regla','Todo el mundo','Solo Google'],a:0,e:'Misión 7.'}]);
+</script>
+</body>
+</html>

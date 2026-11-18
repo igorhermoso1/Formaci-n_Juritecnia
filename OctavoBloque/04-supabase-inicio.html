@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · Supabase: puesta en marcha · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 4: crea tu cuenta y tu proyecto de Supabase, recorre el panel completo, localiza la URL y las claves, revisa los ajustes clave, gestiona la pausa y conoce Supabase en local.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>04 · Supabase:<br>puesta en <em>marcha</em></h1>
+    <div class="bajada">
+      <p>Supabase no se instala: es un servicio en la nube. «Ponerlo en marcha» es crear tu proyecto, conocer su panel y guardar a buen recaudo sus datos de acceso. Al terminar tendrás un proyecto vivo en Europa, sabrás qué hace cada parte del panel y tendrás la URL y la clave que conectarán tu web en la página 08.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Qué es y qué trae</li><li>Organización y proyecto</li><li>Recorrido por el panel</li><li>URL y claves</li><li>Ajustes que importan</li><li>Pausa y segundo proyecto</li><li>Supabase en local (opcional)</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>40 min</b></span><span>Dificultad: <b>baja</b></span><span>Necesitas: <b>la página 01 hecha</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <nav class="banda-sb" id="bandaSb" aria-label="Unidad Supabase: 5 partes"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>04</i><span>Supabase</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l3" id="que" data-nav="Qué es y qué trae">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">Antes de empezar</p><h2>Qué es Supabase y qué trae</h2><p class="lead">Un backend completo que se alquila: base de datos, usuarios, archivos y reglas de acceso.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#supabase"><i>↗</i>El plano · Supabase</a><a class="ext" href="Deploy-Metro.html#arquitecturas"><i>↗</i>Arquitecturas</a><a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Plan gratis</a></div></div></div>
+  <div class="panel rv">
+    <h3>Lo esencial en un minuto</h3>
+    <p>Cada <b>proyecto</b> de Supabase es una base de datos <b>PostgreSQL</b> con un montón de servicios alrededor: una API automática para leer y escribir desde la web, un sistema de usuarios (Auth), un almacén de archivos (Storage), reglas por fila (RLS), tiempo real y funciones. Todo se maneja desde un <b>panel web</b> (el <i>dashboard</i>) con botones.</p>
+    <p>El plan gratuito permite <b>2 proyectos activos</b>, 500 MB de base de datos y 1 GB de archivos, y <b>pausa el proyecto tras una semana sin uso</b> (datos y detalles en <a href="Deploy-Metro.html#supabase">el plano</a>).</p>
+    <h3>La unidad Supabase: cinco partes, una red</h3>
+    <p>Supabase se aprende en cinco paradas, cada una pensada para una sesión. Pulsa cualquier estación para ir a ella; el anillo de cada una se llena con tus pasos marcados.</p>
+    <div class="unidad-sb" id="unidadSb"></div>
+    <div class="nota l3"><span class="lbl">¿Instalar?</span><p>No hay nada que instalar para usarlo: todo vive en la nube y se maneja desde el navegador. Existe una versión para tu ordenador (sección 7), pero es para usuarios avanzados y no la necesitas.</p></div>
+  </div>
+</section>
+
+<section class="sec l3" id="crear" data-nav="Crear el proyecto">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>Organización y proyecto</h2><p class="lead">Cinco minutos de formulario y dos de espera.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="01-entorno.html#cuentas"><i>↗</i>Tu cuenta</a><a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Datos en la UE</a></div></div></div>
+  <div class="panel rv">
+    <h3>Pantalla a pantalla (simulado)</h3>
+    <p>Las pantallas imitan el panel de Supabase. Lo que importa en cada paso late. Supabase cambia el diseño a menudo: guíate por <b>las palabras</b>.</p>
+    <div class="wiz l3" id="wiz"></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="crear">
+    <li>Entra en <b>supabase.com/dashboard</b> con <b>Continue with GitHub</b>.</li>
+    <li>Crea una <b>organización</b> (Organization) con tu nombre o el de la clase, tipo <i>Personal</i> o <i>Educational</i>, plan <b>Free</b>.</li>
+    <li>Pulsa <b>New project</b>. Nombre: <code>libro-de-visitas-pruebas</code>.</li>
+    <li>En <b>Database password</b> pulsa <i>Generate a password</i>, <b>cópiala y guárdala en tu gestor</b> en la carpeta «libro-de-visitas» antes de seguir.</li>
+    <li>En <b>Region</b> elige una de la Unión Europea (por ejemplo <i>Central EU (Frankfurt)</i> o <i>West EU (Ireland)</i>).</li>
+    <li>Pulsa <b>Create new project</b> y espera a que termine de prepararse (uno o dos minutos).</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> ves el panel de tu proyecto con el menú lateral y, arriba, el nombre <code>libro-de-visitas-pruebas</code>. La contraseña está en tu gestor.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>«You have reached the maximum number of free projects»</dt><dd>Ya tienes dos proyectos gratuitos activos. Pausa o borra uno que no uses (Project Settings → General → Pause / Delete project).</dd>
+    <dt>No guardé la contraseña de la base de datos</dt><dd>No pasa nada grave: se puede cambiar en <b>Project Settings → Database → Reset database password</b>. Esta vez, guárdala.</dd>
+    <dt>¿Qué región elijo?</dt><dd>La más cercana a tus visitantes dentro de la UE. No se puede cambiar después sin crear otro proyecto.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l3" id="panel" data-nav="El panel">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>Recorrido por el panel</h2><p class="lead">El menú lateral es el mapa de tu backend. Esto es lo que hay en cada sitio.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="05-supabase-tablas.html"><i>↗</i>Tablas</a><a class="ext" href="06-supabase-sql.html"><i>↗</i>SQL</a><a class="ext" href="07-supabase-seguridad.html"><i>↗</i>Seguridad</a></div></div></div>
+  <div class="panel rv">
+    <h3>Cada entrada del menú, para qué sirve y cuándo la usarás</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Menú</th><th>Qué hay</th><th>En el manual</th></tr></thead>
+      <tbody>
+        <tr><td>Project Overview</td><td>Resumen del proyecto, uso y el botón <b>Connect</b> (datos de conexión).</td><td>04</td></tr>
+        <tr><td>Table Editor</td><td>Tus tablas como una hoja de cálculo: crear, ver y editar filas.</td><td>05</td></tr>
+        <tr><td>SQL Editor</td><td>Escribir y ejecutar SQL; guardar consultas.</td><td>05, 06 y 07</td></tr>
+        <tr><td>Database</td><td>Esquema, tablas, funciones, roles, extensiones, copias de seguridad y <b>Policies</b>.</td><td>05 y 07</td></tr>
+        <tr><td>Authentication</td><td>Usuarios, proveedores de acceso (correo, Google…), <b>URL Configuration</b>, plantillas de correo.</td><td>07</td></tr>
+        <tr><td>Storage</td><td>Cubos de archivos (buckets) y sus reglas.</td><td>07</td></tr>
+        <tr><td>Edge Functions</td><td>Funciones del servidor con secretos.</td><td>Plano · estación 14</td></tr>
+        <tr><td>Realtime</td><td>Avisos en directo cuando cambian los datos.</td><td>08 (opcional)</td></tr>
+        <tr><td>Advisors</td><td><b>Security Advisor</b> y Performance Advisor: avisos automáticos de fallos de seguridad y rendimiento.</td><td>07 y 09</td></tr>
+        <tr><td>Logs</td><td>El registro de todo lo que pasa: peticiones, errores, inicios de sesión.</td><td>08 (depurar)</td></tr>
+        <tr><td>API Docs</td><td>Documentación generada para <b>tus</b> tablas, con ejemplos de código.</td><td>08</td></tr>
+        <tr><td>Integrations</td><td>Ajustes de la <b>Data API</b> y conexiones con otros servicios (Vercel…).</td><td>04</td></tr>
+        <tr><td>Project Settings</td><td>General, <b>API Keys</b>, base de datos, facturación, pausa y borrado.</td><td>04</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="panel">
+    <li>Pasa el ratón por el menú lateral y abre, una a una, <b>Table Editor</b>, <b>SQL Editor</b>, <b>Authentication</b> y <b>Storage</b>. Todo estará vacío: es normal.</li>
+    <li>Abre <b>Advisors → Security Advisor</b>. Con el proyecto vacío no debería haber avisos; volverás aquí en la página 07.</li>
+    <li>Abre <b>Logs</b> y mira cómo cada visita al panel también deja rastro.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="claves" data-nav="URL y claves">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>La URL y las claves</h2><p class="lead">Tres datos que conectan tu web con tu proyecto. Uno de ellos jamás debe salir del panel.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Secretos</a><a class="ext" href="Deploy-Metro.html#rls"><i>↗</i>RLS</a><a class="ext" href="08-supabase-web.html"><i>↗</i>Conecta tu web</a></div></div></div>
+  <div class="panel rv">
+    <h3>Dónde están y qué hacer con cada uno</h3>
+    <p>En <b>Project Settings → API Keys</b> o en el botón <b>Connect</b> de la parte superior del panel.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Dato</th><th>Aspecto</th><th>¿Público?</th><th>Dónde va</th></tr></thead>
+      <tbody>
+        <tr><td>Project URL</td><td><code>https://abcd….supabase.co</code></td><td>Sí</td><td><code>js/config.js</code> de tu web</td></tr>
+        <tr><td>Publishable key</td><td><code>sb_publishable_…</code></td><td>Sí: la protegen las reglas RLS</td><td><code>js/config.js</code> de tu web</td></tr>
+        <tr><td>Secret key</td><td><code>sb_secret_…</code></td><td><b>No.</b> Se salta todas las reglas</td><td>En ningún sitio, salvo una variable de entorno de una función del servidor</td></tr>
+        <tr><td>Contraseña de la base de datos</td><td>La que generaste</td><td><b>No</b></td><td>Solo en tu gestor</td></tr>
+      </tbody>
+    </table></div>
+    <div class="nota l4"><span class="lbl">Claves antiguas</span><p>Si ves <code>anon</code> y <code>service_role</code> (textos larguísimos que empiezan por <code>eyJ</code>), son las versiones antiguas de la publicable y la secreta. Supabase las retira a finales de 2026: usa siempre las nuevas.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="claves">
+    <li>Abre <b>Project Settings → API Keys</b> (o el botón <b>Connect</b>).</li>
+    <li>Copia la <b>Project URL</b> y la <b>Publishable key</b> en una nota de tu gestor llamada «Supabase · pruebas».</li>
+    <li>Abre <code>.env.example</code> de tu carpeta y comprueba que los nombres coinciden: <code>SUPABASE_URL</code> y <code>SUPABASE_PUBLISHABLE_KEY</code>. No pegues valores en ese archivo.</li>
+    <li>No copies la <b>Secret key</b> a ningún sitio. Si algún día se filtra: <b>API Keys → menú ⋯ de la clave → Revoke</b> y crea otra.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en tu gestor hay una nota con la URL y la clave publicable, y la contraseña de la base de datos en otra entrada. En tu carpeta del proyecto no hay ninguna clave todavía.</p></div>
+</section>
+
+<section class="sec l3" id="ajustes" data-nav="Ajustes clave">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4</p><h2>Ajustes que importan</h2><p class="lead">Tres pantallas que conviene conocer desde el primer día.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="07-supabase-seguridad.html#urls"><i>↗</i>Direcciones permitidas</a><a class="ext" href="05-supabase-tablas.html"><i>↗</i>Tablas</a></div></div></div>
+  <div class="panel rv">
+    <h4>1 · Data API: ¿se exponen las tablas solas?</h4>
+    <p>La <b>Data API</b> es la «ventanilla» por la que tu web lee y escribe en las tablas. En <b>Integrations → Data API</b> (o en sus ajustes) hay una opción, <b>Automatically expose new tables</b>, que hace que cada tabla nueva sea accesible desde la API. Supabase la está cambiando para que exponer sea una decisión tuya.</p>
+    <ul>
+      <li>Si está <b>activada</b>: tus tablas se pueden usar desde la web, siempre bajo las reglas RLS (página 07).</li>
+      <li>Si está <b>desactivada</b>: además de las reglas, tendrás que dar permiso explícito con SQL (<code>grant select, insert on … to anon</code>), como verás en la 07.</li>
+    </ul>
+    <h4>2 · Authentication → URL Configuration</h4>
+    <p>Aquí se dice a qué direcciones puede volver alguien después de iniciar sesión o confirmar su correo. Viene preparada para <code>localhost:3000</code>, que no es la tuya. La configurarás en la <a href="07-supabase-seguridad.html#urls">página 07</a>.</p>
+    <h4>3 · Project Settings → General</h4>
+    <p>Nombre del proyecto, <b>pausar</b>, <b>reanudar</b> y <b>borrar</b>. Y el identificador del proyecto (<i>Project ID</i>), que es la parte inicial de tu URL.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="ajustes">
+    <li>Busca el ajuste <b>Automatically expose new tables</b> de la Data API y anota si está activado o no. Déjalo como esté: en la 07 sabrás qué hacer en cada caso.</li>
+    <li>Abre <b>Authentication → URL Configuration</b> y mira la <i>Site URL</i> que trae por defecto. No la cambies aún.</li>
+    <li>Abre <b>Project Settings → General</b> y localiza los botones de pausar y borrar (sin pulsarlos).</li>
+  </ol>
+</section>
+
+<section class="sec l6" id="pausa" data-nav="Pausa y segundo proyecto">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 5</p><h2>La pausa y el segundo proyecto</h2><p class="lead">La trampa más típica del plan gratis, y cómo trabajar como en una empresa.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Entornos</a><a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Costes</a><a class="ext" href="09-proyecto.html"><i>↗</i>Producción</a></div></div></div>
+  <div class="panel rv">
+    <h3>Pausa por inactividad</h3>
+    <p>Un proyecto gratuito sin actividad durante <b>una semana</b> se pausa. Mientras está pausado, tu web no puede leer ni guardar: las peticiones fallan (en la consola verás errores como <code>503</code> o <i>Failed to fetch</i>). Los datos <b>no se pierden</b>: se reanuda desde el panel con <b>Restore project</b> (o <i>Resume</i>), y tarda unos minutos.</p>
+    <div class="nota l6"><span class="lbl">Costumbre</span><p>La víspera de presentar o entregar un proyecto, entra en el panel y comprueba que está activo.</p></div>
+    <h3>Dos proyectos: pruebas y producción</h3>
+    <p>En las empresas nunca se prueba con los datos reales. Tu plan gratis permite dos proyectos activos: <code>libro-de-visitas-pruebas</code> (el que acabas de crear, para romper sin miedo) y <code>libro-de-visitas</code> (producción, el que usará la web publicada). El de producción lo crearás en la <a href="09-proyecto.html">página 09</a>, repitiendo con SQL lo que hayas hecho en pruebas.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>2 minutos</span></div>
+  <ol class="mision rv" data-id="pausa">
+    <li>Pon en tu calendario un recordatorio semanal: «Entrar en Supabase» (mientras estés con el proyecto).</li>
+    <li>Localiza en <b>Project Settings → General</b> dónde se reanuda un proyecto pausado.</li>
+  </ol>
+</section>
+
+<section class="sec l5" id="local" data-nav="Supabase en local">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Opcional · avanzado</p><h2>Supabase en tu ordenador</h2><p class="lead">Para cuando quieras trabajar como un equipo profesional. No lo necesitas para el manual.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="01-entorno.html#node"><i>↗</i>Node.js</a><a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Entornos</a></div></div></div>
+  <div class="panel rv">
+    <h3>Supabase CLI + Docker</h3>
+    <p>Supabase se puede ejecutar entero en tu ordenador: base de datos, panel y API. Hace falta <b>Docker Desktop</b> (un programa que ejecuta «contenedores», pequeños servidores aislados) y Node.js. Sirve para probar cambios sin tocar la nube y para guardar la estructura de la base de datos como archivos (<i>migraciones</i>) dentro del repositorio.</p>
+    <textarea class="src" data-lang="sh" data-title="Terminal · Supabase en local (requiere Docker Desktop abierto)">
+npx supabase init     # crea la carpeta supabase/ con la configuración
+npx supabase start    # arranca la base de datos y el panel en tu ordenador
+npx supabase status   # muestra las direcciones locales (panel, API) y las claves locales
+npx supabase stop     # lo apaga</textarea>
+    <div class="nota l5"><span class="lbl">Ojo</span><p>Docker consume bastante memoria y en ordenadores del centro puede no estar permitido. Para este curso, el proyecto en la nube es suficiente.</p></div>
+  </div>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Proyecto en marcha</h2><p class="lead">Ya tienes backend. En la página siguiente le das forma a los datos.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">04 · Supabase: puesta en marcha</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+(function(){
+const {lado,wizard,test}=M;
+wizard('#wiz',[
+ {t:'Entra con GitHub',u:'supabase.com/dashboard/sign-in',s:`${lado(-1)}<div class="main"><h5>Welcome back</h5><span class="m-btn gris resalta" style="display:block;text-align:center">Continue with GitHub</span><span class="fl">o con correo</span><span class="m-in">tu@correo.es</span></div>`,x:'<p>Entra con <b>Continue with GitHub</b>: la cuenta que protegiste con 2FA en la página 01.</p>'},
+ {t:'Crea la organización',u:'supabase.com/dashboard/new',s:`${lado(-1)}<div class="main"><h5>Create a new organization</h5><span class="fl">Name</span><span class="m-in">Clase de Ane</span><span class="fl">Type</span><span class="m-in">Educational</span><span class="fl">Plan</span><span class="m-in resalta">Free - $0/month</span><span class="m-btn">Create organization</span></div>`,x:'<p>Una <b>organización</b> agrupa proyectos (como una carpeta). Elige el plan <b>Free</b>: no pide tarjeta.</p>'},
+ {t:'Nuevo proyecto',u:'supabase.com/dashboard/projects',s:`${lado(0)}<div class="main"><div class="m-row" style="justify-content:space-between"><h5 style="margin:0">Projects</h5><span class="m-btn resalta" style="margin:0">New project</span></div><p style="color:#a1a1a1;font-size:13px">Clase de Ane · Free</p></div>`,x:'<p>Pulsa <b>New project</b>.</p>'},
+ {t:'Nombre, contraseña y región',u:'supabase.com/dashboard/new/xxxx',s:`${lado(0)}<div class="main"><h5>Create a new project</h5><span class="fl">Project name</span><span class="m-in">libro-de-visitas-pruebas</span><span class="fl">Database password</span><span class="m-in resalta">••••••••••••••••  Generate a password · Copy</span><span class="fl">Region</span><span class="m-in">Central EU (Frankfurt)</span><span class="m-btn">Create new project</span></div>`,x:'<p><b>Copia la contraseña al gestor</b> antes de seguir. Región: una de la <b>UE</b>.</p>'},
+ {t:'Espera',u:'supabase.com/dashboard/project/xxxx',s:`${lado(1)}<div class="main"><h5>libro-de-visitas-pruebas</h5><div class="m-ok">Setting up project…</div><p style="color:#a1a1a1;font-size:13px">Estamos preparando tu base de datos PostgreSQL.</p></div>`,x:'<p>Uno o dos minutos. Cuando termine verás el panel con el menú lateral.</p>'},
+ {t:'Localiza la URL y la clave',u:'supabase.com/dashboard/project/xxxx/settings/api-keys',s:`${lado(5)}<div class="main"><h5>API Keys</h5><span class="fl">Project URL</span><span class="m-in">https://xxxx.supabase.co</span><span class="fl">Publishable key</span><span class="m-in resalta">sb_publishable_••••••••••••</span><span class="fl">Secret keys</span><span class="m-in">sb_secret_•••••• (oculta)</span></div>`,x:'<p>Esto lo harás en la misión 3. La <b>publicable</b> va a tu web; la <b>secreta</b>, a ningún sitio.</p>'}]);
+test([
+ {q:'¿Hay que instalar algo para usar Supabase?',o:['No: es un servicio en la nube que se maneja desde el navegador','Sí, un programa en el ordenador','Sí, PHP'],a:0,e:'Sección 0. La versión local es opcional.'},
+ {q:'¿Dónde guardas la contraseña de la base de datos?',o:['En el gestor de contraseñas','En config.js','En el README'],a:0,e:'Misión 1.'},
+ {q:'¿Por qué elegir una región de la UE?',o:['Cercanía a tus visitantes y cumplir más fácilmente el RGPD','Porque es más barata','Porque es la única gratis'],a:0,e:'Misión 1.'},
+ {q:'¿Qué dos datos irán en el código de tu web?',o:['La Project URL y la Publishable key','La Secret key y la contraseña','Solo la contraseña'],a:0,e:'Misión 3.'},
+ {q:'¿Dónde ves avisos automáticos de fallos de seguridad?',o:['Advisors → Security Advisor','Storage','Table Editor'],a:0,e:'Misión 2.'},
+ {q:'Tu web deja de guardar y en la consola sale un 503. ¿Qué compruebas primero?',o:['Si el proyecto de Supabase está pausado por inactividad','El color del botón','El nombre del repositorio'],a:0,e:'Misión 5.'},
+ {q:'¿Para qué sirve tener dos proyectos de Supabase?',o:['Uno para pruebas y otro para producción, con los datos reales a salvo','Para tener el doble de espacio y ya','No sirve para nada'],a:0,e:'Misión 5.'}]);
+})();
+</script>
+</body>
+</html>

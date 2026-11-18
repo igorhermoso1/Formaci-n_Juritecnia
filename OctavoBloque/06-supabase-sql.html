@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · Supabase: consultas SQL · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 6: aprende SQL con una consola real en la página: SELECT, WHERE, ORDER BY, funciones, GROUP BY, JOIN, INSERT, UPDATE y DELETE, retos autocorregidos y su equivalencia en supabase-js.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+<style>
+.consola-fija{position:sticky;top:70px;z-index:10}
+.leccion .ej{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.leccion .ej code{font-size:.9em;padding:4px 10px}
+.probar{font:700 12.5px var(--h);border:0;background:var(--l3);color:#fff;border-radius:999px;padding:5px 12px;cursor:pointer}
+.probar:hover{background:var(--tinta)}
+.dos-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+@media (max-width:980px){.dos-col{grid-template-columns:minmax(0,1fr)}.consola-fija{position:static}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>06 · Consultas<br><em>SQL</em></h1>
+    <div class="bajada">
+      <p>SQL es el idioma para preguntarle cosas a una base de datos: «dame los mensajes de hoy», «¿cuántos hay por tema?», «borra el de Pepe». Aquí tienes una <b>base de datos de práctica dentro de la página</b>, con las mismas tablas que creaste en la página 05. Rompe lo que quieras: con un clic vuelve a estar como al principio.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>La consola</li><li>Leer: SELECT y WHERE</li><li>Ordenar y limitar</li><li>Contar y agrupar</li><li>Juntar tablas: JOIN</li><li>Escribir: INSERT, UPDATE, DELETE</li><li>Retos</li><li>De SQL a tu web</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>75 min</b></span><span>Dificultad: <b>media</b></span><span>Necesitas: <b>la página 05</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <nav class="banda-sb" id="bandaSb" aria-label="Unidad Supabase: 5 partes"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>06</i><span>SQL</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l3" id="consola-sec" data-nav="La consola">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Tu laboratorio</p><h2>La consola SQL</h2><p class="lead">Escribe una consulta y pulsa «Ejecutar» (o <kbd>Ctrl</kbd>+<kbd>Intro</kbd>). Cada botón «Probar» de esta página escribe aquí una consulta por ti.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="05-supabase-tablas.html#sql"><i>↗</i>Las tablas</a><a class="ext" href="04-supabase-inicio.html#panel"><i>↗</i>SQL Editor de Supabase</a></div></div></div>
+  <div class="panel rv">
+    <h3>Las tablas de práctica</h3>
+    <div class="esquema"><div><b>temas</b>id · número 🔑<br>nombre · texto</div><div><b>mensajes</b>id · número 🔑<br>created_at · fecha y hora<br>nombre · texto<br>mensaje · texto<br>tema_id · número → temas.id</div></div>
+    <p>La consola usa <b>SQLite</b>, una base de datos pequeña que funciona dentro del navegador. Para todo lo de esta página habla igual que <b>PostgreSQL</b> (el de Supabase). Las diferencias que importan te las marcamos con «En Supabase».</p>
+  </div>
+  <div class="consola" id="consola">
+    <div class="cab-c"><span>Consola SQL · base de datos de práctica</span><span id="cEstado">Cargando…</span></div>
+    <textarea id="cSql" spellcheck="false" aria-label="Consulta SQL">SELECT * FROM mensajes;</textarea>
+    <div class="acc"><button class="btn sm" type="button" id="cRun">▶ Ejecutar</button><button class="btn sm claro" type="button" id="cReset">Reiniciar los datos</button><button class="btn sm claro" type="button" id="cTablas">Ver las tablas</button></div>
+    <div class="resultado" id="cRes" aria-live="polite"></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>2 minutos</span></div>
+  <ol class="mision rv" data-id="con">
+    <li>Pulsa <b>Ejecutar</b> con la consulta que trae escrita. Verás la tabla <code>mensajes</code> completa.</li>
+    <li>Cambia <code>mensajes</code> por <code>temas</code> y vuelve a ejecutar con <kbd>Ctrl</kbd>+<kbd>Intro</kbd>.</li>
+  </ol>
+</section>
+
+<section class="sec l3 leccion" id="leer" data-nav="SELECT y WHERE">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Leer</p><h2>SELECT y WHERE</h2><p class="lead">«Dame estas columnas de esta tabla… pero solo las filas que cumplan esto».</p></div></div>
+  <div class="panel rv">
+    <h3>SELECT: qué columnas</h3>
+    <p>La estructura básica es <code>SELECT columnas FROM tabla;</code>. El asterisco <code>*</code> significa «todas». El punto y coma cierra la orden.</p>
+    <div class="ej"><code>SELECT nombre, mensaje FROM mensajes;</code><button class="probar" type="button">Probar</button></div>
+    <h3>WHERE: qué filas</h3>
+    <p>Filtra las filas con una condición. Los textos van entre <b>comillas simples</b>.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Operador</th><th>Significa</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>= &nbsp; &lt;&gt;</td><td>igual / distinto</td><td><code>WHERE nombre = 'Ane'</code></td></tr>
+        <tr><td>&gt; &lt; &gt;= &lt;=</td><td>mayor, menor…</td><td><code>WHERE id &gt;= 5</code></td></tr>
+        <tr><td>LIKE</td><td>parecido, con comodín <code>%</code></td><td><code>WHERE mensaje LIKE '%web%'</code></td></tr>
+        <tr><td>IN</td><td>uno de la lista</td><td><code>WHERE tema_id IN (1, 3)</code></td></tr>
+        <tr><td>BETWEEN</td><td>entre dos valores</td><td><code>WHERE id BETWEEN 3 AND 6</code></td></tr>
+        <tr><td>IS NULL</td><td>vacío</td><td><code>WHERE tema_id IS NULL</code></td></tr>
+        <tr><td>AND · OR · NOT</td><td>combinar condiciones</td><td><code>WHERE tema_id = 1 AND id &gt; 4</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="ej"><code>SELECT * FROM mensajes WHERE nombre = 'Ane';</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT nombre, mensaje FROM mensajes WHERE mensaje LIKE '%web%';</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT * FROM mensajes WHERE tema_id IS NULL;</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT * FROM mensajes WHERE tema_id = 1 AND id &gt; 4;</code><button class="probar" type="button">Probar</button></div>
+    <div class="nota l3"><span class="lbl">En Supabase</span><p>En PostgreSQL, <code>LIKE</code> distingue mayúsculas: para buscar sin distinguir se usa <code>ILIKE</code>. En esta consola, <code>LIKE</code> ya no distingue.</p></div>
+  </div>
+</section>
+
+<section class="sec l3 leccion" id="ordenar" data-nav="ORDER BY y LIMIT">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Leer</p><h2>Ordenar y limitar</h2><p class="lead">Los más nuevos primero, y solo los cinco últimos.</p></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><code>ORDER BY columna</code>: de menor a mayor (<code>ASC</code>, por defecto). Con <code>DESC</code>, de mayor a menor.</li>
+      <li><code>LIMIT n</code>: solo las primeras <i>n</i> filas. <code>OFFSET m</code>: sáltate las <i>m</i> primeras (para páginas: 1-10, 11-20…).</li>
+    </ul>
+    <div class="ej"><code>SELECT nombre, created_at FROM mensajes ORDER BY created_at DESC;</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT nombre, mensaje FROM mensajes ORDER BY created_at DESC LIMIT 5;</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT nombre FROM mensajes ORDER BY nombre LIMIT 3 OFFSET 3;</code><button class="probar" type="button">Probar</button></div>
+    <p>El orden de las piezas importa: <code>SELECT … FROM … WHERE … ORDER BY … LIMIT …</code>.</p>
+  </div>
+</section>
+
+<section class="sec l3 leccion" id="agrupar" data-nav="Contar y agrupar">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Resumir</p><h2>Contar y agrupar</h2><p class="lead">Estadísticas en una línea: cuántos, la media, el más largo…</p></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Función</th><th>Devuelve</th></tr></thead>
+      <tbody>
+        <tr><td>COUNT(*)</td><td>cuántas filas</td></tr>
+        <tr><td>MIN() · MAX()</td><td>el menor y el mayor</td></tr>
+        <tr><td>AVG() · SUM()</td><td>la media y la suma</td></tr>
+        <tr><td>LENGTH() · UPPER()</td><td>longitud de un texto y texto en mayúsculas (en PostgreSQL, <code>char_length()</code>)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ej"><code>SELECT COUNT(*) AS total FROM mensajes;</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT MAX(LENGTH(mensaje)) AS mas_largo FROM mensajes;</code><button class="probar" type="button">Probar</button></div>
+    <p><code>GROUP BY</code> hace un grupo por cada valor distinto y calcula la función en cada grupo. <code>HAVING</code> filtra grupos (como <code>WHERE</code>, pero después de agrupar). <code>AS</code> pone un nombre a la columna del resultado.</p>
+    <div class="ej"><code>SELECT tema_id, COUNT(*) AS cuantos FROM mensajes GROUP BY tema_id;</code><button class="probar" type="button">Probar</button></div>
+    <div class="ej"><code>SELECT nombre, COUNT(*) AS veces FROM mensajes GROUP BY nombre HAVING COUNT(*) &gt; 1;</code><button class="probar" type="button">Probar</button></div>
+  </div>
+</section>
+
+<section class="sec l3 leccion" id="join" data-nav="JOIN">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Relacionar</p><h2>Juntar tablas: JOIN</h2><p class="lead">El mensaje con el <b>nombre</b> de su tema, no con un número.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="05-supabase-tablas.html#relaciones"><i>↗</i>Relaciones</a></div></div></div>
+  <div class="panel rv">
+    <p><code>JOIN</code> pega dos tablas usando la clave foránea: «junta cada mensaje con el tema cuyo <code>id</code> es su <code>tema_id</code>». Para no confundir columnas con el mismo nombre se escribe <code>tabla.columna</code>.</p>
+    <div class="ej"><code>SELECT mensajes.nombre, temas.nombre AS tema FROM mensajes JOIN temas ON temas.id = mensajes.tema_id;</code><button class="probar" type="button">Probar</button></div>
+    <p>Con <code>JOIN</code> a secas, los mensajes <b>sin tema</b> desaparecen. Con <code>LEFT JOIN</code> salen todos los mensajes, y el tema queda vacío si no tienen.</p>
+    <div class="ej"><code>SELECT m.nombre, m.mensaje, t.nombre AS tema FROM mensajes m LEFT JOIN temas t ON t.id = m.tema_id ORDER BY m.id;</code><button class="probar" type="button">Probar</button></div>
+    <p>En el último ejemplo, <code>m</code> y <code>t</code> son <b>alias</b>: apodos cortos para no escribir el nombre entero.</p>
+  </div>
+</section>
+
+<section class="sec l1 leccion" id="escribir" data-nav="INSERT, UPDATE, DELETE">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Escribir</p><h2>INSERT, UPDATE y DELETE</h2><p class="lead">Añadir, cambiar y borrar. Con dos de ellas, un olvido borra la tabla entera.</p></div></div>
+  <div class="panel rv">
+    <h3>INSERT: añadir filas</h3>
+    <div class="ej"><code>INSERT INTO mensajes (nombre, mensaje, tema_id) VALUES ('Lucía', 'Me ha encantado', 1);</code><button class="probar" type="button">Probar</button></div>
+    <p>No se envían <code>id</code> ni <code>created_at</code>: se rellenan solos. Después, ejecuta <code>SELECT * FROM mensajes ORDER BY id DESC LIMIT 1;</code> para ver la fila nueva.</p>
+    <h3>UPDATE: cambiar</h3>
+    <div class="ej"><code>UPDATE mensajes SET mensaje = 'Mensaje editado' WHERE id = 2;</code><button class="probar" type="button">Probar</button></div>
+    <h3>DELETE: borrar</h3>
+    <div class="ej"><code>DELETE FROM mensajes WHERE id = 3;</code><button class="probar" type="button">Probar</button></div>
+    <div class="nota l1"><span class="lbl">Peligro</span><p><code>UPDATE</code> y <code>DELETE</code> <b>sin <code>WHERE</code></b> afectan a <b>todas</b> las filas. <code>DELETE FROM mensajes;</code> vacía la tabla entera. Costumbre profesional: escribe primero el <code>SELECT</code> con el mismo <code>WHERE</code>, comprueba qué filas salen, y solo entonces cámbialo por <code>DELETE</code>. Pruébalo aquí sin miedo y pulsa «Reiniciar los datos».</p></div>
+    <div class="nota l4"><span class="lbl">En Supabase</span><p>En el <b>SQL Editor</b> trabajas como administrador (rol <code>postgres</code>): <b>las reglas RLS no se aplican</b> y puedes borrarlo todo. Las reglas protegen lo que llega <b>desde la web</b> con la clave publicable (página 07).</p></div>
+  </div>
+</section>
+
+<section class="sec l3" id="retos" data-nav="Retos">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Misión 2</p><h2>Retos autocorregidos</h2><p class="lead">Escribe la consulta en la consola, ejecútala y pulsa «Comprobar». La página compara tu resultado con el correcto.</p></div></div>
+  <div id="listaRetos"></div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>30 minutos</span></div>
+  <ol class="mision rv" data-id="retos">
+    <li>Resuelve los retos 1 a 4 (leer, filtrar, ordenar).</li>
+    <li>Resuelve los retos 5 a 8 (agrupar, juntar, escribir).</li>
+    <li>Repite en el <b>SQL Editor de Supabase</b> el reto 6 sobre tus tablas reales de la página 05.</li>
+  </ol>
+</section>
+
+<section class="sec l3" id="web" data-nav="De SQL a tu web">
+  <div class="letrero rv"><div class="badge">8</div><div><p class="kick">Puente con la página 08</p><h2>De SQL a tu web</h2><p class="lead">Desde la web no se escribe SQL: se usa la librería de Supabase, que lo traduce por ti.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="08-supabase-web.html"><i>↗</i>Conecta tu web</a><a class="ext" href="07-supabase-seguridad.html"><i>↗</i>RLS</a></div></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>SQL</th><th>supabase-js (JavaScript)</th></tr></thead>
+      <tbody>
+        <tr><td>SELECT * FROM mensajes</td><td><code>db.from('mensajes').select('*')</code></td></tr>
+        <tr><td>SELECT nombre, mensaje …</td><td><code>.select('nombre, mensaje')</code></td></tr>
+        <tr><td>WHERE nombre = 'Ane'</td><td><code>.eq('nombre', 'Ane')</code></td></tr>
+        <tr><td>WHERE id &gt; 4</td><td><code>.gt('id', 4)</code> (y <code>.lt</code>, <code>.gte</code>, <code>.lte</code>, <code>.neq</code>)</td></tr>
+        <tr><td>WHERE mensaje ILIKE '%web%'</td><td><code>.ilike('mensaje', '%web%')</code></td></tr>
+        <tr><td>WHERE tema_id IN (1, 3)</td><td><code>.in('tema_id', [1, 3])</code></td></tr>
+        <tr><td>WHERE tema_id IS NULL</td><td><code>.is('tema_id', null)</code></td></tr>
+        <tr><td>ORDER BY created_at DESC</td><td><code>.order('created_at', { ascending: false })</code></td></tr>
+        <tr><td>LIMIT 5</td><td><code>.limit(5)</code></td></tr>
+        <tr><td>JOIN con temas</td><td><code>.select('nombre, mensaje, temas(nombre)')</code></td></tr>
+        <tr><td>INSERT INTO mensajes …</td><td><code>db.from('mensajes').insert({ nombre, mensaje })</code></td></tr>
+        <tr><td>UPDATE … WHERE id = 2</td><td><code>db.from('mensajes').update({ mensaje }).eq('id', 2)</code></td></tr>
+        <tr><td>DELETE … WHERE id = 3</td><td><code>db.from('mensajes').delete().eq('id', 3)</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Y siempre con un matiz que no tiene el SQL Editor: desde la web, cada una de esas órdenes pasa primero por las <b>reglas RLS</b>. Si no hay regla que lo permita, no se hace.</p>
+  </div>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Ya hablas SQL</h2><p class="lead">Lo justo para leer, filtrar, resumir y escribir datos con seguridad.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">06 · Consultas SQL</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.16.0/sql-wasm.js"></script>
+<script src="metro.js"></script>
+<script>
+(function(){
+const {$,$$,el,esc,test}=M;
+const SEMILLA=`CREATE TABLE temas (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL UNIQUE);
+CREATE TABLE mensajes (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL DEFAULT (datetime('now')), nombre TEXT NOT NULL CHECK (length(nombre) BETWEEN 2 AND 60), mensaje TEXT NOT NULL CHECK (length(mensaje) BETWEEN 1 AND 500), tema_id INTEGER REFERENCES temas(id) ON DELETE SET NULL);
+INSERT INTO temas (nombre) VALUES ('Felicitación'),('Sugerencia'),('Saludo');
+INSERT INTO mensajes (created_at,nombre,mensaje,tema_id) VALUES
+('2026-11-02 10:15:00','Ane','¡Qué web más bonita!',1),
+('2026-11-03 18:40:00','Mikel','Volveré pronto.',3),
+('2026-11-04 09:05:00','Irati','Me encanta el diseño de la web.',1),
+('2026-11-05 12:30:00','Jon','Podríais añadir modo oscuro.',2),
+('2026-11-06 20:10:00','Ane','Segunda visita, sigue genial.',1),
+('2026-11-07 16:45:00','Lucía','Hola desde Gasteiz.',3),
+('2026-11-08 11:00:00','Pablo','La web carga muy rápido.',1),
+('2026-11-09 13:20:00','Nerea','¿Hay versión en euskera?',2),
+('2026-11-10 17:55:00','Mikel','Gracias por responder.',NULL),
+('2026-11-11 08:30:00','Leire','Buen trabajo con el formulario.',1),
+('2026-11-12 19:00:00','Unai','Un saludo a toda la clase.',3),
+('2026-11-13 10:45:00','Irati','Faltan fotos en la galería.',NULL);`;
+let SQL=null,db=null;
+const R=$('#cRes'),T=$('#cSql'),E=$('#cEstado');
+const nuevo=()=>{db=new SQL.Database();db.exec(SEMILLA);};
+function tabla(res){if(!res.length)return '';const r=res[res.length-1];
+ return `<table><thead><tr>${r.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${r.values.map(f=>`<tr>${f.map(v=>`<td>${v===null?'<i style="color:#9aa0b3">null</i>':esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table><div class="msg ok">${r.values.length} fila${r.values.length===1?'':'s'}</div>`;}
+const PISTAS=[[/no such table: (\w+)/,'La tabla «$1» no existe. Las tablas son temas y mensajes.'],[/no such column: ([\w.]+)/,'La columna «$1» no existe. Pulsa «Ver las tablas» para ver los nombres.'],[/syntax error/,'Error de sintaxis: revisa comas, comillas simples y el orden SELECT · FROM · WHERE · ORDER BY · LIMIT.'],[/NOT NULL constraint failed: \w+\.(\w+)/,'Falta «$1», que es obligatorio.'],[/CHECK constraint failed/,'Un valor no cumple una regla de la tabla (por ejemplo, el nombre debe tener entre 2 y 60 letras).'],[/UNIQUE constraint failed: \w+\.(\w+)/,'Ya existe una fila con ese «$1» y no se puede repetir.'],[/incomplete input/,'La consulta está incompleta: ¿falta cerrar una comilla o un paréntesis?']];
+function ejecutar(sql){if(!db)return null;try{const res=db.exec(sql);const mod=db.getRowsModified();
+  R.innerHTML=res.length?tabla(res):`<div class="msg ok">Hecho. Filas afectadas: ${mod}.</div>`;return res;}
+ catch(e){let p=e.message;for(const [re,t] of PISTAS){const m=p.match(re);if(m){p=t.replace('$1',m[1]||'');break;}}R.innerHTML=`<div class="msg err">✕ ${esc(p)}<br><small>${esc(e.message)}</small></div>`;return null;}}
+$('#cRun').onclick=()=>ejecutar(T.value);
+T.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();ejecutar(T.value);}});
+$('#cReset').onclick=()=>{if(SQL){nuevo();R.innerHTML='<div class="msg ok">Datos reiniciados: todo está como al principio.</div>';}};
+$('#cTablas').onclick=()=>{T.value="SELECT name AS tabla, sql AS definicion FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';";ejecutar(T.value);};
+$$('.probar').forEach(b=>b.onclick=()=>{T.value=b.previousElementSibling.textContent;ejecutar(T.value);$('#consola').scrollIntoView({behavior:M.reduce?'auto':'smooth',block:'center'});});
+if(typeof initSqlJs==='function'){initSqlJs({locateFile:f=>'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.16.0/'+f}).then(S=>{SQL=S;nuevo();E.textContent='Lista';ejecutar(T.value);}).catch(()=>{E.textContent='Sin conexión';R.innerHTML='<div class="msg err">No se pudo cargar la base de datos de práctica (hace falta internet). Puedes seguir la página y practicar en el SQL Editor de tu proyecto de Supabase.</div>';});}
+else{E.textContent='Sin conexión';R.innerHTML='<div class="msg err">No se pudo cargar la base de datos de práctica (hace falta internet). Puedes practicar en el SQL Editor de tu proyecto de Supabase.</div>';}
+
+/* ---------- retos: se compara el resultado del alumno con el de la solución ---------- */
+const RETOS=[
+ ['Muestra solo el <b>nombre</b> y el <b>mensaje</b> de todos los mensajes.','SELECT nombre, mensaje FROM mensajes;',false],
+ ['Muestra todos los mensajes escritos por <b>Mikel</b>.',"SELECT * FROM mensajes WHERE nombre = 'Mikel';",false],
+ ['Muestra los mensajes que contienen la palabra <b>web</b>.',"SELECT * FROM mensajes WHERE mensaje LIKE '%web%';",false],
+ ['Muestra el <b>nombre</b> y la <b>fecha</b> de los <b>3 mensajes más recientes</b>, del más nuevo al más viejo.','SELECT nombre, created_at FROM mensajes ORDER BY created_at DESC LIMIT 3;',true],
+ ['¿Cuántos mensajes hay de cada <b>tema_id</b>? Dos columnas: tema_id y el número.','SELECT tema_id, COUNT(*) FROM mensajes GROUP BY tema_id;',false],
+ ['Muestra el <b>nombre</b> de quien escribe y el <b>nombre del tema</b> de cada mensaje que tenga tema.','SELECT mensajes.nombre, temas.nombre FROM mensajes JOIN temas ON temas.id = mensajes.tema_id;',false],
+ ['Añade un mensaje de <b>Sara</b> que diga <b>«Hola»</b> con el tema <b>2</b>. Luego pulsa Comprobar.',"SELECT COUNT(*) FROM mensajes WHERE nombre = 'Sara' AND mensaje = 'Hola' AND tema_id = 2;",'estado'],
+ ['Borra <b>solo</b> los mensajes que no tienen tema (y ninguno más). Luego pulsa Comprobar.',"SELECT (SELECT COUNT(*) FROM mensajes WHERE tema_id IS NULL) = 0 AND (SELECT COUNT(*) FROM mensajes) >= 10;",'borrar']];
+const LR=$('#listaRetos');
+const firma=(vals,ord)=>{const f=vals.map(r=>JSON.stringify(r.map(v=>v===null?null:String(v))));return (ord?f:f.sort()).join('|');};
+RETOS.forEach((r,i)=>{const d=el('div','reto rv');d.innerHTML=`<p><b>Reto ${i+1}.</b> ${r[0]}</p><div class="chips"><button class="btn sm" type="button">Comprobar mi consulta</button><button class="btn sm claro" type="button">Ver la solución</button></div><div class="res-reto" aria-live="polite"></div>`;
+ const [bc,bs]=$$('button',d),out=$('.res-reto',d);
+ bc.onclick=()=>{if(!db){out.textContent='La consola no está disponible.';return;}
+  if(r[2]==='estado'||r[2]==='borrar'){let ok=false;try{ok=db.exec(r[1])[0].values[0][0]==1;}catch(e){}
+   out.innerHTML=ok?'<span style="color:var(--ok)">✔ ¡Correcto! La base de datos está como debe.</span>':'<span style="color:var(--mal)">✕ Todavía no. Ejecuta tu consulta en la consola y vuelve a comprobar. Si te pasas, «Reiniciar los datos».</span>';return;}
+  let mio,bueno;try{mio=db.exec(T.value);bueno=db.exec(r[1]);}catch(e){out.innerHTML='<span style="color:var(--mal)">✕ Tu consulta da error: mira el mensaje de la consola.</span>';ejecutar(T.value);return;}
+  ejecutar(T.value);const a=mio.length?mio[mio.length-1].values:[],b=bueno.length?bueno[0].values:[];
+  out.innerHTML=firma(a,r[2])===firma(b,r[2])?'<span style="color:var(--ok)">✔ ¡Correcto! Tu resultado coincide con el esperado.</span>':`<span style="color:var(--mal)">✕ El resultado no coincide (tú: ${a.length} filas; esperado: ${b.length}). Revisa columnas, filtro${r[2]?' y orden':''}.</span>`;};
+ bs.onclick=()=>{out.innerHTML=`Una solución: <code>${esc(r[2]==='estado'?"INSERT INTO mensajes (nombre, mensaje, tema_id) VALUES ('Sara', 'Hola', 2);":r[2]==='borrar'?'DELETE FROM mensajes WHERE tema_id IS NULL;':r[1])}</code>`;};
+ LR.appendChild(d);});
+
+test([
+ {q:'¿Qué hace <code>SELECT * FROM temas;</code>?',o:['Muestra todas las columnas y filas de temas','Borra temas','Crea la tabla temas'],a:0,e:'Sección 2.'},
+ {q:'¿Cómo se escribe un texto en una condición SQL?',o:["Entre comillas simples: 'Ane'","Sin comillas: Ane","Entre corchetes: [Ane]"],a:0,e:'Sección 2.'},
+ {q:'¿Qué consulta da los 5 mensajes más nuevos?',o:['… ORDER BY created_at DESC LIMIT 5','… ORDER BY created_at LIMIT 5','… LIMIT 5 ORDER BY created_at'],a:0,e:'Sección 3: DESC = de mayor a menor, y LIMIT al final.'},
+ {q:'¿Para qué sirve GROUP BY?',o:['Para calcular una función (COUNT, AVG…) en cada grupo de filas con el mismo valor','Para ordenar','Para borrar repetidos'],a:0,e:'Sección 4.'},
+ {q:'Quieres todos los mensajes, tengan tema o no, con el nombre del tema. ¿Qué usas?',o:['LEFT JOIN','JOIN a secas','WHERE tema_id IS NULL'],a:0,e:'Sección 5.'},
+ {q:'¿Qué pasa con <code>DELETE FROM mensajes;</code>?',o:['Borra todas las filas de la tabla','Borra la última','Da error'],a:0,e:'Sección 6: sin WHERE afecta a todas.'},
+ {q:'En el SQL Editor de Supabase, ¿se aplican las reglas RLS?',o:['No: trabajas como administrador (postgres)','Sí, siempre','Solo los lunes'],a:0,e:'Sección 6.'},
+ {q:'¿Cuál es el equivalente en supabase-js de <code>WHERE nombre = \'Ane\'</code>?',o:[".eq('nombre', 'Ane')",".where('Ane')",".filter = 'Ane'"],a:0,e:'Sección 8.'}]);
+})();
+</script>
+</body>
+</html>

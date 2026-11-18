@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · Monta tu taller · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 1: deja listo tu entorno de trabajo: navegador y DevTools, Visual Studio Code, carpeta del proyecto, gestor de contraseñas, verificación en dos pasos y cuentas de GitHub, Vercel y Supabase.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>01 · Monta<br>tu <em>taller</em></h1>
+    <div class="bajada">
+      <p>Antes de publicar nada, deja tu ordenador y tus cuentas listos. Al terminar esta página tendrás <b>todas las herramientas</b> del bloque instaladas, configuradas y protegidas, y la carpeta del proyecto que irás llenando hasta la página 09.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Navegador y DevTools</li><li>Visual Studio Code a punto</li><li>La carpeta del proyecto</li><li>Contraseñas y doble verificación</li><li>Cuentas: GitHub, Vercel, Supabase</li><li>Node.js (opcional)</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>45-60 min</b></span><span>Dificultad: <b>baja</b></span><span>Necesitas: <b>ordenador, correo y móvil</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>01</i><span>Taller</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l1" id="mapa" data-nav="Qué vas a montar">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">Antes de empezar</p><h2>Qué vas a montar</h2><p class="lead">Un taller de desarrollo web profesional, el mismo que usan las empresas, con herramientas gratuitas.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#orientacion"><i>↗</i>El plano</a><a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Los tres entornos</a></div></div></div>
+  <div class="panel rv">
+    <h3>Las piezas y para qué sirve cada una</h3>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Pieza</th><th>Para qué</th><th>Dónde se usa en el manual</th></tr></thead>
+      <tbody>
+        <tr><td>Navegador con DevTools</td><td>Ver tu web, inspeccionarla y ver sus peticiones</td><td>En todas las páginas, sobre todo la 08</td></tr>
+        <tr><td>Visual Studio Code</td><td>Escribir el código y probarlo con Live Server</td><td>01, 08 y 09</td></tr>
+        <tr><td>Carpeta del proyecto</td><td>El libro de visitas que irás construyendo</td><td>De la 01 a la 09</td></tr>
+        <tr><td>Gestor de contraseñas</td><td>Guardar contraseñas y claves secretas sin perderlas</td><td>04 (contraseña de la base de datos) y 08</td></tr>
+        <tr><td>GitHub</td><td>Guardar el código con su historial</td><td>02 y 09</td></tr>
+        <tr><td>Vercel</td><td>Publicar la web</td><td>02, 03 y 09</td></tr>
+        <tr><td>Supabase</td><td>Base de datos, usuarios y archivos</td><td>De la 04 a la 09</td></tr>
+        <tr><td>Node.js (opcional)</td><td>Herramientas de terminal: Vercel CLI, Supabase CLI, NPM</td><td>Opcional en 04 (Supabase CLI); bloque NPM</td></tr>
+      </tbody>
+    </table></div>
+    <div class="analogia"><span class="ico">🧰</span><p>Es como montar un taller de carpintería antes del primer mueble: banco de trabajo (VS Code), herramientas (navegador), caja fuerte para las llaves (gestor de contraseñas) y los locales donde guardarás y venderás tus muebles (GitHub, Vercel, Supabase).</p></div>
+  </div>
+</section>
+
+<section class="sec l1" id="navegador" data-nav="Navegador y DevTools">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>El navegador y sus DevTools</h2><p class="lead">Tu microscopio: con él verás qué pasa dentro de cualquier web, incluida la tuya.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#peticion"><i>↗</i>La petición</a><a class="ext" href="Deploy-Metro.html#rendimiento"><i>↗</i>Lighthouse</a></div></div></div>
+  <div class="panel rv">
+    <h3>Las cinco pestañas que vas a usar</h3>
+    <p>Usa <b>Chrome</b>, <b>Edge</b> o <b>Firefox</b> actualizados. Las DevTools (herramientas de desarrollo) se abren con <kbd>F12</kbd> o con <kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>I</kbd>.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Pestaña</th><th>Para qué te sirve en este bloque</th></tr></thead>
+      <tbody>
+        <tr><td>Elements (Elementos)</td><td>Ver el HTML y el CSS de lo que hay en pantalla. Ya la conoces.</td></tr>
+        <tr><td>Console (Consola)</td><td>Ver los <b>errores</b>. Si tu web no guarda en Supabase, el motivo aparece aquí en rojo.</td></tr>
+        <tr><td>Network (Red)</td><td>Ver cada <b>petición</b>: a dónde va, qué código devuelve (200, 404…) y cuánto tarda.</td></tr>
+        <tr><td>Application (Aplicación)</td><td>Ver lo que la web guarda en el navegador (almacenamiento local, cookies, la sesión de Supabase).</td></tr>
+        <tr><td>Lighthouse</td><td>Auditar rendimiento, accesibilidad y SEO de tu web publicada.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="nav">
+    <li>Actualiza tu navegador: menú <b>⋮ → Ayuda → Información</b> (en Chrome o Edge). Se actualiza solo y te pide reiniciarlo.</li>
+    <li>Abre esta misma página, pulsa <kbd>F12</kbd> y coloca las DevTools abajo o a la derecha (menú <b>⋮</b> de las DevTools → <i>Dock side</i>).</li>
+    <li>Ve a la pestaña <b>Network</b>, marca <b>Disable cache</b> y recarga con <kbd>F5</kbd>. Verás aparecer la lista de peticiones.</li>
+    <li>Busca la petición <code>metro.css</code>: pulsa en ella y mira la pestaña <b>Headers</b>: <i>Status Code</i> debe ser <code>200</code>.</li>
+    <li>Ve a <b>Console</b>. Si está vacía o solo hay avisos grises, la página no tiene errores.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> sabes abrir las DevTools, encontrar una petición en Network y leer su código de estado. Es la habilidad que más tiempo te ahorrará en la página 08.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>F12 no hace nada</dt><dd>En algunos portátiles hay que pulsar <kbd>Fn</kbd>+<kbd>F12</kbd>. Usa <kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>I</kbd>.</dd>
+    <dt>La pestaña Network está vacía</dt><dd>Solo registra lo que pasa con ella abierta: recarga la página con las DevTools abiertas.</dd>
+    <dt>Las DevTools están en inglés</dt><dd>Es lo normal y lo que verás en tutoriales. Si prefieres castellano: ⚙ Settings → Preferences → Language.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l1" id="vscode" data-nav="Visual Studio Code">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>Visual Studio Code a punto</h2><p class="lead">Ya lo usas desde el primer bloque. Ahora lo afinamos para trabajar con proyectos reales.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#localhost"><i>↗</i>localhost y Live Server</a></div></div></div>
+  <div class="panel rv">
+    <h3>Extensiones recomendadas</h3>
+    <p>Se instalan desde el icono de los cuadraditos de la barra izquierda (<kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>X</kbd>), buscando el nombre y pulsando <b>Install</b>.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Extensión</th><th>Qué hace</th><th>¿Obligatoria?</th></tr></thead>
+      <tbody>
+        <tr><td>Live Server</td><td>Tu servidor local en <code>127.0.0.1:5500</code>, que recarga al guardar.</td><td>Sí (ya la tienes)</td></tr>
+        <tr><td>Prettier · Code formatter</td><td>Ordena y sangra tu código al guardar.</td><td>Muy recomendable</td></tr>
+        <tr><td>Error Lens</td><td>Muestra los errores escritos en la misma línea donde están.</td><td>Recomendable</td></tr>
+        <tr><td>Spanish - Code Spell Checker</td><td>Marca faltas de ortografía en tus textos (instala también «Code Spell Checker»).</td><td>Recomendable</td></tr>
+        <tr><td>DotENV</td><td>Colorea los archivos <code>.env</code>.</td><td>Opcional</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="vsc">
+    <li>Actualiza VS Code: <b>Help → Check for Updates</b> (en castellano, <b>Ayuda → Buscar actualizaciones</b>).</li>
+    <li>Instala <b>Prettier</b> y <b>Error Lens</b> (y, si quieres, el corrector en castellano).</li>
+    <li>Activa el formateo al guardar: <kbd>Ctrl</kbd>+<kbd>,</kbd> → busca <code>format on save</code> → marca <b>Editor: Format On Save</b>.</li>
+    <li>Activa el guardado automático: menú <b>File → Auto Save</b>. Así Live Server recarga sin que pulses <kbd>Ctrl</kbd>+<kbd>S</kbd>.</li>
+    <li>Abre la terminal integrada con <kbd>Ctrl</kbd>+<kbd>ñ</kbd> (en teclado español) o desde <b>Terminal → New Terminal</b>. La usarás en la parte opcional de Node.js.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> escribe un HTML mal sangrado, guarda, y Prettier lo ordena solo. En la esquina inferior derecha ves <b>Go Live</b> (Live Server).</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>Prettier no formatea al guardar</dt><dd>Clic derecho en el código → <b>Format Document With… → Configure Default Formatter → Prettier</b>.</dd>
+    <dt>No aparece «Go Live»</dt><dd>Abre una <b>carpeta</b> (File → Open Folder), no un archivo suelto. Live Server necesita una carpeta abierta.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l1" id="carpeta" data-nav="La carpeta del proyecto">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>La carpeta del proyecto</h2><p class="lead">El libro de visitas que crecerá a lo largo del manual. Empieza ordenado y seguirá ordenado.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#carpeta"><i>↗</i>index.html y carpetas</a><a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Secretos</a></div></div></div>
+  <div class="panel rv">
+    <h3>La estructura</h3>
+    <textarea class="src" data-lang="sh" data-title="Estructura · libro-de-visitas">
+libro-de-visitas/
+├── index.html          # la página del libro de visitas
+├── privacidad.html     # política de privacidad (página 09)
+├── css/
+│   └── estilos.css     # todo el CSS
+├── js/
+│   ├── config.js       # URL y clave PUBLICABLE de Supabase (página 08)
+│   └── app.js          # el código que habla con Supabase (página 08)
+├── img/
+├── README.md           # qué es el proyecto y cómo se usa
+├── .env.example        # nombres de las variables, SIN valores reales
+└── .gitignore          # lo que NUNCA se sube a GitHub</textarea>
+    <ul>
+      <li><b>README.md</b>: la portada del repositorio en GitHub. Explica qué es el proyecto, cómo verlo en local y dónde está publicado. Se escribe en Markdown (texto con <code>#</code> para títulos y <code>-</code> para listas).</li>
+      <li><b>.env.example</b>: una plantilla con los <b>nombres</b> de las variables, sin los valores. Así, quien descargue el proyecto sabe qué necesita. El <code>.env</code> real (con valores) no se sube nunca.</li>
+      <li><b>.gitignore</b>: la lista de archivos que Git debe ignorar. Lo usarás de verdad en el bloque 09, pero déjalo creado desde hoy.</li>
+    </ul>
+    <div class="g2">
+      <textarea class="src" data-lang="env" data-title=".env.example · sí se sube">
+# copia este archivo como .env y rellena los valores
+SUPABASE_URL=
+SUPABASE_PUBLISHABLE_KEY=</textarea>
+      <textarea class="src" data-lang="env" data-title=".gitignore · sí se sube">
+# secretos y configuración local
+.env
+.env.local
+# carpetas que generan las herramientas
+node_modules/
+.vercel/
+# basura del sistema
+.DS_Store
+Thumbs.db</textarea>
+    </div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="car">
+    <li>Crea en tu ordenador una carpeta <code>libro-de-visitas</code> (minúsculas, sin espacios ni tildes) en un sitio fácil de encontrar, como <code>Documentos/proyectos/</code>.</li>
+    <li>Ábrela en VS Code: <b>File → Open Folder</b>.</li>
+    <li>Crea las carpetas <code>css</code>, <code>js</code> e <code>img</code> con el icono de «nueva carpeta» del explorador de VS Code.</li>
+    <li>Crea los archivos vacíos <code>index.html</code>, <code>privacidad.html</code>, <code>css/estilos.css</code>, <code>js/config.js</code>, <code>js/app.js</code> y <code>README.md</code>.</li>
+    <li>Crea <code>.env.example</code> y <code>.gitignore</code> y pega en ellos el contenido de las cajas de arriba (los nombres empiezan por punto: es correcto).</li>
+    <li>En <code>index.html</code> escribe <kbd>!</kbd> y pulsa <kbd>Tab</kbd> para la estructura básica; cambia <code>lang="en"</code> por <code>lang="es"</code> y pon un <code>&lt;h1&gt;</code>. Pulsa <b>Go Live</b>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> el navegador abre <code>http://127.0.0.1:5500/index.html</code> con tu título y el explorador de VS Code muestra exactamente la estructura de arriba.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>Windows no me deja crear un archivo que empieza por punto</dt><dd>Créalo desde VS Code, no desde el explorador de Windows: VS Code lo permite sin problema.</dd>
+    <dt>No veo .gitignore en el explorador de Windows</dt><dd>Los archivos que empiezan por punto se tratan como ocultos. En VS Code se ven siempre.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l4" id="seguridad" data-nav="Contraseñas y 2FA">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4</p><h2>Contraseñas y doble verificación</h2><p class="lead">Vas a manejar tres cuentas con acceso a tu web y a tus datos. Si te roban una, te roban la web.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Secretos</a><a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Seguridad y ley</a></div></div></div>
+  <div class="panel rv">
+    <h3>Dos herramientas, cinco minutos cada una</h3>
+    <ul>
+      <li><b>Gestor de contraseñas</b>: una caja fuerte cifrada que recuerda todas tus contraseñas y claves; tú solo recuerdas una. Opciones gratuitas: <b>Bitwarden</b> (multiplataforma), el gestor de tu navegador o el del móvil. Aquí guardarás la <b>contraseña de la base de datos</b> de Supabase (página 04).</li>
+      <li><b>Verificación en dos pasos (2FA)</b>: además de la contraseña, un código de 6 cifras que genera una app del móvil (Google Authenticator, Microsoft Authenticator, Aegis…) o una llave de acceso (<i>passkey</i>). Aunque alguien sepa tu contraseña, sin tu móvil no entra.</li>
+    </ul>
+    <div class="nota l4"><span class="lbl">Muy importante</span><p>Al activar la 2FA, cada servicio te da unos <b>códigos de recuperación</b>. Guárdalos en el gestor de contraseñas. Si pierdes el móvil sin ellos, puedes perder la cuenta para siempre.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="seg">
+    <li>Instala un gestor de contraseñas (por ejemplo, Bitwarden: extensión del navegador y app del móvil) y crea una contraseña maestra larga: una frase de cuatro o cinco palabras.</li>
+    <li>Instala en el móvil una app de autenticación (Google Authenticator, Microsoft Authenticator o similar).</li>
+    <li>Crea en el gestor una carpeta o etiqueta <b>«libro-de-visitas»</b>: ahí irá todo lo del proyecto.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> el gestor rellena una contraseña en una web de prueba y la app del móvil está instalada. La usarás en la misión siguiente.</p></div>
+</section>
+
+<section class="sec l2" id="cuentas" data-nav="Las tres cuentas">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 5</p><h2>Cuentas: GitHub, Vercel y Supabase</h2><p class="lead">Una cuenta principal (GitHub) y las otras dos entrando con ella. Menos contraseñas y todo conectado.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="02-publicar.html#github"><i>↗</i>02 · Publica tu web</a><a class="ext" href="04-supabase-inicio.html"><i>↗</i>Supabase</a></div></div></div>
+  <div class="panel rv">
+    <h3>Por qué en este orden</h3>
+    <p>GitHub es la cuenta «madre»: Vercel y Supabase permiten entrar con <b>Continue with GitHub</b>. Así, si proteges bien GitHub (2FA), proteges las tres, y Vercel puede leer tus repositorios para publicarlos solo. El paso a paso de GitHub y Vercel está en la <a href="02-publicar.html">página 02</a> (y, con pantallas ilustradas, en <a href="../ExtraGrid/Publicar-Web-Zoo.html#github">Súbela a internet</a>); aquí solo creamos y aseguramos las cuentas.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="cue">
+    <li>Crea tu cuenta en <b>github.com</b> (si no la tienes) con un nombre de usuario profesional en minúsculas. Guarda la contraseña en el gestor.</li>
+    <li>Activa la 2FA en GitHub: foto de perfil → <b>Settings → Password and authentication → Enable two-factor authentication</b>. Escanea el código QR con la app del móvil y <b>guarda los códigos de recuperación</b> en el gestor.</li>
+    <li>Entra en <b>vercel.com → Sign Up</b>, elige el plan <b>Hobby</b> y pulsa <b>Continue with GitHub</b>.</li>
+    <li>Entra en <b>supabase.com → Start your project</b> y pulsa <b>Continue with GitHub</b>.</li>
+    <li>En Supabase, activa la 2FA en tu cuenta: avatar → <b>Account preferences → Security</b> (o «Multi-factor authentication»).</li>
+    <li>Apunta en el gestor qué cuenta usas en cada servicio: así nunca dudarás con qué entrar.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> puedes entrar en Vercel y en Supabase con el botón de GitHub, y GitHub te pide el código del móvil al entrar desde otro navegador.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>Vercel o Supabase no me dejan entrar con GitHub</dt><dd>Comprueba que tu correo de GitHub está verificado (GitHub → Settings → Emails).</dd>
+    <dt>El nombre de los menús no coincide</dt><dd>Los servicios cambian su diseño a menudo. Busca siempre las mismas palabras: <i>Security</i>, <i>Two-factor</i>, <i>Account</i>.</dd>
+    <dt>No tengo móvil propio</dt><dd>Las <i>passkeys</i> (llaves de acceso del propio ordenador) o una llave física de seguridad sustituyen a la app. Pregunta a tu profesor si el centro ofrece una alternativa.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l5" id="node" data-nav="Node.js (opcional)">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 6 · opcional</p><h2>Node.js y la terminal</h2><p class="lead">No lo necesitas para el manual, pero abre la puerta a las herramientas profesionales.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="04-supabase-inicio.html#local"><i>↗</i>Supabase en local</a><a class="ext" href="Deploy-Metro.html#funciones"><i>↗</i>Funciones</a></div></div></div>
+  <div class="panel rv">
+    <h3>Qué son Node.js y npm</h3>
+    <p><b>Node.js</b> permite ejecutar JavaScript fuera del navegador, en tu ordenador. Con él viene <b>npm</b>, el gestor de paquetes: una tienda gigante de herramientas que se instalan con una orden. Las usarás en el bloque NPM y en el de JavaScript, pero ya puedes probar dos:</p>
+    <ul>
+      <li><code>npx vercel</code>: publicar en Vercel desde la terminal.</li>
+      <li><code>npx supabase</code>: la herramienta de Supabase (proyectos en local, migraciones…).</li>
+    </ul>
+    <p><code>npx</code> descarga la herramienta y la ejecuta sin instalarla para siempre.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 6</b><span>10 minutos · opcional</span></div>
+  <ol class="mision rv" data-id="node">
+    <li>Descarga la versión <b>LTS</b> (soporte largo, la estable) desde <b>nodejs.org</b> e instálala con las opciones por defecto.</li>
+    <li>Cierra y vuelve a abrir VS Code, abre la terminal (<kbd>Ctrl</kbd>+<kbd>ñ</kbd>) y escribe <code>node -v</code>: debe salir un número de versión.</li>
+    <li>Escribe <code>npm -v</code>: también debe salir un número.</li>
+  </ol>
+  <textarea class="src" data-lang="sh" data-title="Terminal · comprobar la instalación">
+node -v     # muestra la versión de Node.js (por ejemplo v22.x)
+npm -v      # muestra la versión de npm</textarea>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>«node» no se reconoce como un comando</dt><dd>Cierra del todo VS Code (y la terminal) y vuelve a abrirlo: la terminal necesita recargar las rutas del sistema tras instalar.</dd>
+    <dt>En PowerShell sale un error de «ejecución de scripts deshabilitada» con npx</dt><dd>Usa la terminal <b>Command Prompt</b> o <b>Git Bash</b> en VS Code (flechita junto al <b>+</b> de la terminal). En ordenadores del centro, pregunta al profesor antes de cambiar políticas del sistema.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l6" id="listo" data-nav="Taller listo">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Tu taller está listo</h2><p class="lead">Repaso final y una pequeña autoevaluación antes de pasar a publicar.</p></div></div>
+  <div class="panel rv">
+    <h3>Lo que tienes ahora</h3>
+    <ul>
+      <li>Navegador actualizado y sabes leer Network y Console.</li>
+      <li>VS Code con formateo automático y Live Server.</li>
+      <li>La carpeta <code>libro-de-visitas</code> con su estructura, <code>.env.example</code> y <code>.gitignore</code>.</li>
+      <li>Gestor de contraseñas y 2FA en tus cuentas.</li>
+      <li>Cuentas en GitHub, Vercel y Supabase conectadas.</li>
+    </ul>
+    <p><b>Siguiente paso:</b> <a href="02-publicar.html">02 · Publica tu web</a>: tu carpeta en GitHub y publicada con Vercel.</p>
+  </div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">01 · Monta tu taller</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'¿En qué pestaña de las DevTools ves el código de estado (200, 404…) de cada archivo?',o:['Network (Red)','Elements','Lighthouse'],a:0,e:'Misión 1.'},
+ {q:'¿Para qué sirve el archivo .gitignore?',o:['Para decirle a Git qué archivos no debe subir nunca (como .env)','Para ignorar errores de CSS','Para esconder la web de Google'],a:0,e:'Misión 3.'},
+ {q:'¿Qué diferencia hay entre .env y .env.example?',o:['.env tiene los valores reales y no se sube; .env.example solo los nombres y sí se sube','Ninguna','.env.example es el que no se sube'],a:0,e:'Misión 3.'},
+ {q:'¿Por qué conviene entrar en Vercel y Supabase con «Continue with GitHub»?',o:['Menos contraseñas, todo conectado y protegido por la 2FA de GitHub','Porque es obligatorio','Porque así es más barato'],a:0,e:'Misión 5.'},
+ {q:'Activas la verificación en dos pasos. ¿Qué debes guardar sí o sí?',o:['Los códigos de recuperación, en el gestor de contraseñas','Una captura del código QR en el escritorio','Nada más'],a:0,e:'Misión 4.'},
+ {q:'¿Necesitas Node.js para seguir este manual?',o:['No, es opcional: abre la puerta a herramientas de terminal','Sí, sin él no funciona Supabase','Sí, para usar Live Server'],a:0,e:'Misión 6.'}]);
+</script>
+</body>
+</html>

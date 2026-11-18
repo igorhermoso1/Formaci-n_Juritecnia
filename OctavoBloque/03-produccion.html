@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Producción en Vercel · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 3: deja tu web lista para producción: ajustes del proyecto, página 404 propia, vercel.json con direcciones limpias, redirecciones y cabeceras de seguridad, dominio propio, analítica y revisión de calidad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>03 · Producción<br>en <em>Vercel</em></h1>
+    <div class="bajada">
+      <p>Publicar no es lo mismo que estar listo para el público. Aquí afinas lo que distingue una web de prácticas de una web profesional: una página de error propia, direcciones limpias, redirecciones, <b>cabeceras de seguridad</b>, tu propio dominio y estadísticas de visitas. Todo con archivos de tu repositorio y unos clics en Vercel.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>La lista de producción</li><li>Ajustes del proyecto</li><li>Página 404 propia</li><li>vercel.json</li><li>Dominio propio</li><li>Analítica y velocidad</li><li>Revisión de calidad</li><li>Límites del plan</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>60 min</b></span><span>Dificultad: <b>media</b></span><span>Necesitas: <b>la página 02 hecha</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>03</i><span>Producción</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l6" id="lista" data-nav="La lista de producción">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">Antes de empezar</p><h2>Qué pide una web en producción</h2><p class="lead">Seis cosas que el visitante no ve… hasta que faltan.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Seguridad y ley</a><a class="ext" href="Deploy-Metro.html#rendimiento"><i>↗</i>Rendimiento</a></div></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Pieza</th><th>Sin ella</th><th>Misión</th></tr></thead>
+      <tbody>
+        <tr><td>Ajustes revisados</td><td>Carpetas sin <code>index.html</code> enseñan la lista de tus archivos.</td><td>1</td></tr>
+        <tr><td>Página 404 propia</td><td>Un enlace roto muestra una página fea y genérica que echa a la gente.</td><td>2</td></tr>
+        <tr><td>Direcciones limpias y redirecciones</td><td>Enlaces antiguos rotos y direcciones con <code>.html</code>.</td><td>3</td></tr>
+        <tr><td>Cabeceras de seguridad</td><td>El navegador no sabe qué protecciones activar.</td><td>3</td></tr>
+        <tr><td>Dominio propio</td><td>Una dirección <code>.vercel.app</code> poco profesional (opcional).</td><td>4</td></tr>
+        <tr><td>Analítica</td><td>No sabes si alguien visita tu web ni si va rápida.</td><td>5</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="sec l2" id="ajustes" data-nav="Ajustes del proyecto">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>Ajustes del proyecto</h2><p class="lead">Tres pantallas de <b>Settings</b> que conviene revisar una vez.</p></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><b>General</b>: nombre del proyecto (decide la dirección <code>.vercel.app</code>) y la opción de <b>Directory Listing</b>: si está activada, una carpeta sin <code>index.html</code> enseña la lista de sus archivos. En producción, <b>desactívala</b>.</li>
+      <li><b>Build and Deployment</b>: <i>Framework Preset</i> (<code>Other</code>) y <i>Root Directory</i> (la carpeta donde está tu <code>index.html</code>; <code>./</code> si está en la raíz).</li>
+      <li><b>Git</b>: la rama de producción (<code>main</code>).</li>
+    </ul>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="aj">
+    <li>En tu proyecto de Vercel: <b>Settings → General</b>. Revisa el nombre y desactiva <b>Directory Listing</b> si está activado.</li>
+    <li><b>Settings → Build and Deployment</b>: confirma <code>Other</code> y <code>./</code>.</li>
+    <li><b>Settings → Git</b>: confirma que la rama de producción es <code>main</code>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> abre <code>tu-web.vercel.app/css/</code>: ya no ves la lista de archivos de la carpeta.</p></div>
+</section>
+
+<section class="sec l1" id="error404" data-nav="Página 404">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>Una página 404 propia</h2><p class="lead">Si alguien llega a una dirección que no existe, que encuentre algo útil y con tu estilo.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#peticion"><i>↗</i>Código 404</a></div></div></div>
+  <div class="panel rv">
+    <p>Vercel sirve automáticamente un archivo <code>404.html</code> que esté en la raíz de tu web cuando la dirección pedida no coincide con ningún archivo. El navegador recibe igualmente el código <code>404</code> (bueno para Google: no indexa páginas que no existen), pero la persona ve tu página.</p>
+  </div>
+  <div class="caso rv" data-h="380">
+    <h4>404.html con el estilo del libro de visitas</h4>
+    <p class="prueba">Una buena 404 dice qué ha pasado, no culpa a nadie y ofrece una salida: volver al inicio.</p>
+    <textarea class="src" data-lang="html">
+<main class="error">
+  <p class="codigo">404</p>
+  <h1>Esta página no existe</h1>
+  <p>Puede que el enlace esté mal escrito o que la página se haya movido.</p>
+  <a class="volver" href="/">Volver al libro de visitas</a>
+</main></textarea>
+    <textarea class="src" data-lang="css">
+.error {                                /* la caja central */
+  max-width: 460px;                     /* ancho de lectura */
+  margin: 30px auto;                    /* centrada */
+  padding: 30px 24px;                   /* aire interior */
+  text-align: center;                   /* texto centrado */
+  background: #ffffff;                  /* blanco */
+  border: 1px solid #e2e0d8;            /* borde suave */
+  border-radius: 18px;                  /* esquinas */
+  font-family: system-ui, sans-serif;   /* letra del sistema */
+}
+.codigo {                               /* el número 404 */
+  margin: 0;                            /* sin márgenes */
+  font: 900 88px/1 system-ui, sans-serif; /* enorme */
+  color: transparent;                   /* sin relleno… */
+  -webkit-text-stroke: 3px #14161c;     /* …solo el contorno */
+}
+.error h1 {                             /* el título */
+  margin: 8px 0;                        /* aire */
+  font-size: 24px;                      /* tamaño */
+}
+.error p {                              /* la explicación */
+  color: #3d414c;                       /* gris oscuro */
+}
+.volver {                               /* el botón de salida */
+  display: inline-block;                /* para dar aire */
+  margin-top: 12px;                     /* separado del texto */
+  padding: 12px 22px;                   /* aire */
+  border-radius: 999px;                 /* píldora */
+  background: #14161c;                  /* casi negro */
+  color: #ffffff;                       /* blanco */
+  font-weight: 700;                     /* negrita */
+  text-decoration: none;                /* sin subrayado */
+}
+.volver:focus-visible {                 /* foco de teclado */
+  outline: 3px solid #1f6feb;           /* anillo azul */
+  outline-offset: 3px;                  /* separado */
+}</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="e404">
+    <li>Crea <code>404.html</code> en la raíz de tu carpeta, con estructura completa (<code>&lt;!DOCTYPE&gt;</code>, <code>lang="es"</code>, <code>title</code>), el HTML de arriba y tu <code>css/estilos.css</code> enlazado con ruta absoluta: <code>href="/css/estilos.css"</code> (la 404 puede aparecer en cualquier carpeta).</li>
+    <li>Añade al final de <code>css/estilos.css</code> el CSS de arriba.</li>
+    <li>Sube los dos archivos a GitHub. Cuando Vercel publique, visita <code>tu-web.vercel.app/no-existe</code>.</li>
+    <li>En las DevTools → <b>Network</b>, comprueba que esa petición devuelve el código <code>404</code>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> cualquier dirección inventada muestra tu página con estilo y un botón para volver, y Network marca 404.</p></div>
+</section>
+
+<section class="sec l4" id="vercel-json" data-nav="vercel.json">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>vercel.json: la configuración en un archivo</h2><p class="lead">Direcciones limpias, redirecciones y cabeceras de seguridad, guardadas en el repositorio.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Seguridad</a><a class="ext" href="../ExtraGrid/HTML-Semantico-Lolipop.html#seo"><i>↗</i>SEO y canonical</a></div></div></div>
+  <div class="panel rv">
+    <p>Si en la raíz del repositorio hay un archivo <code>vercel.json</code>, Vercel lo lee en cada despliegue. Es <b>JSON</b>: claves entre comillas dobles, valores separados por comas y <b>ninguna coma después del último elemento</b>.</p>
+    <textarea class="src" data-lang="js" data-title="vercel.json · en la raíz del repositorio">
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/firmar", "destination": "/", "permanent": true }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ]
+}</textarea>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Línea</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td>cleanUrls</td><td><code>/privacidad.html</code> se sirve en <code>/privacidad</code>, y quien entra con <code>.html</code> es redirigido a la versión limpia.</td></tr>
+        <tr><td>trailingSlash: false</td><td>Quita la barra final (<code>/privacidad/</code> → <code>/privacidad</code>). Así Google no ve dos páginas iguales con distinta dirección.</td></tr>
+        <tr><td>redirects</td><td>Manda una dirección vieja a otra nueva. <code>permanent: true</code> da el código <code>308</code> (mudanza permanente: los buscadores actualizan el enlace); <code>false</code>, el <code>307</code> (temporal).</td></tr>
+        <tr><td>X-Content-Type-Options</td><td>Que el navegador no «adivine» el tipo de un archivo: evita que un texto se ejecute como código.</td></tr>
+        <tr><td>Referrer-Policy</td><td>Al pulsar un enlace a otra web, solo se envía tu dominio, no la dirección completa de la página.</td></tr>
+        <tr><td>X-Frame-Options: DENY</td><td>Nadie puede meter tu web dentro de un <code>iframe</code> en la suya (evita trampas de clics).</td></tr>
+        <tr><td>Permissions-Policy</td><td>Tu web declara que no usará cámara, micrófono ni ubicación: aunque alguien inyecte código, no podrá pedirlos.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="nota l4"><span class="lbl">Avanzado</span><p>Existe una cabecera más potente, <code>Content-Security-Policy</code>, que dice exactamente de qué sitios puede cargar scripts tu web. Es muy eficaz, pero mal puesta rompe la conexión con Supabase (que se carga desde una CDN). Se ve en un curso de seguridad web.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="vjson">
+    <li>Crea <code>vercel.json</code> en la raíz de tu carpeta con el contenido de arriba.</li>
+    <li>Súbelo a GitHub y espera el despliegue.</li>
+    <li>Visita <code>tu-web.vercel.app/privacidad.html</code>: la barra de direcciones cambia a <code>/privacidad</code>.</li>
+    <li>Visita <code>tu-web.vercel.app/firmar</code>: te lleva a la portada.</li>
+    <li>DevTools → <b>Network</b> → pulsa la petición del documento → <b>Headers → Response Headers</b>: ves tus cuatro cabeceras.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> las direcciones salen sin <code>.html</code>, la redirección funciona y las cabeceras aparecen en la respuesta.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>El despliegue falla tras subir vercel.json</dt><dd>Casi siempre es JSON mal escrito: una coma de más al final de una lista, comillas simples en vez de dobles o una llave sin cerrar. Pégalo en un validador de JSON o fíjate en el error de los Build Logs.</dd>
+    <dt>Mis enlaces internos con .html siguen funcionando</dt><dd>Es lo esperado: con <code>cleanUrls</code> redirigen a la versión limpia. Para que sea más rápido, cambia tus enlaces a <code>/privacidad</code>.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l2" id="dominio" data-nav="Dominio propio">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4 · opcional</p><h2>Tu propio dominio</h2><p class="lead">De <code>libro-de-visitas.vercel.app</code> a <code>tudominio.es</code>.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#dominio"><i>↗</i>Qué es un dominio y el DNS</a><a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Costes</a></div></div></div>
+  <div class="panel rv">
+    <p>El dominio se alquila por años en un registrador (unos 10-20 € al año). Qué es y cómo funciona el DNS lo tienes explicado y animado en <a href="../ExtraGrid/Publicar-Web-Zoo.html#dominio">Súbela a internet</a>. Aquí, el procedimiento en Vercel:</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>20 minutos más la espera del DNS · opcional</span></div>
+  <ol class="mision rv" data-id="dom">
+    <li>En tu proyecto de Vercel: <b>Settings → Domains → Add</b> y escribe tu dominio (por ejemplo <code>tudominio.es</code>). Vercel suele proponer añadir también <code>www.tudominio.es</code> con redirección: acéptalo.</li>
+    <li>Vercel te enseña los <b>registros DNS</b> que debes crear (normalmente un registro <b>A</b> para el dominio y un <b>CNAME</b> para <code>www</code>). Copia los valores <b>exactos</b> de esa pantalla.</li>
+    <li>En tu registrador, abre la <b>zona DNS</b> del dominio y crea esos registros.</li>
+    <li>Espera: el DNS puede tardar de minutos a horas. Vercel marca el dominio como <b>Valid Configuration</b> y activa HTTPS solo.</li>
+    <li>Si usas Supabase, añade el dominio nuevo en <b>Authentication → URL Configuration</b> (página 07).</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> <code>https://tudominio.es</code> abre tu web con candado y <code>www.tudominio.es</code> redirige a ella.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>«Invalid Configuration» después de horas</dt><dd>Revisa que los valores del registrador son exactamente los de Vercel y que no queda un registro antiguo del mismo tipo apuntando a otro sitio.</dd>
+    <dt>La web va en .vercel.app pero no en mi dominio</dt><dd>El despliegue está bien: es un problema de DNS o de propagación. Espera y revisa los registros.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l5" id="analitica" data-nav="Analítica y velocidad">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 5</p><h2>Analítica y velocidad</h2><p class="lead">Saber cuánta gente te visita y si tu web va rápida para ellos.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#servicios"><i>↗</i>Servicios</a><a class="ext" href="Deploy-Metro.html#legal"><i>↗</i>Cookies y RGPD</a></div></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><b>Web Analytics</b>: visitas, páginas más vistas, países y dispositivos. El plan Hobby incluye 50.000 eventos al mes.</li>
+      <li><b>Speed Insights</b>: las Core Web Vitals (LCP, INP, CLS) medidas en los dispositivos reales de tus visitantes.</li>
+    </ul>
+    <p>Para una web de HTML, Vercel te da un pequeño fragmento de código con una ruta <b>propia de tu proyecto</b>: por eso hay que copiarlo del panel, no de un tutorial. Recuerda mencionar las estadísticas en tu política de privacidad.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="ana">
+    <li>En tu proyecto de Vercel: <b>Analytics → Enable</b>.</li>
+    <li>Elige la opción para <b>HTML</b> y copia el fragmento de <code>&lt;script&gt;</code> que te enseña.</li>
+    <li>Pégalo al final del <code>&lt;body&gt;</code> de tus páginas, súbelas y espera el despliegue.</li>
+    <li>Visita tu web y comprueba en <b>Network</b> que aparece una petición de la analítica (termina en <code>/view</code>).</li>
+    <li>Opcional: haz lo mismo con <b>Speed Insights</b>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> pasados unos minutos, el panel <b>Analytics</b> muestra tu propia visita.</p></div>
+</section>
+
+<section class="sec l6" id="calidad" data-nav="Revisión de calidad">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 6</p><h2>Revisión de calidad</h2><p class="lead">Lo que se revisa siempre antes de dar la dirección a nadie.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#rendimiento"><i>↗</i>Core Web Vitals</a><a class="ext" href="../ExtraGrid/HTML-Semantico-Lolipop.html#validar"><i>↗</i>Validador W3C</a></div></div></div>
+  <div class="mision-cab rv"><b>Misión 6</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="cal">
+    <li><b>Lighthouse</b> en la web publicada, modo móvil e incógnito: rendimiento, accesibilidad, buenas prácticas y SEO en verde.</li>
+    <li><b>Validador del W3C</b> con la dirección publicada: sin errores.</li>
+    <li>Pulsa <b>todos los enlaces</b>, también los del pie y la 404.</li>
+    <li>Prueba la web en un <b>móvil real</b> y con el <b>teclado</b>.</li>
+    <li>Comparte la dirección en un chat: la tarjeta de vista previa sale con título, descripción e imagen (Open Graph).</li>
+  </ol>
+</section>
+
+<section class="sec l6" id="limites" data-nav="Límites del plan">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Para no llevarse sorpresas</p><h2>Límites del plan Hobby</h2><p class="lead">Lo que importa para una web de clase.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Costes de toda la red</a></div></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><b>Uso personal, no comercial</b>: para la web de un negocio hace falta el plan Pro.</li>
+      <li><b>100 GB de tráfico al mes</b>: cientos de miles de visitas a una web ligera.</li>
+      <li><b>100 despliegues al día</b>: si haces muchos commits pequeños seguidos, agrúpalos.</li>
+      <li><b>Volver atrás</b>: solo a la versión anterior.</li>
+      <li>Si te pasas de un límite, esa función se para hasta que pasan 30 días.</li>
+    </ul>
+    <p class="fuente">Datos comprobados el 17 de noviembre de 2026 en <a href="https://vercel.com/docs/plans/hobby" target="_blank" rel="noopener noreferrer">vercel.com/docs/plans/hobby</a> y <a href="https://vercel.com/docs/instant-rollback" target="_blank" rel="noopener noreferrer">vercel.com/docs/instant-rollback</a>.</p>
+  </div>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Lista para producción</h2><p class="lead">Tu web ya es profesional. Ahora le das memoria: base de datos con Supabase.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">03 · Producción en Vercel</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'¿Qué hace Vercel con un archivo 404.html en la raíz?',o:['Lo enseña cuando la dirección no existe, con código 404','Lo usa como portada','Nada'],a:0,e:'Misión 2.'},
+ {q:'¿Por qué conviene desactivar Directory Listing?',o:['Para que una carpeta sin index.html no enseñe la lista de sus archivos','Para que la web cargue más rápido','Porque cuesta dinero'],a:0,e:'Misión 1.'},
+ {q:'¿Qué hace <code>"cleanUrls": true</code>?',o:['Sirve /privacidad.html como /privacidad','Borra los archivos viejos','Limpia la caché'],a:0,e:'Misión 3.'},
+ {q:'Una redirección con <code>"permanent": true</code> devuelve…',o:['308 (mudanza permanente)','404','500'],a:0,e:'Misión 3.'},
+ {q:'¿Qué evita <code>X-Frame-Options: DENY</code>?',o:['Que otra web meta la tuya en un iframe','Que se vean las imágenes','Que Google te indexe'],a:0,e:'Misión 3.'},
+ {q:'El despliegue falla justo después de subir vercel.json. ¿Lo primero que miras?',o:['Que el JSON esté bien escrito (comas, comillas dobles, llaves)','El color del CSS','Supabase'],a:0,e:'Misión 3.'},
+ {q:'¿De dónde copias los registros DNS para tu dominio?',o:['De Settings → Domains de tu proyecto en Vercel','De cualquier tutorial','Te los inventas'],a:0,e:'Misión 4.'},
+ {q:'¿Por qué hay que copiar el script de Web Analytics del panel?',o:['Porque lleva una ruta propia de tu proyecto','Porque es secreto','Porque cambia cada día'],a:0,e:'Misión 5.'}]);
+</script>
+</body>
+</html>

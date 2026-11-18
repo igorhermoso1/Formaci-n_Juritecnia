@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Publica tu web · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 2: qué pasa en un despliegue, repositorio en GitHub, importar en Vercel, despliegue automático, leer un despliegue y sus registros, vistas previas por rama y volver a una versión anterior.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>02 · Publica<br>tu <em>web</em></h1>
+    <div class="bajada">
+      <p>El corazón del deploy. Vas a entender qué ocurre de verdad cuando una web se publica y a montarlo tú: el código en GitHub y Vercel publicándolo solo en cada cambio. También aprenderás a leer un despliegue, a probar cambios en una dirección aparte y a <b>deshacer</b> una publicación que ha salido mal.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Qué es desplegar, de verdad</li><li>El repositorio en GitHub</li><li>Importar en Vercel</li><li>El despliegue automático</li><li>Leer un despliegue</li><li>Vistas previas</li><li>Volver atrás</li><li>Otras plataformas</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>60 min</b></span><span>Dificultad: <b>baja-media</b></span><span>Necesitas: <b>la página 01 hecha</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>02</i><span>Publica</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l2" id="que" data-nav="Qué es desplegar">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">Antes de empezar</p><h2>Qué es desplegar, de verdad</h2><p class="lead">Cuatro ideas que convierten «subir la web» en un oficio.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#orientacion"><i>↗</i>El plano · deploy</a><a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Entornos</a><a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html"><i>↗</i>Versión ilustrada</a></div></div></div>
+  <div class="panel rv">
+    <h3>El recorrido de un cambio</h3>
+    <div class="arq">
+      <div class="caja l1"><small>1 · Commit</small><b>Guardas en GitHub</b><p>Cada cambio queda registrado con un mensaje.</p></div>
+      <div class="caja l5"><small>2 · Build</small><b>Vercel prepara</b><p>Copia tus archivos y monta la versión nueva (con HTML y CSS, casi instantáneo).</p></div>
+      <div class="caja l2"><small>3 · Deploy</small><b>Se publica</b><p>La versión queda en la red de servidores de Vercel (CDN) con su propia dirección.</p></div>
+      <div class="caja l6"><small>4 · Producción</small><b>Se asigna el dominio</b><p>Tu dirección principal pasa a apuntar a esa versión.</p></div>
+    </div>
+    <h4>Las cuatro ideas clave</h4>
+    <ol>
+      <li><b>Cada despliegue es una foto fija.</b> Vercel no «sobrescribe» tu web: crea una versión nueva y completa, con su propia dirección única, y las anteriores siguen existiendo.</li>
+      <li><b>Producción es un cartel que se mueve.</b> Tu dirección principal (<code>libro-de-visitas.vercel.app</code>) es un alias que apunta a la última versión buena. Publicar es mover el cartel; volver atrás, también.</li>
+      <li><b>Todo sale del repositorio.</b> Lo que no está en GitHub no existe para Vercel. Por eso nunca se editan archivos «en el servidor».</li>
+      <li><b>Cada rama, un entorno.</b> La rama <code>main</code> es producción; cualquier otra rama genera una vista previa con su dirección.</li>
+    </ol>
+    <div class="analogia"><span class="ico">🎞️</span><p>Es como un rollo de fotos de carné: cada despliegue es una foto nueva y nunca se tiran las anteriores. El escaparate (producción) enseña la que tú eliges. Si la nueva sale mal, vuelves a colgar la de antes en un segundo.</p></div>
+  </div>
+</section>
+
+<section class="sec l2" id="github" data-nav="El repositorio">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>El repositorio en GitHub</h2><p class="lead">Tu carpeta <code>libro-de-visitas</code>, en la nube y con historial.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="01-entorno.html#carpeta"><i>↗</i>La carpeta</a><a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#github"><i>↗</i>Pantallas de GitHub</a></div></div></div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="gh">
+    <li>En GitHub, botón <b>+ → New repository</b>. Nombre: <code>libro-de-visitas</code>. Visibilidad <b>Public</b>. Pulsa <b>Create repository</b>.</li>
+    <li>Pulsa el enlace <b>uploading an existing file</b>. Abre tu carpeta en el explorador, selecciona <b>todo lo de dentro</b> (no la carpeta) y arrástralo.</li>
+    <li>Escribe un mensaje de commit que diga qué subes («Primera versión del libro de visitas») y pulsa <b>Commit changes</b>.</li>
+    <li>Comprueba que <code>index.html</code>, <code>.gitignore</code> y <code>README.md</code> están en la raíz, junto a las carpetas <code>css</code> y <code>js</code>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en la portada del repositorio se ve tu <code>README.md</code> y la lista de archivos empieza por las carpetas y sigue con <code>index.html</code>. No hay ningún archivo <code>.env</code>.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>Todo quedó dentro de una carpeta <code>libro-de-visitas/</code></dt><dd>Arrastraste la carpeta, no su contenido. Bórrala del repositorio o crea uno nuevo y repite arrastrando lo de dentro.</dd>
+    <dt>No se ven <code>.gitignore</code> ni <code>.env.example</code></dt><dd>El explorador de Windows esconde los archivos que empiezan por punto. Actívalos en <b>Vista → Mostrar → Elementos ocultos</b> antes de arrastrar, o súbelos uno a uno con <b>Add file → Upload files</b>.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l2" id="vercel" data-nav="Importar en Vercel">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>Importar en Vercel</h2><p class="lead">Conectar el repositorio y obtener tu primera dirección pública.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#vercel"><i>↗</i>Pantallas de Vercel</a><a class="ext" href="Deploy-Metro.html#cdn"><i>↗</i>CDN</a></div></div></div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="vc">
+    <li>En <b>vercel.com</b>: <b>Add New… → Project</b>.</li>
+    <li>En la lista de repositorios, <b>Import</b> en <code>libro-de-visitas</code>. Si no aparece, pulsa <i>Adjust GitHub App Permissions</i> y dale acceso.</li>
+    <li>Revisa la configuración: <b>Framework Preset</b> <code>Other</code> (es HTML y CSS, no hay nada que construir) y <b>Root Directory</b> <code>./</code>.</li>
+    <li>Pulsa <b>Deploy</b> y espera el confeti.</li>
+    <li>Abre la dirección <code>….vercel.app</code> y apúntala en tu gestor: la usarás en Supabase (página 07).</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> tu web se abre en el móvil desde la dirección <code>.vercel.app</code>, con candado (HTTPS) y con su CSS.</p></div>
+  <details class="falla rv"><summary>Si algo falla</summary><div class="dentro"><dl>
+    <dt>404: NOT_FOUND</dt><dd>No hay <code>index.html</code> en la raíz del repositorio (misión 1) o se llama distinto (<code>Index.html</code>).</dd>
+    <dt>La web sale sin estilos</dt><dd>La ruta del CSS no coincide letra a letra (mayúsculas). En el servidor, <code>Estilos.css</code> y <code>estilos.css</code> son archivos distintos.</dd>
+    <dt>No puedo importar el repositorio</dt><dd>El plan Hobby solo conecta repositorios de tu cuenta personal, no de una organización de GitHub.</dd>
+  </dl></div></details>
+</section>
+
+<section class="sec l2" id="auto" data-nav="Despliegue automático">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>El despliegue automático</h2><p class="lead">Desde ahora, cada commit en <code>main</code> se publica solo. Míralo pasar.</p></div></div>
+  <div class="panel rv">
+    <p>Vercel quedó «escuchando» tu repositorio. Cada vez que llega un commit a <code>main</code>, hace el recorrido completo: build, despliegue y asignación del dominio. Tú no vuelves a subir nada a Vercel nunca más.</p>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Estado</th><th>Qué significa</th></tr></thead>
+      <tbody>
+        <tr><td>Queued</td><td>En cola: espera su turno (en Hobby, un despliegue a la vez).</td></tr>
+        <tr><td>Building</td><td>Preparando la versión.</td></tr>
+        <tr><td>Ready</td><td>Publicada. Si es de <code>main</code>, ya está en producción.</td></tr>
+        <tr><td>Error</td><td>Algo falló: no se publica nada y producción sigue con la versión anterior.</td></tr>
+        <tr><td>Canceled</td><td>Cancelado (por ejemplo, porque llegó otro commit más nuevo).</td></tr>
+      </tbody>
+    </table></div>
+    <p>Fíjate en el detalle de seguridad: si un despliegue falla, <b>tu web no se rompe</b>, porque el dominio sigue apuntando a la última versión buena.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="auto">
+    <li>Abre en Vercel tu proyecto, pestaña <b>Deployments</b>, y déjala abierta.</li>
+    <li>En GitHub, abre <code>index.html</code>, pulsa el lápiz (<b>Edit</b>), cambia el texto del <code>&lt;h1&gt;</code> y pulsa <b>Commit changes</b>.</li>
+    <li>Vuelve a Vercel: aparece un despliegue nuevo que pasa por <i>Building</i> hasta <i>Ready</i>.</li>
+    <li>Recarga tu web (si no ves el cambio, <kbd>Ctrl</kbd>+<kbd>F5</kbd>: es la caché).</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> en <b>Deployments</b> hay dos despliegues, el primero y el de tu cambio, y la web publicada enseña el título nuevo.</p></div>
+</section>
+
+<section class="sec l2" id="leer" data-nav="Leer un despliegue">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4</p><h2>Leer un despliegue</h2><p class="lead">Cada despliegue cuenta su historia: qué commit, qué archivos, qué pasó.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#peticion"><i>↗</i>Códigos de estado</a><a class="ext" href="01-entorno.html#navegador"><i>↗</i>DevTools</a></div></div></div>
+  <div class="panel rv">
+    <ul>
+      <li><b>Dirección única</b>: cada despliegue tiene la suya (algo como <code>libro-de-visitas-a1b2c3-tu-usuario.vercel.app</code>), que siempre enseña <b>esa</b> versión. Sirve para comparar el antes y el después.</li>
+      <li><b>Source</b>: el commit y el mensaje que lo provocó. Por eso importa escribir buenos mensajes.</li>
+      <li><b>Build Logs</b>: el registro paso a paso. Si algo falla, el motivo está aquí, normalmente en las últimas líneas en rojo.</li>
+      <li><b>Source / Output</b>: la lista de archivos que se publicaron. Si un archivo falta aquí, no existe en tu web.</li>
+    </ul>
+  </div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="leer">
+    <li>En <b>Deployments</b>, pulsa el despliegue más reciente.</li>
+    <li>Abre su dirección única (botón <b>Visit</b> o la URL larga) y compárala con la de producción.</li>
+    <li>Abre <b>Build Logs</b> y lee las líneas: verás que copia tus archivos y termina sin errores.</li>
+    <li>Busca en la lista de archivos publicados tu <code>css/estilos.css</code>.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="previa" data-nav="Vistas previas">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Misión 5</p><h2>Vistas previas por rama</h2><p class="lead">Probar un cambio en una dirección aparte, sin tocar la web de verdad.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#entornos"><i>↗</i>Local, preview, producción</a></div></div></div>
+  <div class="panel rv">
+    <p>Una <b>rama</b> es una copia paralela del código donde puedes cambiar cosas sin afectar a <code>main</code>. El bloque 09 (Git) las explica a fondo, pero GitHub deja crearlas desde la web, y Vercel genera una <b>vista previa</b> para cada una.</p>
+    <div class="nota l4"><span class="lbl">Protección</span><p>Por defecto, Vercel protege las vistas previas: para abrirlas hay que haber iniciado sesión en Vercel con permiso sobre el proyecto. Si un compañero no puede verla, es eso. Se cambia en <b>Settings → Deployment Protection</b>; para clase, mejor dejarlo así.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="previa">
+    <li>En GitHub, edita <code>css/estilos.css</code> (lápiz) y cambia un color.</li>
+    <li>Al guardar, elige <b>Create a new branch for this commit and start a pull request</b>, con un nombre como <code>prueba-color</code>, y pulsa <b>Propose changes</b> y luego <b>Create pull request</b>.</li>
+    <li>En unos segundos, Vercel deja un comentario en el <i>pull request</i> con el enlace a la <b>Preview</b>. Ábrelo: ves el color nuevo.</li>
+    <li>Abre tu dirección de producción: sigue con el color de antes.</li>
+    <li>Si te gusta, pulsa <b>Merge pull request</b>: el cambio entra en <code>main</code> y Vercel lo publica en producción. Si no, <b>Close pull request</b>.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> durante unos minutos conviven dos versiones de tu web: la de producción y la vista previa. Así se trabaja en los equipos profesionales.</p></div>
+</section>
+
+<section class="sec l6" id="atras" data-nav="Volver atrás">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 6</p><h2>Volver a la versión anterior</h2><p class="lead">Has publicado algo roto. En un clic, la web vuelve a como estaba.</p></div></div>
+  <div class="panel rv">
+    <p>Como cada despliegue es una foto fija, deshacer es tan sencillo como volver a apuntar el dominio a la foto anterior. Vercel lo llama <b>Instant Rollback</b>.</p>
+    <ul>
+      <li>En el plan <b>Hobby</b> solo se puede volver a la versión <b>inmediatamente anterior</b> de producción.</li>
+      <li>Después de volver atrás, Vercel <b>deja de publicar solos</b> los commits nuevos de <code>main</code>, para no pisar tu arreglo de emergencia. Cuando hayas corregido el error, hay que <b>deshacer la vuelta atrás</b> para recuperar la publicación automática.</li>
+    </ul>
+    <div class="analogia"><span class="ico">⏪</span><p>Es el botón de «deshacer» de la web entera. Pero, como en un procesador de textos, después de deshacer conviene arreglar el original: la vuelta atrás es un parche, no la solución.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 6</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="atras">
+    <li>Rompe algo a propósito: en GitHub, cambia en <code>index.html</code> el enlace al CSS por <code>css/no-existe.css</code> y haz commit. Espera a que se publique: tu web sale sin estilos.</li>
+    <li>En la portada del proyecto en Vercel, en el recuadro de producción, pulsa <b>Instant Rollback</b>, elige la versión anterior y confirma.</li>
+    <li>Recarga tu web: vuelve a tener estilos al instante.</li>
+    <li>Arregla el enlace en GitHub y haz commit (verás que <b>no</b> se publica solo).</li>
+    <li>En el recuadro de producción pulsa <b>Manage</b>, elige el despliegue nuevo y confirma: vuelve la publicación automática.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> sabes volver atrás en segundos y sabes reactivar la publicación automática. Es lo primero que se hace cuando algo se rompe en producción.</p></div>
+</section>
+
+<section class="sec l2" id="otras" data-nav="Otras plataformas">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Para saber más</p><h2>Otras plataformas</h2><p class="lead">Las mismas ideas, con otros nombres.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../ExtraGrid/Publicar-Web-Zoo.html#comparar"><i>↗</i>Comparativa con fecha</a><a class="ext" href="Deploy-Metro.html#costes"><i>↗</i>Costes</a></div></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Idea</th><th>Vercel</th><th>GitHub Pages</th><th>Netlify</th></tr></thead>
+      <tbody>
+        <tr><td>Publicar al hacer commit</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+        <tr><td>Vistas previas por rama</td><td>Sí</td><td>No</td><td>Sí (Deploy Previews)</td></tr>
+        <tr><td>Volver atrás</td><td>Instant Rollback (Hobby: la anterior)</td><td>Revertir el commit en GitHub</td><td>Publicar un despliegue antiguo</td></tr>
+        <tr><td>Registros del despliegue</td><td>Build Logs</td><td>Pestaña Actions</td><td>Deploy log</td></tr>
+      </tbody>
+    </table></div>
+    <p>La comparativa de límites gratuitos, con fecha y fuentes, está en <a href="../ExtraGrid/Publicar-Web-Zoo.html#comparar">Súbela a internet</a>, que también tiene todas las pantallas de GitHub, Vercel, Pages y Netlify ilustradas paso a paso.</p>
+  </div>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Ya despliegas</h2><p class="lead">Siguiente parada: dejar tu web lista para producción de verdad.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">02 · Publica tu web</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'¿Qué hace Vercel con cada despliegue?',o:['Crea una versión nueva y completa con su propia dirección; las anteriores se conservan','Sobrescribe la web anterior','Borra el repositorio'],a:0,e:'Sección 0.'},
+ {q:'¿Qué es «producción» en Vercel?',o:['El dominio principal, que apunta a la versión elegida (normalmente la última de main)','Una carpeta del ordenador','Un tipo de archivo'],a:0,e:'Sección 0.'},
+ {q:'¿Qué Framework Preset eliges para una web de HTML y CSS?',o:['Other','Next.js','React'],a:0,e:'Misión 2.'},
+ {q:'Un despliegue termina en Error. ¿Qué ve la gente en tu web?',o:['La última versión buena: producción no cambia','Una página en blanco','Un 404'],a:0,e:'Misión 3.'},
+ {q:'¿Dónde buscas el motivo de un despliegue fallido?',o:['En los Build Logs del despliegue','En el CSS','En Supabase'],a:0,e:'Misión 4.'},
+ {q:'¿Qué genera Vercel al hacer un commit en una rama que no es main?',o:['Una vista previa (preview) con su propia dirección','Nada','Un cambio en producción'],a:0,e:'Misión 5.'},
+ {q:'En el plan Hobby, ¿a qué versión puedes volver con Instant Rollback?',o:['A la inmediatamente anterior de producción','A cualquiera','A ninguna'],a:0,e:'Misión 6.'},
+ {q:'Tras un Instant Rollback, ¿se publican solos los commits nuevos?',o:['No, hasta que deshaces la vuelta atrás (Manage → promote)','Sí, como siempre','Solo los viernes'],a:0,e:'Misión 6.'}]);
+</script>
+</body>
+</html>

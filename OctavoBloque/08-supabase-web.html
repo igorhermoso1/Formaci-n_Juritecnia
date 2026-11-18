@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · Supabase: conecta tu web · Deploy</title>
+<meta name="description" content="Manual del bloque Deploy, página 8: construye el libro de visitas real conectado a Supabase: HTML, CSS y JavaScript explicado, pruebas en local, depuración con DevTools, tiempo real, inicio de sesión con enlace mágico y publicación en Vercel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="metro.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="hero mini" id="inicio">
+  <div class="wrap">
+    <div class="top">
+      <div class="logo"><i>08</i>Bloque 08 · Deploy · Manual</div>
+      <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+    </div>
+    <h1>08 · Conecta<br>tu <em>web</em></h1>
+    <div class="bajada">
+      <p>El momento en que todo encaja: tu formulario guarda en Supabase y la lista muestra los mensajes de verdad. Escribirás cuatro archivos, los probarás en tu ordenador, aprenderás a encontrar cualquier fallo con las DevTools y lo publicarás. El JavaScript va <b>completo y explicado</b>: no necesitas dominarlo todavía (eso es el bloque 10), solo entender qué hace cada parte.</p>
+      <div class="tarjeta-ruta"><b>En esta página</b><ol><li>Lo que vas a construir</li><li>HTML y CSS</li><li>La conexión</li><li>Leer y escribir</li><li>Probar en local</li><li>Depurar</li><li>Tiempo real (opcional)</li><li>Iniciar sesión (opcional)</li><li>Publicar</li></ol></div>
+    </div>
+    <div class="ficha-pag"><span>Tiempo: <b>90 min</b></span><span>Dificultad: <b>media-alta</b></span><span>Necesitas: <b>páginas 01, 04, 05 y 07</b></span></div>
+    <nav class="recorrido" id="recorrido" aria-label="Páginas del manual"></nav>
+    <nav class="banda-sb" id="bandaSb" aria-label="Unidad Supabase: 5 partes"></nav>
+    <div id="progreso" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a class="marca" href="#inicio"><i>08</i><span>Conecta</span></a>
+    <button class="nav-arrow" id="navL" type="button" aria-label="Anterior">◀</button>
+    <div class="nav-links"><ul id="navUl"></ul></div>
+    <button class="nav-arrow" id="navR" type="button" aria-label="Siguiente">▶</button>
+    <div class="prog" id="prog"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="contenido" tabindex="-1">
+
+<section class="sec l3" id="plan" data-nav="Lo que vas a construir">
+  <div class="letrero rv"><div class="badge">0</div><div><p class="kick">El plan</p><h2>Lo que vas a construir</h2><p class="lead">Cuatro archivos y un viaje de ida y vuelta a Supabase.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="01-entorno.html#carpeta"><i>↗</i>Tu carpeta</a><a class="ext" href="06-supabase-sql.html#web"><i>↗</i>De SQL a la web</a></div></div></div>
+  <div class="panel rv">
+    <div class="arq">
+      <div class="caja l1"><small>index.html</small><b>La estructura</b><p>Formulario (nombre, tema, mensaje) y lista de mensajes.</p></div>
+      <div class="caja l6"><small>css/estilos.css</small><b>El aspecto</b><p>Lo que ya sabes hacer, con estados de envío y error.</p></div>
+      <div class="caja l4"><small>js/config.js</small><b>La dirección y la llave</b><p>URL del proyecto y clave <b>publicable</b>.</p></div>
+      <div class="caja l3"><small>js/app.js</small><b>El mensajero</b><p>Lee los temas y los mensajes, y guarda los nuevos.</p></div>
+    </div>
+    <p style="margin-top:14px">El orden de carga importa: primero la librería de Supabase (desde una CDN), luego <code>config.js</code> y por último <code>app.js</code>, que usa lo que definen los dos anteriores.</p>
+  </div>
+</section>
+
+<section class="sec l1" id="html" data-nav="HTML y CSS">
+  <div class="letrero rv"><div class="badge">1</div><div><p class="kick">Misión 1</p><h2>El HTML y el CSS</h2><p class="lead">Lo que ya dominas. Fíjate en los <code>name</code>: coinciden con las columnas.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="../Formularios/Formularios-CSS.html"><i>↗</i>Formularios con CSS</a><a class="ext" href="05-supabase-tablas.html#disenar"><i>↗</i>name = columna</a></div></div></div>
+  <div class="caso rv" data-h="800">
+    <h4>El libro de visitas (aspecto, todavía sin datos reales)</h4>
+    <p class="prueba">El recuadro enseña el diseño con dos mensajes de ejemplo. Los reales llegarán cuando añadas <code>config.js</code> y <code>app.js</code>.</p>
+    <textarea class="src" data-lang="html">
+<main class="libro">
+  <h1>Libro de visitas</h1>
+  <form id="form-mensaje">
+    <label for="nombre">Tu nombre</label>
+    <input id="nombre" name="nombre" required minlength="2" maxlength="60" autocomplete="name">
+    <label for="tema">Tema</label>
+    <select id="tema" name="tema_id">
+      <option value="">Sin tema</option>
+    </select>
+    <label for="mensaje">Tu mensaje</label>
+    &lt;textarea id="mensaje" name="mensaje" required maxlength="500" rows="3"&gt;&lt;/textarea&gt;
+    <button type="submit">Firmar el libro</button>
+    <p id="estado" role="status"></p>
+  </form>
+  <h2>Mensajes</h2>
+  <ul id="lista">
+    <li><p class="cab"><b>Ane</b> · 2 de noviembre <span class="tema">Felicitación</span></p><p>¡Qué web más bonita!</p></li>
+    <li><p class="cab"><b>Mikel</b> · 3 de noviembre <span class="tema">Saludo</span></p><p>Volveré pronto.</p></li>
+  </ul>
+  <p class="legal"><a href="privacidad.html">Política de privacidad</a></p>
+</main></textarea>
+    <textarea class="src" data-lang="css">
+.libro {                                /* la página */
+  max-width: 560px;                     /* ancho de lectura */
+  margin: 0 auto;                       /* centrada */
+  font-family: system-ui, sans-serif;   /* letra del sistema */
+  color: #14161c;                       /* tinta */
+}
+.libro h1 {                             /* título principal */
+  font-size: 32px;                      /* grande */
+  margin: 0 0 14px;                     /* aire debajo */
+}
+.libro h2 {                             /* título de la lista */
+  font-size: 20px;                      /* mediano */
+  margin: 26px 0 10px;                  /* aire */
+}
+#form-mensaje {                         /* el formulario */
+  display: grid;                        /* piezas una debajo de otra */
+  gap: 8px;                             /* separación */
+  padding: 18px;                        /* aire interior */
+  background: #ffffff;                  /* blanco */
+  border: 1px solid #e2e0d8;            /* borde suave */
+  border-radius: 14px;                  /* esquinas */
+}
+#form-mensaje label {                   /* las etiquetas */
+  font-weight: 600;                     /* negrita suave */
+  font-size: 14px;                      /* tamaño */
+}
+#form-mensaje :is(input, select, textarea) {   /* los tres tipos de campo */
+  font: inherit;                        /* hereda la letra */
+  padding: 10px 12px;                   /* aire */
+  border: 1px solid #c9c6bb;            /* borde */
+  border-radius: 10px;                  /* esquinas */
+  background: #ffffff;                  /* fondo */
+}
+#form-mensaje :is(input, select, textarea):focus-visible {   /* foco de teclado */
+  outline: 3px solid #12a079;           /* anillo verde */
+  outline-offset: 1px;                  /* pegado */
+}
+#form-mensaje button {                  /* el botón */
+  font: 700 16px system-ui, sans-serif; /* letra */
+  padding: 12px;                        /* aire */
+  border: 0;                            /* sin borde */
+  border-radius: 999px;                 /* píldora */
+  background: #14161c;                  /* casi negro */
+  color: #ffffff;                       /* blanco */
+  cursor: pointer;                      /* manita */
+}
+#form-mensaje button[aria-busy="true"] {   /* mientras se envía */
+  opacity: .6;                          /* apagado */
+  cursor: progress;                     /* cursor de espera */
+}
+#estado {                               /* mensaje de estado */
+  margin: 0;                            /* sin márgenes */
+  min-height: 1.4em;                    /* reserva el hueco: nada salta (CLS) */
+  font-size: 14px;                      /* pequeño */
+}
+#estado[data-tipo="ok"] {               /* todo bien */
+  color: #12a079;                       /* verde */
+}
+#estado[data-tipo="error"] {            /* algo falló */
+  color: #e03a2f;                       /* rojo */
+}
+#lista {                                /* la lista de mensajes */
+  list-style: none;                     /* sin viñetas */
+  margin: 0;                            /* sin márgenes */
+  padding: 0;                           /* sin sangría */
+  display: grid;                        /* uno debajo de otro */
+  gap: 10px;                            /* separación */
+}
+#lista li {                             /* cada mensaje */
+  padding: 12px 16px;                   /* aire */
+  background: #f7f6f2;                  /* papel */
+  border-left: 4px solid #12a079;       /* raya verde */
+  border-radius: 10px;                  /* esquinas */
+}
+#lista p {                              /* párrafos del mensaje */
+  margin: 0;                            /* sin márgenes */
+}
+#lista .cab {                           /* cabecera: nombre y fecha */
+  font-size: 13px;                      /* pequeña */
+  color: #6b7080;                       /* gris */
+  margin-bottom: 4px;                   /* aire debajo */
+}
+#lista .cab b {                         /* el nombre */
+  color: #14161c;                       /* tinta */
+  font-size: 15px;                      /* algo mayor */
+}
+#lista .tema {                          /* la etiqueta del tema */
+  font-size: 12px;                      /* pequeña */
+  background: #e6f6ef;                  /* verde muy claro */
+  color: #0c5a44;                       /* verde oscuro */
+  padding: 1px 8px;                     /* aire */
+  border-radius: 999px;                 /* píldora */
+}
+#lista[aria-busy="true"] {              /* mientras carga */
+  opacity: .5;                          /* apagada */
+}
+.legal {                                /* enlace legal */
+  font-size: 13px;                      /* pequeño */
+  margin-top: 20px;                     /* separado */
+}</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 1</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="html">
+    <li>En tu <code>index.html</code>, dentro del <code>&lt;body&gt;</code>, pega el HTML de arriba; borra los dos <code>&lt;li&gt;</code> de ejemplo (los mensajes vendrán de Supabase).</li>
+    <li>En el <code>&lt;head&gt;</code> enlaza el CSS: <code>&lt;link rel="stylesheet" href="css/estilos.css"&gt;</code> y pon un <code>&lt;title&gt;</code> y una <code>meta description</code>.</li>
+    <li>Pega el CSS en <code>css/estilos.css</code>.</li>
+    <li>Abre con <b>Go Live</b>: ves el formulario y la lista vacía.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="conexion" data-nav="La conexión">
+  <div class="letrero rv"><div class="badge">2</div><div><p class="kick">Misión 2</p><h2>La conexión: librería y claves</h2><p class="lead">Dos etiquetas <code>&lt;script&gt;</code> y un archivo con la dirección y la llave publicable.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="04-supabase-inicio.html#claves"><i>↗</i>URL y claves</a><a class="ext" href="Deploy-Metro.html#secretos"><i>↗</i>Por qué la publicable puede ir aquí</a></div></div></div>
+  <div class="panel rv">
+    <div class="g2">
+      <textarea class="src" data-lang="html" data-title="index.html · justo antes de </body>">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script></textarea>
+      <textarea class="src" data-lang="js" data-title="js/config.js · SOLO la clave publicable">
+// datos de conexión del proyecto de Supabase
+// la clave PUBLICABLE puede estar aquí: la protegen las reglas RLS
+const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+const SUPABASE_KEY = "sb_publishable_TU_CLAVE";</textarea>
+    </div>
+    <div class="nota l4"><span class="lbl">Doble comprobación</span><p>Antes de guardar, mira que la clave empieza por <code>sb_publishable_</code>. Si empieza por <code>sb_secret_</code>, para: estás pegando la secreta.</p></div>
+  </div>
+  <div class="mision-cab rv"><b>Misión 2</b><span>5 minutos</span></div>
+  <ol class="mision rv" data-id="con">
+    <li>Pega las tres etiquetas <code>&lt;script&gt;</code> al final de <code>index.html</code>, antes de <code>&lt;/body&gt;</code>, en ese orden.</li>
+    <li>Rellena <code>js/config.js</code> con tu URL y tu clave publicable (las tienes en tu gestor, página 04).</li>
+    <li>Recarga, abre las DevTools → <b>Console</b> y escribe <code>supabase</code> + <kbd>Intro</kbd>: debe salir un objeto (la librería está cargada).</li>
+  </ol>
+</section>
+
+<section class="sec l3" id="app" data-nav="Leer y escribir">
+  <div class="letrero rv"><div class="badge">3</div><div><p class="kick">Misión 3</p><h2>El mensajero: leer y escribir</h2><p class="lead">El archivo <code>app.js</code> completo, y su explicación en castellano.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="06-supabase-sql.html#web"><i>↗</i>select, insert, order</a><a class="ext" href="07-supabase-seguridad.html#panel"><i>↗</i>Las reglas que lo permiten</a></div></div></div>
+  <div class="panel rv">
+    <textarea class="src" data-lang="js" data-title="js/app.js · avance del bloque 10">
+// 1 · conectar con el proyecto (los datos vienen de config.js)
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 2 · las piezas de la página que vamos a usar
+const form = document.getElementById("form-mensaje");
+const lista = document.getElementById("lista");
+const estado = document.getElementById("estado");
+const selTema = document.getElementById("tema");
+const boton = form.querySelector("button");
+
+// 3 · escribir un aviso debajo del formulario (ok, error o info)
+function avisar(texto, tipo) {
+  estado.textContent = texto;
+  estado.dataset.tipo = tipo;
+}
+
+// 4 · rellenar el desplegable con los temas de la tabla temas
+async function cargarTemas() {
+  const { data, error } = await db.from("temas").select("id, nombre").order("nombre");
+  if (error) { console.error(error); return; }
+  for (const tema of data) {
+    const opcion = document.createElement("option");
+    opcion.value = tema.id;
+    opcion.textContent = tema.nombre;
+    selTema.append(opcion);
+  }
+}
+
+// 5 · crear el <li> de un mensaje (con textContent: el texto nunca se ejecuta)
+function crearMensaje(fila) {
+  const li = document.createElement("li");
+  const cab = document.createElement("p");
+  cab.className = "cab";
+  const nombre = document.createElement("b");
+  nombre.textContent = fila.nombre;
+  const fecha = new Date(fila.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "long" });
+  cab.append(nombre, " · " + fecha);
+  if (fila.temas) {
+    const tema = document.createElement("span");
+    tema.className = "tema";
+    tema.textContent = fila.temas.nombre;
+    cab.append(" ", tema);
+  }
+  const texto = document.createElement("p");
+  texto.textContent = fila.mensaje;
+  li.append(cab, texto);
+  return li;
+}
+
+// 6 · leer los 50 mensajes más recientes, con el nombre de su tema
+async function cargarMensajes() {
+  lista.setAttribute("aria-busy", "true");
+  const { data, error } = await db
+    .from("mensajes")
+    .select("nombre, mensaje, created_at, temas(nombre)")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  lista.removeAttribute("aria-busy");
+  if (error) { console.error(error); avisar("No se pudieron cargar los mensajes.", "error"); return; }
+  lista.replaceChildren();
+  if (data.length === 0) {
+    const vacio = document.createElement("li");
+    vacio.textContent = "Todavía no hay mensajes. ¡Sé la primera persona en firmar!";
+    lista.append(vacio);
+    return;
+  }
+  for (const fila of data) lista.append(crearMensaje(fila));
+}
+
+// 7 · al enviar el formulario, guardar el mensaje
+form.addEventListener("submit", async (evento) => {
+  evento.preventDefault();                                 // que la página no se recargue
+  const datos = Object.fromEntries(new FormData(form));    // { nombre, tema_id, mensaje }
+  datos.tema_id = datos.tema_id ? Number(datos.tema_id) : null;
+  boton.disabled = true;
+  boton.setAttribute("aria-busy", "true");
+  avisar("Enviando…", "info");
+  const { error } = await db.from("mensajes").insert(datos);
+  boton.disabled = false;
+  boton.removeAttribute("aria-busy");
+  if (error) { console.error(error); avisar("No se pudo guardar: " + error.message, "error"); return; }
+  form.reset();
+  avisar("¡Gracias por firmar!", "ok");
+  cargarMensajes();
+});
+
+// 8 · arrancar
+cargarTemas();
+cargarMensajes();</textarea>
+    <h4>Qué hace cada bloque</h4>
+    <ol>
+      <li><b>Conectar</b>: crea el cliente de Supabase con tu URL y tu clave. A partir de aquí, <code>db</code> es tu proyecto.</li>
+      <li><b>Piezas</b>: guarda en variables los elementos del HTML por su <code>id</code>.</li>
+      <li><b>Avisar</b>: escribe un texto en el párrafo de estado y le pone un <code>data-tipo</code> que el CSS colorea.</li>
+      <li><b>Temas</b>: <code>select("id, nombre")</code> en la tabla <code>temas</code>, ordenados, y crea un <code>&lt;option&gt;</code> por cada uno. Es el <code>SELECT … ORDER BY</code> de la página 06.</li>
+      <li><b>Crear mensaje</b>: fabrica el HTML de cada mensaje con <code>textContent</code>, nunca con <code>innerHTML</code>: si alguien escribe código como mensaje, se muestra como texto y no se ejecuta.</li>
+      <li><b>Leer</b>: <code>select</code> con <code>temas(nombre)</code> (el JOIN de la página 06), del más nuevo al más viejo, máximo 50. Mientras carga, la lista lleva <code>aria-busy</code>.</li>
+      <li><b>Guardar</b>: <code>preventDefault</code> evita la recarga; <code>FormData</code> recoge los campos por su <code>name</code>; el tema vacío se convierte en <code>null</code>; el botón se bloquea para evitar dobles envíos; <code>insert</code> guarda, y si va bien vacía el formulario y recarga la lista.</li>
+      <li><b>Arrancar</b>: al abrir la página carga temas y mensajes.</li>
+    </ol>
+    <p>Fíjate en el patrón que se repite: <code>const { data, error } = await …</code>. Supabase siempre devuelve dos cosas: los datos o un error. Siempre se mira el error primero.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 3</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="app">
+    <li>Pega el código en <code>js/app.js</code> y guarda.</li>
+    <li>Recarga la página: el desplegable de temas se llena y aparecen los mensajes que creaste en la página 05.</li>
+    <li>Firma el libro con tu nombre: sale «¡Gracias por firmar!» y tu mensaje aparece arriba de la lista.</li>
+    <li>Abre el <b>Table Editor</b> de Supabase y comprueba que tu mensaje está en la tabla.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> el mensaje que escribes en tu web aparece en el Table Editor, y una fila que añades en el Table Editor aparece en la web al recargar. La ida y la vuelta funcionan.</p></div>
+</section>
+
+<section class="sec l2" id="local" data-nav="Probar en local">
+  <div class="letrero rv"><div class="badge">4</div><div><p class="kick">Misión 4</p><h2>Probar como un profesional</h2><p class="lead">No basta con que funcione una vez: prueba los casos raros.</p></div></div>
+  <div class="mision-cab rv"><b>Misión 4</b><span>10 minutos</span></div>
+  <ol class="mision rv" data-id="pru">
+    <li><b>Network</b>: recarga con las DevTools abiertas y filtra por <code>supabase</code>. Verás <code>GET …/rest/v1/temas</code> y <code>…/mensajes</code> con código <code>200</code>.</li>
+    <li>Firma de nuevo y busca la petición <code>POST …/rest/v1/mensajes</code>: código <code>201</code> (<i>Created</i>).</li>
+    <li>Escribe un mensaje con <code>&lt;b&gt;hola&lt;/b&gt;</code>: debe verse tal cual, con los símbolos, no en negrita.</li>
+    <li>Quita el <code>maxlength</code> del <code>textarea</code> con las DevTools (Elements) y envía un texto de más de 500 caracteres: Supabase lo rechaza por la regla <code>check</code> de la tabla.</li>
+    <li>Prueba la web en modo móvil (DevTools → icono de móvil) y con el teclado (<kbd>Tab</kbd> hasta el botón y <kbd>Intro</kbd>).</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> peticiones con 200 y 201, el HTML escrito por la gente se ve como texto y el texto demasiado largo se rechaza en el servidor aunque se salte el formulario. Tu web es segura aunque alguien la manipule.</p></div>
+</section>
+
+<section class="sec l1" id="depurar" data-nav="Depurar">
+  <div class="letrero rv"><div class="badge">5</div><div><p class="kick">Cuando algo falla</p><h2>Guía de depuración</h2><p class="lead">El 95 % de los fallos están en esta tabla. Mira primero la <b>Console</b> y la <b>Network</b>.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="Deploy-Metro.html#peticion"><i>↗</i>Códigos de estado</a><a class="ext" href="07-supabase-seguridad.html#probar"><i>↗</i>Probar reglas</a></div></div></div>
+  <div class="panel rv">
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>Lo que ves</th><th>Causa</th><th>Solución</th></tr></thead>
+      <tbody>
+        <tr><td>supabase is not defined</td><td>No se cargó la librería o va después de <code>app.js</code>.</td><td>Revisa el orden de los tres <code>&lt;script&gt;</code> y tu conexión a internet.</td></tr>
+        <tr><td>SUPABASE_URL is not defined</td><td><code>config.js</code> no se cargó (ruta mal escrita) o va después.</td><td>Ruta <code>js/config.js</code> exacta, en minúsculas, antes de <code>app.js</code>.</td></tr>
+        <tr><td>Invalid API key · 401</td><td>Clave mal copiada, incompleta o revocada.</td><td>Vuelve a copiarla de Project Settings → API Keys.</td></tr>
+        <tr><td>Failed to fetch · ERR_NAME_NOT_RESOLVED</td><td>URL del proyecto mal escrita, o sin internet.</td><td>Copia la Project URL exacta.</td></tr>
+        <tr><td>503 o fallo de conexión de golpe</td><td>Proyecto pausado por inactividad.</td><td>Panel → reanudar el proyecto (página 04).</td></tr>
+        <tr><td>La lista sale vacía, sin errores</td><td>Falta la regla de <b>SELECT</b>: RLS devuelve vacío, no error.</td><td>Página 07, misión 2.</td></tr>
+        <tr><td>new row violates row-level security policy</td><td>Falta la regla de <b>INSERT</b> para <code>anon</code>.</td><td>Página 07, misión 2.</td></tr>
+        <tr><td>permission denied for table … (42501)</td><td>Falta el <code>grant</code>.</td><td>Página 07, misión 3.</td></tr>
+        <tr><td>Could not find the table … in the schema cache</td><td>Nombre de tabla mal escrito, o la tabla no está expuesta en la Data API.</td><td>Revisa el nombre; página 04, misión 4.</td></tr>
+        <tr><td>violates check constraint</td><td>El dato no cumple una regla de la tabla (longitud…).</td><td>Es lo esperado: el formulario debería avisar antes con <code>maxlength</code>.</td></tr>
+        <tr><td>Could not find a relationship between …</td><td>Pides <code>temas(nombre)</code> pero no existe la clave foránea.</td><td>Página 05, misión 3.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Además, en Supabase: <b>Logs → API</b> enseña cada petición que llegó y por qué se rechazó.</p>
+  </div>
+</section>
+
+<section class="sec l5" id="realtime" data-nav="Tiempo real">
+  <div class="letrero rv"><div class="badge">6</div><div><p class="kick">Misión 5 · opcional</p><h2>Mensajes en tiempo real</h2><p class="lead">Que un mensaje nuevo aparezca solo, sin recargar, en todas las pantallas abiertas.</p></div></div>
+  <div class="panel rv">
+    <textarea class="src" data-lang="js" data-title="js/app.js · añádelo al final">
+// tiempo real: avisa cada vez que alguien inserta un mensaje
+db.channel("mensajes-nuevos")
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "mensajes" }, () => {
+    cargarMensajes();
+  })
+  .subscribe();</textarea>
+  </div>
+  <div class="mision-cab rv"><b>Misión 5</b><span>10 minutos · opcional</span></div>
+  <ol class="mision rv" data-id="rt">
+    <li>Activa el tiempo real en la tabla: <b>Table Editor → mensajes</b> → botón <b>Realtime</b> (o <i>Enable Realtime</i>). También está en <b>Database → Publications → supabase_realtime</b>.</li>
+    <li>Añade el código al final de <code>app.js</code>.</li>
+    <li>Abre tu web en dos ventanas, una al lado de la otra. Firma en una: el mensaje aparece en la otra sin recargar.</li>
+  </ol>
+</section>
+
+<section class="sec l4" id="login" data-nav="Iniciar sesión">
+  <div class="letrero rv"><div class="badge">7</div><div><p class="kick">Misión 6 · opcional</p><h2>Iniciar sesión con enlace mágico</h2><p class="lead">Para el libro «con usuarios» de la página 07: solo firma quien ha entrado.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="07-supabase-seguridad.html#urls"><i>↗</i>Direcciones permitidas</a><a class="ext" href="07-supabase-seguridad.html#propias"><i>↗</i>Reglas por usuario</a></div></div></div>
+  <div class="panel rv">
+    <div class="g2">
+      <textarea class="src" data-lang="html" data-title="index.html · encima del formulario">
+<section id="acceso">
+  <form id="form-acceso">
+    <label for="correo">Tu correo</label>
+    <input id="correo" type="email" required autocomplete="email">
+    <button type="submit">Enviarme el enlace</button>
+  </form>
+  <p id="usuario" hidden>Has entrado como <b id="quien"></b> · <button type="button" id="salir">Salir</button></p>
+</section></textarea>
+      <textarea class="src" data-lang="js" data-title="js/app.js · inicio de sesión">
+// pedir el enlace mágico: vuelve a ESTA página al pulsarlo
+document.getElementById("form-acceso").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("correo").value;
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: location.origin + location.pathname }
+  });
+  avisar(error ? error.message : "Revisa tu correo y pulsa el enlace.", error ? "error" : "ok");
+});
+
+// salir
+document.getElementById("salir").addEventListener("click", () => db.auth.signOut());
+
+// cada vez que cambia la sesión, enseñar u ocultar cada parte
+db.auth.onAuthStateChange((evento, sesion) => {
+  const dentro = Boolean(sesion);
+  document.getElementById("form-acceso").hidden = dentro;
+  document.getElementById("usuario").hidden = !dentro;
+  form.hidden = !dentro;
+  if (dentro) document.getElementById("quien").textContent = sesion.user.email;
+});</textarea>
+    </div>
+    <p>La dirección de vuelta (<code>emailRedirectTo</code>) debe estar en la lista de <b>Redirect URLs</b> de la página 07. Si no, el enlace del correo te llevará a la Site URL.</p>
+  </div>
+  <div class="mision-cab rv"><b>Misión 6</b><span>20 minutos · opcional</span></div>
+  <ol class="mision rv" data-id="login">
+    <li>Aplica en Supabase el script «con usuarios» de la página 07 (misión 6).</li>
+    <li>Añade el HTML encima del formulario y el código al final de <code>app.js</code>.</li>
+    <li>Pide el enlace con tu correo, pulsa el enlace del correo y vuelve a tu web con la sesión iniciada.</li>
+    <li>Firma: en el Table Editor, tu mensaje lleva tu identificador en la columna <code>autor</code>.</li>
+  </ol>
+</section>
+
+<section class="sec l6" id="publicar" data-nav="Publicar">
+  <div class="letrero rv"><div class="badge">8</div><div><p class="kick">Misión 7</p><h2>Publícalo</h2><p class="lead">Lo que funciona en local, a internet. Con dos comprobaciones extra.</p>
+    <div class="corresp">Correspondencias <a class="ext" href="02-publicar.html"><i>↗</i>02 · Publica tu web</a><a class="ext" href="09-proyecto.html"><i>↗</i>De cero a producción</a></div></div></div>
+  <div class="mision-cab rv"><b>Misión 7</b><span>15 minutos</span></div>
+  <ol class="mision rv" data-id="pub">
+    <li>Revisa que en tu carpeta <b>no</b> hay ninguna clave secreta (busca <code>sb_secret</code> con <kbd>Ctrl</kbd>+<kbd>Mayús</kbd>+<kbd>F</kbd> en VS Code: no debe salir nada).</li>
+    <li>Sube los archivos a tu repositorio de GitHub (como en la <a href="02-publicar.html#auto">página 02</a>). <code>config.js</code> sí se sube: solo tiene la clave publicable.</li>
+    <li>Importa el repositorio en Vercel (Framework Preset: <b>Other</b>) y despliega.</li>
+    <li>Copia tu dirección <code>…vercel.app</code> y ponla en Supabase → <b>Authentication → URL Configuration</b> (Site URL y Redirect URLs).</li>
+    <li>Abre tu web publicada, firma y comprueba en el Table Editor que llega.</li>
+  </ol>
+  <div class="comprueba rv"><p><b>Comprueba:</b> desde el móvil, en tu dirección <code>.vercel.app</code>, puedes firmar y ver los mensajes. ¡Tienes una aplicación web completa en producción!</p></div>
+</section>
+
+<section class="sec l6" id="fin" data-nav="Autoevaluación">
+  <div class="letrero rv"><div class="badge">✓</div><div><p class="kick">Final de la página</p><h2>Tu web habla con Supabase</h2><p class="lead">Última página: ordenar todo en un proyecto de verdad, con pruebas y producción.</p></div></div>
+  <h3 class="sub-test">Autoevaluación</h3>
+  <div id="quiz"></div>
+  <div class="score"><span>Aciertos</span><b id="qScore">0 / 0</b><button class="btn sm claro" id="qAll" type="button">Corregir todo</button><button class="btn sm claro" id="qReset" type="button">Empezar de nuevo</button></div>
+</section>
+
+<nav class="siguiente" id="siguiente" aria-label="Página siguiente"></nav>
+</main>
+
+<footer class="pie">
+  <div class="wrap">
+    <div><div class="ft">08 · Conecta tu web</div><p>Bloque 08 · Deploy · Manual práctico · Juritecnia</p></div>
+    <div class="lineas-mini" aria-hidden="true"><span class="l1">1</span><span class="l2">2</span><span class="l3">3</span><span class="l4">4</span><span class="l5">5</span><span class="l6">6</span></div>
+  </div>
+</footer>
+
+<script src="metro.js"></script>
+<script>
+M.test([
+ {q:'¿En qué orden van los tres <code>&lt;script&gt;</code>?',o:['Librería de Supabase, config.js, app.js','app.js, config.js, librería','Da igual'],a:0,e:'Sección 0 y misión 2.'},
+ {q:'¿Qué clave va en config.js?',o:['La publicable (sb_publishable_…)','La secreta','La contraseña de la base de datos'],a:0,e:'Misión 2.'},
+ {q:'¿Por qué los <code>name</code> del formulario coinciden con las columnas?',o:['Porque FormData los recoge por name y Supabase los guarda en la columna con ese nombre','Por estética','Porque lo exige HTML'],a:0,e:'Misión 3.'},
+ {q:'¿Por qué se usa textContent y no innerHTML para los mensajes?',o:['Para que el código que escriba alguien nunca se ejecute','Porque es más rápido','Porque innerHTML no existe'],a:0,e:'Misiones 3 y 4.'},
+ {q:'La lista sale vacía y no hay ningún error. ¿Qué compruebas?',o:['Que existe la regla de SELECT en Supabase','El color del CSS','El nombre del repositorio'],a:0,e:'Sección 5: RLS devuelve vacío, no error.'},
+ {q:'¿Qué código devuelve un insert correcto?',o:['201 Created','404','500'],a:0,e:'Misión 4.'},
+ {q:'¿Qué falta si el enlace mágico te lleva a localhost:3000?',o:['Tu dirección en las Redirect URLs (y la Site URL correcta)','Una tabla','Reiniciar Vercel'],a:0,e:'Misión 6 y página 07.'},
+ {q:'Al publicar en Vercel, ¿qué hay que actualizar en Supabase?',o:['La Site URL y las Redirect URLs con tu dirección .vercel.app','Nada','La contraseña de la base de datos'],a:0,e:'Misión 7.'}]);
+</script>
+</body>
+</html>
