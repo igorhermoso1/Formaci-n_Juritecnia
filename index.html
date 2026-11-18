@@ -26,6 +26,12 @@
     .sigil { width: 24px; height: 24px; display: grid; place-items: center; background: var(--ink); color: var(--acid); font-size: .7rem; animation: sigilBlink 4s steps(1) infinite; }
     .edition { color: var(--muted); }
     .edition b { color: var(--ink); }
+    /* Botón a la videoteca: copia el estilo de Igor-Movies (oro Lakers, rotulador, sombra morada) */
+    .tele { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font: 400 1rem 'Permanent Marker', Impact, sans-serif; letter-spacing: 0; text-transform: none; background: #FDB927; color: #2a0f47; padding: 7px 16px; border: 3px solid #0b0810; box-shadow: 5px 5px 0 #552583; transform: rotate(-1.5deg); transition: transform .15s, box-shadow .15s; }
+    .tele::before { content: ""; width: .6em; height: .6em; border-radius: 50%; background: #ff3b30; box-shadow: 0 0 0 2px #0b0810; animation: sigilBlink 1.6s steps(1) infinite; }
+    .tele:hover { transform: translate(3px, 3px) rotate(-1.5deg); box-shadow: 2px 2px 0 #552583; }
+    .tele:focus-visible { outline: 3px solid #552583; outline-offset: 3px; }
+    @media (max-width: 620px) { .masthead { flex-wrap: wrap; gap: 10px; padding-block: 10px; } .edition { display: none; } }
 
     .hero { position: relative; isolation: isolate; min-height: 490px; padding: 56px 0 46px; display: grid; grid-template-columns: minmax(0, 1fr) 290px; align-items: end; gap: 30px; border-bottom: 1px solid var(--ink); overflow: hidden; }
     .hero::before { content: 'HTML'; position: absolute; z-index: -1; right: 2%; top: -45px; color: #191a1808; font: 900 clamp(17rem, 38vw, 35rem)/.9 Arial, sans-serif; letter-spacing: -.12em; animation: ghostDrift 9s ease-in-out infinite; }
@@ -444,6 +450,7 @@
 <body>
   <header class="wrap masthead">
     <div class="signature"><span class="sigil">{ }</span><span>Igor / laboratorio web</span></div>
+    <a class="tele" href="https://igorhermoso1.github.io/Video-juritecnia/" target="_blank" rel="noopener">Videoteca · clases grabadas</a>
     <div class="edition">Cuaderno de formación <b>· 2026</b></div>
   </header>
 

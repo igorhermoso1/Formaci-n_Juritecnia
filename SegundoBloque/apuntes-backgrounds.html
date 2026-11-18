@@ -73,15 +73,11 @@ b,strong{font-weight:700}
 .hero-art svg{width:100%;height:auto;display:block}
 
 /* student card */
-.ikasle{position:relative;z-index:2;margin-top:26px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;
+.ikasle{position:relative;z-index:2;margin-top:26px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:16px 18px;backdrop-filter:blur(6px)}
 .ikasle label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:#e3dcfb;min-width:0}
 .ikasle input{width:100%;min-width:0;font:inherit;font-size:16px;font-weight:500;letter-spacing:0;padding:9px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.95);color:var(--ink);outline:none}
 .ikasle input:focus{border-color:var(--sakura);box-shadow:0 0 0 4px rgba(246,191,208,.35)}
-.timer{display:flex;align-items:center;gap:8px;background:var(--yoru);border-radius:16px;padding:7px 8px 7px 14px;border:1px solid rgba(255,255,255,.18)}
-.timer .t{font-family:var(--mono);font-size:21px;font-weight:600;color:#fde6ee;min-width:104px}
-.timer button{border:none;border-radius:10px;padding:7px 11px;font-family:var(--maru);font-weight:700;font-size:13px;cursor:pointer}
-.t-go{background:var(--sakura);color:var(--ai)}.t-stop{background:var(--beni);color:#fff}.t-rs{background:#3a3d6b;color:#fff}
 
 /* ================= NAV ================= */
 .nav{position:sticky;top:0;z-index:40;background:rgba(248,245,252,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
@@ -445,8 +441,7 @@ footer p{margin:4px 0 0;font-size:15px;color:#bdb8e6}
   .hero-grid,.g2,.ml,.cr,.fx,.dial-demo{grid-template-columns:1fr}
   .hero-art{min-height:0;max-width:440px;margin:0 auto;width:100%}
   .g3,.gtype,.att,.how{grid-template-columns:1fr}
-  .ikasle{grid-template-columns:1fr 1fr}
-  .timer{grid-column:1/-1;justify-content:space-between}
+  .ikasle{grid-template-columns:1fr 1fr 1fr}
   .ficha{grid-template-columns:1fr}
   .compass{margin:0 auto}
 }
@@ -458,7 +453,6 @@ footer p{margin:4px 0 0;font-size:15px;color:#bdb8e6}
   .sec-head .lan{width:54px;height:68px}
   .sec-head .wm{font-size:90px;top:-20px}
   .nav .brand span{display:none}
-  .timer .t{font-size:18px;min-width:88px}
   .daruma{width:58px;height:64px}
   .d-bubble{right:16px;bottom:92px;max-width:calc(100vw - 32px)}
   .d-bubble::after{right:26px;bottom:-9px;border:9px solid transparent;border-top-color:#fff;border-bottom:0}
@@ -501,7 +495,6 @@ footer p{margin:4px 0 0;font-size:15px;color:#bdb8e6}
       <label>Nombre<input type="text" placeholder="Tu nombre" autocomplete="off"></label>
       <label>Apellidos<input type="text" placeholder="Tus apellidos" autocomplete="off"></label>
       <label>Curso / grupo<input type="text" placeholder="Ej. 1º A" autocomplete="off"></label>
-      <div class="timer"><span class="t" id="tT">00:00:00</span><button class="t-go" id="tGo">Iniciar</button><button class="t-stop" id="tSt">Parar</button><button class="t-rs" id="tRs" title="Reiniciar">0</button></div>
     </div>
   </div>
 </header>
@@ -1106,13 +1099,6 @@ addEventListener('scroll',onScroll,{passive:true});onScroll();
   const a=el('a','chip',t);a.href='#'+id;a.style.textDecoration='none';$('#mapa').appendChild(a);
 });
 
-/* ---------- timer ---------- */
-{let t0=null,acc=0,iv=null;const T=$('#tT');
- const f=ms=>{const s=Math.floor(ms/1000);return[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');};
- const up=()=>T.textContent=f(acc+(t0?Date.now()-t0:0));
- $('#tGo').onclick=()=>{if(t0)return;t0=Date.now();iv=setInterval(up,500);};
- $('#tSt').onclick=()=>{if(!t0)return;acc+=Date.now()-t0;t0=null;clearInterval(iv);up();};
- $('#tRs').onclick=()=>{if(!confirm('¿Poner el cronómetro a cero?'))return;t0=null;acc=0;clearInterval(iv);up();};}
 
 /* ---------- reveal ---------- */
 if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.06});$$('.reveal').forEach(x=>io.observe(x));}
