@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La feria del huerto · variables CSS, Font Awesome, texto degradado y menús</title>
+<meta name="description" content="Bloque 05 · :root y variables CSS, iconos de Font Awesome desde cdnjs, texto degradado con background-clip y ocho menús de navegación hechos solo con CSS.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 40 40%27%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%2718%27 fill=%27%23f5b700%27/%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%278%27 fill=%27%236b3d12%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:ital,wght@0,400;0,600;0,800;0,900;1,400&family=Gochi+Hand&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+<style>
+/* =====================================================================
+   LA FERIA DEL HUERTO · colores, letras y medidas (¡variables!)
+   ===================================================================== */
+:root{
+  --crema:#fff6e5; --crema2:#ffecc8; --tinta:#2b1d14; --tinta2:#5a4232;
+  --amapola:#e23d28; --girasol:#f5b700; --hoja:#2f9e44; --hoja-osc:#1f6e2f; --rosa:#ff6fae; --lavanda:#8c6bd6; --terracota:#d9622b; --cielo:#5aa9e6;
+  --radio:18px; --sombra:5px 5px 0 var(--tinta);
+  --f-tit:'DM Serif Display', Georgia, serif; --f-txt:'Nunito', system-ui, sans-serif; --f-mano:'Gochi Hand', cursive; --f-code:'JetBrains Mono', ui-monospace, monospace;
+  --ancho:min(1140px, 100% - 2rem);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.6rem}
+body{margin:0;color:var(--tinta);font:600 clamp(1rem, .96rem + .25vw, 1.1rem)/1.7 var(--f-txt);overflow-x:clip;
+  background:linear-gradient(90deg, rgba(226,61,40,.05) 50%, transparent 0) 0 0/34px 34px, linear-gradient(rgba(226,61,40,.05) 50%, transparent 0) 0 0/34px 34px, var(--crema)}
+a{color:var(--amapola)}
+:focus-visible{outline:3px solid var(--lavanda);outline-offset:3px}
+code{font-family:var(--f-code);font-size:.84em;background:rgba(245,183,0,.22);padding:.06em .35em;border-radius:6px;color:var(--tinta);font-weight:400}
+.skip{position:fixed;left:1rem;top:-4rem;z-index:999;background:var(--tinta);color:#fff;padding:.6rem 1rem;transition:top .2s}
+.skip:focus{top:1rem}
+.wrap{width:var(--ancho);margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ----- toldo y menú superior ----- */
+.toldo{height:30px;background:repeating-linear-gradient(90deg, var(--amapola) 0 34px, var(--crema) 34px 68px);-webkit-mask:radial-gradient(circle at 17px 0, #000 24px, transparent 25px) 0 0/34px 100% repeat-x;mask:radial-gradient(circle at 17px 0, #000 24px, transparent 25px) 0 0/34px 100% repeat-x}
+.nav{position:sticky;top:0;z-index:60;background:var(--tinta);border-bottom:4px solid var(--girasol)}
+.nav-in{display:flex;align-items:center;gap:.4rem;width:min(1240px, 100% - 1rem);margin-inline:auto}
+.nav ul{display:flex;gap:.2rem;list-style:none;margin:0;padding:.5rem 0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:block;white-space:nowrap;text-decoration:none;color:var(--crema);font:800 .9rem/1 var(--f-txt);padding:.55rem .85rem;border-radius:999px;transition:background .2s, color .2s, rotate .2s}
+.nav a:hover{background:var(--crema);color:var(--tinta);rotate:-2deg}
+.nav a[aria-current="true"]{background:var(--girasol);color:var(--tinta)}
+.nav-arr{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;border:2px solid var(--girasol);background:transparent;color:var(--girasol);cursor:pointer}
+.nav-arr:hover{background:var(--girasol);color:var(--tinta)}
+.prog{height:4px;background:linear-gradient(90deg, var(--hoja), var(--girasol), var(--amapola), var(--rosa));transform-origin:left;scale:0 1}
+
+/* ----- portada ----- */
+.portada{position:relative;overflow:hidden;padding:clamp(4rem, 8vw, 7rem) 0 clamp(4rem, 8vw, 6rem)}
+.portada-in{display:grid;grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr);gap:2rem;align-items:center}
+.sello{display:inline-block;font:400 1.5rem/1 var(--f-mano);background:var(--girasol);padding:.35rem .9rem;border-radius:999px;border:2px solid var(--tinta);box-shadow:3px 3px 0 var(--tinta);rotate:-3deg}
+.titulo{margin:.8rem 0;font:400 clamp(3.2rem, 1.6rem + 7vw, 7.4rem)/.88 var(--f-tit);letter-spacing:-.02em}
+.titulo .deg{display:block;font-style:italic;background:linear-gradient(100deg, var(--amapola), var(--girasol) 35%, var(--hoja) 65%, var(--lavanda));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.08em;animation:brilla 6s ease-in-out infinite alternate}
+@keyframes brilla{to{background-position:100% 0}}
+.lead{font-size:1.15rem;max-width:46ch;color:var(--tinta2)}
+.ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.6rem}
+.boton{display:inline-flex;align-items:center;gap:.55rem;font:900 1rem/1 var(--f-txt);text-decoration:none;color:var(--tinta);background:var(--girasol);border:3px solid var(--tinta);padding:.85rem 1.3rem;border-radius:999px;box-shadow:var(--sombra);cursor:pointer;transition:translate .15s, box-shadow .15s}
+.boton:hover{translate:-2px -2px;box-shadow:7px 7px 0 var(--tinta);color:var(--tinta)}
+.boton:active{translate:3px 3px;box-shadow:1px 1px 0 var(--tinta)}
+.boton.sec{background:var(--crema)}
+.puesto{position:relative;aspect-ratio:1;max-width:460px;width:100%;justify-self:center}
+.girasol{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle, #6b3d12 0 26%, #8a5a1c 27% 30%, transparent 31%), repeating-conic-gradient(var(--girasol) 0 9deg, #ffcf33 9deg 18deg);-webkit-mask:radial-gradient(circle, #000 69%, transparent 70%);mask:radial-gradient(circle, #000 69%, transparent 70%);animation:gira 30s linear infinite;filter:drop-shadow(6px 6px 0 var(--tinta))}
+@keyframes gira{to{rotate:1turn}}
+.icono-feria{position:absolute;display:grid;place-items:center;width:4.4rem;aspect-ratio:1;border-radius:50%;background:var(--c);color:#fff;font-size:1.9rem;border:3px solid var(--tinta);box-shadow:4px 4px 0 var(--tinta)}
+.cartel-precio{position:absolute;left:4%;bottom:6%;background:var(--crema);border:3px solid var(--tinta);border-radius:12px;padding:.4rem .8rem;font:400 1.5rem/1.1 var(--f-mano);rotate:-8deg;box-shadow:var(--sombra)}
+
+/* ----- secciones ----- */
+.puesto-sec{position:relative;padding:clamp(3.5rem, 7vw, 6rem) 0}
+.puesto-sec:nth-of-type(even){background:linear-gradient(90deg, rgba(47,158,68,.06) 50%, transparent 0) 0 0/34px 34px, linear-gradient(rgba(47,158,68,.06) 50%, transparent 0) 0 0/34px 34px, #fffaf0;border-block:3px solid var(--tinta)}
+.cab{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-bottom:1.8rem}
+.cab .ico{display:grid;place-items:center;width:4rem;aspect-ratio:1;border-radius:50%;background:var(--c, var(--hoja));color:#fff;font-size:1.7rem;border:3px solid var(--tinta);box-shadow:4px 4px 0 var(--tinta);rotate:-6deg}
+.cab small{display:block;font:400 1.4rem/1 var(--f-mano);color:var(--amapola)}
+.puesto-sec h2{margin:0;font:400 clamp(2.2rem, 1.4rem + 3vw, 3.8rem)/1 var(--f-tit)}
+.puesto-sec h3{font:400 clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem)/1.1 var(--f-tit);margin:2.6rem 0 .6rem}
+.puesto-sec h4{font:900 1rem/1.2 var(--f-txt);text-transform:uppercase;letter-spacing:.06em;color:var(--terracota);margin:1.2rem 0 .3rem}
+.lectura{max-width:68ch}
+.rejilla{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr))}
+.sobre{position:relative;background:#fff;border:3px solid var(--tinta);border-radius:6px 6px var(--radio) var(--radio);padding:1.6rem 1.1rem 1rem;box-shadow:var(--sombra)}
+.sobre::before{content:"";position:absolute;left:-3px;right:-3px;top:-3px;height:14px;background:repeating-linear-gradient(90deg, var(--c, var(--amapola)) 0 14px, #fff 14px 28px);border:3px solid var(--tinta);border-radius:6px 6px 0 0}
+.sobre h4{margin-top:.2rem}
+.sobre p{margin:.35rem 0}
+.nota{position:relative;margin:1.4rem 0;padding:1rem 1.2rem 1rem 3.4rem;background:#fff;border:3px solid var(--tinta);border-radius:var(--radio);box-shadow:4px 4px 0 var(--c, var(--girasol))}
+.nota::before{font:900 1.3rem/1 'Font Awesome 6 Free';content:"\f0eb";position:absolute;left:1.1rem;top:1.05rem;color:var(--c, var(--girasol))}
+.nota.peligro{--c:var(--amapola)}
+.nota.peligro::before{content:"\f071"}
+.nota.ok{--c:var(--hoja)}
+.nota.ok::before{content:"\f058"}
+.nota .tit{display:block;font:900 1rem/1.2 var(--f-txt);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.2rem}
+.tabla{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0;background:#fff;border:3px solid var(--tinta)}
+.tabla th,.tabla td{text-align:left;padding:.55rem .75rem;border-bottom:2px dashed rgba(43,29,20,.2);vertical-align:top}
+.tabla th{background:var(--girasol);font-weight:900}
+.desliza{overflow-x:auto}
+.pasos{counter-reset:p;list-style:none;padding:0;margin:1rem 0;display:grid;gap:.7rem}
+.pasos>li{counter-increment:p;position:relative;padding:.9rem 1rem .9rem 3.8rem;background:#fff;border:3px solid var(--tinta);border-radius:var(--radio)}
+.pasos>li::before{content:counter(p);position:absolute;left:.8rem;top:.75rem;width:2.2rem;height:2.2rem;border-radius:50%;display:grid;place-items:center;background:var(--amapola);color:#fff;font:400 1.3rem/1 var(--f-tit);border:2px solid var(--tinta)}
+
+/* ----- ejemplos y código ----- */
+.ejemplo{margin:1.6rem 0;border:3px solid var(--tinta);border-radius:var(--radio);overflow:hidden;background:#fff;box-shadow:var(--sombra)}
+.ejemplo .src{display:none}
+.ej-cab{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 1rem;font:900 .85rem/1 var(--f-txt);text-transform:uppercase;letter-spacing:.06em;background:var(--girasol);border-bottom:3px solid var(--tinta)}
+.ej-vivo iframe{display:block;width:100%;border:0;height:var(--alto, 220px);background:#fff}
+.ej-codigo{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 330px), 1fr));background:#2b1d14}
+.caja{min-width:0;border-top:3px solid var(--tinta)}
+.caja + .caja{border-left:1px solid rgba(255,255,255,.1)}
+.caja-t{display:flex;justify-content:space-between;align-items:center;padding:.45rem .8rem;font:700 .7rem/1 var(--f-code);letter-spacing:.12em;color:#d8bf9f;text-transform:uppercase}
+.copiar{font:700 .7rem/1 var(--f-code);background:var(--girasol);color:var(--tinta);border:0;padding:.4rem .7rem;border-radius:999px;cursor:pointer}
+.copiar:hover{background:#fff}
+.caja pre{margin:0;padding:.3rem 1rem 1rem;overflow:auto;max-height:460px;font:400 .82rem/1.6 var(--f-code);color:#f5e7d4;tab-size:2}
+.h-c{color:#b59f86;font-style:italic}.h-s{color:#ffd166}.h-p{color:#8fe3a2}.h-v{color:#ff9f8a}.h-t{color:#ff8fa3}.h-a{color:#c9e98e}.h-q{color:#ffe0a3}.h-at{color:#c5b0ff}
+
+/* ----- laboratorios ----- */
+.lab{position:relative;margin:2rem 0;padding:clamp(1.1rem, 3vw, 1.8rem);background:#fff;border:3px solid var(--tinta);border-radius:var(--radio);box-shadow:8px 8px 0 var(--c, var(--hoja))}
+.lab-t,.puesto-sec .lab-t{margin:0 0 .3rem;font:400 2rem/1.05 var(--f-tit)}
+.lab-t i{color:var(--c, var(--hoja));margin-right:.4rem}
+.lab>p{margin:.2rem 0 1rem;color:var(--tinta2)}
+.lab-cuerpo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr);gap:1.4rem;align-items:start}
+.mandos{display:grid;gap:.7rem 1.1rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 170px), 1fr))}
+.mandos label{display:grid;gap:.25rem;font:800 .85rem/1.2 var(--f-txt)}
+.mandos output{font:400 .78rem/1 var(--f-code);color:var(--amapola)}
+input[type=range]{width:100%;accent-color:var(--amapola)}
+input[type=color]{width:100%;height:2.5rem;border:3px solid var(--tinta);border-radius:10px;background:#fff;padding:2px;cursor:pointer}
+input[type=search],select{font:600 1rem/1.3 var(--f-txt);background:#fff;color:var(--tinta);border:3px solid var(--tinta);border-radius:12px;padding:.6rem .8rem;width:100%}
+.salida{font:400 .82rem/1.6 var(--f-code);background:#2b1d14;color:#f5e7d4;border-radius:12px;padding:.9rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:.8rem 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.6rem 0}
+.chip{font:800 .85rem/1 var(--f-txt);padding:.55rem .85rem;border-radius:999px;border:2px solid var(--tinta);background:#fff;color:var(--tinta);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--tinta);color:var(--girasol)}
+.iconos{display:grid;grid-template-columns:repeat(auto-fill, minmax(78px, 1fr));gap:.5rem;max-height:360px;overflow:auto;padding:.3rem}
+.iconos button{display:grid;gap:.3rem;place-items:center;padding:.6rem .2rem;background:var(--crema);border:2px solid var(--tinta);border-radius:12px;cursor:pointer;font:600 .62rem/1.1 var(--f-code);color:var(--tinta2);overflow-wrap:anywhere}
+.iconos button i{font-size:1.5rem;color:var(--tinta)}
+.iconos button:hover,.iconos button[aria-pressed="true"]{background:var(--girasol)}
+.vista-ico{display:grid;place-items:center;min-height:220px;border:3px dashed var(--tinta);border-radius:var(--radio);background:var(--crema)}
+.mini-web{border:3px solid var(--tinta);border-radius:var(--radio);overflow:hidden;background:var(--m-papel);color:var(--m-tinta);font-family:var(--f-txt)}
+.mini-web header{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--m-principal);color:#fff}
+.mini-web header b{font:400 1.4rem/1 var(--f-tit)}
+.mini-web nav a{color:#fff;margin-left:.8rem;font-weight:800;text-decoration:none}
+.mini-web .cuerpo{padding:1rem;display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr))}
+.mini-web .tarj{background:#fff;border:2px solid var(--m-tinta);border-radius:var(--m-radio);padding:.8rem}
+.mini-web .tarj i{color:var(--m-acento);font-size:1.5rem}
+.mini-web .btn{display:inline-block;margin-top:.4rem;background:var(--m-acento);color:var(--m-tinta);border-radius:var(--m-radio);padding:.4rem .8rem;font-weight:900}
+.rotulo-vista{min-height:200px;display:grid;place-items:center;border:3px solid var(--tinta);border-radius:var(--radio);background:var(--crema);padding:1rem;text-align:center}
+@media (max-width:820px){.portada-in,.lab-cuerpo{grid-template-columns:minmax(0, 1fr)}.puesto{max-width:320px}}
+
+/* ----- galería de botones ----- */
+.galeria{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill, minmax(min(100%, 260px), 1fr))}
+.boton-ej{background:#fff;border:3px solid var(--tinta);border-radius:var(--radio);overflow:hidden;box-shadow:4px 4px 0 var(--tinta)}
+.boton-ej iframe{display:block;width:100%;height:150px;border:0;border-bottom:3px solid var(--tinta)}
+.boton-ej .info{padding:.7rem .9rem}
+.boton-ej h4{margin:0 0 .2rem;font:900 1rem/1.2 var(--f-txt);text-transform:none;letter-spacing:0;color:var(--tinta)}
+.boton-ej p{margin:0;font-size:.88rem;color:var(--tinta2)}
+.boton-ej details summary{cursor:pointer;font:800 .85rem/1 var(--f-txt);color:var(--amapola);padding:.5rem 0 .1rem}
+
+/* ----- test ----- */
+.q{background:#fff;border:3px solid var(--tinta);border-radius:var(--radio);padding:1rem 1.1rem;margin:.9rem 0}
+.qq{font-weight:800;margin:0 0 .6rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .6rem;border:2px solid transparent;border-radius:12px;cursor:pointer}
+.opt:hover{background:var(--crema)}
+.opt.right{border-color:var(--hoja);background:rgba(47,158,68,.12)}
+.opt.wrong{border-color:var(--amapola);background:rgba(226,61,40,.1)}
+.opt input{margin-top:.45rem;accent-color:var(--amapola)}
+.ex{display:none;margin-top:.6rem;padding:.6rem .8rem;border-left:4px solid var(--hoja);background:rgba(47,158,68,.08);border-radius:0 10px 10px 0;font-size:.95rem}
+.ex.show{display:block}
+.marcador{position:sticky;top:4.4rem;z-index:5;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;background:var(--girasol);border:3px solid var(--tinta);border-radius:999px;padding:.45rem .5rem .45rem 1.2rem;font:900 1rem/1 var(--f-txt);box-shadow:4px 4px 0 var(--tinta)}
+.pie{text-align:center;padding:2.5rem 1rem;background:var(--tinta);color:var(--crema);font:600 .9rem/1.6 var(--f-txt)}
+.pie a{color:var(--girasol)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="toldo" aria-hidden="true"></div>
+<nav class="nav" aria-label="Puestos de la feria">
+  <div class="nav-in">
+    <button class="nav-arr" id="navL" type="button" aria-label="Puestos anteriores">◀</button>
+    <ul id="navUl"></ul>
+    <button class="nav-arr" id="navR" type="button" aria-label="Puestos siguientes">▶</button>
+  </div>
+  <div class="prog" id="prog"></div>
+</nav>
+
+<header class="portada" id="portada" data-nav="Portada">
+  <div class="wrap portada-in">
+    <div>
+      <span class="sello">Bloque 05 · parte 2</span>
+      <h1 class="titulo">La feria<span class="deg">del huerto</span></h1>
+      <p class="lead">Hoy montamos un puesto en el mercado: guardamos los colores en <b>variables</b>, decoramos con <b>iconos de Font Awesome</b>, rotulamos con <b>texto degradado</b> y colgamos <b>ocho menús de navegación</b> distintos, todos solo con CSS.</p>
+      <div class="ctas"><a class="boton" href="#variables"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> Entrar en la feria</a><a class="boton sec" href="#menus"><i class="fa-solid fa-bars" aria-hidden="true"></i> Ir a los menús</a></div>
+    </div>
+    <div class="puesto" aria-hidden="true">
+      <div class="girasol"></div>
+      <span class="icono-feria" style="--c:var(--amapola);left:2%;top:10%"><i class="fa-solid fa-apple-whole fa-bounce" style="--fa-animation-duration:2.2s"></i></span>
+      <span class="icono-feria" style="--c:var(--hoja);right:0;top:20%"><i class="fa-solid fa-seedling fa-beat" style="--fa-animation-duration:1.8s"></i></span>
+      <span class="icono-feria" style="--c:var(--lavanda);right:8%;bottom:8%"><i class="fa-solid fa-carrot fa-shake" style="--fa-animation-duration:3s"></i></span>
+      <span class="icono-feria" style="--c:var(--rosa);left:42%;top:-2%"><i class="fa-solid fa-heart fa-beat-fade" style="--fa-animation-duration:2s"></i></span>
+      <span class="cartel-precio">¡Todo a<br>var(--precio)!</span>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+
+<!-- 1 · VARIABLES ===================================================== -->
+<section class="puesto-sec" id="variables" data-nav=":root y variables">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--hoja)"><i class="fa-solid fa-jar" aria-hidden="true"></i></span><div><small>Puesto 1 · la despensa</small><h2>:root y las variables CSS</h2></div></div>
+    <div class="lectura">
+      <p>Imagina la despensa de la feria: cada tarro tiene una <b>etiqueta</b> y dentro guarda algo. Una <b>variable CSS</b> (su nombre oficial es <i>custom property</i>, propiedad personalizada) es eso: un nombre con un valor dentro. Lo escribes una vez y lo usas en toda la página.</p>
+    </div>
+    <div class="rejilla">
+      <div class="sobre" style="--c:var(--hoja)"><h4>Se crea con dos guiones</h4><p><code>--verde-hoja: #2f9e44;</code> El nombre empieza siempre por <code>--</code> y distingue mayúsculas: <code>--Verde</code> y <code>--verde</code> son tarros distintos.</p></div>
+      <div class="sobre" style="--c:var(--girasol)"><h4>Se usa con var()</h4><p><code>color: var(--verde-hoja);</code> El navegador abre el tarro y pone su contenido en esa línea.</p></div>
+      <div class="sobre" style="--c:var(--amapola)"><h4>Se guarda en :root</h4><p><code>:root</code> es la raíz del documento (la etiqueta <code>&lt;html&gt;</code>). Lo que se declara ahí lo heredan <b>todos</b> los elementos de la página.</p></div>
+    </div>
+    <div class="ejemplo" data-alto="260" data-t="Una paleta en :root y tres tarjetas que la usan">
+<textarea class="src" data-lang="html"><div class="puesto">
+  <article class="tarjeta">Tomates</article>
+  <article class="tarjeta">Limones</article>
+  <article class="tarjeta">Pepinos</article>
+</div></textarea>
+<textarea class="src" data-lang="css">:root {
+  --rojo: #e23d28; /* un tarro con el rojo amapola */
+  --amarillo: #f5b700; /* otro con el amarillo girasol */
+  --tinta: #2b1d14; /* el color del texto */
+  --radio: 16px; /* también se guardan medidas, no solo colores */
+}
+.puesto {
+  display: flex; /* tarjetas en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 1rem; /* separación */
+  font-family: system-ui, sans-serif; /* letra */
+}
+.tarjeta {
+  flex: 1 1 140px; /* las tres iguales, como mínimo 140px */
+  padding: 1.5rem 1rem; /* relleno */
+  border: 3px solid var(--tinta); /* abre el tarro --tinta */
+  border-radius: var(--radio); /* abre el tarro --radio */
+  background-color: var(--amarillo); /* fondo girasol */
+  color: var(--tinta); /* texto */
+  box-shadow: 5px 5px 0 var(--rojo); /* sombra amapola */
+  font-weight: 800; /* negrita */
+}</textarea>
+    </div>
+    <div class="nota ok"><span class="tit">La gran ventaja</span>Cambia <code>--rojo</code> en <code>:root</code> y cambian todas las sombras de la página a la vez. Sin variables tendrías que buscar ese color en cien sitios.</div>
+
+    <h3>Las variables se heredan y se pueden redefinir</h3>
+    <div class="lectura"><p>Una variable funciona como <code>color</code> o <code>font-family</code>: se <b>hereda</b> de padres a hijos. Y si la vuelves a declarar en un elemento, ese elemento y sus hijos usan el valor nuevo. Así se hacen <b>variantes</b> de un mismo componente cambiando solo una línea:</p></div>
+    <div class="ejemplo" data-alto="230" data-t="Una sola tarjeta, tres variantes">
+<textarea class="src" data-lang="html"><div class="mercado">
+  <p class="etiqueta">Fresas</p>
+  <p class="etiqueta menta">Menta</p>
+  <p class="etiqueta lavanda">Lavanda</p>
+</div></textarea>
+<textarea class="src" data-lang="css">.mercado {
+  display: flex; /* en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 1rem; /* separación */
+  font: bold 1.2rem system-ui, sans-serif; /* letra */
+}
+.etiqueta {
+  --color: #e23d28; /* el color por defecto de la etiqueta */
+  padding: 1rem 1.4rem; /* relleno */
+  border: 3px solid var(--color); /* el borde usa la variable */
+  color: var(--color); /* el texto también */
+  background-color: #fff6e5; /* papel */
+  border-radius: 999px; /* píldora */
+}
+.menta {
+  --color: #2f9e44; /* solo cambio la variable: borde y texto cambian solos */
+}
+.lavanda {
+  --color: #8c6bd6; /* otra variante con una sola línea */
+}</textarea>
+    </div>
+
+    <h3>Variables que cambian al pasar el ratón</h3>
+    <div class="ejemplo" data-alto="220" data-t="El hover cambia el valor del tarro, no las propiedades">
+<textarea class="src" data-lang="html"><button class="boton">Comprar semillas</button></textarea>
+<textarea class="src" data-lang="css">.boton {
+  --fondo: #f5b700; /* color de reposo */
+  --sombra: 6px; /* tamaño de la sombra */
+  display: block; /* para centrar */
+  margin: 2.5rem auto; /* centrado */
+  padding: 1rem 2rem; /* relleno */
+  font: 900 1.1rem system-ui, sans-serif; /* letra */
+  background-color: var(--fondo); /* usa el tarro */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  box-shadow: var(--sombra) var(--sombra) 0 #2b1d14; /* la sombra usa el tamaño guardado */
+  transition: background-color 0.2s, box-shadow 0.2s, translate 0.2s; /* cambio suave */
+}
+.boton:hover {
+  --fondo: #ff6fae; /* en hover solo cambian los tarros… */
+  --sombra: 10px; /* …y todo lo que los usa se actualiza */
+  translate: -3px -3px; /* el botón sube */
+}</textarea>
+    </div>
+
+    <h3>Una variable distinta en cada elemento</h3>
+    <div class="lectura"><p>Las variables también se pueden poner en el atributo <code>style</code> del HTML. Es la forma más limpia de dar a cada elemento un dato propio (su color, su retraso, su porcentaje) sin escribir una clase para cada uno:</p></div>
+    <div class="ejemplo" data-alto="250" data-t="Sobres de semillas, cada uno con su color">
+<textarea class="src" data-lang="html"><ul class="semillas">
+  <li style="--c: #e23d28">Tomate</li>
+  <li style="--c: #f5b700">Calabaza</li>
+  <li style="--c: #2f9e44">Albahaca</li>
+  <li style="--c: #8c6bd6">Berenjena</li>
+</ul></textarea>
+<textarea class="src" data-lang="css">.semillas {
+  display: grid; /* rejilla */
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); /* columnas que caben */
+  gap: 0.8rem; /* separación */
+  list-style: none; /* sin viñetas */
+  padding: 0; /* sin sangría */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+}
+.semillas li {
+  padding: 2.2rem 0.8rem 1rem; /* relleno, más arriba por la franja */
+  text-align: center; /* centrado */
+  background: linear-gradient(var(--c) 0 28px, #fff 28px); /* franja de color con SU variable */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 6px 6px 16px 16px; /* forma de sobre */
+  box-shadow: 4px 4px 0 var(--c); /* sombra de su color */
+}</textarea>
+    </div>
+
+    <h3>El tarro de reserva</h3>
+    <div class="rejilla">
+      <div class="sobre" style="--c:var(--lavanda)"><h4>Valor de reserva</h4><p><code>var(--borde, 2px)</code>: si <code>--borde</code> no existe, usa <code>2px</code>. Muy útil en componentes que se copian a otros proyectos.</p></div>
+      <div class="sobre" style="--c:var(--terracota)"><h4>Variables dentro de variables</h4><p><code>--sombra: 4px 4px 0 var(--tinta);</code> Una variable puede contener otras. Si cambias <code>--tinta</code>, cambia también la sombra.</p></div>
+      <div class="sobre" style="--c:var(--rosa)"><h4>Con calc()</h4><p><code>calc(var(--espacio) * 2)</code> permite hacer cuentas con lo que hay en el tarro. Lo viste a fondo en Gotham (bloque 04).</p></div>
+    </div>
+    <div class="nota peligro"><span class="tit">Tres trampas de las variables</span>
+      <b>1.</b> No funcionan dentro de la condición de una media query: <code>@media (min-width: var(--movil))</code> no hace nada.<br>
+      <b>2.</b> No se pegan con unidades: <code>var(--n)px</code> no da «16px». Se escribe <code>calc(var(--n) * 1px)</code>.<br>
+      <b>3.</b> Si el valor no encaja con la propiedad (<code>--color: 20px</code> en un <code>color</code>), el navegador <b>no</b> vuelve a la línea anterior: se comporta como <code>unset</code> (hereda el valor del padre si la propiedad se hereda, como <code>color</code>, y si no, usa su valor inicial). Revisa los tarros si algo sale de un color inesperado o transparente.
+    </div>
+
+    <div class="lab" id="labPuesto" style="--c:var(--hoja)">
+      <h3 class="lab-t"><i class="fa-solid fa-palette" aria-hidden="true"></i>Pinta tu puesto</h3>
+      <p>Esta minipágina solo usa variables. Cambia los colores y el radio de las esquinas: todo se actualiza a la vez. Abajo tienes tu <code>:root</code> listo para copiar.</p>
+      <div class="lab-cuerpo">
+        <div class="mandos">
+          <label>--principal <input type="color" id="mP" value="#2f9e44"></label>
+          <label>--acento <input type="color" id="mA" value="#f5b700"></label>
+          <label>--papel <input type="color" id="mF" value="#fff6e5"></label>
+          <label>--tinta <input type="color" id="mT" value="#2b1d14"></label>
+          <label>--radio <output id="mRO">14px</output><input type="range" id="mR" min="0" max="30" value="14"></label>
+        </div>
+        <div>
+          <div class="mini-web" id="miniWeb">
+            <header><b>La Huerta</b><nav><a href="#labPuesto">Frutas</a><a href="#labPuesto">Flores</a></nav></header>
+            <div class="cuerpo">
+              <div class="tarj"><i class="fa-solid fa-lemon" aria-hidden="true"></i><p style="margin:.3rem 0">Limones del valle</p><span class="btn">2 €/kg</span></div>
+              <div class="tarj"><i class="fa-solid fa-seedling" aria-hidden="true"></i><p style="margin:.3rem 0">Plantel de albahaca</p><span class="btn">1,50 €</span></div>
+            </div>
+          </div>
+          <p class="salida" id="mCss"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · FONT AWESOME ==================================================== -->
+<section class="puesto-sec" id="iconos" data-nav="Font Awesome">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--lavanda)"><i class="fa-solid fa-icons" aria-hidden="true"></i></span><div><small>Puesto 2 · la caja de herramientas</small><h2>Iconos con Font Awesome</h2></div></div>
+    <div class="lectura">
+      <p><b>Font Awesome</b> es una colección de miles de iconos que se usan como si fueran <b>letras</b>: se cargan con una hoja de estilos y se ponen con una etiqueta <code>&lt;i&gt;</code> y unas clases. Como son texto, cambian de tamaño con <code>font-size</code> y de color con <code>color</code>, sin perder calidad.</p>
+    </div>
+    <h3>Paso 1 · Enlazarlo desde cdnjs</h3>
+    <ol class="pasos">
+      <li>Entra en <a href="https://cdnjs.com/libraries/font-awesome" target="_blank" rel="noopener noreferrer">cdnjs.com/libraries/font-awesome</a> y elige la versión <b>6.4.0</b>, la que usamos en clase. (Hay versiones más nuevas; las clases de este bloque funcionan igual en toda la serie 6.)</li>
+      <li>Copia el enlace de <code>all.min.css</code> (todos los estilos de iconos, comprimidos).</li>
+      <li>Pégalo dentro del <code>&lt;head&gt;</code> de tu HTML, antes de tu propia hoja de estilos.</li>
+    </ol>
+    <div class="ejemplo" data-alto="190" data-t="El enlace y tus primeros iconos">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<p class="lista">
+  <i class="fa-solid fa-leaf"></i>
+  <i class="fa-solid fa-carrot"></i>
+  <i class="fa-regular fa-sun"></i>
+  <i class="fa-brands fa-instagram"></i>
+</p></textarea>
+<textarea class="src" data-lang="css">.lista {
+  display: flex; /* iconos en fila */
+  gap: 1.5rem; /* separación */
+  justify-content: center; /* centrados */
+  font-size: 3rem; /* el tamaño del icono es el de la letra */
+  color: #2f9e44; /* y su color, el del texto */
+}</textarea>
+    </div>
+    <h3>Paso 2 · Buscar el icono en el catálogo</h3>
+    <div class="lectura">
+      <p>El catálogo oficial está en <a href="https://fontawesome.com/icons" target="_blank" rel="noopener noreferrer">fontawesome.com/icons</a>. Marca el filtro <b>Free</b> (los iconos Pro son de pago y no se ven con el enlace gratuito). Al pulsar un icono, el catálogo te da su código para copiar.</p>
+    </div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Clase</th><th>Qué significa</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><code>fa-solid</code></td><td>Estilo relleno. Es el que más iconos gratuitos tiene.</td><td><i class="fa-solid fa-heart" aria-hidden="true"></i> <code>fa-solid fa-heart</code></td></tr>
+        <tr><td><code>fa-regular</code></td><td>Estilo de contorno. En la versión gratuita hay pocos.</td><td><i class="fa-regular fa-heart" aria-hidden="true"></i> <code>fa-regular fa-heart</code></td></tr>
+        <tr><td><code>fa-brands</code></td><td>Logos de marcas: redes sociales, GitHub…</td><td><i class="fa-brands fa-github" aria-hidden="true"></i> <code>fa-brands fa-github</code></td></tr>
+        <tr><td><code>fa-</code> + nombre</td><td>Qué icono es: <code>fa-leaf</code>, <code>fa-carrot</code>…</td><td><i class="fa-solid fa-carrot" aria-hidden="true"></i> <code>fa-carrot</code></td></tr>
+        <tr><td><code>fa-2x</code> … <code>fa-10x</code></td><td>Tamaño: 2, 3… 10 veces la letra. También <code>fa-xs</code>, <code>fa-sm</code>, <code>fa-lg</code>, <code>fa-xl</code>.</td><td><i class="fa-solid fa-seedling fa-xl" aria-hidden="true"></i> <code>fa-xl</code></td></tr>
+        <tr><td><code>fa-fw</code></td><td>Ancho fijo: todos los iconos miden lo mismo y las listas quedan alineadas.</td><td><code>fa-fw</code></td></tr>
+        <tr><td><code>fa-rotate-90</code>, <code>fa-flip-horizontal</code></td><td>Girar o reflejar.</td><td><i class="fa-solid fa-carrot fa-rotate-90" aria-hidden="true"></i> <code>fa-rotate-90</code></td></tr>
+      </tbody>
+    </table></div>
+    <h3>Animaciones listas para usar</h3>
+    <div class="ejemplo" data-alto="200" data-t="Seis animaciones de Font Awesome">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="feria">
+  <span><i class="fa-solid fa-sun fa-spin"></i> fa-spin</span>
+  <span><i class="fa-solid fa-heart fa-beat"></i> fa-beat</span>
+  <span><i class="fa-solid fa-apple-whole fa-bounce"></i> fa-bounce</span>
+  <span><i class="fa-solid fa-bell fa-shake"></i> fa-shake</span>
+  <span><i class="fa-solid fa-lemon fa-fade"></i> fa-fade</span>
+  <span><i class="fa-solid fa-leaf fa-flip"></i> fa-flip</span>
+</div></textarea>
+<textarea class="src" data-lang="css">.feria {
+  display: grid; /* rejilla */
+  grid-template-columns: repeat(3, 1fr); /* tres columnas */
+  gap: 1rem; /* separación */
+  font: 700 0.9rem system-ui, sans-serif; /* letra de la etiqueta */
+  text-align: center; /* centrado */
+}
+.feria i {
+  display: block; /* icono encima de su nombre */
+  margin-bottom: 0.3rem; /* separación */
+  font-size: 2rem; /* tamaño del icono */
+  color: #e23d28; /* rojo amapola */
+  --fa-animation-duration: 2s; /* Font Awesome lee esta variable para la velocidad */
+}</textarea>
+    </div>
+    <div class="nota"><span class="tit">Font Awesome usa variables</span>Las animaciones se ajustan con variables propias: <code>--fa-animation-duration</code>, <code>--fa-beat-scale</code>, <code>--fa-bounce-height</code>… Es justo lo que acabas de aprender en el puesto 1. Además, Font Awesome detiene sus animaciones si el sistema pide menos movimiento (<code>prefers-reduced-motion</code>).</div>
+    <h3>Iconos accesibles</h3>
+    <div class="ejemplo" data-alto="190" data-t="Decorativo, con texto o solo icono">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<button class="b"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Añadir a la cesta</button>
+<button class="b" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button></textarea>
+<textarea class="src" data-lang="css">.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.2rem; /* relleno */
+  margin: 1rem 0.4rem; /* separación */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  background-color: #f5b700; /* girasol */
+}
+.b i {
+  margin-right: 0.3rem; /* separa el icono del texto */
+}</textarea>
+    </div>
+    <div class="rejilla">
+      <div class="sobre" style="--c:var(--hoja)"><h4>Icono decorativo</h4><p>Si el texto ya lo dice todo, pon <code>aria-hidden="true"</code> en el <code>&lt;i&gt;</code>: el lector de pantalla no leerá un símbolo raro.</p></div>
+      <div class="sobre" style="--c:var(--amapola)"><h4>Botón solo con icono</h4><p>Sin texto visible, el botón necesita un nombre: <code>aria-label="Buscar"</code> en el botón y <code>aria-hidden</code> en el icono.</p></div>
+      <div class="sobre" style="--c:var(--girasol)"><h4>Color con currentColor</h4><p>El icono toma el <code>color</code> del texto que lo rodea. Si el enlace cambia de color en <code>:hover</code>, el icono lo sigue solo.</p></div>
+    </div>
+    <div class="lab" id="labIconos" style="--c:var(--lavanda)">
+      <h3 class="lab-t"><i class="fa-solid fa-box-open" aria-hidden="true"></i>La caja de semillas</h3>
+      <p>Elige un icono gratuito de la feria, su tamaño, su color y su animación. El código está listo para copiar.</p>
+      <div class="lab-cuerpo">
+        <div>
+          <label class="sr" for="icoQ">Buscar icono</label>
+          <input type="search" id="icoQ" placeholder="Buscar: leaf, sun, cart…">
+          <div class="iconos" id="icoG" style="margin-top:.6rem"></div>
+        </div>
+        <div>
+          <div class="mandos">
+            <label>tamaño <select id="icoT"><option value="">normal</option><option>fa-lg</option><option selected>fa-3x</option><option>fa-5x</option><option>fa-8x</option></select></label>
+            <label>animación <select id="icoA"><option value="">ninguna</option><option>fa-spin</option><option>fa-beat</option><option>fa-bounce</option><option>fa-shake</option><option>fa-fade</option><option>fa-flip</option></select></label>
+            <label>color <input type="color" id="icoC" value="#2f9e44"></label>
+          </div>
+          <div class="vista-ico" id="icoVista" style="margin-top:.8rem"></div>
+          <p class="salida" id="icoCss"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · TEXTO DEGRADADO ================================================= -->
+<section class="puesto-sec" id="degradado" data-nav="Texto degradado">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--amapola)"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span><div><small>Interludio · el rotulista</small><h2>Texto degradado</h2></div></div>
+    <div class="lectura">
+      <p>Un texto no puede tener un degradado como <code>color</code>: <code>color</code> solo admite colores lisos. El truco es otro. Se pone el degradado como <b>fondo</b>, se recorta ese fondo con la <b>forma de las letras</b> y se vuelven las letras <b>transparentes</b> para que se vea el fondo a través.</p>
+    </div>
+    <ol class="pasos">
+      <li><b>Un color de reserva</b>: <code>color: #e23d28;</code> Si algo falla, el texto se lee igualmente.</li>
+      <li><b>El degradado de fondo</b>: <code>background: linear-gradient(90deg, rojo, amarillo, verde);</code></li>
+      <li><b>Recortarlo con las letras</b>: <code>-webkit-background-clip: text;</code> y <code>background-clip: text;</code> Se escriben las dos: la versión con prefijo es la que entienden los navegadores antiguos.</li>
+      <li><b>Letras transparentes</b>: <code>color: transparent;</code> Esta línea va <b>después</b> del color de reserva, así que gana.</li>
+      <li><b>Si el título ocupa toda la línea</b>, el degradado se estira a todo el ancho. Con <code>display: inline-block</code> se ajusta al texto.</li>
+    </ol>
+    <div class="ejemplo" data-alto="220" data-t="Un rótulo de feria en cinco líneas">
+<textarea class="src" data-lang="html"><h1 class="rotulo">Mercado de flores</h1></textarea>
+<textarea class="src" data-lang="css">.rotulo {
+  display: inline-block; /* el degradado se ajusta al ancho del texto */
+  font: italic 900 3.4rem Georgia, serif; /* letra grande y gruesa: el degradado luce más */
+  color: #e23d28; /* color de reserva por si el navegador no entiende lo de abajo */
+  background: linear-gradient(90deg, #e23d28, #f5b700, #2f9e44); /* amapola, girasol y hoja */
+  -webkit-background-clip: text; /* recorta el fondo con la forma de las letras (con prefijo) */
+  background-clip: text; /* lo mismo, sin prefijo */
+  color: transparent; /* letras transparentes para ver el fondo: gana a la línea de reserva */
+}</textarea>
+    </div>
+    <div class="nota peligro"><span class="tit">Dos tropiezos</span>
+      <b>1. Letras que se cortan por abajo</b> (la «g», la «y»): el fondo solo llega hasta el final de la caja. Añade un poco de <code>padding-bottom</code> o sube el <code>line-height</code>.<br>
+      <b>2. Al seleccionar el texto</b>, algunos navegadores lo muestran raro. Si lo usas en párrafos largos, mejor no: déjalo para títulos.
+    </div>
+    <h3>Un degradado que se mueve</h3>
+    <div class="ejemplo" data-alto="210" data-t="Rótulo que brilla">
+<textarea class="src" data-lang="html"><h2 class="neon">¡Fresas recién cogidas!</h2></textarea>
+<textarea class="src" data-lang="css">.neon {
+  font: 900 2.6rem system-ui, sans-serif; /* letra gruesa */
+  text-align: center; /* centrado */
+  background: linear-gradient(90deg, #e23d28, #ff6fae, #f5b700, #e23d28); /* el último color repite el primero para que el bucle no salte */
+  background-size: 300% 100%; /* el fondo es tres veces más ancho que el texto */
+  -webkit-background-clip: text; /* recorte con las letras (prefijo) */
+  background-clip: text; /* recorte con las letras */
+  color: transparent; /* letras transparentes */
+  animation: brillo 4s linear infinite; /* el fondo se desliza */
+}
+@keyframes brillo {
+  to { background-position: 300% 0; } /* mueve el fondo un ciclo entero */
+}</textarea>
+    </div>
+    <h3>Iconos degradados</h3>
+    <div class="lectura"><p>Los iconos de Font Awesome son letras, así que el mismo truco funciona con ellos:</p></div>
+    <div class="ejemplo" data-alto="190" data-t="Iconos con degradado">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<p class="huerto">
+  <i class="fa-solid fa-lemon"></i>
+  <i class="fa-solid fa-seedling"></i>
+  <i class="fa-solid fa-sun"></i>
+</p></textarea>
+<textarea class="src" data-lang="css">.huerto {
+  display: flex; /* en fila */
+  justify-content: center; /* centrados */
+  gap: 2rem; /* separación */
+  font-size: 4rem; /* iconos grandes */
+}
+.huerto i {
+  background: linear-gradient(160deg, #f5b700, #e23d28); /* de girasol a amapola */
+  -webkit-background-clip: text; /* recorte con la forma del icono (prefijo) */
+  background-clip: text; /* recorte con la forma del icono */
+  color: transparent; /* el icono deja ver el degradado */
+}</textarea>
+    </div>
+    <div class="lab" id="labRotulo" style="--c:var(--amapola)">
+      <h3 class="lab-t"><i class="fa-solid fa-paintbrush" aria-hidden="true"></i>El rotulista</h3>
+      <p>Escribe tu rótulo, elige tres colores y el ángulo. Si activas el brillo, el degradado se mueve.</p>
+      <div class="lab-cuerpo">
+        <div class="mandos">
+          <label style="grid-column:1 / -1">texto <input type="search" id="rTx" value="Feria del huerto"></label>
+          <label>color 1 <input type="color" id="r1" value="#e23d28"></label>
+          <label>color 2 <input type="color" id="r2" value="#f5b700"></label>
+          <label>color 3 <input type="color" id="r3" value="#2f9e44"></label>
+          <label>ángulo <output id="rAO">90deg</output><input type="range" id="rA" min="0" max="360" value="90"></label>
+          <label><span><input type="checkbox" id="rB"> brillo animado</span></label>
+        </div>
+        <div><div class="rotulo-vista"><span id="rVista" style="font:400 clamp(2.2rem, 1.6rem + 3vw, 4rem)/1.05 var(--f-tit);padding-bottom:.1em">Feria del huerto</span></div><p class="salida" id="rCss"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · MENÚS ============================================================ -->
+<section class="puesto-sec" id="menus" data-nav="Ocho menús">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--girasol)"><i class="fa-solid fa-bars" aria-hidden="true"></i></span><div><small>Puesto 4 · los letreros</small><h2>Crear un menú de navegación</h2></div></div>
+    <div class="lectura">
+      <p>Todos los menús de esta sección comparten el mismo esqueleto HTML. Aprende el esqueleto una vez y luego solo cambia el CSS:</p>
+    </div>
+    <ol class="pasos">
+      <li><b><code>&lt;nav&gt;</code></b>: le dice al navegador (y a los lectores de pantalla) que dentro hay navegación. Si hay varios menús, dale un nombre: <code>aria-label="Principal"</code>.</li>
+      <li><b>Una lista <code>&lt;ul&gt;</code></b>, porque un menú es una lista de enlaces. Se le quitan las viñetas con <code>list-style: none</code> y el margen con <code>margin: 0; padding: 0</code>.</li>
+      <li><b>Cada opción, un <code>&lt;li&gt;</code> con un <code>&lt;a&gt;</code></b>. El enlace lleva el <code>display: block</code> y el relleno, para que <b>toda</b> la zona sea pulsable.</li>
+      <li><b>La página actual</b> se marca con <code>aria-current="page"</code>, y en el CSS se pinta con el selector <code>[aria-current="page"]</code>.</li>
+      <li><b>Teclado</b>: todo lo que hagas en <code>:hover</code>, hazlo también en <code>:focus-visible</code>.</li>
+    </ol>
+
+    <h3>1 · La barra del mercado (subrayado que crece)</h3>
+    <div class="ejemplo" data-alto="150" data-t="Menú 1 · subrayado animado">
+<textarea class="src" data-lang="html"><nav class="m1" aria-label="Principal">
+  <ul>
+    <li><a href="#" aria-current="page">Inicio</a></li>
+    <li><a href="#">Frutas</a></li>
+    <li><a href="#">Verduras</a></li>
+    <li><a href="#">Flores</a></li>
+  </ul>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m1 ul {
+  display: flex; /* opciones en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 1.5rem; /* separación */
+  list-style: none; /* sin viñetas */
+  margin: 0; /* sin margen */
+  padding: 1rem 1.5rem; /* relleno de la barra */
+  background-color: #fff6e5; /* crema */
+  border-bottom: 3px solid #2b1d14; /* línea de base */
+}
+.m1 a {
+  position: relative; /* referencia para el subrayado */
+  display: block; /* toda la zona pulsable */
+  padding: 0.3rem 0; /* relleno vertical */
+  color: #2b1d14; /* tinta */
+  font: 800 1.05rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado de serie */
+}
+.m1 a::after {
+  content: ""; /* la línea */
+  position: absolute; /* debajo del texto */
+  left: 0; /* desde la izquierda */
+  bottom: 0; /* abajo del todo */
+  width: 100%; /* todo el ancho */
+  height: 3px; /* grosor */
+  background-color: #e23d28; /* amapola */
+  scale: 0 1; /* empieza sin ancho */
+  transform-origin: left; /* crece desde la izquierda */
+  transition: scale 0.3s; /* crece suave */
+}
+.m1 a:hover::after,
+.m1 a:focus-visible::after,
+.m1 a[aria-current="page"]::after {
+  scale: 1 1; /* línea entera al pasar, al enfocar y en la página actual */
+}</textarea>
+    </div>
+
+    <h3>2 · Píldoras con iconos</h3>
+    <div class="ejemplo" data-alto="160" data-t="Menú 2 · píldoras con Font Awesome">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<nav class="m2" aria-label="Secciones">
+  <ul>
+    <li><a href="#" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i> Inicio</a></li>
+    <li><a href="#"><i class="fa-solid fa-lemon" aria-hidden="true"></i> Frutas</a></li>
+    <li><a href="#"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Plantel</a></li>
+    <li><a href="#"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Contacto</a></li>
+  </ul>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m2 ul {
+  display: flex; /* en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 0.6rem; /* separación */
+  list-style: none; /* sin viñetas */
+  margin: 0; /* sin margen */
+  padding: 1rem; /* relleno */
+}
+.m2 a {
+  display: flex; /* icono y texto en línea */
+  align-items: center; /* centrados en vertical */
+  gap: 0.5rem; /* separación icono-texto */
+  padding: 0.6rem 1.1rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  background-color: #fff; /* blanco */
+  color: #2b1d14; /* tinta: el icono la copia */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado */
+  transition: background-color 0.2s, translate 0.2s; /* cambio suave */
+}
+.m2 a:hover,
+.m2 a:focus-visible {
+  background-color: #f5b700; /* girasol */
+  translate: 0 -3px; /* sube un poco */
+}
+.m2 a[aria-current="page"] {
+  background-color: #2b1d14; /* la actual, en tinta */
+  color: #f5b700; /* texto e icono en girasol */
+}</textarea>
+    </div>
+
+    <h3>3 · Menú con desplegable</h3>
+    <div class="ejemplo" data-alto="250" data-t="Menú 3 · submenú con :hover y :focus-within">
+<textarea class="src" data-lang="html"><nav class="m3" aria-label="Tienda">
+  <ul>
+    <li><a href="#">Inicio</a></li>
+    <li class="tiene-sub">
+      <a href="#">Huerto ▾</a>
+      <ul class="sub">
+        <li><a href="#">Tomates</a></li>
+        <li><a href="#">Pimientos</a></li>
+        <li><a href="#">Calabazas</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Contacto</a></li>
+  </ul>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m3 ul {
+  list-style: none; /* sin viñetas */
+  margin: 0; /* sin margen */
+  padding: 0; /* sin sangría */
+}
+.m3 > ul {
+  display: flex; /* el menú principal en fila */
+  background-color: #2f9e44; /* verde hoja */
+  border-radius: 14px; /* esquinas */
+}
+.m3 li {
+  position: relative; /* referencia para el submenú */
+}
+.m3 a {
+  display: block; /* zona pulsable */
+  padding: 0.9rem 1.2rem; /* relleno */
+  color: #fff; /* texto blanco */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado */
+}
+.m3 a:hover,
+.m3 a:focus-visible {
+  background-color: rgb(0 0 0 / 15%); /* oscurece al pasar */
+}
+.m3 .sub {
+  position: absolute; /* flota debajo de su opción */
+  top: 100%; /* justo debajo */
+  left: 0; /* alineado a la izquierda */
+  min-width: 170px; /* ancho mínimo */
+  background-color: #fff6e5; /* crema */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 0 0 12px 12px; /* esquinas de abajo */
+  opacity: 0; /* escondido */
+  visibility: hidden; /* y fuera del alcance del tabulador */
+  translate: 0 -8px; /* un poco más arriba */
+  transition: opacity 0.2s, translate 0.2s, visibility 0.2s; /* aparece suave */
+}
+.m3 .sub a {
+  color: #2b1d14; /* texto oscuro en el submenú */
+}
+.m3 .tiene-sub:hover .sub,
+.m3 .tiene-sub:focus-within .sub {
+  opacity: 1; /* visible al pasar el ratón… */
+  visibility: visible; /* …y al tabular dentro (focus-within) */
+  translate: 0 0; /* en su sitio */
+}</textarea>
+    </div>
+
+    <h3>4 · Hamburguesa para el móvil, sin JavaScript</h3>
+    <div class="ejemplo" data-alto="300" data-t="Menú 4 · details y summary">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<nav class="m4" aria-label="Principal">
+  <details>
+    <summary><i class="fa-solid fa-bars" aria-hidden="true"></i> Menú</summary>
+    <ul>
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Recetas de temporada</a></li>
+      <li><a href="#">Mercadillo</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </details>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m4 summary {
+  display: inline-flex; /* icono y texto en línea */
+  align-items: center; /* centrados */
+  gap: 0.5rem; /* separación */
+  padding: 0.7rem 1.1rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 12px; /* esquinas */
+  background-color: #f5b700; /* girasol */
+  font: 900 1rem system-ui, sans-serif; /* letra */
+  cursor: pointer; /* manita */
+  list-style: none; /* quita el triángulo de serie */
+}
+.m4 summary::-webkit-details-marker {
+  display: none; /* quita el triángulo en Safari */
+}
+.m4 details[open] summary i::before {
+  content: "\f00d"; /* abierto: el icono pasa a ser una X (fa-xmark) */
+}
+.m4 ul {
+  list-style: none; /* sin viñetas */
+  margin: 0.6rem 0 0; /* separación del botón */
+  padding: 0; /* sin sangría */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 12px; /* esquinas */
+  overflow: hidden; /* las esquinas recortan el fondo */
+}
+.m4 a {
+  display: block; /* zona pulsable */
+  padding: 0.8rem 1rem; /* relleno */
+  border-bottom: 2px dashed #e6d3b0; /* separación entre opciones */
+  background-color: #fff; /* blanco */
+  color: #2b1d14; /* tinta */
+  font: 700 1rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado */
+}
+.m4 a:hover,
+.m4 a:focus-visible {
+  background-color: #fff6e5; /* crema al pasar */
+}</textarea>
+    </div>
+    <div class="nota"><span class="tit">¿Por qué details?</span><code>&lt;details&gt;</code> y <code>&lt;summary&gt;</code> abren y cierran solos, se manejan con el teclado y avisan al lector de pantalla de si están abiertos. Es la hamburguesa más accesible que se puede hacer sin JavaScript. Se verán a fondo en el séptimo bloque.</div>
+
+    <h3>5 · Barra lateral que se despliega</h3>
+    <div class="ejemplo" data-alto="300" data-t="Menú 5 · solo iconos que muestran su texto">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<nav class="m5" aria-label="Panel">
+  <ul>
+    <li><a href="#"><i class="fa-solid fa-house fa-fw" aria-hidden="true"></i><span>Inicio</span></a></li>
+    <li><a href="#"><i class="fa-solid fa-basket-shopping fa-fw" aria-hidden="true"></i><span>Pedidos</span></a></li>
+    <li><a href="#"><i class="fa-solid fa-calendar fa-fw" aria-hidden="true"></i><span>Cosechas</span></a></li>
+    <li><a href="#"><i class="fa-solid fa-gear fa-fw" aria-hidden="true"></i><span>Ajustes</span></a></li>
+  </ul>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m5 {
+  width: 64px; /* cerrada: solo cabe el icono */
+  height: 260px; /* alto del panel */
+  background-color: #2b1d14; /* tinta */
+  border-radius: 16px; /* esquinas */
+  overflow: hidden; /* el texto que no cabe, escondido */
+  transition: width 0.3s; /* se despliega suave */
+}
+.m5:hover,
+.m5:focus-within {
+  width: 200px; /* abierta: ya cabe el texto */
+}
+.m5 ul {
+  list-style: none; /* sin viñetas */
+  margin: 0; /* sin margen */
+  padding: 0.6rem 0; /* relleno vertical */
+}
+.m5 a {
+  display: flex; /* icono y texto en fila */
+  align-items: center; /* centrados */
+  gap: 1rem; /* separación */
+  padding: 0.85rem 1.25rem; /* relleno */
+  color: #fff6e5; /* crema */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado */
+  white-space: nowrap; /* el texto no se parte al estrecharse */
+}
+.m5 a:hover,
+.m5 a:focus-visible {
+  background-color: #e23d28; /* amapola */
+}
+.m5 i {
+  font-size: 1.2rem; /* tamaño del icono */
+}</textarea>
+    </div>
+
+    <h3>6 · Barra inferior de aplicación</h3>
+    <div class="ejemplo" data-alto="220" data-t="Menú 6 · tab bar para móvil">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<nav class="m6" aria-label="Aplicación">
+  <a href="#" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i>Inicio</a>
+  <a href="#"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>Buscar</a>
+  <a href="#"><i class="fa-solid fa-heart" aria-hidden="true"></i>Favoritos</a>
+  <a href="#"><i class="fa-solid fa-user" aria-hidden="true"></i>Perfil</a>
+</nav></textarea>
+<textarea class="src" data-lang="css">body {
+  min-height: 180px; /* alto del "móvil" */
+  background-color: #fff6e5; /* pantalla */
+}
+.m6 {
+  position: fixed; /* pegada… */
+  left: 12px; /* …con margen a los lados */
+  right: 12px; /* margen derecho */
+  bottom: 12px; /* …abajo de la pantalla */
+  display: grid; /* rejilla */
+  grid-template-columns: repeat(4, 1fr); /* cuatro botones iguales */
+  background-color: #fff; /* blanco */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 22px; /* muy redondeada */
+  box-shadow: 0 6px 0 #2b1d14; /* sombra dura */
+}
+.m6 a {
+  display: grid; /* icono encima del texto */
+  justify-items: center; /* centrados */
+  gap: 0.2rem; /* separación */
+  padding: 0.6rem 0; /* relleno */
+  color: #8a7a6c; /* gris cálido */
+  font: 800 0.75rem system-ui, sans-serif; /* letra pequeña */
+  text-decoration: none; /* sin subrayado */
+}
+.m6 i {
+  font-size: 1.3rem; /* icono */
+}
+.m6 a[aria-current="page"] {
+  color: #e23d28; /* la actual, en amapola */
+}</textarea>
+    </div>
+
+    <h3>7 · Pestañas de tarro de despensa</h3>
+    <div class="ejemplo" data-alto="170" data-t="Menú 7 · pestañas que asoman">
+<textarea class="src" data-lang="html"><nav class="m7" aria-label="Despensa">
+  <a href="#" style="--c: #e23d28">Mermeladas</a>
+  <a href="#" style="--c: #f5b700" aria-current="page">Mieles</a>
+  <a href="#" style="--c: #2f9e44">Encurtidos</a>
+  <a href="#" style="--c: #8c6bd6">Licores</a>
+</nav>
+<div class="estante">Estante de mieles</div></textarea>
+<textarea class="src" data-lang="css">.m7 {
+  display: flex; /* pestañas en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 0.3rem; /* separación */
+  padding-left: 1rem; /* sangría */
+}
+.m7 a {
+  padding: 0.6rem 1rem 0.8rem; /* relleno */
+  background-color: var(--c); /* cada pestaña, con SU variable */
+  color: #fff; /* texto blanco */
+  font: 800 0.95rem system-ui, sans-serif; /* letra */
+  text-decoration: none; /* sin subrayado */
+  border: 3px solid #2b1d14; /* borde */
+  border-bottom: 0; /* sin borde abajo: se une al estante */
+  border-radius: 14px 14px 0 0; /* esquinas de arriba */
+  translate: 0 8px; /* hundidas */
+  transition: translate 0.2s; /* asoman suave */
+}
+.m7 a:hover,
+.m7 a:focus-visible,
+.m7 a[aria-current="page"] {
+  translate: 0 0; /* la pestaña asoma entera */
+}
+.estante {
+  padding: 1.5rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 0 14px 14px 14px; /* esquinas */
+  background-color: #fff6e5; /* crema */
+  font: 800 1.1rem system-ui, sans-serif; /* letra */
+}</textarea>
+    </div>
+
+    <h3>8 · Migas de pan</h3>
+    <div class="ejemplo" data-alto="130" data-t="Menú 8 · dónde estoy">
+<textarea class="src" data-lang="html"><nav class="m8" aria-label="Migas de pan">
+  <ol>
+    <li><a href="#">Inicio</a></li>
+    <li><a href="#">Huerto</a></li>
+    <li><a href="#">Tomates</a></li>
+    <li><span aria-current="page">Tomate corazón de buey</span></li>
+  </ol>
+</nav></textarea>
+<textarea class="src" data-lang="css">.m8 ol {
+  display: flex; /* en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 0.4rem; /* separación */
+  list-style: none; /* sin números */
+  margin: 0; /* sin margen */
+  padding: 1rem; /* relleno */
+  font: 700 1rem system-ui, sans-serif; /* letra */
+}
+.m8 li + li::before {
+  content: "›"; /* separador antes de cada miga, menos la primera */
+  margin-right: 0.4rem; /* separación */
+  color: #e23d28; /* amapola */
+}
+.m8 a {
+  color: #2f9e44; /* verde */
+}
+.m8 [aria-current="page"] {
+  color: #2b1d14; /* la página actual no es enlace: texto normal */
+}</textarea>
+    </div>
+    <div class="nota ok"><span class="tit">Cuál elegir</span>Barra (1 y 2) para webs con pocas secciones. Desplegable (3) para tiendas con categorías. Hamburguesa (4) y barra inferior (6) para el móvil. Lateral (5) para paneles de gestión. Pestañas (7) para cambiar de sección dentro de una página. Migas (8) para que la persona sepa dónde está en una web con muchos niveles.</div>
+  </div>
+</section>
+
+<!-- 5 · BOTONES DE FERIA ================================================ -->
+<section class="puesto-sec" id="botones" data-nav="20 botones">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--rosa)"><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i></span><div><small>Puesto 5 · la tómbola</small><h2>Veinte botones de feria</h2></div></div>
+    <p class="lectura">Un botón es la pieza donde mejor se ve todo lo de hoy: variables para los colores, un icono de Font Awesome y, a veces, texto degradado. Pasa el ratón por encima de cada uno y abre su código. (Todos cargan Font Awesome con el enlace del puesto 2.)</p>
+    <div class="galeria" id="galeria"></div>
+  </div>
+</section>
+
+<!-- 6 · TODO JUNTO ====================================================== -->
+<section class="puesto-sec" id="junto" data-nav="Todo junto">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--terracota)"><i class="fa-solid fa-store" aria-hidden="true"></i></span><div><small>Puesto 6 · la receta</small><h2>Una cabecera completa, paso a paso</h2></div></div>
+    <ol class="pasos">
+      <li><b>Las variables en <code>:root</code></b>: la paleta y el radio, una sola vez.</li>
+      <li><b>El esqueleto</b>: <code>&lt;header&gt;</code> con el logo y un <code>&lt;nav&gt;</code> con su lista.</li>
+      <li><b>El logo con texto degradado</b> y un icono de Font Awesome delante.</li>
+      <li><b>El menú de píldoras</b> con iconos, que usa las variables para sus colores.</li>
+      <li><b>Responsive</b>: en pantallas estrechas el menú baja debajo del logo, con <code>flex-wrap</code>.</li>
+    </ol>
+    <div class="ejemplo" data-alto="260" data-t="La cabecera de La Huerta">
+<textarea class="src" data-lang="html"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<header class="cabecera">
+  <a class="logo" href="#"><i class="fa-solid fa-seedling" aria-hidden="true"></i> La Huerta</a>
+  <nav aria-label="Principal">
+    <ul class="menu">
+      <li><a href="#" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i> Inicio</a></li>
+      <li><a href="#"><i class="fa-solid fa-lemon" aria-hidden="true"></i> Productos</a></li>
+      <li><a href="#"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Contacto</a></li>
+    </ul>
+  </nav>
+</header></textarea>
+<textarea class="src" data-lang="css">:root {
+  --verde: #2f9e44; /* color principal */
+  --amarillo: #f5b700; /* acento */
+  --rojo: #e23d28; /* segundo acento */
+  --crema: #fff6e5; /* fondo */
+  --tinta: #2b1d14; /* texto */
+  --radio: 999px; /* píldoras */
+}
+body {
+  margin: 0; /* sin margen */
+  background-color: var(--crema); /* fondo */
+  font-family: system-ui, sans-serif; /* letra */
+}
+.cabecera {
+  display: flex; /* logo y menú en fila */
+  flex-wrap: wrap; /* el menú baja si no cabe */
+  justify-content: space-between; /* uno a cada lado */
+  align-items: center; /* centrados en vertical */
+  gap: 1rem; /* separación */
+  padding: 1rem 1.5rem; /* relleno */
+  border-bottom: 4px solid var(--tinta); /* línea de base */
+}
+.logo {
+  font: italic 900 2rem Georgia, serif; /* letra del logo */
+  text-decoration: none; /* sin subrayado */
+  color: var(--verde); /* reserva */
+  background: linear-gradient(90deg, var(--verde), var(--amarillo), var(--rojo)); /* degradado con las variables */
+  -webkit-background-clip: text; /* recorte con las letras (prefijo) */
+  background-clip: text; /* recorte con las letras */
+  color: transparent; /* letras transparentes */
+}
+.menu {
+  display: flex; /* opciones en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 0.5rem; /* separación */
+  list-style: none; /* sin viñetas */
+  margin: 0; /* sin margen */
+  padding: 0; /* sin sangría */
+}
+.menu a {
+  display: block; /* zona pulsable */
+  padding: 0.55rem 1rem; /* relleno */
+  border: 3px solid var(--tinta); /* borde */
+  border-radius: var(--radio); /* forma, desde la variable */
+  color: var(--tinta); /* texto e icono */
+  font-weight: 800; /* negrita */
+  text-decoration: none; /* sin subrayado */
+}
+.menu a:hover,
+.menu a:focus-visible {
+  background-color: var(--amarillo); /* acento al pasar */
+}
+.menu a[aria-current="page"] {
+  background-color: var(--verde); /* la página actual */
+  color: #fff; /* texto blanco */
+}</textarea>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · ERRORES Y TEST =================================================== -->
+<section class="puesto-sec" id="errores" data-nav="Arregla el código">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--amapola)"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span><div><small>Puesto 7 · el taller</small><h2>Arregla el código</h2></div></div>
+    <div id="fixes"></div>
+  </div>
+</section>
+<section class="puesto-sec" id="test" data-nav="Test">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--hoja)"><i class="fa-solid fa-medal" aria-hidden="true"></i></span><div><small>Puesto 8 · el concurso</small><h2>Test de la feria</h2></div></div>
+    <div class="marcador"><span>Aciertos: <b id="qScore">0 / 12</b></span><span><button class="boton sec" type="button" id="qAll">Corregir todo</button> <button class="boton sec" type="button" id="qReset">Otra vez</button></span></div>
+    <div id="quiz"></div>
+  </div>
+</section>
+<section class="puesto-sec" id="chuleta" data-nav="Chuleta">
+  <div class="wrap">
+    <div class="cab"><span class="ico" style="--c:var(--girasol)"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i></span><div><small>Para llevar</small><h2>La chuleta</h2></div></div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Quiero…</th><th>Escribo</th></tr></thead>
+      <tbody>
+        <tr><td>Crear una variable para toda la página</td><td><code>:root { --verde: #2f9e44; }</code></td></tr>
+        <tr><td>Usarla</td><td><code>color: var(--verde);</code></td></tr>
+        <tr><td>Un valor de reserva</td><td><code>var(--verde, green)</code></td></tr>
+        <tr><td>Una variante de un componente</td><td><code>.menta { --color: #2f9e44; }</code></td></tr>
+        <tr><td>Un dato distinto por elemento</td><td><code>&lt;li style="--c: red"&gt;</code></td></tr>
+        <tr><td>Cargar Font Awesome</td><td><code>&lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"&gt;</code></td></tr>
+        <tr><td>Poner un icono</td><td><code>&lt;i class="fa-solid fa-leaf" aria-hidden="true"&gt;&lt;/i&gt;</code></td></tr>
+        <tr><td>Icono más grande o animado</td><td><code>fa-3x</code> · <code>fa-spin</code> · <code>fa-beat</code></td></tr>
+        <tr><td>Texto degradado</td><td>fondo degradado + <code>-webkit-background-clip: text</code> + <code>background-clip: text</code> + <code>color: transparent</code></td></tr>
+        <tr><td>Esqueleto de un menú</td><td><code>&lt;nav&gt;</code> &gt; <code>&lt;ul&gt;</code> &gt; <code>&lt;li&gt;</code> &gt; <code>&lt;a&gt;</code> + <code>aria-current="page"</code></td></tr>
+        <tr><td>Submenú accesible con teclado</td><td><code>.padre:hover .sub, .padre:focus-within .sub</code></td></tr>
+        <tr><td>Hamburguesa sin JavaScript</td><td><code>&lt;details&gt;&lt;summary&gt;Menú&lt;/summary&gt;…&lt;/details&gt;</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+</main>
+<footer class="pie">
+  <p><i class="fa-solid fa-seedling" aria-hidden="true"></i> Bloque 05 · Variables, iconos, texto degradado y menús · Formación web Juritecnia</p>
+  <p><a href="Efectos-Visuales-Herbario.html">← Herbario de efectos visuales</a> · <a href="https://igorhermoso1.github.io/Formaci-n_Juritecnia/">Volver a la plataforma</a></p>
+</footer>
+
+<script>
+/* =====================================================================
+   DATOS · botones de feria, iconos del laboratorio, errores y test
+   ===================================================================== */
+const FA = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">';
+const BOTONES = [
+{t:"Sello de feria",d:"Sombra dura que se hunde al pulsar.",h:`<button class="b"><i class="fa-solid fa-ticket" aria-hidden="true"></i> Entrada</button>`,s:`.b {
+  --fondo: #f5b700; /* girasol */
+  font: 900 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.4rem; /* relleno */
+  background-color: var(--fondo); /* fondo desde la variable */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  box-shadow: 5px 5px 0 #2b1d14; /* sombra dura */
+  transition: translate 0.1s, box-shadow 0.1s; /* rápido */
+}
+.b:active {
+  translate: 4px 4px; /* se hunde */
+  box-shadow: 1px 1px 0 #2b1d14; /* la sombra casi desaparece */
+}`},
+{t:"Contorno que se rellena",d:"De hueco a lleno con una variable.",h:`<button class="b"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Sembrar</button>`,s:`.b {
+  --c: #2f9e44; /* verde hoja */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.4rem; /* relleno */
+  color: var(--c); /* texto e icono del color */
+  background-color: transparent; /* hueco */
+  border: 3px solid var(--c); /* borde del color */
+  border-radius: 12px; /* esquinas */
+  transition: background-color 0.3s, color 0.3s; /* cambio suave */
+}
+.b:hover {
+  background-color: var(--c); /* se rellena */
+  color: #fff; /* texto blanco */
+}`},
+{t:"Rótulo degradado",d:"Texto degradado dentro de un botón claro.",h:`<button class="b">¡Fresas frescas!</button>`,s:`.b {
+  font: 900 1.2rem system-ui, sans-serif; /* letra gruesa */
+  padding: 0.8rem 1.4rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+}
+.b {
+  display: inline-block; /* el degradado se ajusta al texto */
+  background-image: linear-gradient(90deg, #e23d28, #ff6fae); /* degradado */
+  -webkit-background-clip: text; /* recorte con letras (prefijo) */
+  background-clip: text; /* recorte con letras */
+  color: transparent; /* letras transparentes */
+}`},
+{t:"Icono que gira",d:"El icono da una vuelta al pasar el ratón.",h:`<button class="b"><i class="fa-solid fa-sun" aria-hidden="true"></i> Buen tiempo</button>`,s:`.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.3rem; /* relleno */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* píldora */
+  background-color: #f5b700; /* girasol */
+}
+.b i {
+  transition: rotate 0.6s; /* giro suave */
+}
+.b:hover i {
+  rotate: 1turn; /* una vuelta */
+}`},
+{t:"Flecha que avanza",d:"El icono se desplaza hacia la derecha.",h:`<button class="b">Ver la huerta <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>`,s:`.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.3rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 12px; /* esquinas */
+  background-color: #fff; /* blanco */
+}
+.b i {
+  margin-left: 0.4rem; /* separación */
+  transition: translate 0.25s; /* se mueve suave */
+}
+.b:hover i {
+  translate: 6px 0; /* avanza */
+}`},
+{t:"Corazón que late",d:"La animación fa-beat de Font Awesome solo al pasar.",h:`<button class="b"><i class="fa-solid fa-heart" aria-hidden="true"></i> Me gusta</button>`,s:`.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.3rem; /* relleno */
+  border: 3px solid #e23d28; /* borde amapola */
+  border-radius: 999px; /* píldora */
+  color: #e23d28; /* texto e icono */
+  background-color: #fff; /* blanco */
+}
+.b:hover i {
+  animation: fa-beat 1s ease-in-out infinite; /* usa la animación que ya trae Font Awesome */
+}`},
+{t:"Gingham",d:"Fondo de cuadros vichy con dos degradados.",h:`<button class="b"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i> Merendar</button>`,s:`.b {
+  font: 900 1rem system-ui, sans-serif; /* letra */
+  padding: 0.9rem 1.4rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 12px; /* esquinas */
+  background: linear-gradient(90deg, rgb(226 61 40 / 35%) 50%, transparent 0) 0 0 / 16px 16px, linear-gradient(rgb(226 61 40 / 35%) 50%, transparent 0) 0 0 / 16px 16px, #fff; /* cuadros vichy */
+}`},
+{t:"Sobre de semillas",d:"Franja de color superior con su propia variable.",h:`<button class="b" style="--c: #8c6bd6"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Lavanda</button>`,s:`.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 1.4rem 1.3rem 0.8rem; /* más relleno arriba, por la franja */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 6px 6px 14px 14px; /* forma de sobre */
+  background: linear-gradient(var(--c) 0 12px, #fff 12px); /* franja de su color */
+}`},
+{t:"Brillo que cruza",d:"Una franja de luz atraviesa el botón.",h:`<button class="b"><i class="fa-solid fa-star" aria-hidden="true"></i> Destacado</button>`,s:`.b {
+  position: relative; /* referencia */
+  overflow: hidden; /* la luz no se sale */
+  font: 900 1rem system-ui, sans-serif; /* letra */
+  padding: 0.85rem 1.4rem; /* relleno */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* píldora */
+  background-color: #2f9e44; /* verde */
+  color: #fff; /* texto */
+}
+.b::after {
+  content: ""; /* la franja */
+  position: absolute; /* encima */
+  inset: 0; /* entera */
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 55%) 50%, transparent 65%); /* luz */
+  translate: -100% 0; /* fuera */
+  transition: translate 0.6s; /* cruza */
+}
+.b:hover::after {
+  translate: 100% 0; /* atraviesa */
+}`},
+{t:"Solo icono, redondo",d:"Botón circular con su nombre accesible.",h:`<button class="b" aria-label="Añadir a la cesta"><i class="fa-solid fa-cart-plus" aria-hidden="true"></i></button>`,s:`.b {
+  width: 3.4rem; /* ancho */
+  aspect-ratio: 1; /* redondo */
+  font-size: 1.3rem; /* tamaño del icono */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 50%; /* círculo */
+  background-color: #ff6fae; /* rosa */
+  color: #fff; /* icono blanco */
+  box-shadow: 4px 4px 0 #2b1d14; /* sombra */
+}`},
+{t:"Etiqueta de precio",d:"Recorte con forma de etiqueta colgante.",h:`<button class="b"><i class="fa-solid fa-tag" aria-hidden="true"></i> 2,50 €</button>`,s:`.b {
+  font: 900 1.1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.2rem 0.8rem 1.8rem; /* relleno, más a la izquierda */
+  border: 0; /* sin borde */
+  background-color: #f5b700; /* girasol */
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%); /* punta a la izquierda */
+}`},
+{t:"Degradado animado",d:"El fondo se desliza sin parar.",h:`<button class="b">¡Gran sorteo!</button>`,s:`.b {
+  font: 900 1.1rem system-ui, sans-serif; /* letra */
+  padding: 0.9rem 1.5rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  color: #fff; /* texto */
+  background: linear-gradient(90deg, #e23d28, #ff6fae, #8c6bd6, #e23d28); /* el último repite el primero */
+  background-size: 300% 100%; /* tres veces más ancho */
+  animation: desliza 5s linear infinite; /* se mueve */
+}
+@keyframes desliza {
+  to { background-position: 300% 0; } /* un ciclo entero */
+}`},
+{t:"Hoja que se inclina",d:"Todo el botón se ladea con un toque de rotate.",h:`<button class="b"><i class="fa-solid fa-feather" aria-hidden="true"></i> Escribir</button>`,s:`.b {
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.3rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 40px 4px; /* esquinas de hoja */
+  background-color: #c6e7c9; /* verde claro */
+  transition: rotate 0.2s; /* giro suave */
+}
+.b:hover {
+  rotate: -4deg; /* se ladea */
+}`},
+{t:"Insignia con número",d:"Un contador en la esquina con un pseudo-elemento.",h:`<button class="b" data-n="3"><i class="fa-solid fa-bell" aria-hidden="true"></i> Avisos</button>`,s:`.b {
+  position: relative; /* referencia para la insignia */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.3rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 12px; /* esquinas */
+  background-color: #fff; /* blanco */
+}
+.b::after {
+  content: attr(data-n); /* el número sale del atributo data-n */
+  position: absolute; /* en la esquina */
+  top: -0.7rem; /* arriba */
+  right: -0.7rem; /* a la derecha */
+  width: 1.6rem; /* tamaño */
+  aspect-ratio: 1; /* redonda */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  border-radius: 50%; /* círculo */
+  background-color: #e23d28; /* amapola */
+  color: #fff; /* blanco */
+  font-size: 0.8rem; /* letra pequeña */
+}`},
+{t:"Neón de mercadillo",d:"Brillo con text-shadow y box-shadow del mismo color.",h:`<button class="b"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Abierto</button>`,s:`body {
+  background-color: #2b1d14; /* noche */
+}
+.b {
+  --neon: #ffd166; /* el color de la luz */
+  font: 900 1.1rem system-ui, sans-serif; /* letra */
+  padding: 0.8rem 1.4rem; /* relleno */
+  color: var(--neon); /* texto e icono */
+  background-color: transparent; /* sin fondo */
+  border: 2px solid var(--neon); /* tubo de neón */
+  border-radius: 12px; /* esquinas */
+  text-shadow: 0 0 8px var(--neon); /* brillo del texto */
+  box-shadow: 0 0 12px var(--neon), inset 0 0 12px var(--neon); /* brillo del tubo */
+}`},
+{t:"Píldora doble",d:"Icono en una cápsula de otro color.",h:`<button class="b"><span><i class="fa-solid fa-download" aria-hidden="true"></i></span> Descargar receta</button>`,s:`.b {
+  display: inline-flex; /* cápsula y texto en línea */
+  align-items: center; /* centrados */
+  gap: 0.7rem; /* separación */
+  padding: 0.35rem 1.2rem 0.35rem 0.35rem; /* relleno, menos a la izquierda */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  background-color: #fff6e5; /* crema */
+}
+.b span {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  width: 2.2rem; /* tamaño */
+  aspect-ratio: 1; /* redonda */
+  border-radius: 50%; /* círculo */
+  background-color: #2f9e44; /* verde */
+  color: #fff; /* icono blanco */
+}`},
+{t:"Gota que se expande",d:"Un círculo de color crece desde el centro.",h:`<button class="b"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Regar</button>`,s:`.b {
+  position: relative; /* referencia */
+  overflow: hidden; /* el círculo no se sale */
+  isolation: isolate; /* el círculo queda detrás del texto */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.85rem 1.4rem; /* relleno */
+  border: 3px solid #5aa9e6; /* borde azul */
+  border-radius: 12px; /* esquinas */
+  background-color: #fff; /* blanco */
+  transition: color 0.4s; /* el texto cambia de color */
+}
+.b::before {
+  content: ""; /* el agua */
+  position: absolute; /* detrás */
+  inset: 0; /* entera */
+  z-index: -1; /* debajo del texto */
+  background-color: #5aa9e6; /* azul */
+  clip-path: circle(0% at 50% 50%); /* sin tamaño */
+  transition: clip-path 0.4s; /* crece */
+}
+.b:hover {
+  color: #fff; /* texto blanco */
+}
+.b:hover::before {
+  clip-path: circle(75% at 50% 50%); /* el agua lo llena */
+}`},
+{t:"Tres variantes con una clase",d:"El mismo botón con --c distinto en cada uno.",h:`<button class="b">Tomate</button>
+<button class="b" style="--c: #f5b700">Limón</button>
+<button class="b" style="--c: #8c6bd6">Uva</button>`,s:`.b {
+  --c: #e23d28; /* color por defecto */
+  font: 800 0.85rem system-ui, sans-serif; /* letra */
+  padding: 0.55rem 0.8rem; /* relleno */
+  margin: 0.15rem; /* separación */
+  border: 3px solid var(--c); /* borde de su color */
+  border-radius: 999px; /* píldora */
+  background-color: color-mix(in srgb, var(--c) 18%, white); /* fondo: su color muy aclarado */
+  color: #2b1d14; /* texto */
+}`},
+{t:"Botón de tómbola",d:"Un pequeño balanceo que llama la atención.",h:`<button class="b"><i class="fa-solid fa-gift" aria-hidden="true"></i> ¡Prueba suerte!</button>`,s:`.b {
+  font: 900 1rem system-ui, sans-serif; /* letra */
+  padding: 0.85rem 1.4rem; /* relleno */
+  border: 3px solid #2b1d14; /* borde */
+  border-radius: 999px; /* píldora */
+  background-color: #ff6fae; /* rosa */
+  color: #fff; /* texto */
+  animation: llama 2.4s ease-in-out infinite; /* se balancea cada poco */
+}
+@keyframes llama {
+  0%, 80%, 100% { rotate: 0deg; } /* quieto casi todo el tiempo */
+  85% { rotate: -6deg; } /* a un lado */
+  90% { rotate: 6deg; } /* al otro */
+  95% { rotate: -3deg; } /* se calma */
+}`},
+{t:"Enlace con icono externo",d:"Un enlace que avisa de que abre otra web.",h:`<a class="b" href="https://fontawesome.com/icons" target="_blank" rel="noopener noreferrer">Catálogo de iconos <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>`,s:`.b {
+  display: inline-block; /* para el relleno */
+  font: 800 1rem system-ui, sans-serif; /* letra */
+  padding: 0.6rem 0.2rem; /* relleno */
+  color: #2f9e44; /* verde */
+  text-decoration: underline; /* subrayado: es un enlace */
+  text-decoration-thickness: 2px; /* subrayado grueso */
+  text-underline-offset: 5px; /* separado del texto */
+}
+.b i {
+  font-size: 0.75em; /* icono algo más pequeño que el texto */
+  margin-left: 0.2rem; /* separación */
+}`}
+];
+const ICONOS = ["leaf","seedling","carrot","lemon","apple-whole","pepper-hot","wheat-awn","tree","sun","cloud-sun","cloud-rain","droplet","bug","spa","feather","mug-hot","cookie","egg","cheese","bread-slice","fish","cow","paw","dove","kiwi-bird","tractor","bicycle","recycle","jar","bowl-food","basket-shopping","cart-shopping","store","house","envelope","phone","heart","star","bell","calendar","location-dot","magnifying-glass","user","gear","bars","xmark","palette","paintbrush","gift","ticket","tag","lightbulb","moon","fire","music","camera"];
+const FIX = [
+ {q:"El color no se aplica.",code:":root {\n  -verde: #2f9e44;\n}\nh1 {\n  color: var(-verde);\n}",o:["Las variables empiezan por DOS guiones: --verde","Falta !important","var() solo funciona dentro de :root"],a:0,e:"Con un solo guion no es una variable válida."},
+ {q:"La variable no hace nada en la media query.",code:":root { --movil: 600px; }\n@media (max-width: var(--movil)) {\n  nav { display: none; }\n}",o:["Las variables no funcionan dentro de la condición de una media query: escribe 600px","Falta calc()","Hay que declararla dentro de la media query"],a:0,e:"La condición se evalúa antes de que existan las variables de los elementos."},
+ {q:"Los iconos salen como cuadrados vacíos.",code:"<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">\n<i class=\"fa-solid fa-leaf-pro\"></i>",o:["Ese icono no existe en la versión gratuita: búscalo en el catálogo con el filtro Free","Hay que poner el enlace al final del body","Falta fa-2x"],a:0,e:"Si el nombre no existe (o es Pro), no se dibuja nada o sale un cuadro."},
+ {q:"El título debería ser degradado, pero se ve una caja de colores con el texto encima.",code:"h1 {\n  background: linear-gradient(90deg, red, gold);\n  color: transparent;\n}",o:["Falta recortar el fondo con las letras: -webkit-background-clip: text y background-clip: text","Falta display: flex","El degradado debe ir en color"],a:0,e:"Sin background-clip: text, el fondo ocupa toda la caja."},
+ {q:"El submenú se abre con el ratón, pero no con el teclado.",code:".padre:hover .sub {\n  display: block;\n}",o:["Añade también .padre:focus-within .sub para que se abra al tabular dentro","Pon tabindex=\"5\" en el submenú","Cambia hover por active"],a:0,e:":focus-within se activa cuando el foco está en cualquier elemento de dentro."},
+ {q:"En el menú, solo se puede pulsar justo encima de las letras.",code:".menu li {\n  padding: 1rem;\n}\n.menu a {\n  color: #2b1d14;\n}",o:["El relleno debe ir en el enlace: .menu a { display: block; padding: 1rem; }","Hay que poner cursor: pointer en el li","Falta un z-index"],a:0,e:"La zona pulsable es la del <a>: dale a él el display: block y el relleno."}
+];
+const TEST = [
+ {q:"¿Cómo se escribe el nombre de una variable CSS?",o:["$verde","--verde","@verde"],a:1,e:"Siempre con dos guiones delante."},
+ {q:"¿Dónde se declaran las variables que debe ver toda la página?",o:["En :root","En el último selector del archivo","En cualquier p"],a:0,e:":root es la raíz (html) y todos los elementos la heredan."},
+ {q:"¿Qué hace <code>var(--borde, 2px)</code>?",o:["Suma 2px al borde","Usa --borde y, si no existe, 2px","Da error"],a:1,e:"El segundo valor es la reserva."},
+ {q:"Tengo <code>.etiqueta { --color: red; color: var(--color) }</code> y <code>.menta { --color: green }</code>. ¿De qué color es <code>&lt;p class=\"etiqueta menta\"&gt;</code>?",o:["Rojo","Verde","Negro"],a:1,e:"La variable se redefine en .menta (que va después) y color la usa."},
+ {q:"¿Para qué sirve <code>style=\"--c: red\"</code> en un elemento?",o:["Para darle a ese elemento un valor propio de la variable","No sirve: las variables solo van en el CSS","Para pintar su texto de rojo directamente"],a:0,e:"Es la forma limpia de dar un dato distinto a cada elemento."},
+ {q:"¿Qué archivo de cdnjs se enlaza para tener todos los estilos de Font Awesome?",o:["all.min.css","fontawesome.js","icons.html"],a:0,e:"…/font-awesome/6.4.0/css/all.min.css"},
+ {q:"¿Qué significan las clases de <code>&lt;i class=\"fa-solid fa-leaf\"&gt;</code>?",o:["El estilo (relleno) y el icono (hoja)","El color y el tamaño","La animación y la velocidad"],a:0,e:"fa-solid / fa-regular / fa-brands es el estilo; fa-nombre, el icono."},
+ {q:"¿Cómo se cambia el color de un icono de Font Awesome?",o:["Con fill","Con color, como un texto","No se puede"],a:1,e:"Es una letra: color y font-size."},
+ {q:"Un botón que solo tiene un icono necesita…",o:["Nada más","aria-label en el botón y aria-hidden en el icono","Un title en el icono"],a:1,e:"Sin texto visible, el botón necesita un nombre accesible."},
+ {q:"En el texto degradado, ¿por qué se pone antes <code>color: #e23d28</code> y luego <code>color: transparent</code>?",o:["Por si el navegador no entiende el recorte: el texto se seguiría leyendo","Para que el degradado sea más rojo","No hace falta, es un error"],a:0,e:"Es un color de reserva; la segunda línea gana si todo funciona."},
+ {q:"¿Qué etiqueta debe envolver un menú principal?",o:["<div class=\"menu\">","<nav>","<section>"],a:1,e:"nav anuncia la navegación a los lectores de pantalla."},
+ {q:"¿Cómo se marca la página actual en un menú?",o:["Con class=\"activo\" y nada más","Con aria-current=\"page\" (y se pinta con [aria-current=\"page\"])","Con un <b>"],a:1,e:"aria-current además lo anuncia el lector de pantalla."}
+];
+
+/* =====================================================================
+   MOTOR DEL HERBARIO
+   ===================================================================== */
+(() => {
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- resaltado de código ---------- */
+function hlCssLinea(code) {
+  const decl = s => s.replace(/([\w-]+)(\s*:\s*)([^;]*)(;?)/g, (m, p, c, v, f) => `<span class="h-p">${p}</span>${c}<span class="h-v">${v}</span>${f}`);
+  let m;
+  if (/^\s*@/.test(code)) return code.replace(/(@[\w-]+)/, '<span class="h-at">$1</span>');
+  if ((m = code.match(/^(\s*)([^{]+)\{(.*)\}(\s*)$/))) return `${m[1]}<span class="h-s">${m[2]}</span>{${decl(m[3])}}${m[4]}`;
+  if (code.includes("{")) return code.replace(/^(\s*)([^{]*)\{/, '$1<span class="h-s">$2</span>{');
+  if (/^\s*[\w-]+\s*:/.test(code)) return decl(code);
+  return code;
+}
+const hlCss = src => esc(src).split("\n").map(l => { const i = l.indexOf("/*"); return i < 0 ? hlCssLinea(l) : hlCssLinea(l.slice(0, i)) + `<span class="h-c">${l.slice(i)}</span>`; }).join("\n");
+const hlHtml = src => esc(src).replace(/(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g, (m, a, t, at, z) => `${a}<span class="h-t">${t}</span>${at.replace(/([\w-:]+)(=)(&quot;.*?&quot;)/g, '<span class="h-a">$1</span>$2<span class="h-q">$3</span>')}${z}`);
+let nCaja = 0;
+function cajaCodigo(lang, src, titulo) {
+  const c = el("div", "caja"), id = "cod" + (++nCaja);
+  c.innerHTML = `<div class="caja-t">${esc(titulo)} <button class="copiar" type="button" data-copia="${id}">Copiar</button></div><pre id="${id}">${lang === "css" ? hlCss(src) : hlHtml(src)}</pre>`;
+  return c;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copiar"); if (!b) return; const n = document.getElementById(b.dataset.copia);
+  (navigator.clipboard ? navigator.clipboard.writeText(n.textContent) : Promise.reject()).then(() => { b.textContent = "¡Copiado!"; setTimeout(() => b.textContent = "Copiar", 1400); },
+    () => { const r = document.createRange(); r.selectNodeContents(n); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Ctrl + C"; });
+});
+
+/* ---------- ejemplos en vivo (iframe perezoso) ---------- */
+const BASE = "body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;color:#222;background:#fff}";
+const doc = (h, c) => `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}</style><style>${c}</style></head><body>${h}</body></html>`;
+const perezosos = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting && x.target._doc) { x.target.srcdoc = x.target._doc; x.target._doc = null; perezosos.unobserve(x.target); } }), { rootMargin: "500px" });
+function iframe(h, c, alto, titulo, ajusta) {
+  const f = el("iframe"); f.title = titulo; f._doc = doc(h, ajusta ? c : "html{overflow:hidden}" + c); /* las vistas del catálogo no deben mostrar barras */ if (alto) f.style.setProperty("--alto", alto + "px");
+  if (ajusta) f.addEventListener("load", () => { try { const d = f.contentDocument, a = () => f.style.setProperty("--alto", Math.min(Math.max(alto, d.documentElement.scrollHeight), 760) + "px"); a(); setTimeout(a, 500); } catch (e) {} });
+  perezosos.observe(f); return f;
+}
+$$(".ejemplo").forEach(ej => {
+  const [h, c] = ["html", "css"].map(l => (ej.querySelector(`.src[data-lang="${l}"]`) || {}).value || "");
+  const vivo = el("div", "ej-vivo"); vivo.append(iframe(h, c, +ej.dataset.alto || 220, "Ejemplo: " + ej.dataset.t, true));
+  const cod = el("div", "ej-codigo"); if (h) cod.append(cajaCodigo("html", h, "HTML")); cod.append(cajaCodigo("css", c, "CSS"));
+  ej.append(el("div", "ej-cab", `<span>${esc(ej.dataset.t)}</span><span>en vivo</span>`), vivo, cod);
+});
+
+/* ---------- menú y progreso ---------- */
+const ZONAS = $$("[data-nav]"), ul = $("#navUl");
+ZONAS.forEach(z => { const li = el("li"); li.innerHTML = `<a href="#${z.id}">${esc(z.dataset.nav)}</a>`; ul.append(li); });
+$("#navL").onclick = () => ul.scrollBy({ left: -240, behavior: "smooth" }); $("#navR").onclick = () => ul.scrollBy({ left: 240, behavior: "smooth" });
+const links = $$("a", ul); let actual = -1;
+function alScroll() {
+  const vh = innerHeight, tot = document.documentElement.scrollHeight - vh; $("#prog").style.scale = `${tot > 0 ? scrollY / tot : 0} 1`;
+  let i = 0; ZONAS.forEach((z, k) => { if (z.getBoundingClientRect().top < vh * .4) i = k; });
+  if (i !== actual) { actual = i; links.forEach((a, k) => a.setAttribute("aria-current", k === i)); const a = links[i]; ul.scrollTo({ left: a.offsetLeft - ul.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" }); }
+}
+let pend = false; addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; alScroll(); }); } }, { passive: true }); alScroll();
+
+/* ---------- LAB · pinta tu puesto (variables) ---------- */
+{
+  const W = $("#miniWeb"), V = { mP: "--m-principal", mA: "--m-acento", mF: "--m-papel", mT: "--m-tinta" };
+  const N = { mP: "--principal", mA: "--acento", mF: "--papel", mT: "--tinta" };
+  const up = () => {
+    for (const id in V) W.style.setProperty(V[id], $("#" + id).value);
+    const r = $("#mR").value; W.style.setProperty("--m-radio", r + "px"); $("#mRO").textContent = r + "px";
+    $("#mCss").innerHTML = hlCss(`:root {\n${Object.keys(N).map(id => `  ${N[id]}: ${$("#" + id).value}; /* ${{ mP: "cabecera", mA: "botones e iconos", mF: "fondo de la página", mT: "texto y bordes" }[id]} */`).join("\n")}\n  --radio: ${r}px; /* esquinas de tarjetas y botones */\n}`);
+  };
+  ["mP", "mA", "mF", "mT", "mR"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- LAB · la caja de semillas (Font Awesome) ---------- */
+{
+  const G = $("#icoG"), Vi = $("#icoVista"); let ico = "seedling";
+  ICONOS.forEach(n => { const b = el("button", "", `<i class="fa-solid fa-${n}" aria-hidden="true"></i>${n}`); b.type = "button"; b.dataset.n = n; b.setAttribute("aria-pressed", n === ico); b.onclick = () => { ico = n; $$("button", G).forEach(x => x.setAttribute("aria-pressed", x === b)); up(); }; G.append(b); });
+  $("#icoQ").addEventListener("input", e => { const q = e.target.value.trim().toLowerCase(); $$("button", G).forEach(b => b.hidden = q && !b.dataset.n.includes(q)); });
+  const up = () => {
+    const t = $("#icoT").value, a = $("#icoA").value, c = $("#icoC").value, cls = ["fa-solid", "fa-" + ico, t, a].filter(Boolean).join(" ");
+    Vi.innerHTML = `<i class="${cls}" style="color:${c}" aria-hidden="true"></i>`;
+    $("#icoCss").innerHTML = hlHtml(`<i class="${cls}" aria-hidden="true"></i>`) + "\n\n" + hlCss(`.fa-${ico} {\n  color: ${c}; /* el icono es una letra: se pinta con color */\n}`);
+  };
+  ["icoT", "icoA", "icoC"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- LAB · el rotulista (texto degradado) ---------- */
+{
+  const V = $("#rVista");
+  const up = () => {
+    const c = ["r1", "r2", "r3"].map(i => $("#" + i).value), a = $("#rA").value, b = $("#rB").checked;
+    $("#rAO").textContent = a + "deg"; V.textContent = $("#rTx").value || "Feria";
+    const g = `linear-gradient(${a}deg, ${c.join(", ")}${b ? ", " + c[0] : ""})`;
+    V.style.backgroundImage = g; V.style.backgroundSize = b ? "300% 100%" : ""; V.style.webkitBackgroundClip = "text"; V.style.backgroundClip = "text"; V.style.color = "transparent";
+    V.style.animation = b && !QUIETO ? "brilla-r 4s linear infinite" : "";
+    $("#rCss").innerHTML = hlCss(`.rotulo {\n  display: inline-block; /* el degradado se ajusta al texto */\n  color: ${c[0]}; /* reserva */\n  background: ${g}; /* el degradado */\n${b ? "  background-size: 300% 100%; /* más ancho que el texto, para poder moverlo */\n" : ""}  -webkit-background-clip: text; /* recorte con las letras (prefijo) */\n  background-clip: text; /* recorte con las letras */\n  color: transparent; /* letras transparentes */\n${b ? "  animation: brillo 4s linear infinite; /* el fondo se desliza */\n" : ""}}${b ? "\n@keyframes brillo {\n  to { background-position: 300% 0; } /* un ciclo entero */\n}" : ""}`);
+  };
+  const st = el("style"); st.textContent = "@keyframes brilla-r{to{background-position:300% 0}}"; document.head.append(st);
+  ["rTx", "r1", "r2", "r3", "rA", "rB"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- galería de botones ---------- */
+{
+  const G = $("#galeria");
+  BOTONES.forEach((x, i) => {
+    const art = el("article", "boton-ej");
+    const f = el("iframe"); f.title = "Botón " + (i + 1) + ": " + x.t;
+    f._doc = doc(FA + `<div style="min-height:110px;display:grid;place-items:center">${x.h}</div>`, "html{overflow:hidden}" + x.s); perezosos.observe(f);
+    const info = el("div", "info", `<h4>${i + 1} · ${esc(x.t)}</h4><p>${esc(x.d)}</p>`);
+    const det = el("details"); det.innerHTML = "<summary>Ver el código</summary>";
+    det.addEventListener("toggle", () => { if (!det.open || det._ok) return; det._ok = true; const cod = el("div", "ej-codigo"); cod.append(cajaCodigo("html", x.h, "HTML"), cajaCodigo("css", x.s, "CSS")); det.append(cod); });
+    info.append(det); art.append(f, info); G.append(art);
+  });
+}
+
+/* ---------- errores y test ---------- */
+function bloque(host, lista, alPuntuar) {
+  const h = $(host), cards = [];
+  lista.forEach((it, i) => {
+    const c = el("div", "q"); c.innerHTML = `<p class="qq">${i + 1}. ${it.q}</p>`; if (it.code) c.append(cajaCodigo("css", it.code, "CSS"));
+    const ops = el("div"); it.o.map((_, k) => k).sort(() => Math.random() - .5).forEach(k => { const l = el("label", "opt"); l.innerHTML = `<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${esc(it.o[k])}</span>`; ops.append(l); });
+    const ex = el("div", "ex", it.e); c.append(ops, ex);
+    c.corrige = () => { $$(".opt", c).forEach(l => { l.classList.remove("right", "wrong"); const v = +$("input", l).value; if (v === it.a) l.classList.add("right"); else if ($("input", l).checked) l.classList.add("wrong"); }); ex.classList.add("show"); };
+    c.limpia = () => { $$("input", c).forEach(x => x.checked = false); $$(".opt", c).forEach(l => l.classList.remove("right", "wrong")); ex.classList.remove("show"); };
+    c.bien = () => { const s = $("input:checked", c); return !!s && +s.value === it.a; };
+    ops.addEventListener("change", () => { c.corrige(); alPuntuar && alPuntuar(); }); cards.push(c); h.append(c);
+  });
+  return cards;
+}
+bloque("#fixes", FIX);
+{ let cards; const up = () => { const n = cards.filter(c => c.bien()).length; $("#qScore").textContent = `${n} / ${TEST.length}` + (n === TEST.length ? " · ¡primer premio de la feria!" : ""); };
+  cards = bloque("#quiz", TEST, up); $("#qAll").onclick = () => { cards.forEach(c => c.corrige()); up(); }; $("#qReset").onclick = () => { cards.forEach(c => c.limpia()); up(); }; }
+})();
+
+</script>
+</body>
+</html>
