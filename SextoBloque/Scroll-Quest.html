@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scroll Quest · animaciones con scroll, snap, anclas y barras de scroll sin JavaScript</title>
+<meta name="description" content="Bloque 06 · Animaciones dirigidas por el scroll (scroll() y view()), animation-range, barra de progreso, parallax moderno, scroll-snap, anclas suaves, barras de scroll, anchor positioning y normas de accesibilidad. Un juego arcade de 8 bits.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 8%27 shape-rendering=%27crispEdges%27%3E%3Crect width=%278%27 height=%278%27 fill=%27%230b0b24%27/%3E%3Crect x=%271%27 y=%272%27 width=%276%27 height=%275%27 fill=%27%2300f0ff%27/%3E%3Crect x=%272%27 y=%273%27 width=%271%27 height=%271%27 fill=%27%230b0b24%27/%3E%3Crect x=%275%27 y=%273%27 width=%271%27 height=%271%27 fill=%27%230b0b24%27/%3E%3Crect x=%273%27 y=%270%27 width=%272%27 height=%272%27 fill=%27%23ffe14d%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   SCROLL QUEST · paleta de 8 bits
+   ===================================================================== */
+:root{
+  --noche:#0b0b24; --panel:#14143a; --panel2:#1d1d4a; --linea:#2c2c66;
+  --cian:#00f0ff; --rosa:#ff3ea5; --oro:#ffe14d; --verde:#39ff88; --naranja:#ff8a1f; --lila:#9b7bff; --rojo:#ff4a4a;
+  --txt:#e6ecff; --txt2:#a9b6e0;
+  --f-pix:'Press Start 2P', monospace; --f-vt:'VT323', monospace; --f-txt:'Atkinson Hyperlegible', system-ui, sans-serif; --f-code:'JetBrains Mono', ui-monospace, monospace;
+  --ancho:min(1120px, 100% - 2rem);
+  --px:4px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:7.2rem;background:var(--noche)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;color:var(--txt);font:400 clamp(1.02rem, .98rem + .25vw, 1.14rem)/1.7 var(--f-txt);overflow-x:clip;background:var(--noche)}
+/* la barra de scroll de la página, en pixel art (Chrome, Edge y Safari; Firefox deja la suya) */
+html::-webkit-scrollbar{width:18px}
+html::-webkit-scrollbar-track{background:var(--noche) repeating-linear-gradient(0deg, transparent 0 8px, rgba(0,240,255,.12) 8px 10px)}
+html::-webkit-scrollbar-thumb{background:var(--oro);border:4px solid var(--noche);box-shadow:inset -4px -4px 0 #c9a400, inset 4px 4px 0 #fff6b0}
+html::-webkit-scrollbar-thumb:hover{background:var(--rosa);box-shadow:inset -4px -4px 0 #b3206f, inset 4px 4px 0 #ffb3da}
+a{color:var(--cian)}
+a:hover{color:var(--oro)}
+:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+b,strong{color:#fff}
+code{font-family:var(--f-code);font-size:.84em;background:rgba(0,240,255,.12);color:#bff8ff;padding:.08em .35em;border-radius:2px}
+.skip{position:fixed;left:1rem;top:-4rem;z-index:999;background:var(--oro);color:var(--noche);padding:.6rem 1rem;font:400 .7rem var(--f-pix);transition:top .2s}
+.skip:focus{top:1rem}
+.wrap{width:var(--ancho);margin-inline:auto;position:relative}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+img.spr,.spr{image-rendering:pixelated}
+
+/* ----- cielo de estrellas con parallax (¡lo de la sección 6!) ----- */
+.estrellas{position:fixed;inset:0 0 -60vh 0;z-index:-2;pointer-events:none;
+  background:radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 51%) 0 0/120px 140px, radial-gradient(2px 2px at 80px 90px, #9fd 50%, transparent 51%) 0 0/170px 160px}
+.estrellas.cerca{z-index:-1;background:radial-gradient(3px 3px at 40px 50px, var(--oro) 50%, transparent 51%) 0 0/260px 230px, radial-gradient(3px 3px at 150px 160px, var(--rosa) 50%, transparent 51%) 0 0/310px 280px;opacity:.75}
+.crt{position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px)}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: scroll()){
+    .estrellas{animation:sube-lejos linear both;animation-timeline:scroll(root)}
+    .estrellas.cerca{animation-name:sube-cerca}
+  }
+}
+@keyframes sube-lejos{to{translate:0 -20vh}}
+@keyframes sube-cerca{to{translate:0 -55vh}}
+
+/* ----- HUD: menú, barra del nivel y marcador ----- */
+.hud{position:sticky;top:0;z-index:60;isolation:isolate;background:var(--noche);border-bottom:4px solid var(--cian);box-shadow:0 4px 0 var(--rosa)}
+.nav-in{display:flex;align-items:center;gap:.4rem;width:min(1240px, 100% - 1rem);margin-inline:auto}
+.hud ul{display:flex;gap:.25rem;list-style:none;margin:0;padding:.5rem 0;overflow-x:auto;scrollbar-width:none;flex:1}
+.hud ul::-webkit-scrollbar{display:none}
+.hud ul a{display:block;white-space:nowrap;text-decoration:none;color:var(--txt2);font:400 .58rem/1 var(--f-pix);padding:.6rem .7rem;border:2px solid transparent}
+.hud ul a:hover{color:var(--oro);border-color:var(--oro)}
+.hud ul a[aria-current="true"]{background:var(--oro);color:var(--noche)}
+.nav-arr{flex:none;width:2.2rem;height:2.2rem;border:2px solid var(--cian);background:transparent;color:var(--cian);cursor:pointer;font:400 .7rem var(--f-pix)}
+.nav-arr:hover{background:var(--cian);color:var(--noche)}
+.nivel{display:flex;align-items:center;gap:.8rem;width:min(1240px, 100% - 1rem);margin:0 auto;padding:.2rem 0 .55rem}
+.pista{position:relative;flex:1;height:14px;background:var(--panel) repeating-linear-gradient(90deg, transparent 0 10px, rgba(255,255,255,.06) 10px 12px);box-shadow:0 0 0 2px var(--linea)}
+.prog{position:absolute;inset:0;background:repeating-linear-gradient(90deg, var(--verde) 0 10px, #1fd36b 10px 12px);transform-origin:left;scale:0 1}
+.corredor{position:absolute;left:0;bottom:-2px;width:24px;height:28px;background:var(--spr-bit) 0 0/200% 100% no-repeat;image-rendering:pixelated;filter:drop-shadow(2px 2px 0 var(--noche))}
+.marcas{position:absolute;inset:0;pointer-events:none}
+.marcas i{position:absolute;top:-4px;width:4px;height:22px;background:var(--rosa);translate:-50% 0}
+@supports (animation-timeline: scroll()){
+  .prog{animation:llena linear both;animation-timeline:scroll(root)}
+  .corredor{animation:avanza linear both, pasos steps(1) both;animation-iteration-count:1, 70;animation-timeline:scroll(root), scroll(root)}
+}
+@keyframes llena{to{scale:1 1}}
+@keyframes avanza{to{left:100%;translate:-100% 0}}
+@keyframes pasos{50%{background-position:100% 0}}
+.stats{display:flex;gap:.9rem;align-items:center;font:400 1.25rem/1 var(--f-vt);color:var(--txt);white-space:nowrap}
+.stats b{color:var(--oro);font-weight:400}
+.stats .m::before{content:"";display:inline-block;width:14px;height:14px;margin-right:4px;vertical-align:-1px;background:var(--spr-moneda) 0 0/100% 100%;image-rendering:pixelated}
+.cartuchos{display:flex;gap:3px}
+.cartuchos i{width:9px;height:13px;background:var(--linea)}
+.cartuchos i.ok{background:var(--c, var(--verde));box-shadow:inset 0 3px 0 rgba(255,255,255,.5)}
+.sonido{font:400 .55rem/1 var(--f-pix);background:none;color:var(--txt2);border:2px solid var(--linea);padding:.35rem .45rem;cursor:pointer}
+.sonido[aria-pressed="true"]{color:var(--verde);border-color:var(--verde)}
+@media (max-width:640px){.nivel{flex-wrap:wrap;gap:.4rem .8rem}.pista{flex-basis:100%;order:2}.stats{font-size:1.1rem;gap:.7rem}}
+
+/* ----- portada ----- */
+.portada{position:relative;min-height:min(100svh, 900px);display:grid;align-items:center;overflow:hidden;isolation:isolate;
+  background:linear-gradient(#0b0b24 0 30%, #1a1350 30% 46%, #3a1868 46% 58%, #6b1f78 58% 68%, #b0287a 68% 76%, #ff5a7a 76% 82%, #ff9a5a 82%)}
+.sol{position:absolute;left:50%;top:44%;width:min(46vw, 380px);aspect-ratio:1;translate:-50% -50%;border-radius:50%;z-index:-3;
+  background:linear-gradient(var(--oro), var(--naranja) 60%, var(--rosa));
+  -webkit-mask:linear-gradient(#000 52%, transparent 52%), repeating-linear-gradient(#000 0 14px, transparent 14px 22px);
+  mask:linear-gradient(#000 52%, transparent 52%), repeating-linear-gradient(#000 0 14px, transparent 14px 22px)}
+.capa{position:absolute;left:0;right:0;bottom:0;height:var(--h);z-index:var(--z);background:var(--img) center bottom/auto 100% repeat-x;image-rendering:pixelated}
+.portada-in{position:relative;z-index:2;text-align:center;padding:5rem 0 9rem}
+.sello{display:inline-block;font:400 .6rem/1.6 var(--f-pix);color:var(--noche);background:var(--cian);padding:.5rem .8rem;box-shadow:4px 4px 0 var(--rosa)}
+.titulo{margin:1.2rem 0 .6rem;font:400 clamp(2.4rem, 1rem + 8vw, 6.4rem)/1.05 var(--f-pix);color:var(--oro);letter-spacing:.02em;
+  text-shadow:4px 4px 0 var(--rosa), 8px 8px 0 #6b1f78, 12px 12px 0 var(--noche)}
+.titulo span{display:block;color:var(--cian);text-shadow:4px 4px 0 var(--rosa), 8px 8px 0 #1a1350, 12px 12px 0 var(--noche)}
+.lead{font-size:1.15rem;max-width:52ch;margin:0 auto;color:#fff;text-shadow:2px 2px 0 var(--noche);background:rgba(11,11,36,.55);padding:.6rem 1rem}
+.ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:1.8rem}
+.boton{display:inline-flex;align-items:center;gap:.6rem;font:400 .72rem/1.2 var(--f-pix);text-decoration:none;color:var(--noche);background:var(--oro);border:0;padding:1rem 1.2rem;cursor:pointer;
+  box-shadow:inset -4px -4px 0 #c9a400, inset 4px 4px 0 #fff6b0, 0 0 0 4px var(--noche), 6px 6px 0 4px var(--rosa);transition:translate .08s, box-shadow .08s}
+.boton:hover{color:var(--noche);translate:-2px -2px}
+.boton:active{translate:4px 4px;box-shadow:inset -4px -4px 0 #c9a400, inset 4px 4px 0 #fff6b0, 0 0 0 4px var(--noche), 1px 1px 0 4px var(--rosa)}
+.boton.sec{background:var(--cian);box-shadow:inset -4px -4px 0 #00a6b3, inset 4px 4px 0 #b8fbff, 0 0 0 4px var(--noche), 6px 6px 0 4px var(--lila)}
+.boton.peq{font-size:.55rem;padding:.7rem .8rem}
+.parpadea{animation:parpadeo 1s steps(2) infinite}
+@keyframes parpadeo{50%{opacity:0}}
+.bit-grande{position:absolute;z-index:1;left:12%;bottom:118px;width:96px;height:112px;background:var(--spr-bit) 0 0/200% 100% no-repeat;image-rendering:pixelated;cursor:pointer;border:0;padding:0;animation:bota 1.2s steps(2) infinite}
+@keyframes bota{50%{translate:0 -8px}}
+.bug-portada{position:absolute;z-index:1;right:14%;bottom:122px;width:88px;height:64px;background:var(--spr-bug) 0 0/100% 100%;image-rendering:pixelated;animation:bicho 2s steps(4) infinite alternate}
+@keyframes bicho{to{translate:-40px 0}}
+.creditos{position:absolute;z-index:3;left:0;right:0;bottom:1rem;display:flex;justify-content:space-between;width:var(--ancho);margin:auto;font:400 .55rem/1 var(--f-pix);color:#fff}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .portada .capa{animation:baja-capa linear both;animation-timeline:view();animation-range:exit 0% exit 100%}
+    .portada .sol{animation:baja-sol linear both;animation-timeline:view();animation-range:exit}
+    .portada-in{animation:sube-titulo linear both;animation-timeline:view();animation-range:exit}
+  }
+}
+@keyframes baja-capa{to{translate:0 calc(var(--v) * 1px)}}
+@keyframes baja-sol{to{translate:-50% 10%;scale:1.3}}
+@keyframes sube-titulo{to{translate:0 -40%;opacity:0}}
+@media (max-width:640px){.bit-grande{left:4%;width:64px;height:75px;bottom:96px}.bug-portada{right:4%;width:58px;height:42px;bottom:100px}.portada-in{padding-bottom:8rem}}
+
+/* ----- mundos (secciones) ----- */
+.mundo{position:relative;padding:clamp(3.5rem, 7vw, 6rem) 0 clamp(4rem, 7vw, 6rem)}
+.mundo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:24px;
+  background:linear-gradient(var(--suelo, var(--verde)) 0 6px, transparent 6px), repeating-linear-gradient(90deg, #5a2d0c 0 22px, #3b1d08 22px 24px), #5a2d0c;
+  box-shadow:inset 0 -6px 0 #2b1405}
+.cab{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.2rem;margin-bottom:2rem}
+.cab .num{display:grid;place-items:center;min-width:5.2rem;padding:.7rem .6rem;font:400 .55rem/1.5 var(--f-pix);text-align:center;color:var(--noche);background:var(--c, var(--cian));box-shadow:inset -4px -4px 0 rgba(0,0,0,.25), 0 0 0 4px var(--noche), 6px 6px 0 4px var(--rosa)}
+.cab .num b{display:block;font-size:1.4rem;color:var(--noche);font-weight:400}
+.cab small{display:block;font:400 1.5rem/1 var(--f-vt);color:var(--c, var(--cian));letter-spacing:.06em}
+.mundo h2{margin:.2rem 0 0;font:400 clamp(1.15rem, .8rem + 2vw, 2.1rem)/1.35 var(--f-pix);color:#fff;text-shadow:3px 3px 0 var(--c, var(--rosa))}
+.mundo h3{font:400 clamp(.85rem, .7rem + .8vw, 1.15rem)/1.5 var(--f-pix);color:var(--oro);margin:3rem 0 .9rem}
+.mundo h3::before{content:"▶ ";color:var(--rosa)}
+.mundo h4{font:400 1.45rem/1.1 var(--f-vt);color:var(--cian);letter-spacing:.04em;margin:1.2rem 0 .2rem}
+.lectura{max-width:70ch}
+.lectura p,.lectura li{color:var(--txt)}
+.rejilla{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr))}
+.panel{position:relative;background:var(--panel);padding:1.2rem 1.2rem 1rem;margin:4px;
+  box-shadow:0 -4px 0 0 var(--c, var(--linea)), 0 4px 0 0 var(--c, var(--linea)), -4px 0 0 0 var(--c, var(--linea)), 4px 0 0 0 var(--c, var(--linea)), 8px 8px 0 0 rgba(0,0,0,.5)}
+.panel h4{margin-top:0;color:var(--c, var(--cian))}
+.panel p{margin:.35rem 0}
+.nota{position:relative;margin:1.6rem 4px;padding:1rem 1.2rem 1rem 4rem;background:var(--panel2);
+  box-shadow:0 -4px 0 0 var(--c, var(--oro)), 0 4px 0 0 var(--c, var(--oro)), -4px 0 0 0 var(--c, var(--oro)), 4px 0 0 0 var(--c, var(--oro))}
+.nota::before{content:"!";position:absolute;left:1rem;top:1rem;width:2rem;height:2rem;display:grid;place-items:center;font:400 .9rem/1 var(--f-pix);background:var(--c, var(--oro));color:var(--noche)}
+.nota.peligro{--c:var(--rojo)}
+.nota.peligro::before{content:"✕"}
+.nota.ok{--c:var(--verde)}
+.nota.ok::before{content:"✓"}
+.nota.pista-n{--c:var(--lila)}
+.nota.pista-n::before{content:"?"}
+.nota .tit{display:block;font:400 .62rem/1.6 var(--f-pix);color:var(--c, var(--oro));margin-bottom:.3rem}
+.tabla{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0;background:var(--panel)}
+.tabla th,.tabla td{text-align:left;padding:.6rem .75rem;border-bottom:2px solid var(--linea);vertical-align:top}
+.tabla th{background:var(--cian);color:var(--noche);font:400 .58rem/1.5 var(--f-pix)}
+.desliza{overflow-x:auto}
+.si{color:var(--verde)}.no{color:var(--rojo)}.casi{color:var(--oro)}
+.pasos{counter-reset:p;list-style:none;padding:0;margin:1rem 0;display:grid;gap:.8rem}
+.pasos>li{counter-increment:p;position:relative;padding:.9rem 1rem .9rem 4rem;background:var(--panel);box-shadow:0 0 0 2px var(--linea)}
+.pasos>li::before{content:counter(p);position:absolute;left:.8rem;top:.8rem;width:2.3rem;height:2.3rem;display:grid;place-items:center;background:var(--rosa);color:#fff;font:400 .8rem/1 var(--f-pix)}
+.analogia{display:grid;grid-template-columns:auto minmax(0, 1fr);gap:1rem;align-items:center;margin:1.6rem 0;padding:1rem;background:linear-gradient(90deg, rgba(255,62,165,.14), transparent);border-left:6px solid var(--rosa)}
+.analogia .spr{width:64px;height:64px}
+.analogia p{margin:0}
+.chiste{font:400 1.35rem/1.25 var(--f-vt);color:var(--oro)}
+
+/* ----- lo que aparece en la propia página al hacer scroll ----- */
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .aparece{animation:aparece linear both;animation-timeline:view();animation-range:entry 0% cover 30%}
+    .mundo h2{animation:tecla linear both;animation-timeline:view();animation-range:entry 10% cover 35%}
+  }
+}
+@keyframes aparece{from{opacity:0;translate:0 60px;scale:.96}}
+@keyframes tecla{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+/* ----- monedas ----- */
+.moneda{display:inline-block;vertical-align:middle;width:34px;height:34px;padding:0;margin:0 .3rem;border:0;cursor:pointer;background:var(--spr-moneda) 0 0/100% 100%;image-rendering:pixelated;animation:gira-moneda 1.1s steps(6) infinite}
+.moneda.suelta{position:absolute;right:var(--x, 6%);top:var(--y, 2rem);z-index:3}
+.moneda:hover{filter:drop-shadow(0 0 6px var(--oro))}
+.moneda.cogida{visibility:hidden;pointer-events:none}
+@keyframes gira-moneda{0%,100%{scale:1 1}50%{scale:.15 1}}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .moneda{animation:gira-moneda 1.1s steps(6) infinite, sale-moneda linear both;animation-timeline:auto, view();animation-range:normal, entry 0% entry 100%}
+  }
+}
+@keyframes sale-moneda{from{translate:0 40px;opacity:0}}
+.punto{position:fixed;z-index:300;pointer-events:none;font:400 .8rem/1 var(--f-pix);color:var(--oro);text-shadow:2px 2px 0 var(--noche);animation:punto .8s steps(8) forwards}
+@keyframes punto{to{translate:0 -60px;opacity:0}}
+
+/* ----- ejemplos y código ----- */
+.ejemplo{margin:1.8rem 4px;background:var(--panel);box-shadow:0 0 0 4px var(--cian), 8px 8px 0 4px rgba(0,0,0,.5)}
+.ejemplo .src{display:none}
+.ej-cab{display:flex;justify-content:space-between;gap:1rem;padding:.65rem 1rem;font:400 .55rem/1.6 var(--f-pix);color:var(--noche);background:var(--cian)}
+.ej-cab span:last-child::after{content:" ●";color:var(--rojo);animation:parpadeo 1s steps(2) infinite}
+.ej-vivo iframe{display:block;width:100%;border:0;height:var(--alto, 220px);background:#fff}
+.ejemplo[data-fijo] .ej-cab span:last-child::before{content:"↓ desplázate dentro · "}
+.ej-codigo{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 330px), 1fr));background:#070718}
+.caja{min-width:0;border-top:4px solid var(--linea)}
+.caja + .caja{border-left:2px solid var(--linea)}
+.caja-t{display:flex;justify-content:space-between;align-items:center;padding:.5rem .8rem;font:400 .5rem/1 var(--f-pix);color:var(--txt2)}
+.copiar{font:400 .5rem/1 var(--f-pix);background:var(--oro);color:var(--noche);border:0;padding:.5rem .6rem;cursor:pointer}
+.copiar:hover{background:#fff}
+.caja pre{margin:0;padding:.3rem 1rem 1rem;overflow:auto;max-height:480px;font:400 .82rem/1.6 var(--f-code);color:#dfe6ff;tab-size:2;scrollbar-color:var(--rosa) #070718}
+.h-c{color:#7d86b8;font-style:italic}.h-s{color:var(--oro)}.h-p{color:var(--cian)}.h-v{color:#ff9bd0}.h-t{color:var(--rosa)}.h-a{color:var(--verde)}.h-q{color:#ffd29b}.h-at{color:var(--lila)}
+
+/* ----- laboratorios ----- */
+.lab{position:relative;margin:2.4rem 4px;padding:clamp(1.1rem, 3vw, 1.8rem);background:var(--panel);
+  box-shadow:0 -4px 0 0 var(--c, var(--verde)), 0 4px 0 0 var(--c, var(--verde)), -4px 0 0 0 var(--c, var(--verde)), 4px 0 0 0 var(--c, var(--verde)), 10px 10px 0 0 rgba(0,0,0,.55)}
+.lab-t,.mundo .lab-t{margin:0 0 .5rem;font:400 clamp(.8rem, .7rem + .6vw, 1.05rem)/1.5 var(--f-pix);color:var(--c, var(--verde))}
+.mundo .lab-t::before{content:"◆ "}
+.lab>p{margin:.2rem 0 1rem;color:var(--txt2)}
+.lab-cuerpo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr);gap:1.4rem;align-items:start}
+.mandos{display:grid;gap:.8rem 1.1rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 160px), 1fr))}
+.mandos label{display:grid;gap:.3rem;font:400 1.2rem/1.1 var(--f-vt);color:var(--txt)}
+.mandos output{font:400 .78rem/1 var(--f-code);color:var(--oro)}
+input[type=range]{width:100%;accent-color:var(--rosa)}
+input[type=color]{width:100%;height:2.5rem;border:3px solid var(--linea);background:var(--noche);padding:2px;cursor:pointer}
+input[type=search],input[type=text],select{font:400 1rem/1.3 var(--f-code);background:var(--noche);color:var(--txt);border:3px solid var(--linea);padding:.55rem .7rem;width:100%;border-radius:0}
+input[type=search]:focus,input[type=text]:focus,select:focus{border-color:var(--oro);outline:0}
+.salida{font:400 .8rem/1.6 var(--f-code);background:#070718;color:#dfe6ff;padding:.9rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:.8rem 0 0;box-shadow:0 0 0 2px var(--linea)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.chip{font:400 .55rem/1.3 var(--f-pix);padding:.6rem .7rem;border:2px solid var(--cian);background:transparent;color:var(--cian);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--cian);color:var(--noche)}
+@media (max-width:820px){.lab-cuerpo{grid-template-columns:minmax(0, 1fr)}}
+
+/* tiempo frente a scroll (mundo 1) */
+.duelo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1rem}
+.carril{position:relative;height:120px;background:var(--noche);box-shadow:0 0 0 3px var(--linea);overflow:hidden}
+.carril .bit{position:absolute;left:4px;bottom:14px;width:36px;height:42px;background:var(--spr-bit) 0 0/200% 100%;image-rendering:pixelated}
+.carril::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:repeating-linear-gradient(90deg, var(--verde) 0 8px, #1fd36b 8px 10px)}
+.carril .rot{position:absolute;left:.6rem;top:.5rem;font:400 .5rem/1.5 var(--f-pix);color:var(--oro)}
+.carril.reloj .bit{animation:cruza 4s linear infinite alternate, pasos .4s steps(1) infinite}
+@keyframes cruza{to{left:calc(100% - 40px)}}
+.rodillo{height:260px;overflow-y:auto;background:var(--panel2);box-shadow:0 0 0 3px var(--rosa);scrollbar-color:var(--rosa) var(--noche)}
+.rodillo .escena{position:sticky;top:0;padding:.6rem}
+.rodillo .largo{height:900px;display:flex;align-items:flex-end;justify-content:center;padding:1rem;font:400 1.3rem var(--f-vt);color:var(--txt2)}
+@supports (animation-timeline: scroll()){
+  .carril.rueda .bit{animation:cruza linear both, pasos steps(1) both;animation-iteration-count:1, 24;animation-timeline:scroll(), scroll()}
+}
+@media (max-width:640px){.duelo{grid-template-columns:minmax(0, 1fr)}}
+
+/* visor de animation-range (mundo 4) */
+.visor{display:grid;grid-template-columns:minmax(0, 300px) minmax(0, 1fr);gap:1.4rem}
+.ventana{position:relative;height:320px;overflow-y:auto;background:#070718 repeating-linear-gradient(0deg, transparent 0 39px, rgba(0,240,255,.08) 39px 40px);box-shadow:0 0 0 4px var(--oro);scrollbar-color:var(--oro) var(--noche)}
+.ventana .hueco{height:420px;display:grid;place-items:center;font:400 1.2rem var(--f-vt);color:var(--txt2);text-align:center;padding:1rem}
+.sujeto{margin:0 auto;width:150px;height:110px;display:grid;place-items:center;background:var(--rosa);color:#fff;font:400 .55rem/1.5 var(--f-pix);text-align:center;box-shadow:inset -6px -6px 0 rgba(0,0,0,.25), inset 6px 6px 0 rgba(255,255,255,.3)}
+.diagrama{display:grid;gap:.7rem}
+.fases{position:relative;height:74px;background:var(--noche);box-shadow:0 0 0 2px var(--linea)}
+.fases .f{position:absolute;top:0;height:34px;display:grid;place-items:center;font:400 .45rem/1 var(--f-pix);color:var(--noche);overflow:hidden;white-space:nowrap}
+.fases .rango{position:absolute;top:40px;height:14px;background:var(--oro);box-shadow:0 0 0 2px var(--noche)}
+.fases .cursor{position:absolute;top:-6px;bottom:-6px;width:4px;background:#fff;translate:-50% 0;box-shadow:0 0 8px #fff}
+.fases .eje{position:absolute;left:0;right:0;bottom:2px;display:flex;justify-content:space-between;font:400 .9rem/1 var(--f-vt);color:var(--txt2);padding:0 .3rem}
+.lectura-viva{display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:.6rem}
+.lectura-viva div{background:var(--noche);padding:.55rem .7rem;box-shadow:0 0 0 2px var(--linea);font:400 1.15rem/1.15 var(--f-vt)}
+.lectura-viva b{display:block;font:400 .5rem/1.4 var(--f-pix);color:var(--txt2);margin-bottom:.2rem}
+.lectura-viva output{color:var(--oro);font-size:1.5rem}
+.medidor{height:16px;background:var(--noche);box-shadow:0 0 0 2px var(--linea)}
+.medidor i{display:block;height:100%;width:var(--p, 0%);background:repeating-linear-gradient(90deg, var(--verde) 0 8px, #1fd36b 8px 10px)}
+@media (max-width:820px){.visor{grid-template-columns:minmax(0, 1fr)}}
+
+/* fases dibujadas (mundo 3) */
+.tira{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 150px), 1fr));gap:.9rem;margin:1.4rem 0}
+.foto{background:var(--panel);padding:.7rem;box-shadow:0 0 0 3px var(--linea)}
+.foto .pant{position:relative;height:130px;background:#070718;box-shadow:0 0 0 3px var(--cian);overflow:hidden;margin:18px 0}
+.foto .caja-s{position:absolute;left:30%;width:40%;height:46px;background:var(--rosa);top:var(--t)}
+.foto .caja-s.fuera{opacity:.35;outline:2px dashed var(--rosa);background:transparent}
+.foto b{display:block;font:400 .5rem/1.5 var(--f-pix);color:var(--oro)}
+.foto p{margin:.2rem 0 0;font-size:.92rem;color:var(--txt2)}
+.mini-pant{position:relative;height:200px;margin:30px 0}
+
+/* snap (mundo 7) */
+.cartuchera{display:flex;gap:1.2rem;overflow-x:auto;padding:1.5rem 20%;scroll-snap-type:x mandatory;scroll-padding-inline:20%;background:var(--noche);box-shadow:0 0 0 4px var(--lila);scrollbar-color:var(--lila) var(--noche);overscroll-behavior-x:contain}
+.cart{flex:0 0 min(60%, 240px);scroll-snap-align:center;aspect-ratio:3/4;display:grid;align-content:end;gap:.4rem;padding:1rem;background:var(--c);color:var(--noche);
+  clip-path:polygon(0 8%, 12% 8%, 12% 0, 88% 0, 88% 8%, 100% 8%, 100% 100%, 0 100%);box-shadow:inset 0 -10px 0 rgba(0,0,0,.25)}
+.cart b{font:400 .65rem/1.5 var(--f-pix);color:var(--noche)}
+.cart span{font:400 1.2rem/1 var(--f-vt)}
+.cart .etiq{height:7rem;background:var(--noche) repeating-linear-gradient(90deg, transparent 0 6px, rgba(255,255,255,.08) 6px 8px);margin-bottom:.4rem;display:grid;place-items:center;font:400 1.4rem var(--f-pix);color:var(--c)}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .cart{animation:enfoca linear both;animation-timeline:view(inline)}
+  }
+}
+@keyframes enfoca{0%,100%{scale:.78;opacity:.55;filter:saturate(.3)}50%{scale:1;opacity:1;filter:none}}
+
+/* barras de scroll (mundo 9) */
+.taller-barra{height:240px;overflow-y:scroll;padding:1rem 1.2rem;background:var(--noche);box-shadow:0 0 0 3px var(--linea);font-size:.98rem}
+.salto{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1rem}
+.salto .caja-salto{height:150px;overflow-y:auto;background:var(--noche);box-shadow:0 0 0 3px var(--linea);padding:.6rem}
+.salto .caja-salto.estable{scrollbar-gutter:stable}
+.salto .linea-s{height:22px;margin:4px 0;background:var(--cian)}
+.salto .linea-s:nth-child(even){background:var(--rosa);width:80%}
+.cadena{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1rem}
+.chat{height:200px;overflow-y:auto;background:var(--noche);box-shadow:0 0 0 3px var(--linea);padding:.6rem;font:400 1.15rem/1.3 var(--f-vt)}
+.chat.contiene{overscroll-behavior:contain}
+.chat p{margin:.3rem 0;padding:.3rem .5rem;background:var(--panel2);width:fit-content;max-width:90%}
+.chat p:nth-child(odd){margin-left:auto;background:#2a1450}
+@media (max-width:640px){.salto,.cadena{grid-template-columns:minmax(0, 1fr)}}
+
+/* anchor positioning (mundo 10) */
+.escenario-ancla{position:relative;height:260px;overflow:auto;background:var(--noche);box-shadow:0 0 0 3px var(--oro)}
+.escenario-ancla .lienzo{height:620px;position:relative}
+.bit-ancla{position:absolute;top:var(--top, 300px);left:var(--left, 40%);width:54px;height:63px;border:0;padding:0;background:var(--spr-bit) 0 0/200% 100%;image-rendering:pixelated;cursor:pointer;anchor-name:--bit}
+.bocadillo{position:absolute;position-anchor:--bit;position-area:top;position-try-fallbacks:flip-block;margin:10px;width:max-content;max-width:220px;padding:.6rem .8rem;background:#fff;color:var(--noche);font:400 1.15rem/1.2 var(--f-vt);box-shadow:0 0 0 3px var(--noche), 6px 6px 0 3px var(--rosa)}
+.bocadillo .moneda{width:26px;height:26px}
+.sin-ancla{display:none}
+@supports not (anchor-name: --a){.bocadillo{position:static;display:block;margin:.6rem}.sin-ancla{display:block}}
+
+/* misiones */
+.mision{position:relative;margin:2.6rem 4px;background:#160a2e;box-shadow:0 -4px 0 0 var(--rojo), 0 4px 0 0 var(--rojo), -4px 0 0 0 var(--rojo), 4px 0 0 0 var(--rojo), 10px 10px 0 0 rgba(0,0,0,.6)}
+.mision.ganada{background:#082418;box-shadow:0 -4px 0 0 var(--verde), 0 4px 0 0 var(--verde), -4px 0 0 0 var(--verde), 4px 0 0 0 var(--verde), 10px 10px 0 0 rgba(0,0,0,.6)}
+.mis-cab{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;background:repeating-linear-gradient(-45deg, rgba(255,74,74,.16) 0 10px, transparent 10px 20px)}
+.mision.ganada .mis-cab{background:repeating-linear-gradient(-45deg, rgba(57,255,136,.14) 0 10px, transparent 10px 20px)}
+.mis-cab .bug{flex:none;width:66px;height:48px;background:var(--spr-bug) 0 0/100% 100%;image-rendering:pixelated;animation:tiembla .3s steps(2) infinite}
+.mision.ganada .bug{background-image:var(--spr-cartucho);width:48px;height:48px;animation:none;filter:hue-rotate(var(--h, 0deg))}
+@keyframes tiembla{50%{translate:2px -2px}}
+.mis-cab small{display:block;font:400 .5rem/1.6 var(--f-pix);color:var(--rojo)}
+.mision.ganada .mis-cab small{color:var(--verde)}
+.mis-cab h4{margin:.2rem 0 0;font:400 .75rem/1.5 var(--f-pix);color:#fff}
+.mis-cuerpo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1.2rem;padding:0 1.2rem 1.2rem}
+.mis-cuerpo .enun{margin:.4rem 0 .8rem}
+.mis-codigo{font:400 .84rem/1.75 var(--f-code);background:#070718;color:#dfe6ff;padding:.9rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 0 0 2px var(--linea)}
+.mis-codigo input{font:700 .84rem/1.3 var(--f-code);background:var(--panel2);color:var(--oro);border:0;border-bottom:3px solid var(--oro);padding:.15rem .3rem;width:var(--w, 12ch);max-width:100%}
+.mis-codigo input:focus{outline:2px solid var(--cian)}
+.mision.ganada .mis-codigo input{color:var(--verde);border-color:var(--verde)}
+.mis-vivo iframe{display:block;width:100%;height:280px;border:0;background:#fff;box-shadow:0 0 0 3px var(--linea)}
+.mis-estado{margin:.7rem 0 0;font:400 1.3rem/1.2 var(--f-vt);color:var(--txt2)}
+.mision.ganada .mis-estado{color:var(--verde)}
+.mis-botones{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+.mis-pista{display:none;margin-top:.6rem;padding:.6rem .8rem;background:rgba(155,123,255,.15);border-left:4px solid var(--lila);font-size:.95rem}
+.mis-pista.ver{display:block}
+@media (max-width:820px){.mis-cuerpo{grid-template-columns:minmax(0, 1fr)}}
+
+/* catálogo */
+.cat-mandos{display:grid;grid-template-columns:minmax(0, 1fr) auto;gap:1rem;align-items:center;margin-bottom:.5rem}
+.cat-n{font:400 1.3rem/1 var(--f-vt);color:var(--oro);white-space:nowrap}
+.galeria{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fill, minmax(min(100%, 250px), 1fr));margin-top:1rem}
+.efecto{position:relative;background:var(--panel);box-shadow:0 0 0 3px var(--linea);display:flex;flex-direction:column}
+.efecto:hover{box-shadow:0 0 0 3px var(--cian)}
+.efecto iframe{display:block;width:100%;height:220px;border:0;background:#fff}
+.efecto .demo{position:absolute;right:8px;top:8px;font:400 .45rem/1 var(--f-pix);background:var(--oro);color:var(--noche);border:0;padding:.45rem .5rem;cursor:pointer;box-shadow:2px 2px 0 var(--noche)}
+.efecto .info{padding:.7rem .9rem .8rem}
+.efecto .num-e{font:400 .45rem/1 var(--f-pix);color:var(--rosa)}
+.efecto h4{margin:.35rem 0 .2rem;font:400 1.35rem/1.05 var(--f-vt);color:#fff}
+.efecto p{margin:0;font-size:.88rem;color:var(--txt2)}
+.efecto .tags span{display:inline-block;margin-top:.45rem;font:400 .42rem/1 var(--f-pix);padding:.35rem .4rem;background:var(--noche);color:var(--cian)}
+.efecto details summary{cursor:pointer;font:400 .5rem/1 var(--f-pix);color:var(--oro);padding:.7rem 0 .1rem}
+.efecto.secreto{box-shadow:0 0 0 3px var(--oro)}
+.efecto.secreto .premio{display:grid;place-items:center;height:220px;background:#070718;text-align:center;font:400 1.3rem/1.3 var(--f-vt);color:var(--oro);padding:1rem}
+
+/* test · jefe final */
+.jefe{display:grid;grid-template-columns:auto minmax(0, 1fr);gap:1.2rem;align-items:center;margin-bottom:1.2rem}
+.glitch{width:132px;height:96px;background:var(--spr-bug) 0 0/100% 100%;image-rendering:pixelated;animation:glitch 1.6s steps(1) infinite;filter:hue-rotate(var(--hue, 0deg)) drop-shadow(4px 0 0 var(--cian)) drop-shadow(-4px 0 0 var(--rosa))}
+.glitch.ko{animation:none;rotate:180deg;filter:grayscale(1);opacity:.5}
+@keyframes glitch{0%{translate:0}20%{translate:-4px 2px}40%{translate:4px -2px;clip-path:inset(20% 0 30% 0)}60%{translate:0;clip-path:none}80%{translate:2px 0;scale:1.05 .95}}
+.vida{font:400 .55rem/1.6 var(--f-pix);color:var(--rojo)}
+.vida .barra-v{height:20px;margin-top:.4rem;background:var(--noche);box-shadow:0 0 0 3px var(--linea)}
+.vida .barra-v i{display:block;height:100%;width:var(--hp, 100%);background:repeating-linear-gradient(90deg, var(--rojo) 0 10px, #c92a2a 10px 12px);transition:width .4s steps(6)}
+.q{background:var(--panel);padding:1rem 1.1rem;margin:1rem 4px;box-shadow:0 0 0 3px var(--linea)}
+.qq{font-weight:700;margin:0 0 .6rem;color:#fff}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .6rem;border:2px solid transparent;cursor:pointer}
+.opt:hover{background:var(--panel2)}
+.opt.right{border-color:var(--verde);background:rgba(57,255,136,.1)}
+.opt.wrong{border-color:var(--rojo);background:rgba(255,74,74,.1)}
+.opt input{margin-top:.45rem;accent-color:var(--rosa)}
+.ex{display:none;margin-top:.6rem;padding:.6rem .8rem;border-left:4px solid var(--verde);background:rgba(57,255,136,.07);font-size:.95rem}
+.ex.show{display:block}
+.marcador{position:sticky;top:6.6rem;z-index:5;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;background:var(--oro);color:var(--noche);padding:.5rem .6rem .5rem 1rem;font:400 .6rem/1.4 var(--f-pix);box-shadow:0 0 0 4px var(--noche), 6px 6px 0 4px var(--rosa)}
+.marcador b{color:var(--noche)}
+.marcador .boton{font-size:.5rem;padding:.6rem .7rem;box-shadow:inset -3px -3px 0 rgba(0,0,0,.2), 0 0 0 3px var(--noche)}
+
+/* récords */
+.records{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1.4rem;align-items:start}
+.pantalla-fin{background:#070718;padding:1.4rem;text-align:center;box-shadow:0 0 0 4px var(--rosa), 8px 8px 0 4px rgba(0,0,0,.5)}
+.pantalla-fin .gran{font:400 clamp(1rem, .7rem + 1.6vw, 1.6rem)/1.5 var(--f-pix);color:var(--oro);text-shadow:3px 3px 0 var(--rosa)}
+.pantalla-fin .rango{font:400 1.8rem/1.2 var(--f-vt);color:var(--cian)}
+.desglose{display:grid;grid-template-columns:1fr auto;gap:.2rem 1rem;text-align:left;font:400 1.3rem/1.3 var(--f-vt);margin:1rem auto;max-width:300px}
+.desglose b{color:var(--oro);font-weight:400;text-align:right}
+.iniciales{display:flex;gap:.5rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:1rem}
+.iniciales input{width:7ch;text-align:center;text-transform:uppercase;font:400 1rem var(--f-pix);letter-spacing:.2em}
+.tabla-rec{width:100%;border-collapse:collapse;font:400 1.4rem/1.3 var(--f-vt)}
+.tabla-rec td{padding:.25rem .5rem;border-bottom:2px dashed var(--linea)}
+.tabla-rec td:first-child{color:var(--rosa)}
+.tabla-rec td:last-child{text-align:right;color:var(--oro)}
+@media (max-width:820px){.records{grid-template-columns:minmax(0, 1fr)}.jefe{grid-template-columns:minmax(0, 1fr);justify-items:center;text-align:center}}
+
+.pie{position:relative;text-align:center;padding:3rem 1rem 2.5rem;background:#070718;color:var(--txt2);font:400 1.2rem/1.5 var(--f-vt);border-top:4px solid var(--cian)}
+.pie a{color:var(--oro)}
+.pie .fin{font:400 .8rem/1.6 var(--f-pix);color:var(--rosa);margin:0 0 .6rem}
+
+/* modo 1-BIT (truco secreto) */
+html.unbit body{filter:grayscale(1) contrast(1.6) sepia(.6) hue-rotate(60deg)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div class="estrellas" aria-hidden="true"></div><div class="estrellas cerca" aria-hidden="true"></div><div class="crt" aria-hidden="true"></div>
+<nav class="hud" aria-label="Mundos de Scroll Quest">
+  <div class="nav-in">
+    <button class="nav-arr" id="navL" type="button" aria-label="Mundos anteriores">◀</button>
+    <ul id="navUl"></ul>
+    <button class="nav-arr" id="navR" type="button" aria-label="Mundos siguientes">▶</button>
+  </div>
+  <div class="nivel">
+    <div class="pista" aria-hidden="true"><div class="prog"></div><div class="marcas" id="marcas"></div><div class="corredor"></div></div>
+    <div class="stats" aria-live="polite"><span>SCORE <b id="hudScore">000000</b></span><span class="m"><b id="hudMon">0</b>/<span id="hudMonT">0</span></span><span class="cartuchos" id="hudCart" title="Cartuchos ganados en las misiones"></span><button class="sonido" id="sonido" type="button" aria-pressed="false">SFX</button></div>
+  </div>
+</nav>
+
+<header class="portada" id="portada" data-nav="Start">
+  <div class="sol" aria-hidden="true"></div>
+  <div class="capa" id="capaMontes" style="--h:46%;--z:-2;--v:180" aria-hidden="true"></div>
+  <div class="capa" id="capaCiudad" style="--h:34%;--z:-1;--v:110" aria-hidden="true"></div>
+  <div class="capa" id="capaSuelo" style="--h:118px;--z:0;--v:40" aria-hidden="true"></div>
+  <button class="bit-grande" id="bitPortada" type="button" aria-label="Bit, el robot protagonista"></button>
+  <span class="bug-portada" aria-hidden="true"></span>
+  <div class="wrap portada-in">
+    <span class="sello">BLOQUE 06 · SCROLL Y RATÓN</span>
+    <h1 class="titulo">SCROLL<span>QUEST</span></h1>
+    <p class="lead">Tu ratón es el mando. Cada vez que mueves la rueda, la página avanza… y con ella las animaciones. Hoy aprendemos a hacer que <b>las cosas aparezcan, cambien de color y se muevan al hacer scroll</b>, a <b>imantar carruseles</b>, a <b>pintar las barras de scroll</b> y a pegar bocadillos a cualquier elemento. Todo con CSS, sin una línea de JavaScript.</p>
+    <div class="ctas"><a class="boton" href="#rodillo"><span class="parpadea">▶</span> PRESS START</a><a class="boton sec" href="#catalogo">80 EFECTOS</a></div>
+  </div>
+  <div class="creditos" aria-hidden="true"><span>1UP · BIT</span><span class="parpadea">INSERT COIN</span><span>CREDIT <b id="credito">00</b></span></div>
+</header>
+
+<main id="contenido">
+
+<!-- MUNDO 1 · EL RODILLO =============================================== -->
+<section class="mundo" id="rodillo" data-nav="1 · El rodillo" style="--c:var(--cian);--suelo:var(--verde)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>1-1</b></span><div><small>Cómo se juega</small><h2>El scroll es tu joystick</h2></div></div>
+    <div class="lectura aparece">
+      <p>Hasta ahora, en el bloque 04, todas las animaciones iban <b>con el reloj</b>: escribías <code>animation: salto 2s</code> y, pasara lo que pasara, a los dos segundos la animación había terminado. Si no sabes ya qué es <code>@keyframes</code> o <code>animation</code>, repasa antes <a href="../CuartoBloque/Animaciones-CSS-Comic.html">la página de Animaciones del bloque 04</a>: aquí damos eso por sabido.</p>
+      <p>Hoy cambiamos el reloj por <b>la rueda del ratón</b>. Una <b>animación dirigida por el scroll</b> (en inglés, <i>scroll-driven animation</i>) es una animación normal, con sus <code>@keyframes</code> de siempre, pero que <b>no avanza con el tiempo, sino con lo que te desplazas</b>. Si bajas, avanza. Si paras, se para. Si subes, va marcha atrás.</p>
+    </div>
+    <div class="analogia aparece"><span class="spr" data-spr="cinta" aria-hidden="true"></span><p><b>La analogía de la cinta de vídeo.</b> Una animación normal es una película que se reproduce sola. Una animación con scroll es la misma película, pero <b>tú giras la rueda que mueve la cinta</b>: cada fotograma depende de cuánto has girado, no de cuánto tiempo ha pasado.</p></div>
+
+    <h3>Míralo: el mismo robot, dos relojes</h3>
+    <p class="lectura">Los dos Bit usan los mismos <code>@keyframes</code>. El de la izquierda va con el reloj (4 segundos, ida y vuelta). El de la derecha va con la <b>rueda</b>: desplázate dentro del recuadro rosa y verás que solo anda cuando tú mueves el scroll. Fíjate en las patas: también se mueven solo cuando hay scroll.</p>
+    <div class="duelo">
+      <div class="carril reloj"><span class="rot">CON EL RELOJ · 4s</span><span class="bit"></span></div>
+      <div class="rodillo" tabindex="0" aria-label="Recuadro con scroll: desplázate dentro">
+        <div class="escena"><div class="carril rueda"><span class="rot">CON LA RUEDA ↓</span><span class="bit"></span></div></div>
+        <div class="largo"><span>¡Has llegado al final del rodillo! <button class="moneda" data-id="s-rodillo" aria-label="Moneda secreta"></button></span></div>
+      </div>
+    </div>
+
+    <h3>Las tres piezas de cualquier animación con scroll</h3>
+    <div class="rejilla">
+      <div class="panel aparece" style="--c:var(--oro)"><h4>1 · Los @keyframes</h4><p>Lo que pasa: de dónde sale y adónde llega. Son los de siempre, no cambian.</p></div>
+      <div class="panel aparece" style="--c:var(--rosa)"><h4>2 · La animación</h4><p><code>animation: nombre linear both;</code> pero <b>sin duración</b>: ya no hay segundos que contar.</p></div>
+      <div class="panel aparece" style="--c:var(--cian)"><h4>3 · La línea de tiempo</h4><p><code>animation-timeline:</code> dice <b>qué rueda</b> mueve la cinta. Hay dos tipos: <code>scroll()</code> y <code>view()</code>.</p></div>
+    </div>
+    <div class="desliza aparece"><table class="tabla">
+      <thead><tr><th>Línea de tiempo</th><th>Avanza según…</th><th>Sirve para…</th><th>Mundo</th></tr></thead>
+      <tbody>
+        <tr><td><code>scroll()</code></td><td>Cuánto has bajado <b>en todo un contenedor</b> (0 % arriba del todo, 100 % abajo del todo)</td><td>Barras de progreso, cabeceras que encogen, fondos que cambian de color con la página</td><td>2</td></tr>
+        <tr><td><code>view()</code></td><td>Dónde está <b>un elemento concreto</b> dentro de la pantalla (entrando, cruzando, saliendo)</td><td>Que las cosas aparezcan, se iluminen o cambien al entrar en pantalla</td><td>3 y 4</td></tr>
+      </tbody>
+    </table></div>
+    <div class="nota ok"><span class="tit">¿Funciona en todos los navegadores? (noviembre de 2026)</span>Sí, ya en los tres grandes: <b>Chrome y Edge desde la 115</b> (2023), <b>Safari desde la 26</b> (septiembre de 2025) y <b>Firefox desde la 159</b> (27 de octubre de 2026). Firefox lo tuvo años escondido tras una opción y lo activó hace solo unas semanas, así que <b>todavía hay gente con Firefox antiguo</b>: por eso en el mundo 10 aprenderemos a que la página funcione igual sin ello. Fuente: <a href="https://developer.mozilla.org/es/docs/Web/CSS/animation-timeline" target="_blank" rel="noopener">MDN · animation-timeline</a> (datos de compatibilidad de MDN, versión del 19-11-2026).</div>
+    <button class="moneda suelta" data-id="m-1a" aria-label="Moneda" style="--x:2%;--y:4rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 2 · BARRA DE PROGRESO ====================================== -->
+<section class="mundo" id="progreso" data-nav="2 · Progreso" style="--c:var(--verde);--suelo:var(--cian)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>1-2</b></span><div><small>scroll()</small><h2>La barra de vida del nivel</h2></div></div>
+    <div class="lectura aparece">
+      <p>Mira arriba del todo: la barra verde por la que corre Bit <b>es esta lección</b>. Crece cuanto más bajas por la página y nadie ha escrito JavaScript para ello. Es una animación con la línea de tiempo <code>scroll()</code>.</p>
+      <p><code>scroll()</code> mide el recorrido de un contenedor con scroll: <b>0 %</b> cuando estás arriba del todo y <b>100 %</b> cuando has llegado al final. Ese porcentaje es el «fotograma» de la animación.</p>
+    </div>
+    <ol class="pasos aparece">
+      <li><b>Una barra fija arriba</b>, de ancho completo: <code>position: fixed; top: 0; left: 0; width: 100%;</code></li>
+      <li><b>Los keyframes</b>: de <code>scale: 0 1</code> (ancho cero) a <code>scale: 1 1</code> (ancho completo). Usamos <code>scale</code> y no <code>width</code> porque el navegador anima <code>scale</code> sin recalcular la página: va mucho más fluido.</li>
+      <li><b>Que crezca desde la izquierda</b>: <code>transform-origin: left;</code> Sin esto crecería desde el centro hacia los dos lados.</li>
+      <li><b>La animación sin duración</b>: <code>animation: progreso linear both;</code> <code>linear</code> para que el avance sea proporcional al scroll, y <code>both</code> para que se quede quieta en los extremos.</li>
+      <li><b>La línea de tiempo, DESPUÉS</b>: <code>animation-timeline: scroll();</code></li>
+    </ol>
+    <div class="ejemplo" data-fijo="1" data-alto="320" data-t="Barra de progreso de lectura">
+<textarea class="src" data-lang="html"><div class="progreso"></div>
+<article>
+  <h1>Nivel 1: el castillo</h1>
+  <p>Baja despacio y mira cómo crece la barra de arriba.</p>
+  <p>Cuanto más bajas, más se llena. Si subes, se vacía.</p>
+  <p>Es un fotograma por cada píxel de scroll.</p>
+  <p>Sigue bajando…</p>
+  <p>Ya casi estás.</p>
+  <p>¡Final del nivel!</p>
+</article></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #e6ecff; /* texto claro */
+  font-family: system-ui, sans-serif; /* letra */
+}
+article {
+  padding: 2rem 1.5rem; /* relleno */
+}
+p {
+  margin-bottom: 9rem; /* mucho espacio: así hay scroll */
+}
+.progreso {
+  position: fixed; /* pegada arriba aunque bajes */
+  top: 0; /* arriba del todo */
+  left: 0; /* desde la izquierda */
+  width: 100%; /* ancho completo */
+  height: 10px; /* grosor */
+  background-color: #39ff88; /* verde arcade */
+  transform-origin: left; /* crece desde la izquierda */
+  animation: progreso linear both; /* sin duración: la marca el scroll */
+  animation-timeline: scroll(); /* SIEMPRE después del shorthand */
+}
+@keyframes progreso {
+  from { scale: 0 1; } /* ancho cero */
+  to { scale: 1 1; } /* ancho completo */
+}</textarea>
+    </div>
+    <div class="nota peligro"><span class="tit">La trampa número 1 del bloque: el orden</span><code>animation</code> es un atajo (<i>shorthand</i>) que <b>reinicia a su valor por defecto todas las propiedades animation-*</b>, y desde 2023 <code>animation-timeline</code> es una de ellas. Si escribes <code>animation-timeline: scroll();</code> y <b>debajo</b> <code>animation: progreso linear;</code>, el atajo la devuelve a <code>auto</code> (el reloj) y la barra se llena de golpe al cargar. Lo hemos comprobado en Chrome 157. Regla: <b>primero <code>animation</code>, después <code>animation-timeline</code></b>.</div>
+
+    <h3>¿Qué contenedor mide scroll()?</h3>
+    <p class="lectura"><code>scroll()</code> admite dos datos entre paréntesis, en cualquier orden: <b>qué contenedor</b> y <b>qué eje</b>.</p>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Escribes</th><th>Significa</th></tr></thead>
+      <tbody>
+        <tr><td><code>scroll()</code></td><td>Lo mismo que <code>scroll(nearest block)</code>: el contenedor con scroll más cercano hacia arriba en el HTML, en vertical. Para una barra <code>fixed</code> suele ser la página entera.</td></tr>
+        <tr><td><code>scroll(root)</code></td><td>Siempre la página entera, esté donde esté el elemento. Es lo que usa la barra de esta web.</td></tr>
+        <tr><td><code>scroll(self)</code></td><td>El propio elemento, si él mismo tiene scroll. Útil para que una caja con scroll cambie según su propio recorrido.</td></tr>
+        <tr><td><code>scroll(x)</code> · <code>scroll(inline)</code></td><td>Mide el scroll <b>horizontal</b>. Para carruseles.</td></tr>
+        <tr><td><code>scroll(y)</code> · <code>scroll(block)</code></td><td>Mide el scroll <b>vertical</b> (el que hay por defecto).</td></tr>
+      </tbody>
+    </table></div>
+    <div class="nota pista-n"><span class="tit">El truco de las patas de Bit</span>Una animación con scroll se puede <b>repetir</b>: con <code>animation-iteration-count: 70</code>, la animación se repite 70 veces a lo largo de toda la página. Es lo que hace que Bit mueva las patas <b>solo mientras haces scroll</b>: <code>animation: avanza linear both, pasos steps(1) both; animation-iteration-count: 1, 70; animation-timeline: scroll(root), scroll(root);</code>. Cuando hay varias animaciones separadas por comas, cada valor de <code>animation-timeline</code> va con la animación que ocupa su misma posición.</div>
+    <div class="mision-host" data-m="barra"></div>
+    <button class="moneda suelta" data-id="m-2a" aria-label="Moneda" style="--x:1%;--y:12rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 3 · VIEW() ================================================== -->
+<section class="mundo" id="aparecer" data-nav="3 · Aparecer" style="--c:var(--rosa);--suelo:var(--rosa)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>2-1</b></span><div><small>view()</small><h2>Que las cosas aparezcan</h2></div></div>
+    <div class="lectura aparece">
+      <p>Este es el efecto que ves en muchísimas webs (y en casi todas las de este curso): <b>los bloques aparecen con un fundido según llegan a la pantalla</b>. Hasta hace poco hacía falta JavaScript. Ahora basta con la línea de tiempo <code>view()</code>.</p>
+      <p>La diferencia con <code>scroll()</code> es la pregunta que responde. <code>scroll()</code> pregunta «¿cuánto has bajado en la página?». <code>view()</code> pregunta «<b>¿por dónde va ESTE elemento dentro de la pantalla?</b>». Cada elemento tiene su propia línea de tiempo: empieza (0 %) cuando su borde de arriba asoma por abajo, y termina (100 %) cuando su borde de abajo desaparece por arriba.</p>
+    </div>
+    <div class="analogia aparece"><span class="spr" data-spr="tren" aria-hidden="true"></span><p><b>La ventanilla del tren.</b> Vas en un tren y miras por la ventanilla: cada árbol entra por un lado, cruza delante de ti y sale por el otro. La ventanilla es la pantalla, el árbol es tu elemento y <code>view()</code> mide en qué punto de ese viaje está el árbol.</p></div>
+
+    <h3>El viaje de un elemento, fotograma a fotograma</h3>
+    <div class="tira">
+      <div class="foto"><b>0 % · asoma</b><div class="pant"><span class="caja-s" style="--t:128px"></span></div><p>El borde de arriba toca el borde de abajo de la pantalla.</p></div>
+      <div class="foto"><b>ENTRY · entrando</b><div class="pant"><span class="caja-s" style="--t:100px"></span></div><p>Se está metiendo: una parte ya se ve.</p></div>
+      <div class="foto"><b>CONTAIN · dentro</b><div class="pant"><span class="caja-s" style="--t:42px"></span></div><p>Entero dentro de la pantalla.</p></div>
+      <div class="foto"><b>EXIT · saliendo</b><div class="pant"><span class="caja-s" style="--t:-20px"></span></div><p>Se va por arriba.</p></div>
+      <div class="foto"><b>100 % · se fue</b><div class="pant"><span class="caja-s fuera" style="--t:-46px"></span></div><p>Su borde de abajo ha salido por arriba.</p></div>
+    </div>
+
+    <h3>La receta del fundido al aparecer</h3>
+    <div class="ejemplo" data-fijo="1" data-alto="340" data-t="Tarjetas que aparecen al entrar en pantalla">
+<textarea class="src" data-lang="html"><h1>Baja ↓</h1>
+<div class="tarjeta">Moneda</div>
+<div class="tarjeta">Estrella</div>
+<div class="tarjeta">Corazón</div>
+<div class="tarjeta">Llave</div>
+<div class="tarjeta">Cofre</div>
+<div class="tarjeta">Trofeo</div></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* texto blanco */
+  font-family: system-ui, sans-serif; /* letra */
+  padding-bottom: 60vh; /* espacio al final para poder bajar */
+}
+h1 {
+  height: 70vh; /* primera pantalla casi vacía */
+}
+.tarjeta {
+  margin: 2rem auto; /* separadas y centradas */
+  max-width: 260px; /* ancho */
+  padding: 2rem; /* relleno */
+  background-color: #ff3ea5; /* rosa */
+  font-weight: 800; /* negrita */
+  text-align: center; /* centrado */
+  animation: aparece linear both; /* sin duración */
+  animation-timeline: view(); /* la línea de tiempo es su paso por la pantalla */
+  animation-range: entry 0% cover 40%; /* solo en el primer tramo del viaje */
+}
+@keyframes aparece {
+  from { opacity: 0; translate: 0 80px; scale: 0.8; } /* invisible, abajo y pequeña */
+}</textarea>
+    </div>
+    <div class="lectura">
+      <p>Tres cosas que no son evidentes y que conviene entender bien:</p>
+      <ul>
+        <li><b>Solo hay <code>from</code>.</b> Si no escribes <code>to</code>, el navegador usa el estado normal del elemento como final. Así el CSS dice «empieza invisible y abajo… y acaba como estaría sin animación». Es la forma más limpia de escribir apariciones.</li>
+        <li><b><code>both</code> es imprescindible.</b> Antes de entrar, la tarjeta debe estar ya en el estado <code>from</code> (invisible); si no, se vería un instante y luego desaparecería al empezar la animación.</li>
+        <li><b><code>animation-range</code> recorta el viaje.</b> Sin él, la animación duraría todo el recorrido (de asomar a desaparecer por arriba) y la tarjeta solo estaría entera justo al salir. Con <code>entry 0% cover 40%</code> termina antes: ya está completa cuando aún le queda medio viaje. Lo vemos a fondo en el mundo siguiente.</li>
+      </ul>
+    </div>
+
+    <h3>Desaparecer al salir y cambiar de color al cruzar</h3>
+    <p class="lectura">Otro efecto muy visto: el contenido <b>cambia de color según va pasando</b>. Es lo mismo, pero usando todo el viaje y con varios fotogramas: azul al entrar, rosa en el centro de la pantalla y amarillo al salir.</p>
+    <div class="ejemplo" data-fijo="1" data-alto="340" data-t="Bloques que cambian de color mientras cruzan la pantalla">
+<textarea class="src" data-lang="html"><h1>Baja despacio ↓</h1>
+<p class="bloque">Nivel 1</p>
+<p class="bloque">Nivel 2</p>
+<p class="bloque">Nivel 3</p>
+<p class="bloque">Nivel 4</p>
+<p class="bloque">Nivel 5</p></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* texto blanco */
+  font: 900 2rem system-ui, sans-serif; /* letra gruesa */
+  text-align: center; /* centrado */
+  padding-block: 50vh; /* espacio arriba y abajo */
+}
+.bloque {
+  margin: 0 auto 4rem; /* separación */
+  max-width: 300px; /* ancho */
+  padding: 2rem 1rem; /* relleno */
+  animation: cruza linear both; /* sin duración */
+  animation-timeline: view(); /* todo su paso por la pantalla */
+}
+@keyframes cruza {
+  0% { background-color: #00f0ff; opacity: 0.2; } /* asoma: cian y apagado */
+  50% { background-color: #ff3ea5; opacity: 1; scale: 1.1; } /* en el centro: rosa y grande */
+  100% { background-color: #ffe14d; opacity: 0.2; } /* se va: amarillo y apagado */
+}</textarea>
+    </div>
+
+    <h3>Texto que se va «pintando» mientras lees</h3>
+    <p class="lectura">El otro efecto de moda: un párrafo gris que se rellena de color, de izquierda a derecha, según lo recorres con el scroll. Es <b>texto degradado</b> (lo viste en el bloque 05) con un truco: el fondo es un color liso cuyo <b>ancho</b> (<code>background-size</code>) crece del 0 % al 100 %.</p>
+    <div class="ejemplo" data-fijo="1" data-alto="320" data-t="Texto que se colorea con el scroll">
+<textarea class="src" data-lang="html"><p class="hueco">Baja ↓</p>
+<p class="pinta">Había una vez un robot llamado Bit que vivía dentro de una barra de scroll. Cada vez que alguien giraba la rueda del ratón, Bit daba un paso. Y así, paso a paso, llegó al final de la página.</p>
+<p class="hueco"></p></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  font: 800 1.7rem/1.4 system-ui, sans-serif; /* texto grande */
+  padding: 0 1.5rem; /* relleno lateral */
+}
+.hueco {
+  height: 80vh; /* espacio para poder bajar */
+  color: #556; /* gris */
+}
+.pinta {
+  color: rgb(255 255 255 / 15%); /* reserva: gris si no hay soporte */
+  background: linear-gradient(#ffe14d, #ffe14d) 0 0 / 0% 100% no-repeat; /* un color liso con ancho cero */
+  -webkit-background-clip: text; /* recorte con las letras (prefijo) */
+  background-clip: text; /* recorte con las letras */
+  animation: pinta linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: cover 20% cover 60%; /* se pinta mientras cruza el centro */
+}
+@keyframes pinta {
+  to { background-size: 100% 100%; } /* el color llega a todo el ancho */
+}</textarea>
+    </div>
+    <p class="lectura">¿Por qué funciona aunque el texto tenga varias líneas? Porque el fondo de un elemento <code>display: block</code> es un rectángulo que cubre todas las líneas. Si quieres que se pinte <b>línea a línea</b>, pon el texto en un <code>&lt;span&gt;</code> con <code>box-decoration-break: clone</code> (y su prefijo <code>-webkit-</code>): cada línea recibe su propio trozo de fondo.</p>
+    <div class="mision-host" data-m="view"></div>
+    <button class="moneda suelta" data-id="m-3a" aria-label="Moneda" style="--x:4%;--y:20rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 4 · ANIMATION-RANGE ========================================= -->
+<section class="mundo" id="rango" data-nav="4 · animation-range" style="--c:var(--oro);--suelo:var(--oro)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>2-2</b></span><div><small>El jefe de la teoría</small><h2>animation-range: ¿cuándo empieza y cuándo acaba?</h2></div></div>
+    <div class="lectura aparece">
+      <p>Esta es la parte difícil del bloque, así que vamos despacio. Con <code>view()</code>, la animación dura, por defecto, <b>todo el viaje</b> del elemento por la pantalla: desde que asoma hasta que desaparece. Casi nunca queremos eso. Queremos, por ejemplo, que una tarjeta <b>termine de aparecer cuando ya está entera dentro</b>.</p>
+      <p><code>animation-range</code> dice <b>en qué tramo del viaje</b> ocurre la animación. Se escribe con un <b>punto de inicio</b> y un <b>punto final</b>; cada punto es <b>el nombre de una fase + un porcentaje dentro de esa fase</b>.</p>
+    </div>
+    <div class="rejilla">
+      <div class="panel aparece" style="--c:var(--cian)"><h4>cover</h4><p><b>El viaje completo.</b> 0 % = asoma el primer píxel por abajo. 100 % = sale el último píxel por arriba. Es el valor por defecto.</p></div>
+      <div class="panel aparece" style="--c:var(--verde)"><h4>entry</h4><p><b>La entrada.</b> 0 % = asoma. 100 % = ya está entero dentro. Ideal para apariciones.</p></div>
+      <div class="panel aparece" style="--c:var(--lila)"><h4>contain</h4><p><b>Mientras está entero dentro.</b> 0 % = acaba de entrar del todo. 100 % = va a empezar a salir.</p></div>
+      <div class="panel aparece" style="--c:var(--rosa)"><h4>exit</h4><p><b>La salida.</b> 0 % = empieza a irse por arriba. 100 % = se ha ido. Ideal para desapariciones.</p></div>
+    </div>
+    <div class="nota pista-n"><span class="tit">Cómo leer un animation-range en voz alta</span><code>animation-range: entry 0% entry 100%;</code> → «empieza cuando asoma y acaba cuando ya está entero dentro». Se puede abreviar como <code>animation-range: entry;</code>. Y <code>animation-range: entry 20% cover 50%;</code> → «empieza cuando ha entrado una quinta parte y acaba cuando está en el centro de la pantalla». Las fases se pueden mezclar.</div>
+    <p class="lectura">Hay dos fases más, <code>entry-crossing</code> y <code>exit-crossing</code>, que solo se diferencian de <code>entry</code> y <code>exit</code> cuando el elemento es <b>más alto que la pantalla</b> (entonces nunca llega a estar «entero dentro»). Para empezar, quédate con las cuatro de arriba.</p>
+
+    <div class="lab" id="labRango" style="--c:var(--oro)">
+      <h3 class="lab-t">El visor de rangos</h3>
+      <p>Elige el inicio y el final, y desplázate dentro de la ventana amarilla. Debajo ves el viaje del elemento dibujado como una barra: cada color es una fase, la franja amarilla es <b>tu rango</b> y la línea blanca es <b>dónde estás ahora</b>. El medidor verde es el progreso de la animación: se mueve solo cuando la línea blanca está dentro de la franja.</p>
+      <div class="mandos">
+        <label>Empieza en<select id="rIniN"><option>cover</option><option selected>entry</option><option>contain</option><option>exit</option></select></label>
+        <label>Porcentaje <output id="rIniPO">0%</output><input type="range" id="rIniP" min="0" max="100" step="5" value="0"></label>
+        <label>Acaba en<select id="rFinN"><option>cover</option><option selected>entry</option><option>contain</option><option>exit</option></select></label>
+        <label>Porcentaje <output id="rFinPO">100%</output><input type="range" id="rFinP" min="0" max="100" step="5" value="100"></label>
+        <label>Efecto<select id="rFx"><option value="fundido">Fundido y subida</option><option value="zoom">Zoom</option><option value="giro">Giro</option><option value="color">Cambio de color</option></select></label>
+      </div>
+      <div class="visor" style="margin-top:1.2rem">
+        <div class="ventana" id="rVentana" tabindex="0" aria-label="Ventana con scroll del visor de rangos">
+          <div class="hueco">↓ Baja ↓<br>el sujeto entra por abajo</div>
+          <div class="sujeto" id="rSujeto">SUJETO</div>
+          <div class="hueco">↑ ya se fue ↑<br><button class="moneda" data-id="s-rango" aria-label="Moneda secreta"></button></div>
+        </div>
+        <div class="diagrama">
+          <div class="fases" id="rFases" aria-hidden="true"><div class="eje"><span>asoma</span><span>se va</span></div></div>
+          <div class="lectura-viva">
+            <div><b>FASE AHORA</b><output id="rFase">—</output></div>
+            <div><b>VIAJE (COVER)</b><output id="rCover">0%</output></div>
+            <div><b>ANIMACIÓN</b><output id="rAnim">0%</output></div>
+          </div>
+          <div class="medidor" aria-hidden="true"><i id="rMed"></i></div>
+          <pre class="salida" id="rCss"></pre>
+        </div>
+      </div>
+    </div>
+
+    <h3>También en píxeles</h3>
+    <p class="lectura">Con <code>scroll()</code> no hay fases: el rango se escribe en <b>distancias</b>. <code>animation-range: 0 200px;</code> significa «durante los primeros 200 píxeles de scroll». Es perfecto para una cabecera que encoge nada más empezar a bajar, o para un botón «volver arriba» que aparece después de un rato. Con <code>view()</code> también puedes mezclar: <code>entry 0% entry 120px</code>.</p>
+
+    <h3>Líneas de tiempo con nombre: que un elemento mueva a otro</h3>
+    <div class="lectura">
+      <p>Hasta ahora cada elemento se animaba con <b>su propio</b> viaje. ¿Y si quiero que <b>la luz del marcador</b> se encienda cuando <b>una sección concreta</b> está en pantalla? Entonces le pongo nombre a la línea de tiempo de la sección y la uso desde otro elemento:</p>
+      <ul>
+        <li><code>view-timeline-name: --nivel;</code> en la sección: «tu viaje por la pantalla se llama <code>--nivel</code>».</li>
+        <li><code>animation-timeline: --nivel;</code> en la luz: «muévete con el viaje de <code>--nivel</code>».</li>
+        <li><code>timeline-scope: --nivel;</code> en un antepasado común de los dos (por ejemplo, <code>body</code>): hace falta cuando la luz <b>no está dentro</b> de la sección. Es como decir «este nombre se puede usar en toda esta zona».</li>
+      </ul>
+      <p>Con <code>scroll()</code> es igual: <code>scroll-timeline-name: --carrusel;</code> en el contenedor con scroll y <code>animation-timeline: --carrusel;</code> en quien lo quiera usar.</p>
+    </div>
+    <div class="ejemplo" data-fijo="1" data-alto="340" data-t="La luz del marcador se enciende con el viaje de otra sección">
+<textarea class="src" data-lang="html"><div class="marcador"><span class="luz"></span> JEFE EN PANTALLA</div>
+<p class="hueco">Baja hasta el jefe ↓</p>
+<section class="jefe">EL GRAN GLITCH</section>
+<p class="hueco"></p></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* texto blanco */
+  font: 800 1.1rem system-ui, sans-serif; /* letra */
+  timeline-scope: --jefe; /* el nombre se puede usar en todo el body */
+}
+.marcador {
+  position: fixed; /* fijo arriba */
+  top: 0.8rem; /* separación */
+  left: 0.8rem; /* separación */
+  padding: 0.5rem 0.8rem; /* relleno */
+  background-color: #14143a; /* panel */
+}
+.luz {
+  display: inline-block; /* para darle tamaño */
+  width: 14px; /* ancho */
+  height: 14px; /* alto */
+  background-color: #333; /* apagada */
+  animation: enciende linear both; /* sin duración */
+  animation-timeline: --jefe; /* usa el viaje de la sección .jefe */
+}
+@keyframes enciende {
+  10%, 90% { background-color: #ff4a4a; box-shadow: 0 0 12px #ff4a4a; } /* encendida mientras el jefe cruza */
+}
+.hueco {
+  height: 90vh; /* espacio para bajar */
+  padding: 4rem 1rem 0; /* relleno */
+}
+.jefe {
+  margin: 0 1rem; /* separación */
+  padding: 4rem 1rem; /* relleno */
+  background-color: #ff3ea5; /* rosa */
+  text-align: center; /* centrado */
+  view-timeline-name: --jefe; /* su viaje por la pantalla se llama --jefe */
+}</textarea>
+    </div>
+    <div class="mision-host" data-m="rango"></div>
+    <button class="moneda suelta" data-id="m-4a" aria-label="Moneda" style="--x:2%;--y:8rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 5 · RECETAS ================================================= -->
+<section class="mundo" id="recetas" data-nav="5 · Recetas" style="--c:var(--naranja);--suelo:var(--naranja)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>3-1</b></span><div><small>Power-ups</small><h2>Seis recetas que verás en webs de verdad</h2></div></div>
+    <p class="lectura aparece">Con las piezas de los mundos anteriores (<code>scroll()</code>, <code>view()</code>, <code>animation-range</code> y los nombres) ya se pueden montar casi todos los efectos de scroll que circulan por internet. Aquí van seis, de menos a más difícil. Cada uno tiene su propio scroll: <b>desplázate dentro del recuadro blanco</b>.</p>
+
+    <h3>1 · La cabecera que encoge</h3>
+    <p class="lectura">Grande al principio y compacta en cuanto empiezas a bajar. Es <code>scroll()</code> con un rango en píxeles: todo ocurre en los primeros 150 px.</p>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Cabecera que encoge en los primeros 150 px">
+<textarea class="src" data-lang="html"><header class="cabecera">ARCADE BIT</header>
+<main>
+  <p>Baja un poco y mira la cabecera.</p>
+  <p>Ya ha encogido.</p>
+  <p>Y se queda así el resto de la página.</p>
+</main></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  font-family: system-ui, sans-serif; /* letra */
+}
+main p {
+  margin: 0 1.5rem 14rem; /* mucho espacio para bajar */
+}
+.cabecera {
+  position: sticky; /* se pega arriba */
+  top: 0; /* arriba del todo */
+  padding: 2.5rem 1.5rem; /* grande al principio */
+  font: 900 2rem system-ui, sans-serif; /* letra grande */
+  color: #fff; /* blanco */
+  background-color: #ff3ea5; /* rosa */
+  animation: encoge linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+  animation-range: 0 150px; /* solo los primeros 150 píxeles */
+}
+@keyframes encoge {
+  to { padding-block: 0.6rem; font-size: 1.1rem; background-color: #14143a; } /* pequeña y oscura */
+}</textarea>
+    </div>
+    <div class="nota"><span class="tit">Fluido o no fluido</span>Esta receta anima <code>padding</code> y <code>font-size</code>, que obligan al navegador a recolocar la página en cada fotograma. En un rango corto (150 px) no se nota. Para efectos largos, anima solo <b><code>transform</code>, <code>translate</code>, <code>scale</code>, <code>rotate</code>, <code>opacity</code>, <code>filter</code> y <code>clip-path</code></b>: el navegador los mueve en la tarjeta gráfica, separados del resto, y van suaves incluso en móviles modestos.</div>
+
+    <h3>2 · El botón «volver arriba» que aparece solo</h3>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Botón volver arriba a partir de 300 px">
+<textarea class="src" data-lang="html"><h1 id="arriba">Baja ↓</h1>
+<p class="largo">Sigue bajando…</p>
+<a class="volver" href="#arriba">▲</a></textarea>
+<textarea class="src" data-lang="css">html {
+  scroll-behavior: smooth; /* el viaje de vuelta es suave */
+}
+body {
+  font-family: system-ui, sans-serif; /* letra */
+}
+.largo {
+  height: 1500px; /* contenido largo */
+}
+.volver {
+  position: fixed; /* fijo en la esquina */
+  right: 1rem; /* a la derecha */
+  bottom: 1rem; /* abajo */
+  width: 3rem; /* ancho */
+  height: 3rem; /* alto */
+  display: grid; /* para centrar la flecha */
+  place-items: center; /* flecha centrada */
+  background-color: #ffe14d; /* amarillo */
+  color: #0b0b24; /* flecha oscura */
+  text-decoration: none; /* sin subrayado */
+  animation: asoma linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+  animation-range: 200px 300px; /* aparece entre los 200 y los 300 px */
+}
+@keyframes asoma {
+  from { opacity: 0; visibility: hidden; translate: 0 2rem; } /* oculto: ni se ve ni se puede pulsar */
+}</textarea>
+    </div>
+    <p class="lectura">¿Por qué <code>visibility: hidden</code> además de <code>opacity: 0</code>? Porque un botón transparente <b>sigue ahí</b>: se podría pulsar sin verlo y el teclado pasaría por él. <code>visibility</code> lo quita de verdad mientras está oculto.</p>
+
+    <h3>3 · El cuadro que se destapa</h3>
+    <div class="ejemplo" data-fijo="1" data-alto="320" data-t="Recorte que se abre desde el centro">
+<textarea class="src" data-lang="html"><p class="hueco">Baja ↓</p>
+<div class="cuadro">NIVEL 2</div>
+<p class="hueco"></p></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: system-ui, sans-serif; /* letra */
+}
+.hueco {
+  height: 80vh; /* espacio para bajar */
+}
+.cuadro {
+  height: 240px; /* alto */
+  display: grid; /* para centrar el texto */
+  place-items: center; /* texto centrado */
+  font: 900 2.5rem system-ui, sans-serif; /* letra grande */
+  background: repeating-conic-gradient(#ff3ea5 0 25%, #9b7bff 0 50%) 0 0 / 40px 40px; /* cuadros de píxel */
+  animation: destapa linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 20% cover 50%; /* se abre mientras sube hacia el centro */
+}
+@keyframes destapa {
+  from { clip-path: inset(0 50% 0 50%); } /* una raya en el centro */
+  to { clip-path: inset(0 0 0 0); } /* abierto del todo */
+}</textarea>
+    </div>
+
+    <h3>4 · El marcador que cuenta puntos</h3>
+    <p class="lectura">Un número que sube con el scroll. Un <code>@keyframes</code> no puede animar un texto, pero sí <b>una variable registrada con <code>@property</code></b> como número entero. Luego un contador de CSS (los del bloque de extras) la convierte en texto.</p>
+    <div class="ejemplo" data-fijo="1" data-alto="280" data-t="Puntuación que sube con el scroll">
+<textarea class="src" data-lang="html"><div class="score">SCORE </div>
+<p class="largo">Baja y suma puntos ↓</p></textarea>
+<textarea class="src" data-lang="css">@property --puntos {
+  syntax: "<integer>"; /* un número entero */
+  inherits: false; /* no se hereda */
+  initial-value: 0; /* empieza en cero */
+}
+body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: monospace; /* letra de máquina */
+}
+.largo {
+  height: 1600px; /* contenido largo */
+  padding: 5rem 1rem; /* relleno */
+}
+.score {
+  position: fixed; /* fijo arriba */
+  top: 1rem; /* separación */
+  left: 1rem; /* separación */
+  font-size: 2rem; /* grande */
+  color: #ffe14d; /* amarillo */
+  counter-reset: puntos var(--puntos); /* el contador vale lo que la variable */
+  animation: suma linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+.score::after {
+  content: counter(puntos); /* escribe el número */
+}
+@keyframes suma {
+  to { --puntos: 99999; } /* al final de la página, 99999 */
+}</textarea>
+    </div>
+
+    <h3>5 · La galería horizontal dentro del scroll vertical</h3>
+    <div class="lectura">
+      <p>El efecto estrella de las webs de producto: bajas con la rueda, pero las tarjetas <b>avanzan hacia el lado</b>. La receta junta tres cosas que ya conoces:</p>
+      <ol>
+        <li>Un <b>tramo alto</b> (300 vh) que pone nombre a su viaje: <code>view-timeline-name: --tramo</code>.</li>
+        <li>Dentro, un <b>marco pegajoso</b> (<code>position: sticky</code>) de una pantalla de alto, que se queda quieto mientras recorres el tramo.</li>
+        <li>Dentro del marco, la <b>cinta de tarjetas</b>, que se desplaza en horizontal con <code>animation-timeline: --tramo</code> y <code>animation-range: contain</code>: justo mientras el tramo llena la pantalla, que es cuando el marco está pegado.</li>
+      </ol>
+    </div>
+    <div class="ejemplo" data-fijo="1" data-alto="340" data-t="Scroll vertical que mueve una cinta horizontal">
+<textarea class="src" data-lang="html"><p class="hueco">Baja ↓</p>
+<section class="tramo">
+  <div class="marco">
+    <div class="cinta">
+      <div class="carta">1</div>
+      <div class="carta">2</div>
+      <div class="carta">3</div>
+      <div class="carta">4</div>
+      <div class="carta">5</div>
+    </div>
+  </div>
+</section>
+<p class="hueco">Fin ↑</p></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font: 900 2rem system-ui, sans-serif; /* letra */
+}
+.hueco {
+  height: 60vh; /* espacio antes y después */
+  padding: 1rem; /* relleno */
+}
+.tramo {
+  height: 300vh; /* tres pantallas de recorrido */
+  view-timeline-name: --tramo; /* su viaje se llama --tramo */
+}
+.marco {
+  position: sticky; /* se queda pegado */
+  top: 0; /* arriba */
+  height: 100vh; /* una pantalla */
+  display: flex; /* para centrar la cinta en vertical */
+  align-items: center; /* centrada */
+  overflow: clip; /* corta lo que sobresale sin crear scroll */
+}
+.cinta {
+  display: flex; /* tarjetas en fila */
+  gap: 1rem; /* separación */
+  padding-inline: 1rem; /* margen a los lados */
+  animation: desliza linear both; /* sin duración */
+  animation-timeline: --tramo; /* el viaje del tramo */
+  animation-range: contain; /* mientras el tramo llena la pantalla */
+}
+.carta {
+  flex: none; /* no encoge */
+  width: 70vw; /* casi una pantalla de ancho */
+  height: 50vh; /* alto */
+  display: grid; /* para centrar el número */
+  place-items: center; /* centrado */
+  background-color: #00f0ff; /* cian */
+  color: #0b0b24; /* número oscuro */
+}
+.carta:nth-child(even) {
+  background-color: #ff3ea5; /* rosa en las pares */
+}
+@keyframes desliza {
+  to { translate: calc(-100% + 100vw) 0; } /* hasta que la última toca el borde derecho */
+}</textarea>
+    </div>
+    <div class="nota peligro"><span class="tit">overflow: clip y no overflow: hidden</span>¿Por qué el marco usa <code>overflow: clip</code>? Porque <code>overflow: hidden</code> <b>crea un contenedor con scroll</b> (aunque no se vea la barra). Y <code>view()</code> y <code>scroll()</code> buscan siempre el contenedor con scroll más cercano: encontrarían el marco, que nunca se mueve, y la animación se quedaría <b>congelada</b>. Lo comprobamos en Chrome 157: un elemento dentro de un padre con <code>overflow: hidden</code> se queda clavado en un fotograma. <code>overflow: clip</code> recorta igual, pero no crea scroll.</div>
+
+    <h3>6 · Aparición escalonada</h3>
+    <p class="lectura">En el bloque 04 escalonabas con <code>animation-delay</code> y una variable <code>--i</code>. Con scroll no hay retrasos en segundos, pero puedes <b>retrasar el rango</b>: cada elemento empieza un poco más tarde que el anterior.</p>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Iconos que entran uno detrás de otro">
+<textarea class="src" data-lang="html"><p class="hueco">Baja ↓</p>
+<ul class="fila">
+  <li style="--i: 0">★</li>
+  <li style="--i: 1">♥</li>
+  <li style="--i: 2">◆</li>
+  <li style="--i: 3">●</li>
+  <li style="--i: 4">▲</li>
+</ul>
+<p class="hueco"></p></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: system-ui, sans-serif; /* letra */
+}
+.hueco {
+  height: 80vh; /* espacio para bajar */
+}
+.fila {
+  display: flex; /* en fila */
+  justify-content: center; /* centrados */
+  gap: 0.8rem; /* separación */
+  list-style: none; /* sin viñetas */
+  padding: 0; /* sin sangría */
+  view-timeline-name: --fila; /* el viaje de la fila */
+}
+.fila li {
+  width: 3rem; /* ancho */
+  height: 3rem; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  font-size: 1.6rem; /* icono grande */
+  background-color: #ffe14d; /* amarillo */
+  color: #0b0b24; /* oscuro */
+  animation: salta linear both; /* sin duración */
+  animation-timeline: --fila; /* todos usan el viaje de la fila */
+  animation-range: entry calc(var(--i) * 15%) entry calc(var(--i) * 15% + 40%); /* cada uno empieza un 15 % más tarde */
+}
+@keyframes salta {
+  from { opacity: 0; translate: 0 3rem; rotate: -90deg; } /* abajo, girado e invisible */
+}</textarea>
+    </div>
+    <button class="moneda suelta" data-id="m-5a" aria-label="Moneda" style="--x:3%;--y:6rem"></button>
+    <button class="moneda suelta" data-id="m-5b" aria-label="Moneda" style="--x:90%;--y:60%"></button>
+  </div>
+</section>
+
+<!-- MUNDO 6 · PARALLAX ================================================ -->
+<section class="mundo" id="parallax" data-nav="6 · Parallax" style="--c:var(--lila);--suelo:var(--lila)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>3-2</b></span><div><small>Capas a distinta velocidad</small><h2>Parallax moderno</h2></div></div>
+    <div class="lectura aparece">
+      <p>El <b>parallax</b> es el truco de los videojuegos de plataformas de toda la vida: las montañas del fondo se mueven despacio, los árboles de delante deprisa, y tu cerebro lo interpreta como <b>profundidad</b>. Lo tienes en esta misma página: las estrellas de fondo y las capas de la portada se mueven a distinta velocidad que el texto.</p>
+      <p>En el bloque 03 viste la versión clásica: <code>background-attachment: fixed</code>, que deja la imagen de fondo quieta mientras el contenido pasa por encima. Funciona en el ordenador, pero tiene problemas serios.</p>
+    </div>
+    <div class="nota peligro"><span class="tit">Los problemas de background-attachment: fixed</span>
+      <ul style="margin:.3rem 0 0;padding-left:1.2rem">
+        <li><b>En iPhone y iPad no hace nada.</b> Safari para iOS reconoce el valor, pero lo trata como un fondo normal que se desplaza (caniuse, nota 6, y el fallo 275247 de WebKit, sin resolver en noviembre de 2026). Tu efecto desaparece en la mitad de los móviles.</li>
+        <li><b>Cuesta rendimiento.</b> El navegador tiene que <b>volver a pintar el fondo en cada fotograma</b> del scroll. En móviles modestos se notan tirones.</li>
+        <li><b>Solo sabe hacer una cosa:</b> dejar el fondo quieto. No puedes elegir la velocidad de cada capa, ni mover elementos que no sean fondos.</li>
+      </ul>
+    </div>
+    <h3>La versión moderna: cada capa, su velocidad</h3>
+    <div class="lectura">
+      <p>En lugar de dejar el fondo quieto, <b>movemos cada capa</b> con <code>translate</code> mientras la escena cruza la pantalla (<code>view()</code>). La capa del fondo recorre mucha distancia en el sentido contrario al scroll, así que parece que va despacio; la de delante casi no se mueve, así que va a la velocidad del scroll. La distancia de cada capa la guarda una variable, <code>--v</code>, y un único <code>@keyframes</code> sirve para todas.</p>
+    </div>
+    <div class="ejemplo" data-fijo="1" data-alto="360" data-t="Paisaje de 8 bits con tres capas de parallax">
+<textarea class="src" data-lang="html"><p class="hueco">Baja ↓</p>
+<div class="escena">
+  <div class="capa cielo" style="--v: 160"></div>
+  <div class="capa montes" style="--v: 90"></div>
+  <div class="capa suelo" style="--v: 20"></div>
+  <p class="titulo">WORLD 3</p>
+</div>
+<p class="hueco"></p></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: monospace; /* letra */
+}
+.hueco {
+  height: 70vh; /* espacio para bajar */
+  padding: 1rem; /* relleno */
+}
+.escena {
+  position: relative; /* las capas se colocan dentro */
+  height: 320px; /* alto de la escena */
+  overflow: clip; /* recorta las capas sin crear scroll */
+  background-color: #3a1868; /* cielo morado */
+  view-timeline-name: --escena; /* su viaje por la pantalla */
+}
+.capa {
+  position: absolute; /* encima unas de otras */
+  inset: -160px 0; /* más altas que la escena para que no se vean los bordes al moverse */
+  animation: profundidad linear both; /* sin duración */
+  animation-timeline: --escena; /* el viaje de la escena */
+}
+.cielo {
+  background: radial-gradient(circle at 70% 45%, #ffe14d 0 40px, transparent 41px); /* el sol */
+}
+.montes {
+  background: linear-gradient(135deg, transparent 75%, #6b1f78 0) 0 100% / 80px 80px repeat-x, linear-gradient(225deg, transparent 75%, #6b1f78 0) 0 100% / 80px 80px repeat-x; /* dientes de sierra */
+  bottom: 120px; /* un poco más arriba que el suelo */
+}
+.suelo {
+  top: auto; /* solo la parte de abajo */
+  height: 260px; /* alto del suelo */
+  background: repeating-linear-gradient(90deg, #2bd36b 0 20px, #1f9e50 20px 40px); /* hierba a cuadros */
+}
+.titulo {
+  position: relative; /* por encima de las capas */
+  margin: 0; /* sin margen */
+  padding-top: 2rem; /* separación */
+  text-align: center; /* centrado */
+  font-size: 2rem; /* grande */
+}
+@keyframes profundidad {
+  from { translate: 0 calc(var(--v) * -1px); } /* arriba: la distancia de su capa */
+  to { translate: 0 calc(var(--v) * 1px); } /* abajo: la misma distancia */
+}</textarea>
+    </div>
+    <div class="nota ok"><span class="tit">Por qué es mejor</span>Funciona en iPhone (Safari 26 o posterior), solo anima <code>translate</code> (que va por la tarjeta gráfica), cada capa tiene su velocidad y, si el navegador no entiende <code>animation-timeline</code>, las capas simplemente se quedan quietas: el paisaje se ve igual, solo que sin profundidad.</div>
+    <button class="moneda suelta" data-id="m-6a" aria-label="Moneda" style="--x:2%;--y:5rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 7 · SCROLL-SNAP ============================================= -->
+<section class="mundo" id="snap" data-nav="7 · Snap" style="--c:var(--lila);--suelo:var(--cian)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>4-1</b></span><div><small>Imanes</small><h2>Scroll-snap: carruseles con imán</h2></div></div>
+    <div class="lectura aparece">
+      <p>Hasta ahora el scroll movía animaciones. Ahora vamos a cambiar <b>dónde se para el propio scroll</b>. Con <b>scroll-snap</b>, cuando sueltas la rueda o el dedo, el contenedor se recoloca solo para que un elemento quede bien encuadrado, como si cada tarjeta tuviera <b>un imán</b>. Es lo que hacen los carruseles de las tiendas y las historias de Instagram, y es CSS puro desde hace años (todos los navegadores).</p>
+      <p>Hacen falta solo dos propiedades: una en el <b>contenedor</b> y otra en los <b>hijos</b>.</p>
+    </div>
+    <div class="rejilla">
+      <div class="panel aparece" style="--c:var(--cian)"><h4>En el contenedor</h4><p><code>scroll-snap-type: x mandatory;</code></p><p><b>Eje:</b> <code>x</code> (horizontal), <code>y</code> (vertical) o <code>both</code>.</p><p><b>Fuerza:</b> <code>mandatory</code> (siempre se imanta) o <code>proximity</code> (solo si te paras cerca).</p></div>
+      <div class="panel aparece" style="--c:var(--rosa)"><h4>En cada hijo</h4><p><code>scroll-snap-align: center;</code></p><p>Qué parte del hijo se alinea con el contenedor: <code>start</code> (el principio), <code>center</code> o <code>end</code>.</p></div>
+      <div class="panel aparece" style="--c:var(--oro)"><h4>Ajustes finos</h4><p><code>scroll-snap-stop: always;</code> no deja saltarse tarjetas con un gesto rápido.</p><p><code>scroll-padding</code> (contenedor) y <code>scroll-margin</code> (hijo) mueven el punto del imán.</p></div>
+    </div>
+    <h3>Elige tu cartucho</h3>
+    <p class="lectura">Este selector está hecho con <code>scroll-snap-type: x mandatory</code> y <code>scroll-snap-align: center</code>. Además, cada cartucho usa <code>view(inline)</code>, que mide el viaje en <b>horizontal</b> dentro del carrusel: crece y se ilumina al pasar por el centro. Arrástralo o usa la rueda con Mayúsculas.</p>
+    <div class="cartuchera" tabindex="0" aria-label="Carrusel de cartuchos">
+      <div class="cart" style="--c:var(--cian)"><div class="etiq">01</div><b>SCROLL()</b><span>la barra de vida</span></div>
+      <div class="cart" style="--c:var(--rosa)"><div class="etiq">02</div><b>VIEW()</b><span>que aparezcan</span></div>
+      <div class="cart" style="--c:var(--oro)"><div class="etiq">03</div><b>RANGE</b><span>cuándo empieza</span></div>
+      <div class="cart" style="--c:var(--verde)"><div class="etiq">04</div><b>PARALLAX</b><span>capas y profundidad</span></div>
+      <div class="cart" style="--c:var(--lila)"><div class="etiq">05</div><b>SNAP</b><span>estás aquí</span></div>
+      <div class="cart" style="--c:var(--naranja)"><div class="etiq">06</div><b>BARRAS</b><span>a tu gusto</span></div>
+      <div class="cart" style="--c:#fff"><div class="etiq"><button class="moneda" data-id="s-snap" aria-label="Moneda secreta"></button></div><b>SECRETO</b><span>¡lo encontraste!</span></div>
+    </div>
+    <h3>Pantallas completas en vertical</h3>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Diapositivas verticales con imán">
+<textarea class="src" data-lang="html"><div class="pantallas">
+  <section>NIVEL 1</section>
+  <section>NIVEL 2</section>
+  <section>NIVEL 3</section>
+  <section>FIN</section>
+</div></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+}
+.pantallas {
+  height: 100vh; /* una pantalla de alto */
+  overflow-y: auto; /* scroll vertical propio */
+  scroll-snap-type: y mandatory; /* imán en vertical, siempre */
+}
+.pantallas section {
+  height: 100%; /* cada sección, una pantalla */
+  display: grid; /* para centrar */
+  place-items: center; /* texto centrado */
+  font: 900 2.5rem monospace; /* letra grande */
+  color: #fff; /* blanco */
+  background-color: #14143a; /* panel */
+  scroll-snap-align: start; /* el principio de la sección, arriba */
+  scroll-snap-stop: always; /* no se salta ninguna */
+}
+.pantallas section:nth-child(even) {
+  background-color: #ff3ea5; /* rosa en las pares */
+}</textarea>
+    </div>
+    <div class="nota peligro"><span class="tit">Cuidado con mandatory en toda la página</span>Imantar la página entera (<code>html { scroll-snap-type: y mandatory }</code>) parece buena idea hasta que una sección es más alta que la pantalla o alguien hace zoom: el imán tira de ti y cuesta leer. Para páginas, mejor <code>proximity</code>. Guarda <code>mandatory</code> para carruseles y presentaciones de pantallas iguales.</div>
+    <div class="mision-host" data-m="snap"></div>
+    <button class="moneda suelta" data-id="m-7a" aria-label="Moneda" style="--x:2%;--y:3rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 8 · ANCLAS SUAVES =========================================== -->
+<section class="mundo" id="anclas" data-nav="8 · Anclas" style="--c:var(--cian);--suelo:var(--verde)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>4-2</b></span><div><small>Teletransporte</small><h2>Anclas suaves y que no se escondan</h2></div></div>
+    <div class="lectura aparece">
+      <p>Un enlace <code>&lt;a href="#mundo3"&gt;</code> salta a la etiqueta con <code>id="mundo3"</code>. Por defecto el salto es <b>instantáneo</b>: pantallazo y ya. Una línea lo convierte en un viaje suave:</p>
+    </div>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Índice con desplazamiento suave y cabecera fija">
+<textarea class="src" data-lang="html"><nav class="menu">
+  <a href="#n1">Nivel 1</a>
+  <a href="#n2">Nivel 2</a>
+  <a href="#n3">Nivel 3</a>
+</nav>
+<h2 id="n1">Nivel 1</h2>
+<p>Pulsa los enlaces del menú.</p>
+<h2 id="n2">Nivel 2</h2>
+<p>El título no queda escondido debajo del menú.</p>
+<h2 id="n3">Nivel 3</h2>
+<p>Y el que eliges parpadea al llegar.</p></textarea>
+<textarea class="src" data-lang="css">html {
+  scroll-padding-top: 4rem; /* deja libre el alto del menú al saltar */
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth; /* viaje suave, solo si no se ha pedido reducir el movimiento */
+  }
+}
+body {
+  margin: 0; /* sin margen */
+  font-family: system-ui, sans-serif; /* letra */
+}
+.menu {
+  position: sticky; /* fijo arriba */
+  top: 0; /* arriba del todo */
+  display: flex; /* enlaces en fila */
+  gap: 1rem; /* separación */
+  padding: 1rem; /* relleno */
+  background-color: #0b0b24; /* noche */
+}
+.menu a {
+  color: #ffe14d; /* amarillo */
+}
+h2 {
+  margin: 0 1rem; /* separación lateral */
+  padding-top: 1rem; /* relleno */
+}
+p {
+  margin: 0 1rem 26rem; /* mucho espacio entre niveles */
+}
+h2:target {
+  animation: parpadea 0.3s steps(2) 4; /* parpadeo de arcade al llegar */
+}
+@keyframes parpadea {
+  50% { color: #ff3ea5; } /* rosa a medias */
+}</textarea>
+    </div>
+    <div class="rejilla">
+      <div class="panel" style="--c:var(--cian)"><h4>scroll-behavior: smooth</h4><p>En <code>html</code>. Convierte en suave todo salto a un ancla (y también el <code>scrollTo()</code> de JavaScript). Ponlo dentro de <code>@media (prefers-reduced-motion: no-preference)</code>: a algunas personas el movimiento largo les marea.</p></div>
+      <div class="panel" style="--c:var(--rosa)"><h4>scroll-padding-top</h4><p>En <code>html</code>. Si tienes un menú fijo, el título del ancla queda <b>escondido debajo</b>. Esta propiedad le dice al navegador «para un poco antes». Una línea para toda la página.</p></div>
+      <div class="panel" style="--c:var(--oro)"><h4>scroll-margin-top</h4><p>En el elemento de destino. Lo mismo, pero para un elemento concreto: «cuando salten a ti, déjate 2rem de aire por encima».</p></div>
+      <div class="panel" style="--c:var(--verde)"><h4>:target</h4><p>La pseudoclase del elemento al que apunta la URL (<code>#n2</code>). Sirve para resaltarlo al llegar.</p></div>
+    </div>
+    <div class="mision-host" data-m="ancla"></div>
+    <button class="moneda suelta" data-id="m-8a" aria-label="Moneda" style="--x:92%;--y:4rem"></button>
+  </div>
+</section>
+
+<!-- MUNDO 9 · BARRAS DE SCROLL ======================================== -->
+<section class="mundo" id="barras" data-nav="9 · Barras" style="--c:var(--oro);--suelo:var(--rosa)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>5-1</b></span><div><small>Personaliza el mando</small><h2>Barras de scroll a tu gusto</h2></div></div>
+    <div class="lectura aparece">
+      <p>Mira la barra de scroll de esta página (en el ordenador, a la derecha): es amarilla, con bordes de píxel, y se pone rosa al pasar el ratón. Hay <b>dos maneras</b> de conseguir algo así, y conviene entender bien la diferencia porque <b>se pisan entre ellas</b>.</p>
+    </div>
+    <div class="rejilla">
+      <div class="panel aparece" style="--c:var(--verde)"><h4>A · La estándar (sencilla)</h4><p><code>scrollbar-color: amarillo morado;</code> → primero el color del <b>pulgar</b> (la parte que se arrastra), luego el del <b>carril</b>.</p><p><code>scrollbar-width: thin;</code> → <code>auto</code>, <code>thin</code> (fina) o <code>none</code> (sin barra).</p><p><b>Funciona en los tres navegadores</b>, pero solo deja elegir colores y grosor.</p></div>
+      <div class="panel aparece" style="--c:var(--rosa)"><h4>B · ::-webkit-scrollbar (a fondo)</h4><p>Pseudoelementos para cada pieza: <code>::-webkit-scrollbar</code> (la barra entera, su <code>width</code>), <code>-track</code> (carril), <code>-thumb</code> (pulgar), <code>-button</code> (flechas), <code>-corner</code> (esquina).</p><p>Admiten bordes, sombras, degradados, <code>:hover</code>… <b>Solo Chrome, Edge y Safari.</b></p></div>
+    </div>
+    <div class="nota peligro"><span class="tit">La trampa: si pones las dos, Chrome ignora la B</span>Desde Chrome 121 (2024), si un elemento tiene <code>scrollbar-color</code> o <code>scrollbar-width</code>, <b>Chrome deja de hacer caso a sus <code>::-webkit-scrollbar</code></b>. Lo hemos medido en Chrome 157: la misma caja con <code>::-webkit-scrollbar { width: 30px }</code> mide 30 px de barra… hasta que le añades <code>scrollbar-color</code>, y entonces vuelve a 15. Y el truco antiguo de usar <code>@supports not selector(::-webkit-scrollbar)</code> para dar la estándar solo a Firefox ya no sirve: desde Firefox 153, esa pregunta responde «sí» (aunque Firefox solo entiende <code>display: none</code> y el ancho). Fuente: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar" target="_blank" rel="noopener">MDN · ::-webkit-scrollbar</a>.</div>
+    <div class="nota ok"><span class="tit">Qué hacer entonces</span><b>Si te basta con colores</b>, usa solo la estándar: <code>scrollbar-color</code> y <code>scrollbar-width</code>. <b>Si quieres un diseño elaborado</b> (como el de esta página), usa solo <code>::-webkit-scrollbar</code> y acepta que en Firefox se verá su barra normal. No mezcles las dos en el mismo elemento.</div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Propiedad (nov. 2026)</th><th>Chrome / Edge</th><th>Safari</th><th>Firefox</th></tr></thead>
+      <tbody>
+        <tr><td><code>scrollbar-width</code></td><td class="si">121+</td><td class="si">18.2+</td><td class="si">64+</td></tr>
+        <tr><td><code>scrollbar-color</code></td><td class="si">121+</td><td class="si">26.2+</td><td class="si">64+</td></tr>
+        <tr><td><code>::-webkit-scrollbar</code></td><td class="si">Sí</td><td class="si">Sí</td><td class="casi">Solo ocultar y ancho (153+)</td></tr>
+        <tr><td><code>scrollbar-gutter</code></td><td class="si">94+</td><td class="si">18.2+</td><td class="si">97+</td></tr>
+        <tr><td><code>overscroll-behavior</code></td><td class="si">63+</td><td class="si">16+</td><td class="si">59+</td></tr>
+      </tbody>
+    </table></div>
+    <p class="lectura" style="font-size:.9rem;color:var(--txt2)">Datos de compatibilidad de MDN (paquete <i>browser-compat-data</i>, 19-11-2026).</p>
+
+    <div class="lab" id="labBarra" style="--c:var(--rosa)">
+      <h3 class="lab-t">El taller de barras</h3>
+      <p>Diseña una barra con pixel art y copia el código. La vista usa <code>::-webkit-scrollbar</code>; en Firefox verás su barra normal.</p>
+      <div class="lab-cuerpo">
+        <div>
+          <div class="mandos">
+            <label>Pulgar<input type="color" id="bPul" value="#ffe14d"></label>
+            <label>Carril<input type="color" id="bCar" value="#14143a"></label>
+            <label>Ancho <output id="bAnO">18px</output><input type="range" id="bAn" min="6" max="30" value="18"></label>
+            <label>Bisel de píxel <output id="bBiO">4px</output><input type="range" id="bBi" min="0" max="8" value="4"></label>
+            <label>Al pasar el ratón<input type="color" id="bHov" value="#ff3ea5"></label>
+            <label>Estilo<select id="bEst"><option value="pixel">Pixel art con bisel</option><option value="plano">Plano</option><option value="pildora">Píldora</option><option value="rayas">Carril a rayas</option></select></label>
+          </div>
+          <pre class="salida" id="bCss"></pre>
+        </div>
+        <div class="taller-barra" id="bVista" tabindex="0" aria-label="Caja con scroll para probar la barra">
+          <p><b>Prueba aquí tu barra.</b> Arrastra el pulgar, pasa el ratón por encima y mira el carril.</p>
+          <p>El pulgar es la parte que se mueve. El carril es el fondo por el que se desliza. En pixel art, el bisel (un borde claro arriba a la izquierda y otro oscuro abajo a la derecha) da la sensación de botón en relieve.</p>
+          <p>El ancho se pone en <code>::-webkit-scrollbar</code>. Los colores, en <code>::-webkit-scrollbar-thumb</code> y <code>::-webkit-scrollbar-track</code>.</p>
+          <p>Un truco: un borde del color del carril alrededor del pulgar lo hace parecer más fino sin perder zona para pulsar.</p>
+          <p>Sigue bajando, que al final hay premio.</p>
+          <p style="height:260px"></p>
+          <p>¡Bien! <button class="moneda" data-id="s-barra" aria-label="Moneda secreta"></button></p>
+        </div>
+      </div>
+    </div>
+
+    <h3>scrollbar-gutter: que la página no salte</h3>
+    <p class="lectura">Cuando un contenido crece y aparece la barra, esta <b>roba espacio</b> y todo se mueve unos píxeles hacia la izquierda: un salto feo. <code>scrollbar-gutter: stable</code> <b>reserva el hueco de la barra</b> desde el principio, haya scroll o no. Pulsa el botón y compara.</p>
+    <div class="salto">
+      <div><h4>Sin reservar</h4><div class="caja-salto" id="gut1"><div class="linea-s"></div><div class="linea-s"></div><div class="linea-s"></div></div></div>
+      <div><h4>scrollbar-gutter: stable</h4><div class="caja-salto estable" id="gut2"><div class="linea-s"></div><div class="linea-s"></div><div class="linea-s"></div></div></div>
+    </div>
+    <p><button class="boton peq" type="button" id="gutBtn">+ AÑADIR LÍNEAS</button></p>
+
+    <h3>overscroll-behavior: que el scroll no se escape</h3>
+    <p class="lectura">Cuando llegas al final de una caja con scroll (un chat, un menú lateral, una ventana emergente) y sigues girando la rueda, <b>el scroll «salta» a la página de detrás</b>. Se llama <i>encadenamiento</i>. <code>overscroll-behavior: contain</code> lo corta: la caja se queda con su scroll. Prueba a llegar al final de cada chat y seguir girando. (En el móvil, <code>overscroll-behavior-y: none</code> en <code>html</code> quita además el «tirar para recargar».)</p>
+    <div class="cadena">
+      <div><h4>Normal: se escapa</h4><div class="chat" tabindex="0" aria-label="Chat sin contener"><p>¿Has visto el nivel 4?</p><p>¡Sí! El jefe es durísimo</p><p>Usa el visor de rangos</p><p>Vale, gracias</p><p>Ahora baja hasta el final…</p><p>…y sigue girando la rueda</p><p>¿Ves? Se mueve la página</p></div></div>
+      <div><h4>overscroll-behavior: contain</h4><div class="chat contiene" tabindex="0" aria-label="Chat que contiene el scroll"><p>¿Has visto el nivel 4?</p><p>¡Sí! El jefe es durísimo</p><p>Usa el visor de rangos</p><p>Vale, gracias</p><p>Ahora baja hasta el final…</p><p>…y sigue girando la rueda</p><p>Aquí la página no se mueve</p></div></div>
+    </div>
+    <div class="mision-host" data-m="barra2"></div>
+    <div class="mision-host" data-m="over"></div>
+  </div>
+</section>
+
+<!-- MUNDO 10 · RATÓN Y NORMAS ========================================= -->
+<section class="mundo" id="normas" data-nav="10 · Ratón y normas" style="--c:var(--verde);--suelo:var(--verde)">
+  <div class="wrap">
+    <div class="cab"><span class="num">WORLD<b>5-2</b></span><div><small>Las reglas del juego limpio</small><h2>Ratón, accesibilidad y navegadores antiguos</h2></div></div>
+    <div class="lectura aparece">
+      <p>Un efecto que marea, que esconde el texto o que solo funciona con ratón es un <b>bug</b>, por bonito que sea. Estas son las tres reglas que deben cumplir todos los efectos de este bloque.</p>
+    </div>
+    <h3>Regla 1 · El contenido se ve aunque no haya soporte</h3>
+    <div class="lectura">
+      <p>Fíjate en la receta del mundo 3: la tarjeta empieza con <code>opacity: 0</code> <b>dentro del <code>@keyframes</code></b>. Si un navegador no entiende <code>animation-timeline</code>… ¿qué pasa? Que <b>ignora esa línea</b>, la animación vuelve al reloj sin duración y la tarjeta se queda invisible para siempre. Has escondido tu web a quien tenga un navegador antiguo.</p>
+      <p>La solución es <code>@supports</code>: «aplica esto <b>solo si</b> el navegador entiende <code>animation-timeline: view()</code>». Fuera de <code>@supports</code>, el elemento está normal y visible.</p>
+    </div>
+    <h3>Regla 2 · Se apaga si la persona pide menos movimiento</h3>
+    <p class="lectura">En el bloque 04 viste <code>prefers-reduced-motion</code>: hay personas con mareos o problemas vestibulares que lo activan en su sistema. Que el movimiento lo provoque la rueda no lo hace inofensivo: un parallax fuerte o un zoom grande pueden marear igual. Envuelve los efectos con movimiento en <code>@media (prefers-reduced-motion: no-preference)</code>.</p>
+    <h3>La plantilla dorada (copia esto siempre)</h3>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="Aparición segura: con soporte, sin soporte y con menos movimiento">
+<textarea class="src" data-lang="html"><h1>Baja ↓</h1>
+<div class="aparece">Siempre visible sin soporte</div>
+<div class="aparece">Y quieta si pides menos movimiento</div>
+<div class="aparece">Con soporte y movimiento: aparece</div></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: system-ui, sans-serif; /* letra */
+  padding-bottom: 50vh; /* espacio al final */
+}
+h1 {
+  height: 70vh; /* primera pantalla */
+}
+.aparece {
+  margin: 3rem auto; /* separación */
+  max-width: 300px; /* ancho */
+  padding: 2rem; /* relleno */
+  background-color: #39ff88; /* verde */
+  color: #0b0b24; /* texto oscuro */
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .aparece {
+      animation: aparece linear both; /* sin duración */
+      animation-timeline: view(); /* su paso por la pantalla */
+      animation-range: entry 0% cover 35%; /* aparece al entrar */
+    }
+  }
+}
+@keyframes aparece {
+  from { opacity: 0; translate: 0 60px; } /* invisible y más abajo */
+}</textarea>
+    </div>
+    <h3>Regla 3 · El hover, solo donde hay ratón</h3>
+    <div class="lectura">
+      <p>En un móvil no hay «pasar por encima»: el primer toque activa el <code>:hover</code>, que se queda pegado hasta que tocas en otro sitio. Por eso los efectos que dependen del ratón van dentro de <code>@media (hover: hover) and (pointer: fine)</code>: «solo si el dispositivo principal puede pasar por encima y apunta con precisión». Y la información importante nunca debe estar <b>solo</b> en un hover: también con <code>:focus-visible</code> (teclado) o visible siempre.</p>
+    </div>
+    <div class="ejemplo" data-alto="200" data-t="Botón de arcade: hover con ratón y pulsación para todos">
+<textarea class="src" data-lang="html"><button class="arcade">START</button></textarea>
+<textarea class="src" data-lang="css">body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 160px; /* alto */
+  background-color: #0b0b24; /* noche */
+}
+.arcade {
+  font: 900 1.3rem monospace; /* letra */
+  padding: 1rem 2rem; /* relleno */
+  border: 0; /* sin borde */
+  background-color: #ff3ea5; /* rosa */
+  color: #fff; /* blanco */
+  box-shadow: 0 8px 0 #9e1a62; /* el lateral del botón */
+  cursor: pointer; /* manita */
+}
+.arcade:active {
+  translate: 0 6px; /* se hunde al pulsar, en cualquier dispositivo */
+  box-shadow: 0 2px 0 #9e1a62; /* el lateral casi desaparece */
+}
+.arcade:focus-visible {
+  outline: 4px solid #ffe14d; /* el teclado también ve dónde está */
+}
+@media (hover: hover) and (pointer: fine) {
+  .arcade:hover {
+    background-color: #ff6fbe; /* se ilumina solo con ratón */
+  }
+}</textarea>
+    </div>
+    <div class="nota pista-n"><span class="tit">¿Y el foco de luz que sigue al ratón?</span>Ese efecto (un círculo de luz que persigue el puntero) necesita leer la posición del ratón, y eso solo lo puede hacer <b>JavaScript</b> (<code>pointermove</code> y <code>setProperty</code>). Lo dejamos para el bloque 10. Con CSS puro, el ratón solo nos dice <b>encima de qué está</b> (<code>:hover</code>), no <b>dónde</b>.</div>
+
+    <h3>Bocadillos pegados: anchor positioning</h3>
+    <div class="lectura">
+      <p>Lo que sí puede hacer el CSS moderno es <b>pegar un elemento a otro</b>: un bocadillo, un menú o una pista que <b>siguen a su elemento</b> aunque haya scroll y que <b>se dan la vuelta solos</b> si no caben. Antes había que calcularlo con JavaScript. Se llama <i>anchor positioning</i> (posicionamiento por ancla):</p>
+      <ol>
+        <li>Al elemento de referencia le pones un nombre: <code>anchor-name: --bit;</code></li>
+        <li>Al bocadillo (con <code>position: absolute</code> o <code>fixed</code>) le dices a quién se pega: <code>position-anchor: --bit;</code></li>
+        <li>Y dónde: <code>position-area: top;</code> (encima). Hay <code>bottom</code>, <code>left</code>, <code>right</code>, <code>top right</code>…</li>
+        <li>Plan B si no cabe: <code>position-try-fallbacks: flip-block;</code> (si no cabe arriba, se pone abajo).</li>
+      </ol>
+      <p>Prueba: desplázate dentro del recuadro y verás que el bocadillo <b>viaja pegado a Bit</b>. Luego <b>pulsa en Bit</b> para cambiarlo de sitio: cuando sube al techo del escenario, el bocadillo ya no cabe encima… y se pone debajo él solo. Ojo: «caber» se mide dentro del <b>bloque contenedor</b> del bocadillo (aquí, el lienzo con <code>position: relative</code>), no dentro de lo que ves en pantalla. Si quieres que se dé la vuelta al llegar al borde de la pantalla, el bocadillo tiene que ser <code>position: fixed</code>.</p>
+    </div>
+    <div class="escenario-ancla" tabindex="0" aria-label="Escenario con scroll para probar el bocadillo pegado">
+      <div class="lienzo">
+        <button class="bit-ancla" id="bitAncla" type="button" aria-label="Mover a Bit" aria-describedby="bocadillo"></button>
+        <div class="bocadillo" id="bocadillo" role="tooltip">¡Voy pegado a Bit! <button class="moneda" data-id="s-ancla" aria-label="Moneda secreta"></button></div>
+      </div>
+    </div>
+    <p class="sin-ancla nota">Tu navegador no entiende anchor positioning: el bocadillo se muestra aparte.</p>
+    <div class="nota"><span class="tit">Ya no es experimental (noviembre de 2026)</span>El temario lo daba como «experimental, solo demo», pero ya funciona en los tres: <b>Chrome y Edge 125+</b>, <b>Safari 26+</b> y <b>Firefox 147+</b>. Algunos detalles finos (<code>position-anchor</code> completo) llegaron más tarde, en Chrome 151, Safari 27 y Firefox 151. Fuente: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank" rel="noopener">MDN · CSS anchor positioning</a>.</div>
+    <div class="ejemplo" data-alto="240" data-t="Pista que aparece pegada al botón con ratón y con teclado">
+<textarea class="src" data-lang="html"><button class="ayuda">?</button>
+<p class="pista">Pulsa A para saltar</p></textarea>
+<textarea class="src" data-lang="css">body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 200px; /* alto */
+  background-color: #0b0b24; /* noche */
+  font-family: monospace; /* letra */
+}
+.ayuda {
+  anchor-name: --ayuda; /* este botón es el ancla */
+  width: 3rem; /* ancho */
+  height: 3rem; /* alto */
+  font: 900 1.4rem monospace; /* letra */
+  border: 0; /* sin borde */
+  background-color: #ffe14d; /* amarillo */
+}
+.pista {
+  position: absolute; /* necesario para pegarse al ancla */
+  position-anchor: --ayuda; /* se pega al botón */
+  position-area: top; /* encima de él */
+  position-try-fallbacks: flip-block; /* si no cabe, debajo */
+  margin: 0.6rem; /* separación del botón */
+  padding: 0.5rem 0.8rem; /* relleno */
+  background-color: #fff; /* blanco */
+  opacity: 0; /* oculta */
+  transition: opacity 0.2s; /* aparece suave */
+}
+.ayuda:focus-visible + .pista {
+  opacity: 1; /* con teclado, se ve */
+}
+@media (hover: hover) and (pointer: fine) {
+  .ayuda:hover + .pista {
+    opacity: 1; /* con ratón, al pasar por encima */
+  }
+}</textarea>
+    </div>
+    <div class="mision-host" data-m="supports"></div>
+    <div class="mision-host" data-m="ancla2"></div>
+  </div>
+</section>
+
+<!-- BONUS STAGE · EXPERIMENTAL ======================================= -->
+<section class="mundo" id="bonus" data-nav="Bonus stage" style="--c:var(--rosa);--suelo:var(--lila)">
+  <div class="wrap">
+    <div class="cab"><span class="num">BONUS<b>★</b></span><div><small>Solo Chrome y Edge · experimental</small><h2>La fase secreta: lo que viene</h2></div></div>
+    <div class="lectura aparece">
+      <p>Estas propiedades son nuevas, solo funcionan en <b>Chrome y Edge</b> y todavía pueden cambiar. Úsalas como <b>mejora</b>: el carrusel o el menú deben funcionar igual sin ellas. En Safari y Firefox verás el contenido normal, sin el extra. (Datos de MDN, noviembre de 2026.)</p>
+    </div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Qué</th><th>Para qué</th><th>Desde</th></tr></thead>
+      <tbody>
+        <tr><td><code>::scroll-marker-group</code> · <code>::scroll-marker</code></td><td>Los puntitos de un carrusel, sin HTML ni JavaScript. Cada hijo genera su punto; <code>:target-current</code> marca el activo.</td><td>Chrome 135</td></tr>
+        <tr><td><code>::scroll-button()</code></td><td>Las flechas ◀ ▶ de un carrusel, generadas por el navegador.</td><td>Chrome 135</td></tr>
+        <tr><td><code>container-type: scroll-state</code> + <code>@container scroll-state()</code></td><td>Estilos según el estado del scroll: si una cabecera <b>está pegada</b> (<code>stuck</code>), si un elemento <b>está imantado</b> (<code>snapped</code>) o si <b>se puede hacer scroll</b> (<code>scrollable</code>).</td><td>Chrome 133</td></tr>
+        <tr><td><code>scroll-target-group: auto</code></td><td>El menú que marca solo la sección que estás leyendo (<i>scrollspy</i>), con <code>:target-current</code>.</td><td>Chrome 140</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ejemplo" data-alto="300" data-t="Carrusel con puntos y flechas generados por CSS (Chrome 135+)">
+<textarea class="src" data-lang="html"><ul class="carrusel">
+  <li>1</li>
+  <li>2</li>
+  <li>3</li>
+  <li>4</li>
+</ul>
+<p class="aviso">Tu navegador aún no genera puntos ni flechas: desliza con el dedo o con Mayúsculas + rueda.</p></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font-family: monospace; /* letra */
+}
+.carrusel {
+  display: flex; /* en fila */
+  gap: 1rem; /* separación */
+  overflow-x: auto; /* scroll horizontal */
+  scroll-snap-type: x mandatory; /* imán */
+  list-style: none; /* sin viñetas */
+  padding: 0; /* sin sangría */
+  margin: 0 2.5rem; /* hueco para las flechas */
+  scroll-marker-group: after; /* los puntos, debajo del carrusel */
+}
+.carrusel li {
+  flex: 0 0 100%; /* una tarjeta por vista */
+  height: 160px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  font-size: 3rem; /* número grande */
+  background-color: #9b7bff; /* lila */
+  scroll-snap-align: center; /* imantada al centro */
+}
+.carrusel li::scroll-marker {
+  content: ""; /* un punto vacío */
+  width: 14px; /* ancho */
+  height: 14px; /* alto */
+  background-color: #2c2c66; /* apagado */
+}
+.carrusel li::scroll-marker:target-current {
+  background-color: #ffe14d; /* el activo, amarillo */
+}
+.carrusel::scroll-marker-group {
+  display: flex; /* puntos en fila */
+  justify-content: center; /* centrados */
+  gap: 0.5rem; /* separación */
+  padding-top: 0.8rem; /* separación del carrusel */
+}
+.carrusel::scroll-button(left) {
+  content: "◀"; /* flecha izquierda */
+}
+.carrusel::scroll-button(right) {
+  content: "▶"; /* flecha derecha */
+}
+.carrusel::scroll-button(*) {
+  position: absolute; /* encima del carrusel */
+  top: 80px; /* a media altura */
+  border: 0; /* sin borde */
+  background-color: #ffe14d; /* amarillo */
+  font-size: 1.2rem; /* tamaño */
+}
+.carrusel::scroll-button(left) {
+  left: 0.3rem; /* a la izquierda */
+}
+.carrusel::scroll-button(right) {
+  right: 0.3rem; /* a la derecha */
+}
+@supports (scroll-marker-group: after) {
+  .aviso {
+    display: none; /* con soporte, el aviso sobra */
+  }
+}</textarea>
+    </div>
+    <div class="ejemplo" data-fijo="1" data-alto="300" data-t="La cabecera cambia cuando se queda pegada (Chrome 133+)">
+<textarea class="src" data-lang="html"><p class="hueco">Baja un poco ↓</p>
+<header class="cabecera"><div class="dentro">MENÚ</div></header>
+<p class="largo">Cuando la cabecera toca el techo, cambia de color.</p></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  font-family: monospace; /* letra */
+}
+.hueco {
+  height: 120px; /* un poco de espacio antes */
+  padding: 1rem; /* relleno */
+}
+.largo {
+  height: 1200px; /* contenido largo */
+  padding: 1rem; /* relleno */
+}
+.cabecera {
+  position: sticky; /* se pega arriba */
+  top: 0; /* arriba del todo */
+  container-type: scroll-state; /* sus hijos pueden preguntar si está pegada */
+}
+.dentro {
+  padding: 1rem; /* relleno */
+  background-color: #14143a; /* oscuro */
+  color: #fff; /* blanco */
+  transition: background-color 0.3s; /* cambio suave */
+}
+@container scroll-state(stuck: top) {
+  .dentro {
+    background-color: #ff3ea5; /* pegada: rosa */
+  }
+}</textarea>
+    </div>
+    <p class="lectura">Fíjate en un detalle: el cambio de color se aplica a <code>.dentro</code>, no a la propia cabecera. Igual que con las <i>container queries</i> del bloque 04, <b>un contenedor no puede preguntarse a sí mismo</b>: solo sus hijos pueden preguntar por él.</p>
+    <button class="moneda suelta" data-id="s-bonus" aria-label="Moneda secreta" style="--x:50%;--y:1rem"></button>
+  </div>
+</section>
+
+<!-- CATÁLOGO ========================================================== -->
+<section class="mundo" id="catalogo" data-nav="Catálogo 80" style="--c:var(--cian);--suelo:var(--oro)">
+  <div class="wrap">
+    <div class="cab"><span class="num">SHOP<b>80</b></span><div><small>La tienda de power-ups</small><h2>Catálogo de 80 efectos de scroll y ratón</h2></div></div>
+    <p class="lectura">Cada efecto vive en su propia ventanita con scroll: <b>desplázate dentro</b> o pulsa <b>DEMO</b> para que baje y suba sola. Busca por nombre o por propiedad (prueba «snap», «range», «exit», «barra»…). Para usarlos en tu web, mételos dentro de la plantilla dorada del mundo 10 (con <code>@supports</code> y <code>prefers-reduced-motion</code>).</p>
+    <div class="cat-mandos"><input type="search" id="catQ" placeholder="Buscar: fundido, snap, scroll(), barra…" aria-label="Buscar en el catálogo"><span class="cat-n" id="catN"></span></div>
+    <div class="chips" id="catF"></div>
+    <div class="galeria" id="catG"></div>
+  </div>
+</section>
+
+<!-- ARREGLA ============================================================ -->
+<section class="mundo" id="errores" data-nav="Arregla" style="--c:var(--rojo);--suelo:var(--rojo)">
+  <div class="wrap">
+    <div class="cab"><span class="num">BUGS<b>8</b></span><div><small>El taller de reparación</small><h2>Ocho bichos típicos</h2></div></div>
+    <p class="lectura">Estos son los errores que más se cometen con el scroll. Lee el código, piensa qué falla y elige.</p>
+    <div id="fixes"></div>
+  </div>
+</section>
+
+<!-- JEFE FINAL (TEST) ================================================= -->
+<section class="mundo" id="test" data-nav="Jefe final" style="--c:var(--rojo);--suelo:var(--rojo)">
+  <div class="wrap">
+    <div class="cab"><span class="num">FINAL<b>BOSS</b></span><div><small>El test del bloque</small><h2>El Gran Glitch</h2></div></div>
+    <div class="jefe">
+      <div class="glitch" id="glitch" aria-hidden="true"></div>
+      <div><p class="lectura" style="margin:0">El Gran Glitch se ha comido las animaciones de toda la web. Cada respuesta correcta le quita vida. Quince preguntas, quince golpes. Sin reloj: tómate tu tiempo.</p>
+        <div class="vida">VIDA DEL JEFE<div class="barra-v"><i id="vidaJefe"></i></div></div></div>
+    </div>
+    <div class="marcador"><span>ACIERTOS <b id="qScore">0 / 15</b></span><span><button class="boton peq" type="button" id="qAll">CORREGIR TODO</button> <button class="boton sec peq" type="button" id="qReset">OTRA VEZ</button></span></div>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<!-- RÉCORDS ============================================================ -->
+<section class="mundo" id="records" data-nav="Récords" style="--c:var(--oro);--suelo:var(--verde)">
+  <div class="wrap">
+    <div class="cab"><span class="num">GAME<b>OVER?</b></span><div><small>Tu partida</small><h2>Tabla de récords</h2></div></div>
+    <div class="records">
+      <div class="pantalla-fin">
+        <div class="gran" id="finScore">000000</div>
+        <div class="rango" id="finRango">NOVATO DEL SCROLL</div>
+        <div class="desglose" id="finDesglose"></div>
+        <div class="iniciales"><label for="ini">TUS INICIALES</label><input type="text" id="ini" maxlength="3" autocomplete="off"><button class="boton peq" type="button" id="guardaRec">GUARDAR</button></div>
+        <p style="font-size:.85rem;color:var(--txt2);margin:.8rem 0 0">Los récords se guardan solo en este navegador.</p>
+      </div>
+      <div class="panel" style="--c:var(--rosa)"><h4>HIGH SCORES</h4><table class="tabla-rec" id="tablaRec"></table>
+        <p style="font-size:.9rem;color:var(--txt2)">Monedas: 10 puntos (las secretas, 50). Misiones: 100. Cada acierto contra el jefe: 50. Hay monedas escondidas dentro de cajas con scroll, carruseles, bocadillos y algún buscador… y dicen que un viejo código de los 80 también da premio.</p>
+        <p><button class="boton sec peq" type="button" id="borraPartida">BORRAR MI PARTIDA</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHULETA ============================================================ -->
+<section class="mundo" id="chuleta" data-nav="Chuleta" style="--c:var(--cian);--suelo:var(--cian)">
+  <div class="wrap">
+    <div class="cab"><span class="num">HELP<b>?</b></span><div><small>Para llevar</small><h2>La chuleta</h2></div></div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Quiero…</th><th>Escribo</th></tr></thead>
+      <tbody>
+        <tr><td>Una animación que avance con el scroll de la página</td><td><code>animation: x linear both;</code> <code>animation-timeline: scroll();</code> (en este orden)</td></tr>
+        <tr><td>Que avance según un elemento cruza la pantalla</td><td><code>animation-timeline: view();</code></td></tr>
+        <tr><td>Que solo ocurra al entrar</td><td><code>animation-range: entry;</code> o <code>entry 0% cover 40%</code></td></tr>
+        <tr><td>Que solo ocurra al salir</td><td><code>animation-range: exit;</code></td></tr>
+        <tr><td>Que ocurra en los primeros 200 px de página</td><td><code>animation-timeline: scroll();</code> + <code>animation-range: 0 200px;</code></td></tr>
+        <tr><td>Que un elemento use el viaje de otro</td><td><code>view-timeline-name: --x;</code> · <code>animation-timeline: --x;</code> · <code>timeline-scope: --x;</code> en un antepasado común</td></tr>
+        <tr><td>Barra de progreso</td><td><code>position: fixed</code> + <code>transform-origin: left</code> + keyframes de <code>scale: 0 1</code> a <code>1 1</code> + <code>scroll()</code></td></tr>
+        <tr><td>Que no se esconda sin soporte</td><td><code>@supports (animation-timeline: view()) { … }</code></td></tr>
+        <tr><td>Respetar a quien pide menos movimiento</td><td><code>@media (prefers-reduced-motion: no-preference) { … }</code></td></tr>
+        <tr><td>Carrusel con imán</td><td>contenedor: <code>scroll-snap-type: x mandatory;</code> · hijos: <code>scroll-snap-align: center;</code></td></tr>
+        <tr><td>Salto suave a las anclas</td><td><code>html { scroll-behavior: smooth; }</code> (dentro de <code>no-preference</code>)</td></tr>
+        <tr><td>Que el menú fijo no tape el ancla</td><td><code>html { scroll-padding-top: 5rem; }</code> o <code>scroll-margin-top</code> en el destino</td></tr>
+        <tr><td>Colorear la barra de scroll (los tres navegadores)</td><td><code>scrollbar-color: pulgar carril;</code> · <code>scrollbar-width: thin;</code></td></tr>
+        <tr><td>Barra con diseño (Chrome, Edge, Safari)</td><td><code>::-webkit-scrollbar</code>, <code>-thumb</code>, <code>-track</code> (sin <code>scrollbar-color</code> en ese elemento)</td></tr>
+        <tr><td>Que no salte al aparecer la barra</td><td><code>scrollbar-gutter: stable;</code></td></tr>
+        <tr><td>Que el scroll no se escape de una caja</td><td><code>overscroll-behavior: contain;</code></td></tr>
+        <tr><td>Recortar sin crear scroll (y sin congelar view())</td><td><code>overflow: clip;</code></td></tr>
+        <tr><td>Hover solo con ratón</td><td><code>@media (hover: hover) and (pointer: fine) { … }</code></td></tr>
+        <tr><td>Pegar un bocadillo a un elemento</td><td><code>anchor-name: --a;</code> · <code>position-anchor: --a;</code> · <code>position-area: top;</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+</main>
+<footer class="pie">
+  <p class="fin">THANK YOU FOR PLAYING</p>
+  <p>Bloque 06 · Scroll y ratón sin JavaScript · Formación web Juritecnia <button class="moneda" data-id="s-pie" aria-label="Moneda secreta"></button></p>
+  <p><a href="../QuintoBloque/Variables-Iconos-Menus.html">← La feria del huerto (bloque 05)</a> · <a href="https://igorhermoso1.github.io/Formaci-n_Juritecnia/">Volver a la plataforma</a></p>
+</footer>
+
+<script>
+/* =====================================================================
+   DATOS · sprites, misiones, errores y test
+   ===================================================================== */
+/* sprites de 8 bits: cada letra es un color, el punto es transparente */
+const PAL = { K: "#0b0b24", C: "#00f0ff", c: "#0a8fb0", Y: "#ffe14d", y: "#c9a400", O: "#ff8a1f", M: "#ff3ea5", m: "#a8166a", W: "#ffffff", G: "#39ff88", g: "#1f9e50", L: "#9b7bff", l: "#5a3fc0", R: "#ff4a4a", B: "#5a2d0c", N: "#2c2c66" };
+const SPR = {
+  bit: [ /* dos fotogramas, uno al lado del otro */
+    [".....YY.....", ".....KK.....", "..KKKKKKKK..", ".KCCCCCCCCK.", ".KCWWCCWWCK.", ".KCWKCCWKCK.", ".KCCCCCCCCK.", ".KCCMMMMCCK.", "..KKKKKKKK..", ".KcCCCCCCcK.", "KKcCYCCYCcKK", ".KKKKKKKKKK.", "..KC....CK..", "..KK....KK.."],
+    [".....YY.....", ".....KK.....", "..KKKKKKKK..", ".KCCCCCCCCK.", ".KCWWCCWWCK.", ".KCWKCCWKCK.", ".KCCCCCCCCK.", ".KCCMMMMCCK.", "..KKKKKKKK..", ".KcCCCCCCcK.", "KKcCYCCYCcKK", ".KKKKKKKKKK.", ".KC......CK.", ".KK......KK."]
+  ],
+  moneda: [["..KKKK..", ".KYYYYK.", "KYYWYYyK", "KYWYYYyK", "KYYYYYyK", "KYYYYyyK", ".KyyyyK.", "..KKKK.."]],
+  bug: [["..K.......K..", "...K.....K...", "..KMMMMMMMK..", ".KMWWMMMWWMK.", ".KMWKMMMWKMK.", "KMMMMMMMMMMMK", "KMmMMRRRMMmMK", "K.KmMMMMMmK.K", "..K.K...K.K.."]],
+  cartucho: [["KKKKKKKKKK", "KGGGGGGGGK", "KGKKKKKKGK", "KGKWWWWKGK", "KGKWGGWKGK", "KGKKKKKKGK", "KGGGGGGGGK", "KgGgGgGgGK", "KgKgKgKgKK", ".K.K.K.K.."]],
+  cinta: [["KKKKKKKKKKKK", "KNNNNNNNNNNK", "KNWWNNNNWWNK", "KWKKWNNWKKWK", "KWKKWNNWKKWK", "KNWWNNNNWWNK", "KNNNMMMMNNNK", "KNNNMMMMNNNK", "KKKKKKKKKKKK"]],
+  tren: [["............", "..KKKKKKKK..", ".KCCWCCWCCK.", ".KCCWCCWCCK.", ".KCCCCCCCCK.", "KKKKKKKKKKKK", "KMMMMMMMMMMK", "KMMMMMMMMMMK", "KKKKKKKKKKKK", ".KK.KK.KK.KK", "............"]]
+};
+
+/* misiones: [[n]] es un hueco que rellena el alumno; ok[n] valida ese hueco */
+const MISIONES = [
+{id:"barra", t:"El bicho que se comió la barra", h:"#39ff88",
+ enun:"La barra de vida no crece con el scroll. Rellena los dos huecos: que crezca <b>desde la izquierda</b> y que su línea de tiempo sea <b>el scroll de la página</b>.",
+ css:`.barra {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 14px;
+  background-color: #39ff88;
+  transform-origin: [[0]];
+  animation: llena linear both;
+  animation-timeline: [[1]];
+}
+@keyframes llena {
+  from { scale: 0 1; }
+}`, w:[8, 10], ok:[/^left$/, /^scroll\(\s*(root|nearest)?\s*(block|y)?\s*\)$/],
+ html:`<div class="barra"></div><p>Baja ↓</p><p style="height:1400px"></p>`, base:"body{margin:0;padding:1rem;font:800 1.2rem monospace;background:#0b0b24;color:#fff}",
+ pista:"El origen de la transformación se escribe con una palabra de posición (left, right, center…). La línea de tiempo del scroll de un contenedor es una función con paréntesis."},
+{id:"view", t:"El bicho invisible", h:"#ff3ea5",
+ enun:"Las tarjetas deberían aparecer al entrar en pantalla. Falta que la animación <b>mantenga sus extremos</b> (para que la tarjeta esté invisible antes de entrar) y que su línea de tiempo sea <b>su propio paso por la pantalla</b>.",
+ css:`.tarjeta {
+  margin: 2rem auto;
+  max-width: 220px;
+  padding: 2rem;
+  background-color: #ff3ea5;
+  animation: aparece linear [[0]];
+  animation-timeline: [[1]];
+  animation-range: entry 0% cover 40%;
+}
+@keyframes aparece {
+  from { opacity: 0; translate: 0 80px; }
+}`, w:[6, 8], ok:[/^both$/, /^view\(\s*(block|y)?\s*\)$/],
+ html:`<p style="height:60vh">Baja ↓</p><div class="tarjeta">1</div><div class="tarjeta">2</div><div class="tarjeta">3</div><p style="height:60vh"></p>`, base:"body{margin:0;padding:1rem;font:800 1.4rem monospace;background:#0b0b24;color:#fff;text-align:center}",
+ pista:"El cuarto valor de animation suele ser la forma de rellenar: none, forwards, backwards o… la que hace las dos cosas. La línea de tiempo de un elemento que cruza la pantalla se llama como «vista» en inglés."},
+{id:"rango", t:"El bicho impaciente", h:"#ffe14d",
+ enun:"Ahora la tarjeta usa todo su viaje y solo está entera cuando ya se va. Escribe un <b>animation-range</b> para que empiece <b>al asomar</b> y termine <b>justo cuando ya está entera dentro</b>.",
+ css:`.tarjeta {
+  margin: 2rem auto;
+  max-width: 220px;
+  padding: 2rem;
+  background-color: #ffe14d;
+  animation: aparece linear both;
+  animation-timeline: view();
+  animation-range: [[0]];
+}
+@keyframes aparece {
+  from { opacity: 0; scale: 0.3; rotate: -20deg; }
+}`, w:[20], ok:[/^entry(\s+0%(\s+entry\s+100%)?)?$/],
+ html:`<p style="height:60vh">Baja ↓</p><div class="tarjeta">★</div><p style="height:80vh"></p>`, base:"body{margin:0;padding:1rem;font:800 1.4rem monospace;background:#0b0b24;color:#0b0b24;text-align:center}p{color:#fff}",
+ pista:"La fase que va de «asoma» a «entera dentro» es entry. Puedes escribir la versión larga (entry 0% entry 100%) o la corta."},
+{id:"snap", t:"El bicho resbaladizo", h:"#9b7bff",
+ enun:"El carrusel no se imanta. En el contenedor, imán <b>horizontal y obligatorio</b>. En cada tarjeta, que se alinee <b>por el centro</b>.",
+ css:`.carrusel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 15%;
+  scroll-snap-type: [[0]];
+}
+.carrusel div {
+  flex: 0 0 70%;
+  height: 160px;
+  background-color: #9b7bff;
+  scroll-snap-align: [[1]];
+}`, w:[12, 8], ok:[/^(x|inline)\s+mandatory$/, /^center$/],
+ html:`<div class="carrusel"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div></div><p>Desliza el carrusel con el dedo, arrastrando la barra o con Mayúsculas + rueda.</p>`, base:"body{margin:0;padding:1rem;font:800 1.6rem monospace;background:#0b0b24;color:#fff}.carrusel div{display:grid;place-items:center}p{font-size:.9rem}",
+ pista:"scroll-snap-type lleva dos palabras: el eje (x o y) y la fuerza (mandatory o proximity)."},
+{id:"ancla", t:"El bicho que se esconde", h:"#00f0ff",
+ enun:"Al pulsar un enlace del menú, el título queda <b>escondido debajo del menú fijo</b>, que mide 70 px. Dale al título el aire que necesita (en px o rem) y pruébalo pulsando los enlaces.",
+ css:`.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: #14143a;
+}
+h2 {
+  scroll-margin-top: [[0]];
+}`, w:[8], ok:[v => { const m = v.match(/^(\d*\.?\d+)\s*(px|rem|em)$/); return !!m && parseFloat(m[1]) * (m[2] === "px" ? 1 : 16) >= 70; }],
+ html:`<nav class="menu"><a href="#a">Nivel A</a> <a href="#b">Nivel B</a></nav><p style="height:90px"></p><h2 id="a">NIVEL A</h2><p style="height:600px">…</p><h2 id="b">NIVEL B</h2><p style="height:600px">…</p>`, base:"body{margin:0;font:800 1.1rem monospace;background:#0b0b24;color:#fff}.menu{display:flex;gap:1rem;align-items:center;padding:0 1rem;z-index:2}.menu a{color:#ffe14d}h2{margin:0;padding:.5rem 1rem;background:#ff3ea5}",
+ pista:"El aire tiene que ser al menos tan grande como el menú: 70px, 80px, 5rem…"},
+{id:"barra2", t:"El bicho gris", h:"#ff8a1f",
+ enun:"Pinta la barra de scroll de la caja con la propiedad <b>estándar</b>: el pulgar amarillo <code>#ffe14d</code> y el carril lila <code>#9b7bff</code>. Ojo con el orden.",
+ css:`.caja {
+  height: 200px;
+  overflow-y: auto;
+  scrollbar-color: [[0]];
+}`, w:[18], ok:[/^#ffe14d\s+#9b7bff$/i],
+ html:`<div class="caja"><p style="height:700px">Mira la barra de la derecha →</p></div>`, base:"body{margin:0;padding:1rem;font:800 1.1rem monospace;background:#0b0b24;color:#fff}.caja{background:#14143a;padding:0 1rem}",
+ pista:"scrollbar-color lleva dos colores separados por un espacio: primero el pulgar y después el carril."},
+{id:"over", t:"El bicho escapista", h:"#39ff88",
+ enun:"Cuando llegas al final del chat y sigues girando la rueda, se mueve la página de detrás. Haz que la caja <b>se quede con su scroll</b>.",
+ css:`.chat {
+  height: 160px;
+  overflow-y: auto;
+  overscroll-behavior: [[0]];
+}`, w:[10], ok:[/^(contain|none)(\s+(contain|none))?$/],
+ html:`<p>Baja aquí dentro y sigue girando al llegar al final:</p><div class="chat"><p>Hola</p><p>¿Jugamos?</p><p>¡Vale!</p><p>Nivel 1</p><p>Nivel 2</p><p>Fin del chat</p></div><p style="height:900px"></p>`, base:"body{margin:0;padding:1rem;font:800 1.1rem monospace;background:#0b0b24;color:#fff}.chat{background:#14143a;padding:0 1rem}",
+ pista:"La palabra que significa «contener» en inglés (o la que significa «ninguno»)."},
+{id:"supports", t:"El bicho de los navegadores viejos", h:"#ff3ea5",
+ enun:"En un navegador sin soporte, esta tarjeta se quedaría invisible para siempre. Escribe la <b>condición de @supports</b> que comprueba si el navegador entiende <code>animation-timeline</code> con <code>view()</code>.",
+ css:`.tarjeta {
+  padding: 2rem;
+  background-color: #39ff88;
+}
+@supports ([[0]]) {
+  .tarjeta {
+    animation: aparece linear both;
+    animation-timeline: view();
+  }
+}
+@keyframes aparece {
+  from { opacity: 0; }
+}`, w:[26], ok:[/^animation-timeline\s*:\s*(view|scroll)\(\s*\)$/],
+ html:`<p style="height:60vh">Baja ↓</p><div class="tarjeta">VISIBLE SIEMPRE</div><p style="height:60vh"></p>`, base:"body{margin:0;padding:1rem;font:800 1.2rem monospace;background:#0b0b24;color:#fff}.tarjeta{color:#0b0b24}",
+ pista:"Dentro de los paréntesis de @supports va una declaración, propiedad y valor, sin punto y coma: propiedad: valor."},
+{id:"ancla2", t:"El bicho que se despega", h:"#ffe14d",
+ enun:"El bocadillo debe ir <b>pegado a Bit</b> y <b>encima</b> de él. Bit ya tiene <code>anchor-name: --bit</code>.",
+ css:`.bit {
+  anchor-name: --bit;
+}
+.bocadillo {
+  position: absolute;
+  position-anchor: [[0]];
+  position-area: [[1]];
+  margin: 8px;
+}`, w:[8, 8], ok:[/^--bit$/, /^(top|block-start|top\s+center|center\s+top)$/],
+ html:`<div class="bit">BIT</div><p class="bocadillo">¡Hola!</p>`, base:"body{margin:0;display:grid;place-items:center;min-height:260px;font:800 1.2rem monospace;background:#0b0b24;color:#fff}.bit{width:80px;height:80px;display:grid;place-items:center;background:#00f0ff;color:#0b0b24}.bocadillo{background:#fff;color:#0b0b24;padding:.4rem .7rem}",
+ pista:"Al ancla se la llama por su nombre, con los dos guiones. Y «encima» en inglés es top."}
+];
+
+const FIX = [
+ {q:"La barra de progreso se llena de golpe al cargar la página, sin esperar al scroll.",code:".barra {\n  animation-timeline: scroll();\n  animation: llena linear both;\n}",o:["El atajo animation va después y devuelve animation-timeline a auto: escribe animation-timeline debajo","scroll() necesita escribir root dentro","Falta una duración en segundos"],a:0,e:"animation reinicia todas las animation-*, también animation-timeline. Primero el atajo, luego la línea de tiempo."},
+ {q:"La barra avanza, pero no es proporcional: va lenta al principio y al final, y rápida en medio.",code:".barra {\n  animation: llena both;\n  animation-timeline: scroll();\n}",o:["Falta linear: sin él se usa ease, que acelera y frena","scroll() siempre es irregular","Hay que usar width en lugar de scale"],a:0,e:"La curva por defecto es ease. Con scroll casi siempre quieres linear."},
+ {q:"En Firefox antiguo, las tarjetas no aparecen nunca: la página sale vacía.",code:".tarjeta {\n  animation: aparece linear both;\n  animation-timeline: view();\n}\n@keyframes aparece {\n  from { opacity: 0; }\n}",o:["Mete la animación dentro de @supports (animation-timeline: view()) para que sin soporte no se aplique","Firefox no entiende opacity","Hay que poner opacity: 1 con !important"],a:0,e:"Sin soporte, la animación cae al reloj, sin duración, y se queda en from (invisible) por el both."},
+ {q:"Las tarjetas están dentro de una caja con overflow: hidden y se quedan medio transparentes, quietas, hagas el scroll que hagas.",code:".marco {\n  overflow: hidden;\n}\n.marco .tarjeta {\n  animation: aparece linear both;\n  animation-timeline: view();\n}",o:["overflow: hidden crea un contenedor con scroll que no se mueve y view() lo usa: cambia a overflow: clip","view() no funciona con tarjetas","Falta z-index"],a:0,e:"view() busca el contenedor con scroll más cercano. hidden lo crea; clip recorta sin crearlo."},
+ {q:"La barra de scroll tiene un diseño de pixel art con ::-webkit-scrollbar, pero en Chrome sale con la forma normal.",code:".caja {\n  scrollbar-color: gold navy;\n}\n.caja::-webkit-scrollbar {\n  width: 20px;\n}\n.caja::-webkit-scrollbar-thumb {\n  background: gold;\n  border: 4px solid navy;\n}",o:["Desde Chrome 121, si hay scrollbar-color o scrollbar-width, se ignoran los ::-webkit-scrollbar: quita scrollbar-color","Falta el prefijo -moz-","::-webkit-scrollbar solo funciona en html"],a:0,e:"No mezcles las dos formas en el mismo elemento."},
+ {q:"Al pulsar el índice, cada título queda tapado por la cabecera fija.",code:"header {\n  position: fixed;\n  top: 0;\n  height: 80px;\n}\nhtml {\n  scroll-behavior: smooth;\n}",o:["Falta html { scroll-padding-top: 80px; } (o scroll-margin-top en los títulos)","smooth tapa los títulos","Hay que usar position: sticky siempre"],a:0,e:"El navegador lleva el destino al borde de arriba, justo donde está la cabecera."},
+ {q:"El carrusel con mandatory no deja leer bien la última tarjeta, que es más alta que el carrusel, y el imán tira todo el rato.",code:".pagina {\n  scroll-snap-type: y mandatory;\n}",o:["Para contenido de altura variable usa proximity, que solo imanta si te paras cerca","mandatory solo funciona en horizontal","Falta scroll-snap-stop: always"],a:0,e:"mandatory es para pantallas iguales. Para leer, proximity."},
+ {q:"El parallax con la foto de fondo funciona en el ordenador, pero en el iPhone de una alumna la foto se desplaza normal.",code:".portada {\n  background-image: url(ciudad.jpg);\n  background-attachment: fixed;\n}",o:["Safari para iOS ignora background-attachment: fixed: usa capas con translate y animation-timeline","Falta background-size: cover","El iPhone no admite JPG"],a:0,e:"Lo reconoce pero no lo aplica (fallo 275247 de WebKit). La versión con view() sí funciona."}
+];
+
+const TEST = [
+ {q:"¿Qué cambia en una animación dirigida por el scroll respecto a una normal?",o:["Que avanza con el desplazamiento y no con el tiempo","Que no usa @keyframes","Que solo puede mover el color"],a:0,e:"Los @keyframes son los mismos; cambia lo que hace avanzar la cinta."},
+ {q:"¿Qué mide <code>scroll()</code>?",o:["Dónde está un elemento dentro de la pantalla","Cuánto se ha desplazado un contenedor, de 0 % a 100 %","La velocidad de la rueda"],a:1,e:"0 % arriba del todo, 100 % al final."},
+ {q:"¿Qué mide <code>view()</code>?",o:["El viaje de ese elemento por la pantalla: desde que asoma hasta que se va","El tamaño de la ventana","El tiempo que pasa el elemento visible"],a:0,e:"Cada elemento tiene su propia línea de tiempo de vista."},
+ {q:"¿En qué orden se escriben?",o:["animation-timeline primero y animation después","animation primero y animation-timeline después","Da igual"],a:1,e:"El atajo reinicia animation-timeline a auto."},
+ {q:"¿Por qué casi siempre se usa <code>linear</code>?",o:["Porque es obligatorio","Para que el avance de la animación sea proporcional al scroll","Porque ease no existe con scroll"],a:1,e:"Con ease, la animación acelera y frena aunque bajes a ritmo constante."},
+ {q:"¿Para qué sirve <code>both</code> en una aparición con <code>view()</code>?",o:["Para que antes de entrar el elemento ya esté en el estado from (invisible) y al final se quede como to","Para animar en los dos ejes","Para que se repita"],a:0,e:"Sin backwards se vería un instante y luego desaparecería."},
+ {q:"<code>animation-range: entry</code> significa…",o:["Durante todo el viaje","Desde que asoma hasta que está entero dentro","Desde que empieza a salir hasta que se va"],a:1,e:"Es la abreviatura de entry 0% entry 100%."},
+ {q:"¿Qué fase empieza cuando el elemento empieza a irse por arriba?",o:["cover","contain","exit"],a:2,e:"exit 0% = empieza a salir; exit 100% = se ha ido."},
+ {q:"<code>animation-timeline: scroll()</code> con <code>animation-range: 0 200px</code>…",o:["Ocurre en los primeros 200 px de scroll","Dura 200 milisegundos","Solo funciona en pantallas de 200 px"],a:0,e:"Con scroll() el rango se puede escribir en distancias."},
+ {q:"Quiero que la luz del marcador se encienda con el viaje de otra sección que no la contiene. ¿Qué necesito?",o:["view-timeline-name en la sección, animation-timeline con ese nombre en la luz y timeline-scope en un antepasado común","Solo z-index","No se puede sin JavaScript"],a:0,e:"El nombre es el puente; timeline-scope lo hace visible fuera de la sección."},
+ {q:"¿Qué escribo para que una aparición no deje invisible la página en un navegador sin soporte?",o:["@media (hover: hover)","@supports (animation-timeline: view())","!important"],a:1,e:"Fuera de @supports, el elemento se queda normal y visible."},
+ {q:"¿Qué hace <code>scroll-snap-type: x mandatory</code>?",o:["Imanta el scroll horizontal del contenedor: siempre se para en una tarjeta","Oculta la barra horizontal","Anima las tarjetas"],a:0,e:"Va en el contenedor; los hijos llevan scroll-snap-align."},
+ {q:"Tengo <code>scrollbar-color</code> y <code>::-webkit-scrollbar</code> en la misma caja. En Chrome 121 o posterior…",o:["Se suman los dos","Manda scrollbar-color y se ignoran los ::-webkit-scrollbar","Manda siempre ::-webkit-scrollbar"],a:1,e:"Si hay propiedades estándar, Chrome ignora las antiguas."},
+ {q:"¿Para qué sirve <code>overscroll-behavior: contain</code>?",o:["Para que al llegar al final de una caja el scroll no pase a la página de detrás","Para ocultar la barra","Para imantar el scroll"],a:0,e:"Corta el encadenamiento de scroll."},
+ {q:"¿Qué pasa con <code>background-attachment: fixed</code> en Safari para iPhone (noviembre de 2026)?",o:["Funciona igual que en el ordenador","Lo reconoce pero no hace efecto: el fondo se desplaza normal","Rompe la página"],a:1,e:"Por eso el parallax moderno usa capas con translate y view()."}
+];
+
+/* =====================================================================
+   CATÁLOGO · 80 efectos de scroll y ratón (plantillas + variaciones)
+   ===================================================================== */
+const CAT = (() => {
+  const L = [];
+  const BASE_V = `body {
+  margin: 0; /* sin margen */
+  padding: 75vh 1rem; /* espacio arriba y abajo para hacer scroll */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font: 800 1.1rem monospace; /* letra */
+}
+.fx {
+  height: 80px; /* alto */
+  margin-bottom: 1rem; /* separación */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #ff3ea5; /* rosa */
+}
+.fx:nth-child(even) {
+  background-color: #00f0ff; /* cian en las pares */
+  color: #0b0b24; /* texto oscuro */
+}`;
+  const CAJAS = `<div class="fx">BIT</div>\n<div class="fx">★</div>\n<div class="fx">♥</div>\n<div class="fx">◆</div>`;
+  /* t, descripción, familia, rango + su comentario, líneas de keyframes, css extra en .fx */
+  const vista = (t, d, c, rango, kf, extra = "") => L.push({ t, d, c, h: CAJAS, s: `${BASE_V}
+.fx {
+  animation: fx linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: ${rango}
+${extra}}
+@keyframes fx {
+${kf.map(k => "  " + k).join("\n")}
+}` });
+  const ENT = "entry 0% cover 40%; /* al entrar */", ENT2 = "entry; /* de asomar a estar dentro */";
+  /* --- aparecer (20) --- */
+  vista("Fundido", "Aparece de transparente a visible.", "Aparecer", ENT, ["from { opacity: 0; } /* invisible */"]);
+  vista("Sube y aparece", "El clásico de las webs modernas.", "Aparecer", ENT, ["from { opacity: 0; translate: 0 60px; } /* invisible y más abajo */"]);
+  vista("Baja y aparece", "Cae desde arriba.", "Aparecer", ENT, ["from { opacity: 0; translate: 0 -60px; } /* invisible y más arriba */"]);
+  vista("Desde la izquierda", "Entra deslizándose de lado.", "Aparecer", ENT, ["from { opacity: 0; translate: -100% 0; } /* fuera, a la izquierda */"]);
+  vista("Desde la derecha", "Entra desde el otro lado.", "Aparecer", ENT, ["from { opacity: 0; translate: 100% 0; } /* fuera, a la derecha */"]);
+  vista("Zoom de entrada", "Crece desde pequeño.", "Aparecer", ENT, ["from { opacity: 0; scale: 0.3; } /* diminuto */"]);
+  vista("Zoom desde grande", "Se acerca desde muy cerca.", "Aparecer", ENT, ["from { opacity: 0; scale: 1.8; } /* enorme */"]);
+  vista("Giro", "Entra dando media vuelta.", "Aparecer", ENT, ["from { opacity: 0; rotate: -180deg; scale: 0.5; } /* girado y pequeño */"]);
+  vista("Volteo vertical", "Como una carta que se levanta.", "Aparecer", ENT, ["from { opacity: 0; transform: perspective(500px) rotateX(80deg); } /* tumbada */"]);
+  vista("Volteo horizontal", "Como una puerta que se abre.", "Aparecer", ENT, ["from { opacity: 0; transform: perspective(500px) rotateY(-85deg); } /* de canto */"]);
+  vista("Desenfoque", "Pasa de borroso a nítido.", "Aparecer", ENT, ["from { opacity: 0; filter: blur(14px); } /* muy borroso */"]);
+  vista("Cortina desde arriba", "Se descubre de arriba abajo.", "Aparecer", ENT2, ["from { clip-path: inset(0 0 100% 0); } /* tapado por abajo */", "to { clip-path: inset(0 0 0 0); } /* descubierto */"]);
+  vista("Cortina lateral", "Se descubre de izquierda a derecha.", "Aparecer", ENT2, ["from { clip-path: inset(0 100% 0 0); } /* tapado por la derecha */", "to { clip-path: inset(0 0 0 0); } /* descubierto */"]);
+  vista("Iris", "Se abre en círculo desde el centro.", "Aparecer", ENT, ["from { clip-path: circle(0% at 50% 50%); } /* círculo sin tamaño */", "to { clip-path: circle(75% at 50% 50%); } /* círculo que lo cubre todo */"]);
+  vista("Rombo", "Se abre en forma de diamante.", "Aparecer", ENT, ["from { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); } /* un punto */", "to { clip-path: polygon(50% -50%, 150% 50%, 50% 150%, -50% 50%); } /* rombo enorme */"]);
+  vista("Sin color a color", "Empieza en blanco y negro.", "Aparecer", ENT, ["from { filter: grayscale(1) brightness(0.4); } /* gris y oscuro */"]);
+  vista("Sesgado", "Entra inclinado y se endereza.", "Aparecer", ENT, ["from { opacity: 0; transform: skewY(15deg) translateY(40px); } /* inclinado y abajo */"]);
+  vista("Rebote", "Crece de más y vuelve a su tamaño.", "Aparecer", ENT, ["0% { scale: 0; } /* sin tamaño */", "70% { scale: 1.15; } /* se pasa */", "100% { scale: 1; } /* su tamaño */"]);
+  vista("Píxeles", "Aparece por saltos, como un juego antiguo.", "Aparecer", ENT, ["from { opacity: 0; scale: 0.2; } /* diminuto */"], "  animation-timing-function: steps(5); /* a saltos, no suave */\n");
+  vista("Barrido de brillo", "Entra muy brillante y se calma.", "Aparecer", ENT, ["from { filter: brightness(3) saturate(0); opacity: 0; } /* deslumbrante */"]);
+  /* --- salir (8) --- */
+  const SAL = "exit; /* mientras se va por arriba */";
+  vista("Fundido al salir", "Se desvanece al irse.", "Salir", SAL, ["to { opacity: 0; } /* invisible al final */"]);
+  vista("Sube y se va", "Sale hacia arriba más rápido que el scroll.", "Salir", SAL, ["to { opacity: 0; translate: 0 -80px; } /* arriba e invisible */"]);
+  vista("Encoge al salir", "Se hace pequeño.", "Salir", SAL, ["to { scale: 0.4; opacity: 0; } /* pequeño e invisible */"]);
+  vista("Gira al salir", "Se va dando vueltas.", "Salir", SAL, ["to { rotate: 90deg; opacity: 0; } /* girado e invisible */"]);
+  vista("Borroso al salir", "Se desenfoca al irse.", "Salir", SAL, ["to { filter: blur(12px); opacity: 0.2; } /* borroso */"]);
+  vista("Recorte al salir", "Se cierra por abajo.", "Salir", SAL, ["to { clip-path: inset(0 0 100% 0); } /* tapado */"]);
+  vista("Se aleja", "Como si se fuera hacia el fondo.", "Salir", SAL, ["to { transform: perspective(500px) translateZ(-300px); opacity: 0; } /* hacia el fondo */"]);
+  vista("Entra y sale", "Aparece al entrar y desaparece al salir.", "Salir", "cover; /* todo el viaje */", ["0%, 100% { opacity: 0; scale: 0.8; } /* invisible en los extremos */", "30%, 70% { opacity: 1; scale: 1; } /* visible en medio */"]);
+  /* --- cruzar (8) --- */
+  const COV = "cover; /* todo el viaje */";
+  vista("Cambio de color", "Cian al entrar, rosa en medio y amarillo al salir.", "Cruzar", COV, ["0% { background-color: #00f0ff; } /* cian */", "50% { background-color: #ff3ea5; } /* rosa */", "100% { background-color: #ffe14d; } /* amarillo */"]);
+  vista("Arcoíris", "El tono da la vuelta entera al cruzar.", "Cruzar", COV, ["to { filter: hue-rotate(360deg); } /* vuelta al círculo de color */"]);
+  vista("Foco en el centro", "Solo brilla cuando está en el centro de la pantalla.", "Cruzar", COV, ["0%, 100% { opacity: 0.25; } /* apagado en los extremos */", "50% { opacity: 1; } /* encendido en el centro */"]);
+  vista("Lupa central", "Crece al pasar por el centro.", "Cruzar", COV, ["0%, 100% { scale: 0.8; } /* pequeño en los extremos */", "50% { scale: 1.15; } /* grande en el centro */"]);
+  vista("Ruleta", "Gira mientras cruza.", "Cruzar", COV, ["from { rotate: -20deg; } /* inclinado a un lado */", "to { rotate: 20deg; } /* inclinado al otro */"]);
+  vista("Lento", "Se mueve más despacio que el scroll (parallax de un elemento).", "Cruzar", COV, ["from { translate: 0 -60px; } /* adelantado */", "to { translate: 0 60px; } /* retrasado */"]);
+  vista("Péndulo lateral", "Se balancea de lado a lado.", "Cruzar", COV, ["0%, 100% { translate: -40px 0; } /* a la izquierda */", "50% { translate: 40px 0; } /* a la derecha */"]);
+  vista("Sombra que crece", "Se despega del fondo al llegar al centro.", "Cruzar", COV, ["0%, 100% { box-shadow: 0 0 0 #000; } /* sin sombra */", "50% { box-shadow: 12px 12px 0 #ffe14d; } /* sombra dura */"]);
+  /* --- texto (10) --- */
+  const TX = (t, d, h, css) => L.push({ t, d, c: "Texto", h: `<p class="h">↓</p>\n${h}\n<p class="h"></p>`, s: `body {
+  margin: 0; /* sin margen */
+  padding: 0 1rem; /* relleno lateral */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font: 800 1.5rem/1.3 monospace; /* letra grande */
+}
+.h {
+  height: 75vh; /* espacio para bajar */
+}
+${css}` });
+  const PINTA = (t, d, color) => TX(t, d, `<p class="t">Bit llegó al final de la página paso a paso.</p>`, `.t {
+  color: rgb(255 255 255 / 15%); /* gris de base */
+  background: linear-gradient(${color}, ${color}) 0 0 / 0% 100% no-repeat; /* color con ancho cero */
+  -webkit-background-clip: text; /* recorte con letras (prefijo) */
+  background-clip: text; /* recorte con letras */
+  animation: pinta linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: cover 20% cover 60%; /* mientras cruza el centro */
+}
+@keyframes pinta {
+  to { background-size: 100% 100%; } /* color en todo el ancho */
+}`);
+  PINTA("Texto que se pinta", "Se rellena de amarillo al leerlo.", "#ffe14d");
+  PINTA("Texto que se pinta en rosa", "La misma receta con otro color.", "#ff3ea5");
+  TX("Palabra a palabra", "Cada palabra se enciende un poco después.", `<p class="t"><span style="--i: 0">PRESS</span> <span style="--i: 1">START</span> <span style="--i: 2">TO</span> <span style="--i: 3">PLAY</span></p>`, `.t {
+  view-timeline-name: --frase; /* el viaje de la frase */
+}
+.t span {
+  animation: enciende linear both; /* sin duración */
+  animation-timeline: --frase; /* todas usan el viaje de la frase */
+  animation-range: entry calc(var(--i) * 20%) cover calc(var(--i) * 10% + 30%); /* cada una, más tarde */
+}
+@keyframes enciende {
+  from { opacity: 0.1; color: #ff3ea5; } /* apagada y rosa */
+}`);
+  TX("Letras que saltan", "Las letras suben una tras otra.", `<p class="t"><span style="--i: 0">L</span><span style="--i: 1">E</span><span style="--i: 2">V</span><span style="--i: 3">E</span><span style="--i: 4">L</span></p>`, `.t {
+  font-size: 3rem; /* grande */
+  view-timeline-name: --letras; /* el viaje de la palabra */
+}
+.t span {
+  display: inline-block; /* para poder moverlas */
+  animation: salta linear both; /* sin duración */
+  animation-timeline: --letras; /* el viaje de la palabra */
+  animation-range: entry calc(var(--i) * 15%) entry calc(var(--i) * 15% + 30%); /* escalonadas */
+}
+@keyframes salta {
+  from { translate: 0 1em; opacity: 0; } /* abajo e invisibles */
+}`);
+  TX("Subrayado que crece", "La línea se dibuja bajo el título.", `<h2 class="t">NIVEL 2</h2>`, `.t {
+  background: linear-gradient(#ffe14d, #ffe14d) 0 100% / 0% 6px no-repeat; /* línea con ancho cero */
+  animation: subraya linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 50% cover 50%; /* hasta el centro */
+}
+@keyframes subraya {
+  to { background-size: 100% 6px; } /* línea completa */
+}`);
+  TX("Rotulador", "Un resaltado amarillo detrás del texto.", `<p>Lo importante es <mark class="t">el orden de las propiedades</mark>.</p>`, `.t {
+  color: inherit; /* el color del texto */
+  background: linear-gradient(#ff3ea5, #ff3ea5) 0 0 / 0% 100% no-repeat; /* resaltado con ancho cero */
+  animation: resalta linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 100% cover 50%; /* al llegar al centro */
+}
+@keyframes resalta {
+  to { background-size: 100% 100%; } /* resaltado completo */
+}`);
+  TX("Máquina de escribir", "Las letras se escriben con el scroll.", `<p class="t">HELLO, PLAYER 1</p>`, `.t {
+  width: 15ch; /* exactamente el ancho de las letras */
+  white-space: nowrap; /* en una línea */
+  overflow: clip; /* oculta lo que aún no se ha escrito */
+  border-right: 3px solid #ffe14d; /* el cursor */
+  animation: escribe steps(15) both; /* a saltos: una letra cada vez */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 100% cover 60%; /* mientras sube al centro */
+}
+@keyframes escribe {
+  from { width: 0; } /* sin letras */
+}`);
+  TX("Degradado que corre", "El degradado del texto se desliza al bajar.", `<p class="t">SCROLL QUEST</p>`, `.t {
+  font-size: 2.6rem; /* grande */
+  color: #ffe14d; /* reserva */
+  background: linear-gradient(90deg, #00f0ff, #ff3ea5, #ffe14d, #00f0ff) 0 0 / 300% 100%; /* degradado ancho */
+  -webkit-background-clip: text; /* recorte con letras (prefijo) */
+  background-clip: text; /* recorte con letras */
+  color: transparent; /* letras transparentes */
+  animation: corre linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+}
+@keyframes corre {
+  to { background-position: 100% 0; } /* el degradado se desliza */
+}`);
+  TX("Título que crece", "Pequeño al entrar, enorme en el centro.", `<h2 class="t">BOSS</h2>`, `.t {
+  text-align: center; /* centrado */
+  animation: crece linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 0% cover 50%; /* hasta el centro */
+}
+@keyframes crece {
+  from { scale: 0.3; } /* pequeño */
+  to { scale: 2; } /* el doble */
+}`);
+  TX("Letras que se juntan", "El espaciado se cierra al llegar.", `<h2 class="t">GAME OVER</h2>`, `.t {
+  text-align: center; /* centrado */
+  animation: junta linear both; /* sin duración */
+  animation-timeline: view(); /* su paso por la pantalla */
+  animation-range: entry 0% cover 50%; /* hasta el centro */
+}
+@keyframes junta {
+  from { letter-spacing: 1.5em; opacity: 0; } /* muy separadas e invisibles */
+}`);
+  /* --- progreso con scroll() (10) --- */
+  const PG = (t, d, h, css) => L.push({ t, d, c: "Progreso", h: `${h}\n<p class="largo">Baja ↓</p>`, s: `body {
+  margin: 0; /* sin margen */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font: 800 1.1rem monospace; /* letra */
+}
+.largo {
+  height: 1500px; /* contenido largo para hacer scroll */
+  padding: 3rem 1rem; /* relleno */
+}
+${css}` });
+  const FIJO = `  position: fixed; /* fijo */\n`;
+  PG("Barra arriba", "La barra de progreso de siempre.", `<div class="b"></div>`, `.b {
+${FIJO}  inset: 0 0 auto 0; /* arriba, de lado a lado */
+  height: 8px; /* grosor */
+  background-color: #39ff88; /* verde */
+  transform-origin: left; /* crece desde la izquierda */
+  animation: llena linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes llena {
+  from { scale: 0 1; } /* vacía */
+}`);
+  PG("Barra lateral", "Crece de arriba abajo por el borde.", `<div class="b"></div>`, `.b {
+${FIJO}  inset: 0 auto 0 0; /* a la izquierda, de arriba abajo */
+  width: 8px; /* grosor */
+  background-color: #ff3ea5; /* rosa */
+  transform-origin: top; /* crece desde arriba */
+  animation: llena linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes llena {
+  from { scale: 1 0; } /* sin altura */
+}`);
+  PG("Barra arcoíris", "Un degradado que se descubre.", `<div class="b"></div>`, `.b {
+${FIJO}  inset: 0 0 auto 0; /* arriba */
+  height: 10px; /* grosor */
+  background: linear-gradient(90deg, #00f0ff, #ff3ea5, #ffe14d); /* degradado */
+  animation: destapa linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes destapa {
+  from { clip-path: inset(0 100% 0 0); } /* tapada */
+  to { clip-path: inset(0 0 0 0); } /* descubierta */
+}`);
+  PG("Anillo de progreso", "Un círculo que se completa.", `<div class="anillo"></div>`, `@property --p {
+  syntax: "<percentage>"; /* un porcentaje */
+  inherits: false; /* no se hereda */
+  initial-value: 0%; /* empieza vacío */
+}
+.anillo {
+${FIJO}  right: 1rem; /* a la derecha */
+  bottom: 1rem; /* abajo */
+  width: 60px; /* ancho */
+  height: 60px; /* alto */
+  border-radius: 50%; /* redondo */
+  background: conic-gradient(#ffe14d var(--p), #2c2c66 0); /* tarta según --p */
+  -webkit-mask: radial-gradient(circle, transparent 45%, #000 46%); /* agujero (prefijo) */
+  mask: radial-gradient(circle, transparent 45%, #000 46%); /* agujero en el centro */
+  animation: rellena linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes rellena {
+  to { --p: 100%; } /* completo */
+}`);
+  PG("Fondo que cambia", "La página entera cambia de color al bajar.", ``, `body {
+  animation: tono linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes tono {
+  0% { background-color: #0b0b24; } /* noche */
+  50% { background-color: #6b1f78; } /* morado */
+  100% { background-color: #ff8a1f; } /* amanecer */
+}`);
+  PG("Icono que gira", "Una estrella que da vueltas al bajar.", `<div class="e">★</div>`, `.e {
+${FIJO}  right: 1rem; /* a la derecha */
+  top: 1rem; /* arriba */
+  font-size: 3rem; /* grande */
+  color: #ffe14d; /* amarilla */
+  animation: gira linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+@keyframes gira {
+  to { rotate: 3turn; } /* tres vueltas en toda la página */
+}`);
+  PG("Sombra de la cabecera", "La sombra aparece al despegarse del techo.", `<header class="c">MENÚ</header>`, `.c {
+  position: sticky; /* pegada arriba */
+  top: 0; /* arriba */
+  padding: 1rem; /* relleno */
+  background-color: #14143a; /* panel */
+  animation: sombra linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+  animation-range: 0 80px; /* en los primeros 80 px */
+}
+@keyframes sombra {
+  to { box-shadow: 0 6px 0 #ff3ea5; } /* sombra rosa */
+}`);
+  PG("Cabecera que se esconde", "Sube y desaparece al empezar a bajar.", `<header class="c">MENÚ</header>`, `.c {
+${FIJO}  inset: 0 0 auto 0; /* arriba */
+  padding: 1rem; /* relleno */
+  background-color: #ff3ea5; /* rosa */
+  animation: esconde linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+  animation-range: 0 120px; /* en los primeros 120 px */
+}
+@keyframes esconde {
+  to { translate: 0 -100%; } /* fuera por arriba */
+}`);
+  PG("Volver arriba", "El botón aparece después de bajar un poco.", `<a class="v" href="#">▲</a>`, `.v {
+${FIJO}  right: 1rem; /* a la derecha */
+  bottom: 1rem; /* abajo */
+  padding: 0.6rem 0.9rem; /* relleno */
+  background-color: #ffe14d; /* amarillo */
+  color: #0b0b24; /* oscuro */
+  text-decoration: none; /* sin subrayado */
+  animation: asoma linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+  animation-range: 150px 250px; /* entre 150 y 250 px */
+}
+@keyframes asoma {
+  from { opacity: 0; visibility: hidden; } /* oculto del todo */
+}`);
+  PG("Contador de puntos", "Un número que sube con el scroll.", `<div class="s">SCORE </div>`, `@property --n {
+  syntax: "<integer>"; /* número entero */
+  inherits: false; /* no se hereda */
+  initial-value: 0; /* empieza en cero */
+}
+.s {
+${FIJO}  left: 1rem; /* a la izquierda */
+  top: 1rem; /* arriba */
+  font-size: 1.6rem; /* grande */
+  color: #ffe14d; /* amarillo */
+  counter-reset: n var(--n); /* el contador vale la variable */
+  animation: suma linear both; /* sin duración */
+  animation-timeline: scroll(); /* el scroll de la página */
+}
+.s::after {
+  content: counter(n); /* escribe el número */
+}
+@keyframes suma {
+  to { --n: 50000; } /* puntuación máxima */
+}`);
+  /* --- snap (8) --- */
+  const SN = (t, d, cont, hijo, h = "") => L.push({ t, d, c: "Snap", h: h || `<div class="c">\n  <div>1</div>\n  <div>2</div>\n  <div>3</div>\n  <div>4</div>\n  <div>5</div>\n</div>`, s: `body {
+  margin: 0; /* sin margen */
+  padding: 1rem; /* relleno */
+  background-color: #0b0b24; /* noche */
+  color: #0b0b24; /* texto oscuro */
+  font: 800 2rem monospace; /* letra */
+}
+.c {
+  display: flex; /* en fila */
+  gap: 0.8rem; /* separación */
+  overflow-x: auto; /* scroll horizontal */
+${cont}
+}
+.c > div {
+  height: 150px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #9b7bff; /* lila */
+${hijo}
+}
+.c > div:nth-child(even) {
+  background-color: #ffe14d; /* amarillo en las pares */
+}` });
+  SN("Carrusel centrado", "Cada tarjeta se imanta al centro.", "  padding-inline: 15%; /* hueco para que la primera pueda centrarse */\n  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */", "  flex: 0 0 70%; /* ancho de tarjeta */\n  scroll-snap-align: center; /* imán en el centro */");
+  SN("Carrusel al principio", "Las tarjetas se alinean a la izquierda.", "  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */", "  flex: 0 0 80%; /* ancho de tarjeta */\n  scroll-snap-align: start; /* imán en el principio */");
+  SN("Imán suave", "Solo se imanta si te paras cerca.", "  scroll-snap-type: x proximity; /* imán solo si te paras cerca */", "  flex: 0 0 60%; /* ancho de tarjeta */\n  scroll-snap-align: start; /* imán en el principio */");
+  SN("Sin saltarse ninguna", "Aunque deslices fuerte, para en la siguiente.", "  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */", "  flex: 0 0 100%; /* una por vista */\n  scroll-snap-align: center; /* imán en el centro */\n  scroll-snap-stop: always; /* no se salta ninguna */");
+  SN("Con margen de imán", "scroll-padding deja aire a la izquierda.", "  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */\n  scroll-padding-left: 2rem; /* el imán para 2rem antes */", "  flex: 0 0 70%; /* ancho de tarjeta */\n  scroll-snap-align: start; /* imán en el principio */");
+  SN("Miniaturas", "Muchas tarjetas pequeñas que se alinean.", "  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */", "  flex: 0 0 30%; /* tres por vista */\n  scroll-snap-align: start; /* imán en el principio */");
+  SN("Coverflow", "La del centro crece con view(inline).", "  padding-inline: 25%; /* hueco a los lados */\n  scroll-snap-type: x mandatory; /* imán horizontal obligatorio */", "  flex: 0 0 50%; /* ancho de tarjeta */\n  scroll-snap-align: center; /* imán en el centro */\n  animation: foco linear both; /* sin duración */\n  animation-timeline: view(inline); /* su viaje en horizontal */\n}\n@keyframes foco {\n  0%, 100% { scale: 0.7; opacity: 0.5; } /* pequeña en los lados */\n  50% { scale: 1; opacity: 1; } /* grande en el centro */");
+  SN("Vertical", "Diapositivas que se imantan hacia abajo.", "  flex-direction: column; /* en columna */\n  height: 180px; /* alto de la ventana */\n  overflow-y: auto; /* scroll vertical */\n  scroll-snap-type: y mandatory; /* imán vertical obligatorio */", "  flex: 0 0 100%; /* una por vista */\n  scroll-snap-align: start; /* imán arriba */");
+  /* --- barras de scroll (10) --- */
+  const BR = (t, d, css) => L.push({ t, d, c: "Barras", h: `<div class="c">\n  <p>Mira la barra de la derecha →</p>\n  <p>Desplázate para verla moverse.</p>\n</div>`, s: `body {
+  margin: 0; /* sin margen */
+  padding: 1rem; /* relleno */
+  background-color: #0b0b24; /* noche */
+  color: #fff; /* blanco */
+  font: 800 1rem monospace; /* letra */
+}
+.c {
+  height: 160px; /* alto fijo */
+  overflow-y: scroll; /* siempre con barra */
+  padding: 0 1rem; /* relleno */
+  background-color: #14143a; /* panel */
+}
+.c p {
+  margin-bottom: 200px; /* contenido largo */
+}
+${css}` });
+  BR("Estándar de colores", "scrollbar-color en los tres navegadores.", `.c {\n  scrollbar-color: #ffe14d #2c2c66; /* pulgar y carril */\n}`);
+  BR("Fina", "scrollbar-width: thin.", `.c {\n  scrollbar-width: thin; /* barra fina */\n  scrollbar-color: #ff3ea5 transparent; /* pulgar rosa, sin carril */\n}`);
+  BR("Oculta", "Sin barra, pero con scroll (úsala con cuidado).", `.c {\n  scrollbar-width: none; /* sin barra: avisa de que hay más contenido */\n}\n.c::-webkit-scrollbar {\n  display: none; /* lo mismo en Safari antiguo */\n}`);
+  BR("Pixel art", "Bisel claro y oscuro, como un botón de 8 bits.", `.c::-webkit-scrollbar {\n  width: 18px; /* ancho de la barra */\n}\n.c::-webkit-scrollbar-track {\n  background-color: #0b0b24; /* carril oscuro */\n}\n.c::-webkit-scrollbar-thumb {\n  background-color: #ffe14d; /* pulgar amarillo */\n  border: 3px solid #0b0b24; /* separación del carril */\n  box-shadow: inset -3px -3px 0 #c9a400, inset 3px 3px 0 #fff6b0; /* bisel de píxel */\n}`);
+  BR("Píldora", "Pulgar redondeado con borde del color del carril.", `.c::-webkit-scrollbar {\n  width: 14px; /* ancho */\n}\n.c::-webkit-scrollbar-track {\n  background-color: #14143a; /* carril */\n}\n.c::-webkit-scrollbar-thumb {\n  background-color: #00f0ff; /* pulgar cian */\n  border: 3px solid #14143a; /* lo hace parecer más fino */\n  border-radius: 999px; /* píldora */\n}`);
+  BR("Carril a rayas", "Un carril con dibujo de cinta.", `.c::-webkit-scrollbar {\n  width: 16px; /* ancho */\n}\n.c::-webkit-scrollbar-track {\n  background: repeating-linear-gradient(0deg, #0b0b24 0 6px, #2c2c66 6px 8px); /* rayas */\n}\n.c::-webkit-scrollbar-thumb {\n  background-color: #ff3ea5; /* pulgar rosa */\n}`);
+  BR("Degradado", "El pulgar es un degradado.", `.c::-webkit-scrollbar {\n  width: 14px; /* ancho */\n}\n.c::-webkit-scrollbar-thumb {\n  background: linear-gradient(#00f0ff, #ff3ea5); /* degradado */\n}`);
+  BR("Se ilumina al pasar", "El pulgar cambia con :hover.", `.c::-webkit-scrollbar {\n  width: 14px; /* ancho */\n}\n.c::-webkit-scrollbar-thumb {\n  background-color: #2c2c66; /* apagado */\n}\n.c::-webkit-scrollbar-thumb:hover {\n  background-color: #39ff88; /* verde al pasar el ratón */\n}`);
+  BR("Hueco reservado", "scrollbar-gutter: stable evita saltos.", `.c {\n  overflow-y: auto; /* barra solo si hace falta */\n  scrollbar-gutter: stable; /* pero su hueco, siempre */\n}`);
+  BR("Scroll contenido", "overscroll-behavior: contain no deja escapar el scroll.", `.c {\n  overscroll-behavior: contain; /* el scroll no pasa a la página */\n  scrollbar-color: #39ff88 #0b0b24; /* pulgar verde */\n}`);
+  /* --- ratón (6) --- */
+  const RT = (t, d, h, css) => L.push({ t, d, c: "Ratón", h, s: `body {
+  margin: 0; /* sin margen */
+  min-height: 200px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #0b0b24; /* noche */
+  font: 800 1.1rem monospace; /* letra */
+}
+${css}` });
+  RT("Botón de arcade", "Se hunde al pulsar en cualquier dispositivo.", `<button class="b">START</button>`, `.b {\n  padding: 1rem 2rem; /* relleno */\n  border: 0; /* sin borde */\n  font: inherit; /* la letra del body */\n  background-color: #ff3ea5; /* rosa */\n  color: #fff; /* blanco */\n  box-shadow: 0 8px 0 #9e1a62; /* lateral */\n}\n.b:active {\n  translate: 0 6px; /* se hunde */\n  box-shadow: 0 2px 0 #9e1a62; /* lateral corto */\n}`);
+  RT("Tarjeta que se eleva", "Solo con ratón, gracias a hover: hover.", `<div class="t">NIVEL 3</div>`, `.t {\n  padding: 2rem 3rem; /* relleno */\n  background-color: #00f0ff; /* cian */\n  box-shadow: 0 0 0 #ffe14d; /* sin sombra */\n  transition: translate 0.15s, box-shadow 0.15s; /* suave */\n}\n@media (hover: hover) and (pointer: fine) {\n  .t:hover {\n    translate: -6px -6px; /* se levanta */\n    box-shadow: 6px 6px 0 #ffe14d; /* sombra dura */\n  }\n}`);
+  RT("Brillo que cruza", "Un reflejo pasa por encima al pasar el ratón.", `<button class="b">PLAY</button>`, `.b {\n  position: relative; /* para el reflejo */\n  overflow: clip; /* recorta el reflejo */\n  padding: 1rem 2.5rem; /* relleno */\n  border: 0; /* sin borde */\n  font: inherit; /* letra */\n  background-color: #9b7bff; /* lila */\n  color: #fff; /* blanco */\n}\n.b::after {\n  content: ""; /* la franja de luz */\n  position: absolute; /* encima */\n  inset: 0; /* ocupa el botón */\n  background: linear-gradient(110deg, transparent 40%, rgb(255 255 255 / 60%) 50%, transparent 60%); /* reflejo */\n  translate: -100% 0; /* fuera, a la izquierda */\n  transition: translate 0.5s; /* cruce suave */\n}\n@media (hover: hover) {\n  .b:hover::after {\n    translate: 100% 0; /* cruza hasta la derecha */\n  }\n}`);
+  RT("Icono que gira", "La estrella da una vuelta con el ratón o el foco.", `<a class="b" href="#">★ BONUS</a>`, `.b {\n  display: inline-block; /* para poder girarlo */\n  color: #ffe14d; /* amarillo */\n  text-decoration: none; /* sin subrayado */\n  font-size: 1.6rem; /* grande */\n  transition: rotate 0.4s, color 0.4s; /* giro suave */\n}\n.b:focus-visible {\n  outline: 3px solid #fff; /* foco visible */\n  rotate: 1turn; /* con teclado, también gira */\n}\n@media (hover: hover) {\n  .b:hover {\n    color: #ff3ea5; /* rosa al pasar */\n    rotate: 1turn; /* una vuelta */\n  }\n}`);
+  RT("Mirilla", "Cursor en cruz sobre la zona de juego.", `<div class="z">APUNTA AQUÍ</div>`, `.z {\n  padding: 3rem; /* relleno */\n  background-color: #14143a; /* panel */\n  color: #39ff88; /* verde */\n  cursor: crosshair; /* cursor de mirilla */\n}`);
+  RT("Subrayado de menú", "La línea crece desde el centro al pasar.", `<a class="m" href="#">CONTINUE</a>`, `.m {\n  color: #fff; /* blanco */\n  text-decoration: none; /* sin subrayado normal */\n  background: linear-gradient(#ffe14d, #ffe14d) 50% 100% / 0% 4px no-repeat; /* línea con ancho cero */\n  padding-bottom: 6px; /* hueco para la línea */\n  transition: background-size 0.3s; /* crece suave */\n}\n.m:focus-visible {\n  background-size: 100% 4px; /* con teclado, completa */\n}\n@media (hover: hover) {\n  .m:hover {\n    background-size: 100% 4px; /* con ratón, completa */\n  }\n}`);
+  return L;
+})();
+
+/* =====================================================================
+   MOTOR DE SCROLL QUEST
+   ===================================================================== */
+(() => {
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- resaltado de código ---------- */
+function hlCssLinea(code) {
+  const decl = s => s.replace(/([\w-]+)(\s*:\s*)([^;]*)(;?)/g, (m, p, c, v, f) => `<span class="h-p">${p}</span>${c}<span class="h-v">${v}</span>${f}`);
+  let m;
+  if (/^\s*@/.test(code)) return code.replace(/(@[\w-]+)/, '<span class="h-at">$1</span>');
+  if ((m = code.match(/^(\s*)([^{]+)\{(.*)\}(\s*)$/))) return `${m[1]}<span class="h-s">${m[2]}</span>{${decl(m[3])}}${m[4]}`;
+  if (code.includes("{")) return code.replace(/^(\s*)([^{]*)\{/, '$1<span class="h-s">$2</span>{');
+  if (/^\s*[\w-]+\s*:/.test(code)) return decl(code);
+  return code;
+}
+const hlCss = src => esc(src).split("\n").map(l => { const i = l.indexOf("/*"); return i < 0 ? hlCssLinea(l) : hlCssLinea(l.slice(0, i)) + `<span class="h-c">${l.slice(i)}</span>`; }).join("\n");
+const hlHtml = src => esc(src).replace(/(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g, (m, a, t, at, z) => `${a}<span class="h-t">${t}</span>${at.replace(/([\w-:]+)(=)(&quot;.*?&quot;)/g, '<span class="h-a">$1</span>$2<span class="h-q">$3</span>')}${z}`);
+let nCaja = 0;
+function cajaCodigo(lang, src, titulo) {
+  const c = el("div", "caja"), id = "cod" + (++nCaja);
+  c.innerHTML = `<div class="caja-t">${esc(titulo)} <button class="copiar" type="button" data-copia="${id}">Copiar</button></div><pre id="${id}">${lang === "css" ? hlCss(src) : hlHtml(src)}</pre>`;
+  return c;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copiar"); if (!b) return; const n = document.getElementById(b.dataset.copia);
+  (navigator.clipboard ? navigator.clipboard.writeText(n.textContent) : Promise.reject()).then(() => { b.textContent = "¡Copiado!"; setTimeout(() => b.textContent = "Copiar", 1400); },
+    () => { const r = document.createRange(); r.selectNodeContents(n); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Ctrl + C"; });
+});
+
+/* ---------- ejemplos en vivo (iframe perezoso) ---------- */
+const BASE = "body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;color:#222;background:#fff}";
+const doc = (h, c) => `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}</style><style>${c}</style></head><body>${h}</body></html>`;
+const perezosos = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting && x.target._doc) { x.target.srcdoc = x.target._doc; x.target._doc = null; perezosos.unobserve(x.target); } }), { rootMargin: "500px" });
+function iframe(h, c, alto, titulo, ajusta, rueda) {
+  const f = el("iframe"); f.title = titulo; f._doc = doc(h, ajusta || rueda ? c : "html{overflow:hidden}" + c); /* las vistas del catálogo no deben mostrar barras */ if (alto) f.style.setProperty("--alto", alto + "px");
+  if (ajusta) f.addEventListener("load", () => { try { const d = f.contentDocument, a = () => f.style.setProperty("--alto", Math.min(Math.max(alto, d.documentElement.scrollHeight), 760) + "px"); a(); setTimeout(a, 500); } catch (e) {} });
+  perezosos.observe(f); return f;
+}
+$$(".ejemplo").forEach(ej => {
+  const [h, c] = ["html", "css"].map(l => (ej.querySelector(`.src[data-lang="${l}"]`) || {}).value || "");
+  const vivo = el("div", "ej-vivo"); vivo.append(iframe(h, c, +ej.dataset.alto || 220, "Ejemplo: " + ej.dataset.t, !ej.dataset.fijo, !!ej.dataset.fijo));
+  const cod = el("div", "ej-codigo"); if (h) cod.append(cajaCodigo("html", h, "HTML")); cod.append(cajaCodigo("css", c, "CSS"));
+  ej.append(el("div", "ej-cab", `<span>${esc(ej.dataset.t)}</span><span>en vivo</span>`), vivo, cod);
+});
+
+/* ---------- menú y progreso ---------- */
+const ZONAS = $$("[data-nav]"), ul = $("#navUl");
+ZONAS.forEach(z => { const li = el("li"); li.innerHTML = `<a href="#${z.id}">${esc(z.dataset.nav)}</a>`; ul.append(li); });
+$("#navL").onclick = () => ul.scrollBy({ left: -240, behavior: "smooth" }); $("#navR").onclick = () => ul.scrollBy({ left: 240, behavior: "smooth" });
+const links = $$("a", ul); let actual = -1;
+function alScroll() {
+  const vh = innerHeight, tot = document.documentElement.scrollHeight - vh; 
+  let i = 0; ZONAS.forEach((z, k) => { if (z.getBoundingClientRect().top < vh * .4) i = k; });
+  if (i !== actual) { actual = i; links.forEach((a, k) => a.setAttribute("aria-current", k === i)); const a = links[i]; ul.scrollTo({ left: a.offsetLeft - ul.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" }); }
+}
+let pend = false; addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; alScroll(); }); } }, { passive: true }); alScroll();
+
+/* ---------- sprites de 8 bits (dibujados desde las rejillas de SPR) ---------- */
+const sprite = (frames, esc = 1) => {
+  const w = frames[0][0].length, h = frames[0].length, cv = document.createElement("canvas"); cv.width = w * frames.length * esc; cv.height = h * esc;
+  const g = cv.getContext("2d"); frames.forEach((f, k) => f.forEach((fila, y) => [...fila].forEach((ch, x) => { if (PAL[ch]) { g.fillStyle = PAL[ch]; g.fillRect((k * w + x) * esc, y * esc, esc, esc); } })));
+  return cv.toDataURL();
+};
+const URL_SPR = {}; for (const n in SPR) { URL_SPR[n] = sprite(SPR[n]); document.documentElement.style.setProperty("--spr-" + n, `url(${URL_SPR[n]})`); }
+$$(".spr[data-spr]").forEach(s => { s.style.background = `url(${URL_SPR[s.dataset.spr]}) 0 0/100% 100%`; });
+
+/* ---------- paisaje de la portada: montes, ciudad y suelo generados a píxel ---------- */
+{
+  const capa = (w, h, pinta) => { const cv = document.createElement("canvas"); cv.width = w; cv.height = h; pinta(cv.getContext("2d"), w, h); return `url(${cv.toDataURL()})`; };
+  let semilla = 7; const azar = () => (semilla = (semilla * 9301 + 49297) % 233280) / 233280;
+  $("#capaMontes").style.setProperty("--img", capa(160, 60, (g, w, h) => { let y = 30; for (let x = 0; x < w; x++) { y = Math.max(6, Math.min(48, y + Math.round((azar() - .5) * 4))); if (x > w - 20) y += Math.sign(30 - y); g.fillStyle = "#3a1868"; g.fillRect(x, y, 1, h - y); g.fillStyle = "#9b7bff"; g.fillRect(x, y, 1, 1); } }));
+  $("#capaCiudad").style.setProperty("--img", capa(120, 50, (g, w, h) => { for (let x = 0; x < w;) { const bw = 6 + Math.floor(azar() * 10), bh = 14 + Math.floor(azar() * 34); g.fillStyle = "#1a1350"; g.fillRect(x, h - bh, bw, bh); g.fillStyle = "#ffe14d"; for (let wy = h - bh + 3; wy < h - 3; wy += 4) for (let wx = x + 2; wx < x + bw - 2; wx += 3) if (azar() > .55) g.fillRect(wx, wy, 1, 1); x += bw + 1; } }));
+  $("#capaSuelo").style.setProperty("--img", capa(32, 30, (g, w, h) => { g.fillStyle = "#5a2d0c"; g.fillRect(0, 0, w, h); g.fillStyle = "#3b1d08"; for (let y = 8; y < h; y += 8) { g.fillRect(0, y, w, 1); for (let x = (y / 8 % 2) * 8; x < w; x += 16) g.fillRect(x, y - 7, 1, 7); } g.fillStyle = "#39ff88"; g.fillRect(0, 0, w, 4); g.fillStyle = "#1f9e50"; g.fillRect(0, 4, w, 1); for (let x = 0; x < w; x += 4) g.fillRect(x, 5, 2, 1); }));
+}
+
+/* ---------- partida guardada ---------- */
+const CLAVE = "scroll6:partida";
+let E = { mon: {}, mis: {}, misv: {}, jefe: 0, rec: [], sfx: false };
+try { E = Object.assign(E, JSON.parse(localStorage.getItem(CLAVE)) || {}); } catch (e) {}
+const guarda = () => { try { localStorage.setItem(CLAVE, JSON.stringify(E)); } catch (e) {} };
+
+/* ---------- sonido (apagado por defecto) ---------- */
+let AC = null;
+const pita = (notas, dur = .07) => { if (!E.sfx) return; try { AC = AC || new AudioContext(); notas.forEach((f, i) => { const o = AC.createOscillator(), v = AC.createGain(); o.type = "square"; o.frequency.value = f; v.gain.value = .05; o.connect(v).connect(AC.destination); const t = AC.currentTime + i * dur; o.start(t); o.stop(t + dur * .9); }); } catch (e) {} };
+const bSon = $("#sonido"); bSon.setAttribute("aria-pressed", E.sfx); bSon.onclick = () => { E.sfx = !E.sfx; bSon.setAttribute("aria-pressed", E.sfx); guarda(); pita([660, 880]); };
+
+/* ---------- monedas ---------- */
+const VIRTUALES = ["s-bit", "s-konami", "s-cat"];
+const MONEDAS = [...new Set([...$$(".moneda").map(m => m.dataset.id), ...VIRTUALES])];
+const valor = id => id.startsWith("s-") ? 50 : 10;
+const puntos = () => Object.keys(E.mon).filter(id => MONEDAS.includes(id)).reduce((s, id) => s + valor(id), 0) + Object.keys(E.mis).length * 100 + E.jefe * 50;
+function hud() {
+  $("#hudScore").textContent = String(puntos()).padStart(6, "0");
+  const n = Object.keys(E.mon).filter(id => MONEDAS.includes(id)).length; $("#hudMon").textContent = n; $("#hudMonT").textContent = MONEDAS.length; $("#credito").textContent = String(n).padStart(2, "0");
+  $("#hudCart").innerHTML = MISIONES.map(m => `<i class="${E.mis[m.id] ? "ok" : ""}" style="--c:${m.h}"></i>`).join("");
+  if ($("#finScore")) pintaFin();
+}
+const flota = (x, y, txt) => { const p = el("span", "punto", txt); p.style.left = x + "px"; p.style.top = y + "px"; document.body.append(p); setTimeout(() => p.remove(), 900); };
+function coge(id, x, y) {
+  if (E.mon[id]) return; E.mon[id] = 1; guarda(); hud();
+  flota(x, y, "+" + valor(id)); pita(id.startsWith("s-") ? [988, 1319, 1568, 2093] : [988, 1319]);
+  $$(`.moneda[data-id="${id}"]`).forEach(m => m.classList.add("cogida"));
+}
+$$(".moneda").forEach(m => { if (E.mon[m.dataset.id]) m.classList.add("cogida"); m.type = "button"; m.addEventListener("click", e => { const r = m.getBoundingClientRect(); coge(m.dataset.id, r.left, r.top); }); });
+
+/* Bit en la portada: cinco toques dan premio */
+{ let n = 0; $("#bitPortada").addEventListener("click", e => { pita([440 + n * 110]); if (++n === 5) coge("s-bit", e.clientX, e.clientY); }); }
+/* el código de los 80: ↑ ↑ ↓ ↓ ← → ← → B A */
+{ const K = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"]; let i = 0;
+  addEventListener("keydown", e => { i = (e.key.toLowerCase() === K[i].toLowerCase()) ? i + 1 : (e.key === K[0] ? 1 : 0); if (i === K.length) { i = 0; document.documentElement.classList.toggle("unbit"); coge("s-konami", innerWidth / 2, innerHeight / 2); flota(innerWidth / 2 - 60, innerHeight / 2 + 30, "MODO 1-BIT"); } }); }
+
+/* marcas de cada mundo en la barra del nivel */
+{
+  const M = $("#marcas"), pon = () => { const tot = document.documentElement.scrollHeight - innerHeight; M.innerHTML = ZONAS.slice(1).map(z => `<i style="left:${Math.min(100, z.offsetTop / tot * 100).toFixed(2)}%"></i>`).join(""); };
+  addEventListener("load", pon); addEventListener("resize", pon); setTimeout(pon, 1500); pon();
+}
+
+/* ---------- misiones ---------- */
+const norma = v => v.trim().replace(/\s+/g, " ").replace(/;$/, "").toLowerCase();
+MISIONES.forEach((m, k) => {
+  const host = $(`.mision-host[data-m="${m.id}"]`); if (!host) return;
+  const art = el("article", "mision"); art.id = "mis-" + m.id; art.style.setProperty("--h", k * 40 + "deg");
+  let cod = hlCss(m.css); m.w.forEach((w, n) => { cod = cod.replace(`[[${n}]]`, `<input type="text" spellcheck="false" autocomplete="off" aria-label="Hueco ${n + 1} de la misión" style="--w:${w + 2}ch" data-n="${n}">`); });
+  art.innerHTML = `<div class="mis-cab"><span class="bug" aria-hidden="true"></span><div><small>MISIÓN ${k + 1} · ¡UN BUG!</small><h4>${esc(m.t)}</h4></div></div>
+    <div class="mis-cuerpo"><div><p class="enun">${m.enun}</p><div class="mis-codigo">${cod}</div><p class="mis-estado" aria-live="polite">Escribe en los huecos amarillos. La vista se actualiza sola.</p>
+    <div class="mis-botones"><button class="boton sec peq" type="button">PISTA</button></div><div class="mis-pista">${m.pista}</div></div><div class="mis-vivo"></div></div>`;
+  host.replaceWith(art);
+  const ins = $$("input", art), est = $(".mis-estado", art), f = el("iframe"); f.title = "Vista de la misión: " + m.t; $(".mis-vivo", art).append(f);
+  $(".mis-botones button", art).onclick = () => $(".mis-pista", art).classList.toggle("ver");
+  const pinta = () => { let c = m.css; ins.forEach((x, n) => { c = c.replace(`[[${n}]]`, x.value.replace(/[;{}<]/g, "")); }); f.srcdoc = doc(m.html, m.base + c); };
+  const bien = () => ins.every((x, n) => { const v = norma(x.value), t = m.ok[n]; return typeof t === "function" ? t(v) : t.test(v); });
+  const gana = (nuevo) => { art.classList.add("ganada"); est.textContent = nuevo ? "¡BUG ELIMINADO! +100 · Cartucho conseguido" : "Misión superada. Cartucho en el inventario."; ins.forEach(x => x.readOnly = true); };
+  let t; ins.forEach(x => x.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => {
+    pinta(); if (art.classList.contains("ganada")) return;
+    if (bien()) { E.mis[m.id] = 1; E.misv[m.id] = ins.map(i => i.value); guarda(); gana(true); hud(); pita([523, 659, 784, 1047], .09); const r = art.getBoundingClientRect(); flota(r.left + 40, r.top + 20, "+100"); }
+    else if (ins.every(i => i.value.trim())) est.textContent = "Todavía no. Mira la vista: ¿hace lo que pide el enunciado?";
+  }, 350); }));
+  if (E.mis[m.id]) { (E.misv[m.id] || []).forEach((v, n) => { if (ins[n]) ins[n].value = v; }); gana(false); }
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { pinta(); o.disconnect(); } }, { rootMargin: "400px" }).observe(art);
+});
+
+/* ---------- LAB · el visor de rangos ---------- */
+{
+  const V = $("#rVentana"), S = $("#rSujeto"), F = $("#rFases"), st = el("style"); document.head.append(st);
+  const KF = { fundido: "from { opacity: 0; translate: 0 80px; } /* invisible y abajo */", zoom: "from { scale: 0.2; } /* diminuto */", giro: "from { rotate: -180deg; scale: 0.4; } /* girado y pequeño */", color: "from { background-color: #00f0ff; } /* cian */\n  to { background-color: #39ff88; } /* verde */" };
+  const COL = { entry: "var(--verde)", contain: "var(--lila)", exit: "var(--rosa)" };
+  ["entry", "contain", "exit"].forEach(n => { const d = el("div", "f", n.toUpperCase()); d.dataset.f = n; d.style.background = COL[n]; F.append(d); });
+  const rango = el("div", "rango"), cur = el("div", "cursor"); F.append(rango, cur);
+  const geo = () => { const H = V.clientHeight, h = S.offsetHeight, top = S.offsetTop; return { H, h, top, fase: { cover: [top - H, top + h], entry: [top - H, top + h - H], contain: [top + h - H, top], exit: [top, top + h] } }; };
+  const punto = (g, n, p) => { const [a, b] = g.fase[n]; return a + p / 100 * (b - a); };
+  const up = () => {
+    const iN = $("#rIniN").value, iP = +$("#rIniP").value, fN = $("#rFinN").value, fP = +$("#rFinP").value, fx = $("#rFx").value;
+    $("#rIniPO").textContent = iP + "%"; $("#rFinPO").textContent = fP + "%";
+    const g = geo(), [c0, c1] = g.fase.cover, L = c1 - c0, pct = s => Math.max(0, Math.min(100, (s - c0) / L * 100));
+    $$(".f", F).forEach(d => { const [a, b] = g.fase[d.dataset.f]; d.style.left = pct(a) + "%"; d.style.width = (pct(b) - pct(a)) + "%"; });
+    const a = punto(g, iN, iP), b = punto(g, fN, fP); rango.style.left = pct(Math.min(a, b)) + "%"; rango.style.width = Math.abs(pct(b) - pct(a)) + "%";
+    const sc = V.scrollTop; cur.style.left = pct(sc) + "%";
+    const y = g.top - sc; $("#rFase").textContent = y >= g.H ? "ANTES" : y + g.h > g.H ? "ENTRY" : y >= 0 ? "CONTAIN" : y + g.h > 0 ? "EXIT" : "SE FUE";
+    $("#rCover").textContent = Math.round(pct(sc)) + "%";
+    const pa = b > a ? Math.max(0, Math.min(1, (sc - a) / (b - a))) : 0; $("#rAnim").textContent = Math.round(pa * 100) + "%"; $("#rMed").style.setProperty("--p", pa * 100 + "%");
+    const rg = `${iN} ${iP}% ${fN} ${fP}%`;
+    st.textContent = `#rSujeto{animation:rfx linear both;animation-timeline:view();animation-range:${rg}}@keyframes rfx{${KF[fx].replace(/\/\*.*?\*\//g, "")}}`;
+    $("#rCss").innerHTML = hlCss(`.sujeto {\n  animation: aparece linear both; /* sin duración */\n  animation-timeline: view(); /* su paso por la ventana */\n  animation-range: ${rg}; /* ${b > a ? "de «" + iN + " " + iP + "%» a «" + fN + " " + fP + "%»" : "¡el final está antes que el inicio!"} */\n}\n@keyframes aparece {\n  ${KF[fx]}\n}`);
+  };
+  ["rIniN", "rIniP", "rFinN", "rFinP", "rFx"].forEach(i => $("#" + i).addEventListener("input", up));
+  V.addEventListener("scroll", () => requestAnimationFrame(up), { passive: true }); addEventListener("resize", up); up();
+}
+
+/* ---------- LAB · el taller de barras ---------- */
+{
+  const st = el("style"); document.head.append(st);
+  const mezcla = (hex, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, n >> 8 & 255, n & 255].map(v => Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k))); return "#" + c.map(v => v.toString(16).padStart(2, "0")).join(""); };
+  const up = () => {
+    const P = $("#bPul").value, C = $("#bCar").value, A = $("#bAn").value, B = $("#bBi").value, Hv = $("#bHov").value, est = $("#bEst").value;
+    $("#bAnO").textContent = A + "px"; $("#bBiO").textContent = B + "px";
+    let car = `  background-color: ${C}; /* carril */`, pul = `  background-color: ${P}; /* pulgar */`;
+    if (est === "pixel") pul += `\n  border: ${Math.max(2, B)}px solid ${C}; /* separación con el carril */\n  box-shadow: inset -${B}px -${B}px 0 ${mezcla(P, -.3)}, inset ${B}px ${B}px 0 ${mezcla(P, .55)}; /* bisel: sombra abajo, luz arriba */`;
+    if (est === "pildora") pul += `\n  border: 3px solid ${C}; /* lo hace parecer más fino */\n  border-radius: 999px; /* píldora */`;
+    if (est === "rayas") car = `  background: repeating-linear-gradient(0deg, ${C} 0 6px, ${mezcla(C, .2)} 6px 8px); /* carril a rayas */`;
+    const css = `.caja::-webkit-scrollbar {\n  width: ${A}px; /* ancho de la barra */\n}\n.caja::-webkit-scrollbar-track {\n${car}\n}\n.caja::-webkit-scrollbar-thumb {\n${pul}\n}\n.caja::-webkit-scrollbar-thumb:hover {\n  background-color: ${Hv}; /* al pasar el ratón */\n}`;
+    st.textContent = css.replaceAll(".caja", "#bVista"); $("#bCss").innerHTML = hlCss(css);
+  };
+  ["bPul", "bCar", "bAn", "bBi", "bHov", "bEst"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- scrollbar-gutter: añadir y quitar líneas ---------- */
+{ const b = $("#gutBtn"); let mas = false; b.onclick = () => { mas = !mas; ["#gut1", "#gut2"].forEach(s => { const c = $(s); c.innerHTML = '<div class="linea-s"></div>'.repeat(mas ? 9 : 3); }); b.textContent = mas ? "− QUITAR LÍNEAS" : "+ AÑADIR LÍNEAS"; }; }
+
+/* ---------- anchor: Bit cambia de sitio al pulsarlo ---------- */
+{ const B = $("#bitAncla"), P = [[300, 40], [24, 70], [520, 12], [160, 80], [300, 40]]; let i = 0; B.onclick = () => { i = (i + 1) % P.length; B.style.setProperty("--top", P[i][0] + "px"); B.style.setProperty("--left", P[i][1] + "%"); pita([330, 440]); }; }
+
+/* ---------- catálogo de 80 efectos ---------- */
+{
+  const G = $("#catG"), F = $("#catF"), Q = $("#catQ"); let fam = "Todos";
+  ["Todos", ...new Set(CAT.map(x => x.c))].forEach(c => { const b = el("button", "chip", c); b.type = "button"; b.setAttribute("aria-pressed", c === "Todos"); b.onclick = () => { fam = c; $$(".chip", F).forEach(x => x.setAttribute("aria-pressed", x === b)); filtra(); }; F.append(b); });
+  const demo = f => { const go = () => { try { const d = f.contentDocument, c = [d.scrollingElement, ...d.querySelectorAll("*")].find(e => e && (e.scrollHeight - e.clientHeight > 20 || e.scrollWidth - e.clientWidth > 20)); if (!c) return; const y = c.scrollHeight - c.clientHeight, x = c.scrollWidth - c.clientWidth; c.scrollTo({ top: y, left: x, behavior: "smooth" }); setTimeout(() => c.scrollTo({ top: 0, left: 0, behavior: "smooth" }), 2600); } catch (e) {} };
+    if (f._doc) { f.srcdoc = f._doc; f._doc = null; perezosos.unobserve(f); f.addEventListener("load", () => setTimeout(go, 200), { once: true }); } else go(); };
+  CAT.forEach((x, i) => {
+    const art = el("article", "efecto"); art._txt = (x.t + " " + x.d + " " + x.c + " " + x.s).toLowerCase(); art._c = x.c;
+    const f = iframe(x.h, x.s, 0, "Efecto " + (i + 1) + ": " + x.t, false, true); art.append(f);
+    const b = el("button", "demo", "▶ DEMO"); b.type = "button"; b.setAttribute("aria-label", "Ver la demostración de " + x.t); b.onclick = () => demo(f); art.append(b);
+    const info = el("div", "info", `<span class="num-e">Nº ${String(i + 1).padStart(2, "0")}</span><h4>${esc(x.t)}</h4><p>${esc(x.d)}</p><div class="tags"><span>${esc(x.c)}</span></div>`);
+    const det = el("details"); det.innerHTML = "<summary>VER EL CÓDIGO</summary>";
+    det.addEventListener("toggle", () => { if (!det.open || det._ok) return; det._ok = true; const cod = el("div", "ej-codigo"); cod.append(cajaCodigo("html", x.h, "HTML"), cajaCodigo("css", x.s, "CSS")); det.append(cod); });
+    info.append(det); art.append(info); G.append(art);
+  });
+  const sec = el("article", "efecto secreto"); sec.hidden = true;
+  sec.innerHTML = `<div class="premio"><div>Nº 81 · EFECTO SECRETO<br>Has buscado bien.<br><button class="moneda" data-id="s-cat" aria-label="Moneda secreta"></button></div></div><div class="info"><h4>El buscador curioso</h4><p>Este efecto no existe… pero la moneda sí.</p></div>`;
+  G.append(sec); const mc = $(".moneda", sec); if (E.mon["s-cat"]) mc.classList.add("cogida"); mc.addEventListener("click", () => { const r = mc.getBoundingClientRect(); coge("s-cat", r.left, r.top); });
+  const filtra = () => { const q = Q.value.trim().toLowerCase(); let n = 0; $$(".efecto:not(.secreto)", G).forEach(a => { const v = (fam === "Todos" || a._c === fam) && (!q || a._txt.includes(q)); a.hidden = !v; if (v) n++; }); sec.hidden = !/secret|moneda/.test(q); $("#catN").textContent = `${n} de ${CAT.length}`; };
+  Q.addEventListener("input", filtra); filtra();
+}
+/* ---------- errores y test ---------- */
+function bloque(host, lista, alPuntuar) {
+  const h = $(host), cards = [];
+  lista.forEach((it, i) => {
+    const c = el("div", "q"); c.innerHTML = `<p class="qq">${i + 1}. ${it.q}</p>`; if (it.code) c.append(cajaCodigo("css", it.code, "CSS"));
+    const ops = el("div"); it.o.map((_, k) => k).sort(() => Math.random() - .5).forEach(k => { const l = el("label", "opt"); l.innerHTML = `<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${esc(it.o[k])}</span>`; ops.append(l); });
+    const ex = el("div", "ex", it.e); c.append(ops, ex);
+    c.corrige = () => { $$(".opt", c).forEach(l => { l.classList.remove("right", "wrong"); const v = +$("input", l).value; if (v === it.a) l.classList.add("right"); else if ($("input", l).checked) l.classList.add("wrong"); }); ex.classList.add("show"); };
+    c.limpia = () => { $$("input", c).forEach(x => x.checked = false); $$(".opt", c).forEach(l => l.classList.remove("right", "wrong")); ex.classList.remove("show"); };
+    c.bien = () => { const s = $("input:checked", c); return !!s && +s.value === it.a; };
+    ops.addEventListener("change", () => { c.corrige(); alPuntuar && alPuntuar(); }); cards.push(c); h.append(c);
+  });
+  return cards;
+}
+bloque("#fixes", FIX);
+{ let cards; const up = () => { const n = cards.filter(c => c.bien()).length; $("#qScore").textContent = `${n} / ${TEST.length}` + (n === TEST.length ? " · ¡JEFE DERROTADO!" : ""); };
+  cards = bloque("#quiz", TEST, up); $("#qAll").onclick = () => { cards.forEach(c => c.corrige()); up(); }; $("#qReset").onclick = () => { cards.forEach(c => c.limpia()); up(); }; }
+/* ---------- el jefe final: cada acierto del test le quita vida ---------- */
+{
+  const Qz = $("#quiz"), G = $("#glitch");
+  const golpes = () => $$(".q", Qz).filter(q => { const s = $("input:checked", q); return s && s.closest(".opt").classList.contains("right"); }).length;
+  let antes = -1;
+  const up = () => { const n = golpes(); $("#vidaJefe").style.width = (100 - n / TEST.length * 100) + "%"; G.style.setProperty("--hue", n * 24 + "deg"); G.classList.toggle("ko", n === TEST.length);
+    if (antes >= 0 && n > antes) { pita(n === TEST.length ? [392, 523, 659, 784, 1047, 1319] : [220, 165], .08); if (n === TEST.length) { const r = G.getBoundingClientRect(); flota(r.left, r.top, "K.O.!"); } }
+    antes = n; if (n > E.jefe) { E.jefe = n; guarda(); hud(); } };
+  Qz.addEventListener("change", up); $("#qAll").addEventListener("click", up); $("#qReset").addEventListener("click", () => { antes = -1; up(); }); up();
+}
+
+/* ---------- pantalla final y récords ---------- */
+const RANGOS = [[0, "NOVATO DEL SCROLL"], [300, "APRENDIZ DE LA RUEDA"], [900, "MAESTRO DEL VIEW()"], [1500, "LEYENDA ARCADE"], [2000, "CAMPEÓN DE SCROLL QUEST"]];
+const CPU = [{ i: "BIT", s: 2000 }, { i: "PIX", s: 1200 }, { i: "CSS", s: 600 }];
+function pintaFin() {
+  const p = puntos(), cog = Object.keys(E.mon).filter(id => MONEDAS.includes(id)), nor = cog.filter(id => !id.startsWith("s-")).length, sec = cog.length - nor;
+  $("#finScore").textContent = String(p).padStart(6, "0");
+  $("#finRango").textContent = RANGOS.filter(r => p >= r[0]).pop()[1];
+  const totSec = MONEDAS.filter(id => id.startsWith("s-")).length;
+  $("#finDesglose").innerHTML = `<span>Monedas</span><b>${nor}/${MONEDAS.length - totSec}</b><span>Secretas</span><b>${sec}/${totSec}</b><span>Misiones</span><b>${Object.keys(E.mis).length}/${MISIONES.length}</b><span>Golpes al jefe</span><b>${E.jefe}/${TEST.length}</b>`;
+  $("#tablaRec").innerHTML = [...E.rec, ...CPU].sort((a, b) => b.s - a.s).slice(0, 8).map((r, k) => `<tr><td>${k + 1}.</td><td>${esc(r.i)}</td><td>${String(r.s).padStart(6, "0")}</td></tr>`).join("");
+}
+$("#guardaRec").onclick = () => { const i = $("#ini").value.toUpperCase().replace(/[^A-Z0-9Ñ]/g, "").slice(0, 3); if (!i) { $("#ini").focus(); return; } E.rec.push({ i, s: puntos() }); E.rec = E.rec.sort((a, b) => b.s - a.s).slice(0, 8); guarda(); pintaFin(); pita([784, 988, 1175]); $("#ini").value = ""; };
+$("#borraPartida").onclick = () => { if (!confirm("¿Borrar tus monedas, misiones y golpes al jefe? Los récords guardados se mantienen.")) return; E = Object.assign(E, { mon: {}, mis: {}, misv: {}, jefe: 0 }); guarda(); location.reload(); };
+hud();
+})();
+
+</script>
+</body>
+</html>
