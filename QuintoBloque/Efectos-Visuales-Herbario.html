@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Herbario de efectos visuales · filter, backdrop-filter, mix-blend-mode y clip-path</title>
+<meta name="description" content="Bloque 05 · Un herbario de efectos visuales en CSS: filter, drop-shadow, pegatinas, filtros SVG para deformar, backdrop-filter y cristal, mix-blend-mode, clip-path, máscaras y un catálogo de 80 efectos.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 40 40%27%3E%3Cpath fill=%27%236f8f4e%27 d=%27M20 38C6 30 2 14 20 2c18 12 14 28 0 36Z%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   HERBARIO · papel, tintas y medidas
+   ===================================================================== */
+:root{
+  --papel:#f7f1e3; --papel2:#efe6d0; --lino:#e7dcc2; --tinta:#3b2f25; --sepia:#6b5440; --gris:#7d6c5c;
+  --salvia:#8a9a6b; --musgo:#5b6d42; --rosa:#c4807b; --rosa-claro:#ecc9c3; --terracota:#b0603e; --lavanda:#9c8fb5; --mantequilla:#e8cf86; --cielo:#bcd3df;
+  --f-tit:'Cormorant Garamond', Georgia, serif; --f-txt:'Lora', Georgia, serif; --f-mano:'Caveat', cursive; --f-code:'JetBrains Mono', ui-monospace, monospace;
+  --ancho:min(1140px, 100% - 2rem);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
+body{margin:0;color:var(--tinta);font:400 clamp(1rem, .96rem + .25vw, 1.12rem)/1.75 var(--f-txt);overflow-x:clip;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .25 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 10% 0%, rgba(232,207,134,.25), transparent 50%),
+    radial-gradient(ellipse at 100% 40%, rgba(196,128,123,.14), transparent 45%),
+    var(--papel)}
+img,svg{display:block;max-width:100%}
+a{color:var(--terracota)}
+a:hover{color:var(--musgo)}
+:focus-visible{outline:3px solid var(--terracota);outline-offset:3px}
+code{font-family:var(--f-code);font-size:.84em;background:rgba(138,154,107,.16);padding:.06em .35em;border-radius:4px;color:#4a3a2c}
+.skip{position:fixed;left:1rem;top:-4rem;z-index:999;background:var(--musgo);color:#fff;padding:.6rem 1rem;transition:top .2s}
+.skip:focus{top:1rem}
+.wrap{width:var(--ancho);margin-inline:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ----- menú ----- */
+.nav{position:sticky;top:0;z-index:60;background:rgba(247,241,227,.86);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2);border-bottom:1px solid rgba(107,84,64,.25)}
+.nav-in{display:flex;align-items:center;gap:.4rem;width:min(1240px, 100% - 1rem);margin-inline:auto}
+.nav ul{display:flex;gap:.15rem;list-style:none;margin:0;padding:.45rem 0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:block;white-space:nowrap;text-decoration:none;color:var(--sepia);font:600 1.02rem/1 var(--f-tit);font-style:italic;padding:.5rem .8rem;border-radius:999px}
+.nav a:hover{background:rgba(138,154,107,.18);color:var(--tinta)}
+.nav a[aria-current="true"]{background:var(--musgo);color:#fbf6ea}
+.nav-arr{flex:none;width:2.2rem;height:2.2rem;border-radius:50%;border:1px solid var(--sepia);background:transparent;color:var(--sepia);cursor:pointer}
+.nav-arr:hover{background:var(--sepia);color:var(--papel)}
+.prog{height:2px;background:linear-gradient(90deg, var(--salvia), var(--rosa), var(--mantequilla));transform-origin:left;scale:0 1}
+
+/* ----- portada ----- */
+.portada{position:relative;min-height:min(100svh, 900px);display:grid;grid-template-columns:minmax(0, 1fr);align-items:center;overflow:hidden;padding:5rem 0 4rem}
+.portada-in{display:grid;grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr);gap:clamp(1.5rem, 4vw, 4rem);align-items:center}
+.etiqueta{display:inline-block;font:700 1.35rem/1 var(--f-mano);color:var(--terracota);transform:rotate(-2deg)}
+.titulo{margin:.4rem 0 1rem;font:500 clamp(3rem, 1.6rem + 6vw, 6.4rem)/.9 var(--f-tit);letter-spacing:-.02em;color:var(--tinta)}
+.titulo i{display:block;font-weight:600;color:var(--musgo)}
+.lead{font-size:1.15rem;max-width:44ch;color:#4c3d30}
+.ctas{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+.boton{display:inline-flex;align-items:center;gap:.5rem;font:600 .95rem/1 var(--f-txt);text-decoration:none;color:#fbf6ea;background:var(--musgo);border:1px solid var(--musgo);padding:.85rem 1.3rem;border-radius:999px;cursor:pointer;transition:background .3s, translate .3s, box-shadow .3s;box-shadow:0 6px 18px rgba(91,109,66,.25)}
+.boton:hover{background:#4a5a35;color:#fff;translate:0 -2px}
+.boton.sec{background:transparent;color:var(--musgo)}
+.boton.sec:hover{background:rgba(138,154,107,.15);color:var(--tinta)}
+/* el terrario de la portada: cristal sobre un jardín */
+.terrario{position:relative;aspect-ratio:1;max-width:520px;width:100%;justify-self:center}
+.jardin{position:absolute;inset:6%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 70% 28%, #fff3c4 0 8%, transparent 9%), radial-gradient(ellipse at 25% 105%, #6f8f4e 0 42%, transparent 43%), radial-gradient(ellipse at 85% 115%, #8aa865 0 52%, transparent 53%), linear-gradient(#c6dbe6, #f4e7c9 70%)}
+.jardin .flor{position:absolute;font-size:var(--t, 3rem);line-height:1;animation:mece 6s ease-in-out infinite;animation-delay:calc(var(--d, 0) * -1s);transform-origin:50% 100%}
+@keyframes mece{50%{rotate:6deg}}
+.cupula{position:absolute;inset:0;border-radius:50% 50% 46% 46%;background:linear-gradient(135deg, rgba(255,255,255,.45), rgba(255,255,255,.08) 45%, rgba(255,255,255,.18));backdrop-filter:blur(3px) saturate(1.4);-webkit-backdrop-filter:blur(3px) saturate(1.4);border:1px solid rgba(255,255,255,.7);box-shadow:inset 0 0 40px rgba(255,255,255,.5), inset -20px -30px 60px rgba(107,84,64,.15), 0 30px 60px rgba(59,47,37,.25);clip-path:circle(46% at 50% 50%)}
+.cupula::before{content:"";position:absolute;left:18%;top:10%;width:22%;height:46%;border-radius:50%;background:linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,0));rotate:20deg;filter:blur(2px)}
+.peana{position:absolute;left:12%;right:12%;bottom:2%;height:9%;border-radius:50%;background:linear-gradient(#7a5a3e, #4e3826);box-shadow:0 10px 25px rgba(59,47,37,.35)}
+.terrario .rotulo{position:absolute;right:-2%;top:8%;background:#fbf6ea;border:1px solid var(--sepia);padding:.5rem .8rem;font:700 1.2rem/1.1 var(--f-mano);color:var(--sepia);rotate:8deg;box-shadow:3px 4px 0 rgba(107,84,64,.2)}
+.terrario .rotulo::before{content:"";position:absolute;left:-30px;top:50%;width:30px;height:1px;background:var(--sepia)}
+.petalo{position:absolute;top:-5vh;width:14px;height:10px;border-radius:70% 0 70% 0;background:var(--c, var(--rosa-claro));opacity:.8;animation:cae var(--dur, 14s) linear infinite;animation-delay:calc(var(--d) * -1s);pointer-events:none}
+@keyframes cae{to{translate:var(--x, 60px) 110vh;rotate:540deg}}
+
+/* ----- láminas (secciones) ----- */
+.lamina{position:relative;padding:clamp(3.5rem, 7vw, 6rem) 0}
+.lamina + .lamina{border-top:1px dashed rgba(107,84,64,.25)}
+.cab{display:grid;grid-template-columns:auto 1fr;gap:.2rem 1.4rem;align-items:end;margin-bottom:2rem}
+.num{grid-row:span 2;font:500 clamp(3.6rem, 2.4rem + 4vw, 6.5rem)/.8 var(--f-tit);font-style:italic;color:var(--salvia);opacity:.85}
+.latin{font:700 1.3rem/1 var(--f-mano);color:var(--terracota)}
+.lamina h2{margin:0;font:600 clamp(2.1rem, 1.4rem + 2.6vw, 3.6rem)/1 var(--f-tit);letter-spacing:-.01em}
+.lamina h3{font:600 clamp(1.5rem, 1.2rem + 1vw, 2.1rem)/1.15 var(--f-tit);margin:2.6rem 0 .6rem}
+.lamina h4{font:700 1.25rem/1.2 var(--f-mano);color:var(--terracota);margin:1.4rem 0 .3rem;letter-spacing:.02em}
+.lectura{max-width:68ch}
+.rejilla{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr))}
+.ficha{position:relative;background:#fbf7ec;border:1px solid rgba(107,84,64,.25);border-radius:4px 18px 4px 18px;padding:1.1rem 1.2rem;box-shadow:0 1px 0 rgba(255,255,255,.8) inset, 0 8px 22px rgba(59,47,37,.08)}
+.ficha h4{margin-top:0}
+.ficha p{margin:.35rem 0}
+.nota{position:relative;margin:1.4rem 0;padding:1rem 1.2rem 1rem 3.2rem;background:rgba(232,207,134,.22);border-left:3px solid var(--mantequilla);border-radius:0 12px 12px 0}
+.nota::before{content:"✿";position:absolute;left:1rem;top:.75rem;font-size:1.4rem;color:var(--terracota)}
+.nota.peligro{background:rgba(196,128,123,.16);border-color:var(--rosa)}
+.nota.peligro::before{content:"✗";color:#9c3d33}
+.nota.ok{background:rgba(138,154,107,.16);border-color:var(--salvia)}
+.nota.ok::before{content:"❦";color:var(--musgo)}
+.nota .tit{display:block;font:700 1.2rem/1.1 var(--f-mano);color:var(--sepia);margin-bottom:.2rem}
+.tabla{width:100%;border-collapse:collapse;font-size:.95rem;margin:1rem 0}
+.tabla th,.tabla td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid rgba(107,84,64,.2);vertical-align:top}
+.tabla th{font:700 1.15rem/1 var(--f-mano);color:var(--terracota)}
+.desliza{overflow-x:auto}
+.pasos{counter-reset:paso;list-style:none;padding:0;margin:1rem 0;display:grid;gap:.8rem}
+.pasos>li{counter-increment:paso;position:relative;padding:.9rem 1rem .9rem 3.6rem;background:#fbf7ec;border:1px solid rgba(107,84,64,.2);border-radius:14px}
+.pasos>li::before{content:counter(paso);position:absolute;left:.9rem;top:.8rem;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;background:var(--salvia);color:#fff;font:700 1.1rem/1 var(--f-tit)}
+
+/* ----- ejemplos en vivo y código ----- */
+.ejemplo{margin:1.4rem 0;border:1px solid rgba(107,84,64,.28);border-radius:14px;overflow:hidden;background:#fbf7ec;box-shadow:0 10px 30px rgba(59,47,37,.08)}
+.ejemplo .src{display:none}
+.ej-cab{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 1rem;font:700 1.1rem/1 var(--f-mano);color:var(--sepia);background:var(--lino)}
+.ej-vivo iframe{display:block;width:100%;border:0;height:var(--alto, 220px);background:#fff}
+.ej-codigo{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 330px), 1fr));background:#2d261f}
+.caja{min-width:0;border-top:1px solid rgba(255,255,255,.08)}
+.caja + .caja{border-left:1px solid rgba(255,255,255,.08)}
+.caja-t{display:flex;justify-content:space-between;align-items:center;padding:.4rem .8rem;font:700 .7rem/1 var(--f-code);letter-spacing:.12em;color:#b9a68f;text-transform:uppercase}
+.copiar{font:700 .7rem/1 var(--f-code);background:transparent;color:var(--mantequilla);border:1px solid rgba(232,207,134,.5);padding:.35rem .6rem;border-radius:999px;cursor:pointer}
+.copiar:hover{background:var(--mantequilla);color:#2d261f}
+.caja pre{margin:0;padding:.3rem 1rem 1rem;overflow:auto;max-height:440px;font:400 .82rem/1.6 var(--f-code);color:#eadfcb;tab-size:2}
+.h-c{color:#a39280;font-style:italic}.h-s{color:#f0c27b}.h-p{color:#a8cfa0}.h-v{color:#f2a99b}.h-t{color:#e7a0a0}.h-a{color:#c6d79a}.h-q{color:#f4d9a0}.h-at{color:#c9b3e8}
+
+/* ----- laboratorios ----- */
+.lab{position:relative;margin:2rem 0;padding:clamp(1.1rem, 3vw, 1.8rem);background:linear-gradient(180deg, #fbf7ec, #f3ead4);border:1px solid rgba(107,84,64,.3);border-radius:22px 6px 22px 6px;box-shadow:0 16px 40px rgba(59,47,37,.1)}
+.lab::before{content:"";position:absolute;right:1.4rem;top:-14px;width:90px;height:26px;background:rgba(232,207,134,.65);rotate:3deg;box-shadow:0 2px 4px rgba(0,0,0,.08)}
+.lab-t,.lamina .lab-t{margin:0 0 .2rem;font:600 1.9rem/1.05 var(--f-tit);font-style:italic;color:var(--musgo)}
+.lab>p{margin:.2rem 0 1rem;color:#5a4a3b}
+.lab-cuerpo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr);gap:1.4rem;align-items:start}
+.mandos{display:grid;gap:.7rem 1.2rem;grid-template-columns:repeat(auto-fit, minmax(min(100%, 190px), 1fr))}
+.mandos label{display:grid;gap:.2rem;font:700 1.08rem/1.1 var(--f-mano);color:var(--sepia)}
+.mandos output{font:400 .78rem/1 var(--f-code);color:var(--terracota)}
+input[type=range]{width:100%;accent-color:var(--musgo)}
+input[type=color]{width:100%;height:2.4rem;border:1px solid rgba(107,84,64,.35);border-radius:8px;background:#fff;padding:2px;cursor:pointer}
+select,input[type=search],input[type=text]{font:400 .95rem/1.3 var(--f-txt);background:#fffdf7;color:var(--tinta);border:1px solid rgba(107,84,64,.35);border-radius:10px;padding:.6rem .8rem;width:100%}
+.salida{font:400 .82rem/1.6 var(--f-code);background:#2d261f;color:#eadfcb;border-radius:12px;padding:.9rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:.8rem 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.chip{font:600 .85rem/1 var(--f-txt);padding:.5rem .8rem;border-radius:999px;border:1px solid rgba(107,84,64,.35);background:#fffdf7;color:var(--sepia);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--musgo);color:#fff;border-color:var(--musgo)}
+.escenario{position:relative;border-radius:18px;overflow:hidden;min-height:300px;box-shadow:inset 0 0 0 1px rgba(107,84,64,.25)}
+.prado{background:radial-gradient(circle at 75% 25%, #ffe9a8 0 9%, transparent 10%), radial-gradient(ellipse at 20% 110%, #6f8f4e 0 45%, transparent 46%), radial-gradient(ellipse at 85% 120%, #8aa865 0 50%, transparent 51%), linear-gradient(#bfd8e6, #f3e6c9)}
+.prado .flor{position:absolute;line-height:1}
+.marco-svg{background:#fffdf7;border-radius:18px;padding:1.2rem;border:1px solid rgba(107,84,64,.25)}
+.asa{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:3px solid var(--terracota);cursor:grab;touch-action:none;z-index:3}
+.asa:active{cursor:grabbing}
+@media (max-width:820px){.portada-in,.lab-cuerpo{grid-template-columns:minmax(0, 1fr)}.terrario{max-width:360px}}
+
+/* ----- catálogo (estilo neutro) ----- */
+.catalogo{background:#fafafa;color:#222;border-radius:24px;padding:clamp(1rem, 3vw, 2rem);border:1px solid #ddd;font-family:system-ui, sans-serif}
+.catalogo h3{font-family:system-ui, sans-serif;font-weight:700;margin-top:0;color:#222}
+.catalogo .filtros{display:flex;flex-wrap:wrap;gap:.4rem;margin:.8rem 0}
+.catalogo .chip{font-family:system-ui, sans-serif;border-color:#ccc;background:#fff;color:#333}
+.catalogo .chip[aria-pressed="true"]{background:#222;color:#fff;border-color:#222}
+.catalogo input[type=search]{font-family:system-ui, sans-serif;border-color:#ccc;background:#fff}
+.cat-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill, minmax(min(100%, 300px), 1fr));margin-top:1rem}
+.efecto{background:#fff;border:1px solid #e3e3e3;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.efecto iframe{display:block;width:100%;height:236px;border:0;background:#fff;border-bottom:1px solid #eee}
+.efecto .info{padding:.8rem .9rem;display:grid;gap:.35rem}
+.efecto h4{margin:0;font:700 1rem/1.25 system-ui, sans-serif;color:#222}
+.efecto .num-e{font:700 .72rem/1 var(--f-code);color:#888}
+.efecto p{margin:0;font-size:.9rem;line-height:1.45;color:#444}
+.efecto .tags{display:flex;flex-wrap:wrap;gap:.3rem}
+.efecto .tags span{font:600 .68rem/1 var(--f-code);padding:.25rem .45rem;border-radius:4px;background:#f1f1f1;color:#555}
+.efecto details summary{cursor:pointer;font:600 .85rem/1 system-ui;color:#333;padding:.3rem 0}
+.efecto .ej-codigo{border-radius:8px;overflow:hidden;margin-top:.4rem}
+
+/* ----- test ----- */
+.q{background:#fbf7ec;border:1px solid rgba(107,84,64,.25);border-radius:14px;padding:1rem 1.1rem;margin:.8rem 0}
+.qq{font-weight:600;margin:0 0 .6rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .6rem;border:1px solid transparent;border-radius:10px;cursor:pointer}
+.opt:hover{background:rgba(138,154,107,.1)}
+.opt.right{border-color:var(--salvia);background:rgba(138,154,107,.18)}
+.opt.wrong{border-color:var(--rosa);background:rgba(196,128,123,.15)}
+.opt input{margin-top:.45rem;accent-color:var(--musgo)}
+.ex{display:none;margin-top:.6rem;padding:.6rem .8rem;border-left:3px solid var(--salvia);background:rgba(138,154,107,.1);font-size:.95rem;border-radius:0 8px 8px 0}
+.ex.show{display:block}
+.marcador{position:sticky;top:4.2rem;z-index:5;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;background:rgba(251,247,236,.95);border:1px solid rgba(107,84,64,.3);border-radius:999px;padding:.5rem .6rem .5rem 1.2rem;font:700 1.25rem/1 var(--f-mano)}
+.pie{text-align:center;padding:3rem 1rem;font:400 .9rem/1.6 var(--f-txt);color:var(--sepia);border-top:1px dashed rgba(107,84,64,.3)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.petalo{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="acuarela"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="4"/><feDisplacementMap in="SourceGraphic" scale="14"/></filter>
+  <filter id="deforma"><feTurbulence id="dTurb" type="turbulence" baseFrequency=".02" numOctaves="2" seed="2"/><feDisplacementMap id="dMap" in="SourceGraphic" scale="12"/></filter>
+</svg>
+
+<nav class="nav" aria-label="Láminas del herbario">
+  <div class="nav-in">
+    <button class="nav-arr" id="navL" type="button" aria-label="Láminas anteriores">◀</button>
+    <ul id="navUl"></ul>
+    <button class="nav-arr" id="navR" type="button" aria-label="Láminas siguientes">▶</button>
+  </div>
+  <div class="prog" id="prog"></div>
+</nav>
+
+<header class="portada" id="portada" data-nav="Portada">
+  <div id="petalos" aria-hidden="true"></div>
+  <div class="wrap portada-in">
+    <div>
+      <span class="etiqueta">Bloque 05 · Efectos visuales</span>
+      <h1 class="titulo">Herbario de <i>efectos visuales</i></h1>
+      <p class="lead">Un cuaderno de campo para aprender a prensar, teñir, recortar y poner cristal a cualquier cosa de una web: <code>filter</code>, <code>backdrop-filter</code>, <code>mix-blend-mode</code>, <code>clip-path</code> y unas cuantas rarezas botánicas más.</p>
+      <div class="ctas"><a class="boton" href="#efectos">Abrir el herbario</a><a class="boton sec" href="#catalogo">Ver los 80 efectos</a></div>
+    </div>
+    <div class="terrario" aria-hidden="true">
+      <div class="jardin">
+        <span class="flor" style="left:12%;bottom:18%;--t:3.6rem;--d:1">🌷</span>
+        <span class="flor" style="left:34%;bottom:12%;--t:4.4rem;--d:3">🌻</span>
+        <span class="flor" style="left:60%;bottom:20%;--t:3rem;--d:2">🌼</span>
+        <span class="flor" style="left:74%;bottom:10%;--t:3.8rem;--d:4">🍄</span>
+        <span class="flor" style="left:46%;bottom:34%;--t:2.4rem;--d:5">🦋</span>
+        <span class="flor" style="left:22%;bottom:40%;--t:2.2rem;--d:2.5">🌿</span>
+      </div>
+      <div class="cupula"></div>
+      <div class="peana"></div>
+      <span class="rotulo">backdrop-filter:<br>blur(3px)</span>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+
+<!-- I · QUÉ ES UN EFECTO =============================================== -->
+<section class="lamina" id="efectos" data-nav="Qué es un efecto">
+  <div class="wrap">
+    <div class="cab"><span class="num">I</span><span class="latin">Effectus vulgaris</span><h2>Qué es un efecto visual</h2></div>
+    <div class="lectura">
+      <p>Hasta ahora has pintado cajas: color, borde, sombra, degradado. Los <b>efectos visuales</b> van un paso más allá: el navegador dibuja primero el elemento y luego lo <b>procesa como si fuera una foto</b>. Lo desenfoca, le cambia los colores, lo recorta con unas tijeras o lo mezcla con lo que tiene detrás.</p>
+      <p>Son cuatro herramientas, y cada una trabaja sobre algo distinto:</p>
+    </div>
+    <div class="rejilla">
+      <div class="ficha"><h4>filter</h4><p>Retoca <b>el propio elemento</b> (y todo lo que lleva dentro): desenfoque, brillo, sepia, sombra que sigue la forma…</p></div>
+      <div class="ficha"><h4>backdrop-filter</h4><p>Retoca <b>lo que hay detrás</b> del elemento. Es el famoso efecto cristal esmerilado.</p></div>
+      <div class="ficha"><h4>mix-blend-mode</h4><p>Decide cómo se <b>mezclan los colores</b> del elemento con los de abajo, como dos tintas sobre el papel.</p></div>
+      <div class="ficha"><h4>clip-path</h4><p>Recorta el elemento con <b>unas tijeras</b>: círculo, polígono, hoja… Lo de fuera desaparece.</p></div>
+    </div>
+    <div class="nota">
+      <span class="tit">El orden en que el navegador lo hace</span>
+      Primero dibuja el elemento con sus hijos, después aplica el <code>filter</code>, luego recorta con <code>clip-path</code> (y la máscara), después aplica la <code>opacity</code> y, por último, lo mezcla con el fondo (<code>mix-blend-mode</code>). Por eso una sombra de <code>filter: drop-shadow()</code> desaparece si recortas el mismo elemento con <code>clip-path</code>: las tijeras llegan después y se la llevan. La solución es poner la sombra en un elemento padre.
+    </div>
+    <div class="nota ok">
+      <span class="tit">Rendimiento</span>
+      <code>filter</code>, <code>opacity</code> y <code>transform</code> los suele procesar la tarjeta gráfica y se animan con suavidad. <code>backdrop-filter</code> es el más caro, porque tiene que leer todo lo que hay detrás en cada fotograma: úsalo en pocos elementos y con desenfoques moderados.
+    </div>
+  </div>
+</section>
+
+<!-- II · FILTER =========================================================== -->
+<section class="lamina" id="filter" data-nav="filter">
+  <div class="wrap">
+    <div class="cab"><span class="num">II</span><span class="latin">Filtrum officinale</span><h2>filter: la prensa de flores</h2></div>
+    <div class="lectura">
+      <p><code>filter</code> recibe una o varias <b>funciones</b> separadas por espacios. Cada función es un retoque, como los de una aplicación de fotos. Se aplican <b>en orden, de izquierda a derecha</b>: la salida de una es la entrada de la siguiente.</p>
+    </div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Función</th><th>Qué hace</th><th>Valores</th></tr></thead>
+      <tbody>
+        <tr><td><code>blur(4px)</code></td><td>Desenfoca. El valor es el radio del desenfoque.</td><td>Una longitud: <code>0</code> no hace nada. No admite %.</td></tr>
+        <tr><td><code>brightness(1.2)</code></td><td>Más luz o menos luz.</td><td><code>1</code> = igual · <code>0</code> = negro · <code>2</code> = el doble de luz.</td></tr>
+        <tr><td><code>contrast(1.5)</code></td><td>Separa más (o menos) claros y oscuros.</td><td><code>1</code> = igual · <code>0</code> = gris plano.</td></tr>
+        <tr><td><code>grayscale(1)</code></td><td>Quita el color.</td><td><code>0</code> a <code>1</code> (o 0 % a 100 %).</td></tr>
+        <tr><td><code>sepia(1)</code></td><td>Tono de foto antigua.</td><td><code>0</code> a <code>1</code>.</td></tr>
+        <tr><td><code>saturate(2)</code></td><td>Colores más vivos o más apagados.</td><td><code>1</code> = igual · <code>0</code> = gris · más de 1 = más intenso.</td></tr>
+        <tr><td><code>hue-rotate(90deg)</code></td><td>Gira todos los colores por la rueda de color.</td><td>Un ángulo: <code>180deg</code> da los complementarios.</td></tr>
+        <tr><td><code>invert(1)</code></td><td>Negativo de fotografía.</td><td><code>0</code> a <code>1</code>. <code>0.5</code> da gris.</td></tr>
+        <tr><td><code>opacity(0.5)</code></td><td>Transparencia. Igual que la propiedad <code>opacity</code>.</td><td><code>0</code> a <code>1</code>.</td></tr>
+        <tr><td><code>drop-shadow(x y blur color)</code></td><td>Sombra que sigue la <b>forma real</b> (lo transparente no proyecta sombra).</td><td>Como <code>box-shadow</code>, pero sin <code>spread</code> ni <code>inset</code>.</td></tr>
+        <tr><td><code>url(#id)</code></td><td>Aplica un filtro SVG hecho a medida (lámina IV).</td><td>El id de un <code>&lt;filter&gt;</code> SVG.</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="lab" id="labPrensa">
+      <h3 class="lab-t">La prensa de flores</h3>
+      <p>Mueve los mandos: el prado de la derecha es un elemento normal con <code>filter</code>. Debajo tienes el CSS exacto, listo para copiar.</p>
+      <div class="lab-cuerpo">
+        <div>
+          <div class="mandos" id="prensaMandos"></div>
+          <div class="chips" id="prensaRecetas"></div>
+        </div>
+        <div>
+          <div class="escenario prado" id="prensaVista" style="min-height:320px">
+            <span class="flor" style="left:10%;bottom:12%;font-size:3.4rem">🌷</span><span class="flor" style="left:32%;bottom:8%;font-size:4.2rem">🌻</span><span class="flor" style="left:58%;bottom:14%;font-size:3rem">🌼</span><span class="flor" style="left:76%;bottom:6%;font-size:3.6rem">🍄</span><span class="flor" style="left:46%;top:24%;font-size:2.4rem">🦋</span>
+          </div>
+          <p class="salida" id="prensaCss"></p>
+        </div>
+      </div>
+    </div>
+
+    <h3>El orden importa</h3>
+    <p class="lectura">Las funciones se encadenan. <code>sepia(1) hue-rotate(90deg)</code> primero tiñe de marrón y luego gira ese marrón hacia el verde. <code>hue-rotate(90deg) sepia(1)</code> gira los colores y después los vuelve marrones todos: el giro no se nota. Mira la diferencia:</p>
+    <div class="ejemplo" data-alto="220" data-t="Mismas funciones, distinto orden">
+<textarea class="src" data-lang="html"><div class="fila">
+  <div class="foto"></div>
+  <div class="foto a"></div>
+  <div class="foto b"></div>
+</div></textarea>
+<textarea class="src" data-lang="css">.fila {
+  display: flex; /* las tres fotos en fila */
+  gap: 0.6rem; /* separación */
+}
+.foto {
+  flex: 1; /* las tres del mismo ancho */
+  height: 160px; /* alto */
+  border-radius: 12px; /* esquinas suaves */
+  background: radial-gradient(circle at 70% 30%, #ffe9a8 0 12%, transparent 13%), linear-gradient(#9cc3d9, #6f8f4e); /* cielo, sol y prado */
+}
+.a {
+  filter: sepia(1) hue-rotate(90deg); /* primero marrón, luego lo gira a verde */
+}
+.b {
+  filter: hue-rotate(90deg) sepia(1); /* primero gira, luego todo marrón: el giro se pierde */
+}</textarea>
+    </div>
+
+    <h3>Filtros al pasar el ratón</h3>
+    <p class="lectura"><code>filter</code> se puede animar con <code>transition</code>. El truco clásico: una galería en blanco y negro donde la foto que señalas recupera el color. Para animarlo bien, escribe <b>las mismas funciones en el mismo orden</b> en los dos estados.</p>
+    <div class="ejemplo" data-alto="230" data-t="Galería que recupera el color">
+<textarea class="src" data-lang="html"><div class="galeria">
+  <span>🌷</span>
+  <span>🌻</span>
+  <span>🌼</span>
+  <span>🪻</span>
+</div></textarea>
+<textarea class="src" data-lang="css">.galeria {
+  display: flex; /* flores en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 1rem; /* separación */
+  justify-content: center; /* centradas */
+  font-size: 4rem; /* tamaño de las flores */
+}
+.galeria span {
+  filter: grayscale(1) brightness(1.1); /* apagadas: sin color */
+  transition: filter 0.4s, scale 0.4s; /* cambio suave */
+  cursor: pointer; /* manita */
+}
+.galeria span:hover {
+  filter: grayscale(0) brightness(1); /* mismas funciones, mismo orden: se anima bien */
+  scale: 1.15; /* crece un poco */
+}</textarea>
+    </div>
+
+    <h3>blur() para dar profundidad</h3>
+    <p class="lectura">El desenfoque imita la profundidad de campo de una cámara: lo que está lejos se ve borroso y lo que está cerca, nítido. Con dos o tres capas desenfocadas a distinto nivel, una escena plana gana fondo.</p>
+    <div class="ejemplo" data-alto="240" data-t="Tres capas a distinta distancia">
+<textarea class="src" data-lang="html"><div class="bosque">
+  <span class="lejos">🌲🌲🌲</span>
+  <span class="medio">🌳🌳</span>
+  <span class="cerca">🍄</span>
+</div></textarea>
+<textarea class="src" data-lang="css">.bosque {
+  position: relative; /* referencia para las capas */
+  height: 200px; /* alto de la escena */
+  background: linear-gradient(#d9e6d0, #f4ecd8); /* bruma del bosque */
+  border-radius: 14px; /* esquinas */
+  overflow: hidden; /* nada se sale */
+}
+.bosque span {
+  position: absolute; /* cada capa, libre */
+  bottom: 0; /* apoyada abajo */
+}
+.lejos {
+  left: 10%; /* posición */
+  font-size: 3rem; /* pequeños: están lejos */
+  filter: blur(3px) opacity(0.6); /* borrosos y desvaídos */
+}
+.medio {
+  left: 40%; /* posición */
+  font-size: 4.5rem; /* medianos */
+  filter: blur(1px); /* un poco borrosos */
+}
+.cerca {
+  right: 12%; /* posición */
+  font-size: 6rem; /* grande: está delante */
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.3)); /* nítido y con sombra */
+}</textarea>
+    </div>
+
+    <div class="nota peligro">
+      <span class="tit">filter afecta a TODO lo de dentro</span>
+      Si pones <code>filter: blur(4px)</code> a una tarjeta, se desenfoca la tarjeta <b>y su texto</b>. No se puede «quitar» el filtro a un hijo. Si solo quieres desenfocar el fondo, pon el fondo en una capa aparte (un <code>::before</code>) y desenfoca esa capa.
+    </div>
+    <div class="nota">
+      <span class="tit">filter crea una capa propia</span>
+      Un elemento con <code>filter</code> (con cualquier valor distinto de <code>none</code>) pasa a ser un nuevo contexto de apilamiento. Además, sus hijos con <code>position: fixed</code> se colocan respecto a él y no respecto a la ventana. Si un menú fijo «se queda pegado» a una caja, busca un <code>filter</code> en algún padre.
+    </div>
+  </div>
+</section>
+
+<!-- III · DROP-SHADOW Y PEGATINAS ======================================== -->
+<section class="lamina" id="sombra" data-nav="drop-shadow y pegatinas">
+  <div class="wrap">
+    <div class="cab"><span class="num">III</span><span class="latin">Umbra adhaesiva</span><h2>drop-shadow y el truco de la pegatina</h2></div>
+    <div class="lectura">
+      <p><code>box-shadow</code> proyecta la sombra de la <b>caja</b>, un rectángulo (o con la curva del <code>border-radius</code>). <code>filter: drop-shadow()</code> proyecta la sombra de la <b>forma que se ve</b>: lo transparente de un PNG, un emoji o un SVG no hace sombra. Es como poner una hoja prensada al sol.</p>
+    </div>
+    <div class="ejemplo" data-alto="220" data-t="box-shadow frente a drop-shadow">
+<textarea class="src" data-lang="html"><span class="caja">🍁</span>
+<span class="forma">🍁</span></textarea>
+<textarea class="src" data-lang="css">body {
+  display: flex; /* las dos hojas en fila */
+  gap: 3rem; /* separación */
+  justify-content: center; /* centradas */
+  background-color: #f7f1e3; /* papel */
+  padding-top: 2rem; /* aire arriba */
+}
+span {
+  font-size: 6rem; /* hojas grandes */
+  line-height: 1; /* sin aire extra */
+}
+.caja {
+  box-shadow: 10px 10px 12px rgba(59, 47, 37, 0.45); /* sombra de la CAJA: un rectángulo */
+}
+.forma {
+  filter: drop-shadow(10px 10px 6px rgba(59, 47, 37, 0.45)); /* sombra de la FORMA: sigue la hoja */
+}</textarea>
+    </div>
+
+    <h3>Fe de erratas: <code>drop-shadow(0 0 0 red)</code> no dibuja un contorno</h3>
+    <div class="nota peligro">
+      <span class="tit">Por qué no funciona</span>
+      Una sombra con desplazamiento <code>0 0</code> y desenfoque <code>0</code> queda <b>exactamente debajo</b> de la figura, del mismo tamaño. La figura la tapa entera: no se ve nada. <code>drop-shadow()</code> no tiene <code>spread</code> (el cuarto valor de <code>box-shadow</code> que agranda la sombra), así que no puede «engordar».
+    </div>
+    <p class="lectura">Hay dos formas de conseguir un contorno de verdad:</p>
+    <div class="ejemplo" data-alto="210" data-t="Contornos que sí funcionan">
+<textarea class="src" data-lang="html"><span class="nada">🌻</span>
+<span class="cuatro">🌻</span>
+<span class="halo">🌻</span></textarea>
+<textarea class="src" data-lang="css">body {
+  display: flex; /* en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 2.5rem; /* separación */
+  justify-content: center; /* centradas */
+  padding-top: 1.5rem; /* aire */
+  background-color: #e9e4d6; /* fondo para ver el blanco */
+}
+span {
+  font-size: 5.5rem; /* flores grandes */
+}
+.nada {
+  filter: drop-shadow(0 0 0 red); /* la errata: queda escondida debajo, no se ve */
+}
+.cuatro {
+  filter: /* varias sombras encadenadas: */
+    drop-shadow(2px 0 0 #b0603e) /* sombra a la derecha */
+    drop-shadow(-2px 0 0 #b0603e) /* sombra a la izquierda */
+    drop-shadow(0 2px 0 #b0603e) /* sombra abajo */
+    drop-shadow(0 -2px 0 #b0603e); /* sombra arriba: juntas forman un contorno */
+}
+.halo {
+  filter: drop-shadow(0 0 2px #b0603e) drop-shadow(0 0 2px #b0603e) drop-shadow(0 0 2px #b0603e); /* tres sombras desenfocadas apiladas: un halo que se vuelve sólido */
+}</textarea>
+    </div>
+
+    <h3>Bonus: la pegatina, paso a paso</h3>
+    <p class="lectura">Una pegatina de verdad tiene un <b>borde blanco</b> que sigue la silueta y una <b>sombra oscura</b> que la despega del papel. Con <code>drop-shadow()</code> encadenado se hace sin tocar la imagen:</p>
+    <ol class="pasos">
+      <li><b>Parte de una imagen con transparencia</b>: un PNG o WebP recortado, un SVG o un emoji. Si la imagen es un JPG con fondo, la sombra será rectangular.</li>
+      <li><b>Cuatro sombras blancas sin desenfoque</b>, desplazadas 2-4px a la derecha, a la izquierda, arriba y abajo. Juntas dibujan el borde blanco.</li>
+      <li><b>Repite en diagonal</b> (por ejemplo, <code>2px 2px</code> y <code>-2px -2px</code>) si el borde queda con huecos en las esquinas.</li>
+      <li><b>Al final, una sombra oscura y desenfocada</b>, desplazada hacia abajo. Como va la última, se calcula sobre la figura <i>ya con su borde blanco</i>, así que sombrea la pegatina entera.</li>
+      <li><b>Opcional:</b> gírala un poco con <code>rotate</code> y anima el <code>:hover</code> para que «se despegue».</li>
+    </ol>
+    <div class="ejemplo" data-alto="250" data-t="Pegatinas de herbario">
+<textarea class="src" data-lang="html"><div class="album">
+  <span class="pegatina">🌷</span>
+  <span class="pegatina">🍄</span>
+  <span class="pegatina">🌿</span>
+  <span class="pegatina">🐝</span>
+</div></textarea>
+<textarea class="src" data-lang="css">.album {
+  display: flex; /* pegatinas en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 2rem; /* separación */
+  justify-content: center; /* centradas */
+  padding: 2rem; /* aire */
+  background: #f2e6cc; /* papel de álbum */
+}
+.pegatina {
+  font-size: 4.5rem; /* tamaño */
+  line-height: 1; /* sin aire extra */
+  rotate: -6deg; /* torcida, como pegada a mano */
+  filter: /* varias sombras encadenadas: */
+    drop-shadow(3px 0 0 #fff) /* borde blanco: derecha */
+    drop-shadow(-3px 0 0 #fff) /* izquierda */
+    drop-shadow(0 3px 0 #fff) /* abajo */
+    drop-shadow(0 -3px 0 #fff) /* arriba */
+    drop-shadow(0 6px 6px rgba(59, 47, 37, 0.35)); /* la última: sombra de toda la pegatina */
+  transition: rotate 0.3s, translate 0.3s; /* despegue suave */
+  cursor: pointer; /* manita */
+}
+.pegatina:nth-child(even) {
+  rotate: 7deg; /* las pares, torcidas al otro lado */
+}
+.pegatina:hover {
+  rotate: 0deg; /* se endereza */
+  translate: 0 -6px; /* y se despega del papel */
+}</textarea>
+    </div>
+    <div class="lab" id="labPegatina">
+      <h3 class="lab-t">La fábrica de pegatinas</h3>
+      <p>Elige una flor, el grosor del borde y su color. El laboratorio escribe la cadena de sombras por ti.</p>
+      <div class="lab-cuerpo">
+        <div>
+          <div class="chips" id="pegFlores"></div>
+          <div class="mandos">
+            <label>grosor del borde <output id="pegGO">3px</output><input type="range" id="pegG" min="0" max="8" value="3"></label>
+            <label>color del borde <input type="color" id="pegC" value="#ffffff"></label>
+            <label>sombra final <output id="pegSO">6px</output><input type="range" id="pegS" min="0" max="20" value="6"></label>
+            <label>giro <output id="pegRO">-6deg</output><input type="range" id="pegR" min="-20" max="20" value="-6"></label>
+          </div>
+        </div>
+        <div>
+          <div class="escenario" style="background:#e9dcbd;display:grid;place-items:center;min-height:260px"><span id="pegVista" style="font-size:8rem;line-height:1">🌷</span></div>
+          <p class="salida" id="pegCss"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IV · FILTROS SVG: DEFORMAR ============================================ -->
+<section class="lamina" id="deformar" data-nav="Deformar con SVG">
+  <div class="wrap">
+    <div class="cab"><span class="num">IV</span><span class="latin">Undulata textus</span><h2>Deformar cajas y textos: filtros SVG</h2></div>
+    <div class="lectura">
+      <p>Las funciones de <code>filter</code> retocan colores y sombras, pero no pueden <b>deformar</b>. Para ondular un texto, darle bordes de acuarela o hacer que una caja parezca de papel mojado, CSS toma prestados los <b>filtros de SVG</b>: los defines una vez en el HTML y los usas con <code>filter: url(#nombre)</code>. Todos los títulos ondulados de esta lámina son texto normal, se pueden seleccionar y copiar.</p>
+      <p>El dúo que deforma tiene dos piezas:</p>
+    </div>
+    <div class="rejilla">
+      <div class="ficha"><h4>feTurbulence</h4><p>Genera un <b>ruido</b> aleatorio, como las vetas de un papel o el agua de un estanque. <code>baseFrequency</code> decide el tamaño de las ondas (cuanto más pequeño, ondas más grandes) y <code>numOctaves</code>, el detalle.</p></div>
+      <div class="ficha"><h4>feDisplacementMap</h4><p>Usa ese ruido como un <b>mapa</b> para empujar cada píxel del elemento hacia un lado. <code>scale</code> es la fuerza del empujón: 0 no deforma nada y 40 lo vuelve irreconocible.</p></div>
+    </div>
+    <div class="ejemplo" data-alto="270" data-t="Un título que parece pintado con acuarela">
+<textarea class="src" data-lang="html"><svg width="0" height="0" style="position: absolute">
+  <filter id="acuarela">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" />
+    <feDisplacementMap in="SourceGraphic" scale="10" />
+  </filter>
+</svg>
+<h1 class="titulo">Flora de jardín</h1>
+<div class="mancha">Etiqueta de herbario</div></textarea>
+<textarea class="src" data-lang="css">body {
+  background-color: #f7f1e3; /* papel */
+  text-align: center; /* todo centrado */
+  font-family: Georgia, serif; /* letra clásica */
+}
+.titulo {
+  font-size: 3.4rem; /* título grande */
+  color: #5b6d42; /* verde musgo */
+  filter: url(#acuarela); /* el filtro SVG: deforma los bordes de las letras */
+}
+.mancha {
+  display: inline-block; /* caja a su medida */
+  padding: 1rem 2rem; /* relleno */
+  background-color: #ecc9c3; /* rosa empolvado */
+  color: #3b2f25; /* tinta */
+  filter: url(#acuarela); /* la misma deformación: la caja parece pintada a mano */
+}</textarea>
+    </div>
+    <div class="lab" id="labDeforma">
+      <h3 class="lab-t">El deformador</h3>
+      <p>Cambia el tamaño de las ondas y la fuerza del empujón. El texto sigue siendo texto: puedes seleccionarlo.</p>
+      <div class="lab-cuerpo">
+        <div class="mandos">
+          <label>baseFrequency (tamaño de las ondas) <output id="dFO">0.02</output><input type="range" id="dF" min="0.002" max="0.12" step="0.002" value="0.02"></label>
+          <label>scale (fuerza) <output id="dSO">12</output><input type="range" id="dS" min="0" max="60" value="12"></label>
+          <label>tipo de ruido <select id="dT"><option value="turbulence">turbulence (remolinos)</option><option value="fractalNoise">fractalNoise (nubes, papel)</option></select></label>
+          <label><span><input type="checkbox" id="dA"> que se mueva como el agua</span></label>
+        </div>
+        <div>
+          <div class="marco-svg"><p id="dTexto" style="margin:0;font:600 clamp(2rem, 1.4rem + 2vw, 3rem)/1.1 var(--f-tit);color:var(--musgo);filter:url(#deforma);text-align:center">Herbario<br><span style="font-size:.55em;color:var(--terracota)">de efectos visuales</span></p></div>
+          <p class="salida" id="dCss"></p>
+        </div>
+      </div>
+    </div>
+    <div class="nota">
+      <span class="tit">Otras formas de «deformar»</span>
+      <code>transform: skew()</code> y <code>perspective</code> (vistos en el tercer bloque y en Extras) deforman la caja entera de forma geométrica, y <code>shape-outside</code> (Extras · Textos) hace que el texto rodee una forma. El filtro SVG es el único que deforma de forma <b>orgánica</b>, como el agua o el papel.
+    </div>
+    <div class="nota peligro">
+      <span class="tit">Cuidado con la legibilidad</span>
+      Con <code>scale</code> alto, el texto cuesta de leer. Úsalo en títulos grandes y decorativos, nunca en párrafos. Y si lo animas, respeta <code>prefers-reduced-motion</code>.
+    </div>
+  </div>
+</section>
+
+<!-- V · BACKDROP-FILTER ================================================== -->
+<section class="lamina" id="cristal" data-nav="backdrop-filter">
+  <div class="wrap">
+    <div class="cab"><span class="num">V</span><span class="latin">Vitrum hortense</span><h2>backdrop-filter: el cristal del invernadero</h2></div>
+    <div class="lectura">
+      <p><code>filter</code> retoca el elemento. <code>backdrop-filter</code> retoca <b>lo que se ve a través de él</b>: el fondo, las imágenes y el texto que queden detrás. Admite las mismas funciones (<code>blur</code>, <code>brightness</code>, <code>saturate</code>…), pero el resultado se ve «dentro» de la caja, como si fuera un cristal esmerilado.</p>
+    </div>
+    <div class="nota peligro">
+      <span class="tit">El requisito que todo el mundo olvida</span>
+      El elemento tiene que ser <b>transparente o semitransparente</b>. Si le pones un fondo opaco (<code>background: white</code>), tapa lo que hay detrás y el filtro no se ve. Usa un fondo con alfa: <code>rgb(255 255 255 / 25%)</code>.
+    </div>
+    <h3>La receta del cristal, paso a paso</h3>
+    <ol class="pasos">
+      <li><b>Un fondo con algo que ver detrás</b>: una foto, un degradado vivo o formas de colores. Sobre un fondo liso el cristal no se nota.</li>
+      <li><b>Una tarjeta con fondo semitransparente</b>: <code>background-color: rgb(255 255 255 / 20%)</code>.</li>
+      <li><b>El desenfoque</b>: <code>backdrop-filter: blur(12px)</code>. Entre 8 y 20px queda natural.</li>
+      <li><b>Más color</b>: añade <code>saturate(1.6)</code>; el desenfoque apaga los colores y así los recupera.</li>
+      <li><b>El canto del cristal</b>: un borde fino claro (<code>1px solid rgb(255 255 255 / 45%)</code>) y una sombra suave para separarla del fondo.</li>
+      <li><b>Safari</b>: escribe también <code>-webkit-backdrop-filter</code> con el mismo valor (lo explicamos abajo).</li>
+    </ol>
+    <div class="ejemplo" data-alto="320" data-t="Tarjeta de cristal sobre el jardín">
+<textarea class="src" data-lang="html"><div class="jardin">
+  <article class="cristal">
+    <h2>Rosa canina</h2>
+    <p>Florece de mayo a julio en setos y bordes de caminos.</p>
+  </article>
+</div></textarea>
+<textarea class="src" data-lang="css">.jardin {
+  display: grid; /* para centrar la tarjeta */
+  place-items: center; /* centrada */
+  height: 280px; /* alto */
+  border-radius: 18px; /* esquinas */
+  background: /* varias capas de fondo: */
+    radial-gradient(circle at 20% 30%, #c4807b 0 18%, transparent 19%), /* flor rosa */
+    radial-gradient(circle at 80% 70%, #e8cf86 0 16%, transparent 17%), /* flor amarilla */
+    radial-gradient(circle at 60% 20%, #9c8fb5 0 12%, transparent 13%), /* flor lavanda */
+    linear-gradient(135deg, #8a9a6b, #5b6d42); /* prado */
+  font-family: Georgia, serif; /* letra */
+}
+.cristal {
+  width: min(80%, 320px); /* ancho de la tarjeta */
+  padding: 1.2rem 1.4rem; /* relleno */
+  border-radius: 16px; /* esquinas */
+  background-color: rgb(255 255 255 / 22%); /* fondo SEMItransparente: sin esto no hay cristal */
+  -webkit-backdrop-filter: blur(12px) saturate(1.6); /* versión con prefijo, para Safari */
+  backdrop-filter: blur(12px) saturate(1.6); /* desenfoca y aviva lo que hay detrás */
+  border: 1px solid rgb(255 255 255 / 45%); /* el canto del cristal */
+  box-shadow: 0 10px 30px rgb(0 0 0 / 15%); /* la separa del fondo */
+  color: #2c2219; /* texto oscuro, con buen contraste */
+}
+.cristal h2 {
+  margin: 0 0 0.3rem; /* margen */
+}</textarea>
+    </div>
+    <div class="lab" id="labCristal">
+      <h3 class="lab-t">El invernadero</h3>
+      <p>Arrastra los mandos y mira cómo cambia el cristal. Con la opacidad del fondo al 100 %, el cristal desaparece: lo tapa todo.</p>
+      <div class="lab-cuerpo">
+        <div class="mandos">
+          <label>blur <output id="cBO">12px</output><input type="range" id="cB" min="0" max="40" value="12"></label>
+          <label>saturate <output id="cSO">1.6</output><input type="range" id="cS" min="0" max="3" step="0.1" value="1.6"></label>
+          <label>brightness <output id="cLO">1.05</output><input type="range" id="cL" min="0.5" max="1.6" step="0.05" value="1.05"></label>
+          <label>opacidad del fondo <output id="cAO">20%</output><input type="range" id="cA" min="0" max="100" value="20"></label>
+          <label>color del cristal <input type="color" id="cC" value="#ffffff"></label>
+        </div>
+        <div>
+          <div class="escenario prado" id="cEsc" style="min-height:300px;display:grid;place-items:center">
+            <span class="flor" style="left:6%;top:12%;font-size:4rem">🌸</span><span class="flor" style="right:8%;bottom:10%;font-size:4.6rem">🌻</span><span class="flor" style="left:40%;bottom:6%;font-size:3.4rem">🌿</span><span class="flor" style="right:30%;top:8%;font-size:3rem">🦋</span>
+            <div id="cTarjeta" style="position:relative;width:min(78%, 300px);padding:1.2rem 1.4rem;border-radius:16px;font:600 1.4rem/1.2 var(--f-tit);color:#2c2219">Invernadero<br><span style="font:400 .95rem/1.4 var(--f-txt)">Todo lo que ves detrás pasa por el cristal.</span></div>
+          </div>
+          <p class="salida" id="cCss"></p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Safari y el prefijo <code>-webkit-</code></h3>
+    <div class="lectura">
+      <p>Safari fue el primer navegador en tener <code>backdrop-filter</code>, pero durante años solo con prefijo: <code>-webkit-backdrop-filter</code>. Apple anunció la versión sin prefijo para Safari 18, pero en su propio registro de errores constan casos en los que no funciona (por ejemplo, Safari 18 en macOS Sonoma). La recomendación, comprobada en noviembre de 2026, es sencilla: <b>escribe las dos líneas, siempre</b>.</p>
+    </div>
+    <div class="ejemplo" data-alto="190" data-t="Las dos líneas y un plan B con @supports">
+<textarea class="src" data-lang="html"><div class="fondo">
+  <p class="velo">Cristal o, si no se puede, papel</p>
+</div></textarea>
+<textarea class="src" data-lang="css">.fondo {
+  padding: 2rem; /* aire */
+  background: repeating-linear-gradient(45deg, #8a9a6b 0 18px, #c4807b 18px 36px); /* rayas para ver el efecto */
+}
+.velo {
+  margin: 0; /* sin margen */
+  padding: 1rem; /* relleno */
+  background-color: rgb(247 241 227 / 92%); /* plan B: casi opaco, para que se lea sin desenfoque */
+  font: bold 1.2rem Georgia, serif; /* letra */
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .velo {
+    background-color: rgb(247 241 227 / 35%); /* si hay cristal, el fondo puede ser más transparente */
+    -webkit-backdrop-filter: blur(8px); /* Safari */
+    backdrop-filter: blur(8px); /* el resto */
+  }
+}</textarea>
+    </div>
+    <div class="nota">
+      <span class="tit">Fuentes (noviembre de 2026)</span>
+      <a href="https://caniuse.com/css-backdrop-filter" target="_blank" rel="noopener noreferrer">caniuse.com/css-backdrop-filter</a> · <a href="https://bugs.webkit.org/show_bug.cgi?id=224899" target="_blank" rel="noopener noreferrer">WebKit, error 224899</a> · <a href="https://bugs.webkit.org/show_bug.cgi?id=297620" target="_blank" rel="noopener noreferrer">WebKit, error 297620</a>
+    </div>
+    <h3>Trampas del cristal</h3>
+    <div class="rejilla">
+      <div class="ficha"><h4>Fondo opaco</h4><p>Si el fondo de la tarjeta no es transparente, no se ve nada a través. Es el error número uno.</p></div>
+      <div class="ficha"><h4>Contraste</h4><p>El texto sobre cristal cambia según lo que pase por detrás. Comprueba el contraste en la zona más clara y más oscura del fondo; a veces hace falta más opacidad.</p></div>
+      <div class="ficha"><h4>Cristal sobre cristal</h4><p>Un elemento con <code>backdrop-filter</code> dentro de otro no ve el fondo de la página: ve el del padre. Evita anidarlos.</p></div>
+      <div class="ficha"><h4>Hijos fijos</h4><p>Igual que <code>filter</code>, crea una capa: un hijo con <code>position: fixed</code> se coloca respecto a la tarjeta.</p></div>
+      <div class="ficha"><h4>Menos transparencia</h4><p><code>@media (prefers-reduced-transparency: reduce)</code> detecta a quien ha pedido menos transparencias en su sistema. En noviembre de 2026 solo lo entienden Chrome y Edge (<a href="https://caniuse.com/wf-prefers-reduced-transparency" target="_blank" rel="noopener noreferrer">caniuse</a>). Úsalo para poner un fondo opaco.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VI · MIX-BLEND-MODE =================================================== -->
+<section class="lamina" id="mezclas" data-nav="mix-blend-mode">
+  <div class="wrap">
+    <div class="cab"><span class="num">VI</span><span class="latin">Tinctura miscens</span><h2>mix-blend-mode: tintas que se mezclan</h2></div>
+    <div class="lectura">
+      <p>Normalmente, un elemento <b>tapa</b> lo que tiene debajo. Con <code>mix-blend-mode</code> se <b>mezcla</b> con ello, igual que dos capas de acuarela: el color de arriba y el de abajo se combinan según una fórmula. Son los mismos modos de fusión de los programas de diseño.</p>
+    </div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Familia</th><th>Modos</th><th>Qué consigue</th></tr></thead>
+      <tbody>
+        <tr><td>Oscurecer</td><td><code>multiply</code>, <code>darken</code>, <code>color-burn</code></td><td>El blanco desaparece y lo oscuro se suma. <code>multiply</code> es tinta sobre papel.</td></tr>
+        <tr><td>Aclarar</td><td><code>screen</code>, <code>lighten</code>, <code>color-dodge</code></td><td>El negro desaparece y lo claro se suma. <code>screen</code> es luz sobre luz.</td></tr>
+        <tr><td>Contraste</td><td><code>overlay</code>, <code>soft-light</code>, <code>hard-light</code></td><td>Oscurece lo oscuro y aclara lo claro. Da textura y viveza.</td></tr>
+        <tr><td>Inversión</td><td><code>difference</code>, <code>exclusion</code></td><td>Resta colores: texto que se invierte sobre lo que pasa por debajo.</td></tr>
+        <tr><td>Componentes</td><td><code>hue</code>, <code>saturation</code>, <code>color</code>, <code>luminosity</code></td><td>Toma solo una parte del color de arriba: su tono, su saturación…</td></tr>
+      </tbody>
+    </table></div>
+    <div class="lab" id="labTintero">
+      <h3 class="lab-t">El tintero</h3>
+      <p>Tres gotas de tinta y un título sobre el prado. Cambia el modo de fusión y mira cómo se mezclan con el fondo y entre ellas.</p>
+      <div class="chips" id="tModos"></div>
+      <div class="escenario prado" style="min-height:300px" id="tEsc">
+        <div style="position:absolute;inset:0;display:grid;place-items:center"><span id="tTit" style="font:700 clamp(2.6rem, 1.6rem + 5vw, 5.5rem)/1 var(--f-tit);color:#b0603e">Tintero</span></div>
+        <i class="gota-t" style="position:absolute;left:14%;top:14%;width:34%;aspect-ratio:1;border-radius:50%;background:#c4807b"></i>
+        <i class="gota-t" style="position:absolute;left:30%;top:34%;width:34%;aspect-ratio:1;border-radius:50%;background:#e8cf86"></i>
+        <i class="gota-t" style="position:absolute;left:46%;top:14%;width:34%;aspect-ratio:1;border-radius:50%;background:#9c8fb5"></i>
+      </div>
+      <p class="salida" id="tCss"></p>
+    </div>
+    <div class="ejemplo" data-alto="230" data-t="Texto que se invierte sobre lo que tiene detrás">
+<textarea class="src" data-lang="html"><div class="cartel">
+  <h1>Herbario</h1>
+</div></textarea>
+<textarea class="src" data-lang="css">.cartel {
+  height: 190px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: linear-gradient(90deg, #f7f1e3 50%, #3b2f25 50%); /* mitad clara, mitad oscura */
+  isolation: isolate; /* la mezcla se queda dentro del cartel */
+}
+.cartel h1 {
+  font: bold 4rem Georgia, serif; /* letra grande */
+  color: #fff; /* blanco: con difference se vuelve el opuesto de lo de abajo */
+  mix-blend-mode: difference; /* oscuro sobre lo claro y claro sobre lo oscuro */
+}</textarea>
+    </div>
+    <div class="ejemplo" data-alto="240" data-t="multiply: una ilustración que se funde con el papel">
+<textarea class="src" data-lang="html"><div class="papel">
+  <span class="sello">🌿</span>
+  <span class="tampon">Herbario 1887</span>
+</div></textarea>
+<textarea class="src" data-lang="css">.papel {
+  position: relative; /* referencia */
+  height: 200px; /* alto */
+  background: repeating-linear-gradient(0deg, #efe2c4 0 2px, #f4e9d0 2px 6px); /* papel con fibras */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+}
+.sello {
+  font-size: 6rem; /* ramita grande */
+  mix-blend-mode: multiply; /* se funde con el papel, como impresa */
+}
+.tampon {
+  position: absolute; /* encima de todo */
+  right: 10%; /* posición */
+  bottom: 18%; /* posición */
+  padding: 0.3rem 0.8rem; /* relleno */
+  border: 3px solid #b0603e; /* marco del tampón */
+  color: #b0603e; /* tinta terracota */
+  font: bold 1.2rem Georgia, serif; /* letra */
+  rotate: -12deg; /* torcido */
+  mix-blend-mode: multiply; /* la tinta deja ver las fibras del papel */
+}</textarea>
+    </div>
+    <div class="nota">
+      <span class="tit">isolation: isolate</span>
+      Un elemento con <code>mix-blend-mode</code> se mezcla con <b>todo</b> lo que tenga debajo, hasta el fondo de la página. Pon <code>isolation: isolate</code> en el contenedor para que la mezcla se quede dentro. Y si lo que quieres mezclar son varias capas de <code>background</code> de una misma caja, la propiedad es <code>background-blend-mode</code>.
+    </div>
+  </div>
+</section>
+
+<!-- VII · CLIP-PATH ======================================================== -->
+<section class="lamina" id="tijeras" data-nav="clip-path">
+  <div class="wrap">
+    <div class="cab"><span class="num">VII</span><span class="latin">Forfex hortensis</span><h2>clip-path: las tijeras de jardín</h2></div>
+    <div class="lectura">
+      <p><code>clip-path</code> recorta el elemento con una forma. Lo de dentro se ve y lo de fuera desaparece <b>y deja de recibir clics</b>. La caja sigue ocupando su sitio en la página: el recorte es solo visual.</p>
+    </div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Forma</th><th>Ejemplo</th><th>Cómo se lee</th></tr></thead>
+      <tbody>
+        <tr><td><code>circle()</code></td><td><code>circle(40% at 50% 50%)</code></td><td>Radio y, tras <code>at</code>, el centro.</td></tr>
+        <tr><td><code>ellipse()</code></td><td><code>ellipse(45% 30% at 50% 50%)</code></td><td>Radio horizontal, radio vertical y centro.</td></tr>
+        <tr><td><code>inset()</code></td><td><code>inset(10% 5% round 20px)</code></td><td>Cuánto se recorta desde cada lado (como un <code>margin</code>) y, tras <code>round</code>, las esquinas.</td></tr>
+        <tr><td><code>polygon()</code></td><td><code>polygon(50% 0, 100% 100%, 0 100%)</code></td><td>Una lista de puntos <i>x y</i>, separados por comas. Este es un triángulo.</td></tr>
+        <tr><td><code>path()</code></td><td><code>path("M0 0 C 50 80, 100 0 …")</code></td><td>Un trazado de SVG, con curvas. Solo admite píxeles, así que no se adapta al tamaño.</td></tr>
+        <tr><td><code>shape()</code></td><td><code>shape(from 0 0, curve to …)</code></td><td>Como <code>path()</code>, pero con %, rem y demás unidades de CSS. Es reciente: compruébalo en tu navegador.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="lab" id="labTijeras">
+      <h3 class="lab-t">Las tijeras de jardín</h3>
+      <p>Elige una forma o <b>arrastra los puntos blancos</b> para cortar a mano. El CSS se escribe solo. Con el botón «Animar», la forma cambia a la siguiente con transición.</p>
+      <div class="chips" id="tijFormas"></div>
+      <div class="lab-cuerpo">
+        <div class="escenario" style="min-height:0;aspect-ratio:1;max-width:420px;width:calc(100% - 20px);margin:10px;background:#e9dcbd;overflow:visible" id="tijMarco">
+          <div id="tijVista" class="prado" style="position:absolute;inset:0;border-radius:18px;transition:clip-path .8s cubic-bezier(.5,0,.2,1)"><span class="flor" style="left:20%;bottom:16%;font-size:4rem">🌷</span><span class="flor" style="right:18%;bottom:12%;font-size:4.6rem">🌻</span></div>
+        </div>
+        <div><p class="salida" id="tijCss"></p><p style="margin-top:1rem"><button class="boton sec" type="button" id="tijAnim">Animar a la siguiente forma</button></p>
+        <p style="font-size:.92rem;color:var(--sepia)">Para que dos polígonos se animen, tienen que tener <b>el mismo número de puntos</b>. Las formas de las tijeras tienen todas 8, por eso se transforman unas en otras.</p></div>
+      </div>
+    </div>
+    <div class="ejemplo" data-alto="240" data-t="Una foto en forma de hoja que se abre al pasar el ratón">
+<textarea class="src" data-lang="html"><div class="hoja"></div></textarea>
+<textarea class="src" data-lang="css">.hoja {
+  width: 200px; /* ancho */
+  height: 200px; /* alto */
+  margin: 1rem auto; /* centrada */
+  background: radial-gradient(circle at 30% 30%, #e8cf86, #8a9a6b 60%, #5b6d42); /* la "foto" */
+  clip-path: polygon(50% 0%, 85% 25%, 100% 60%, 70% 100%, 30% 100%, 0% 60%, 15% 25%, 50% 0%); /* hoja con 8 puntos */
+  transition: clip-path 0.6s ease; /* el recorte se anima */
+}
+.hoja:hover {
+  clip-path: polygon(0% 0%, 50% 0%, 100% 0%, 100% 50%, 100% 100%, 50% 100%, 0% 100%, 0% 50%); /* cuadrado entero: también 8 puntos */
+}</textarea>
+    </div>
+    <div class="ejemplo" data-alto="230" data-t="inset() con esquinas: una ventana que se abre">
+<textarea class="src" data-lang="html"><div class="ventana">Pasa el ratón</div></textarea>
+<textarea class="src" data-lang="css">.ventana {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: linear-gradient(135deg, #c4807b, #9c8fb5); /* fondo */
+  color: #fff; /* texto blanco */
+  font: bold 1.4rem Georgia, serif; /* letra */
+  clip-path: inset(30% 35% round 999px); /* recortada en una píldora pequeña */
+  transition: clip-path 0.6s; /* se anima */
+}
+.ventana:hover {
+  clip-path: inset(0 0 round 16px); /* se abre entera, con esquinas suaves */
+}</textarea>
+    </div>
+    <div class="nota">
+      <span class="tit">clip-path, border-radius u overflow</span>
+      Para esquinas redondeadas basta <code>border-radius</code>. <code>clip-path</code> es para formas que <code>border-radius</code> no puede hacer (triángulos, estrellas, hojas) y para animar recortes. Recuerda que corta también las sombras: si quieres sombra, ponla en un padre con <code>filter: drop-shadow()</code>. Para dibujar polígonos a mano existe <a href="https://bennettfeely.com/clippy/" target="_blank" rel="noopener noreferrer">Clippy</a>, una herramienta gratuita.
+    </div>
+  </div>
+</section>
+
+<!-- VIII · MÁSCARAS Y RAREZAS ================================================ -->
+<section class="lamina" id="mascaras" data-nav="Máscaras y rarezas">
+  <div class="wrap">
+    <div class="cab"><span class="num">VIII</span><span class="latin">Curiosa moderna</span><h2>Máscaras y otras rarezas que dan mucho juego</h2></div>
+    <div class="lectura">
+      <p><code>clip-path</code> corta en seco: o se ve o no se ve. Una <b>máscara</b> corta con suavidad: donde la máscara es opaca, el elemento se ve; donde es transparente, desaparece, y en medio queda semitransparente. Con un degradado como máscara, las cosas se desvanecen.</p>
+    </div>
+    <div class="ejemplo" data-alto="240" data-t="mask-image: un texto que se desvanece y una foto con bordes de niebla">
+<textarea class="src" data-lang="html"><p class="desvanece">Las hojas de la menta crecen opuestas, de dos en dos, en tallos de sección cuadrada. Huelen al frotarlas y se secan bien colgadas boca abajo.</p>
+<div class="niebla"></div></textarea>
+<textarea class="src" data-lang="css">body {
+  display: grid; /* dos columnas */
+  grid-template-columns: 1fr 1fr; /* mitad y mitad */
+  gap: 1rem; /* separación */
+  background-color: #f7f1e3; /* papel */
+  font-family: Georgia, serif; /* letra */
+}
+.desvanece {
+  margin: 0; /* sin margen */
+  font-size: 1.1rem; /* tamaño */
+  -webkit-mask-image: linear-gradient(#000 40%, transparent); /* versión con prefijo */
+  mask-image: linear-gradient(#000 40%, transparent); /* negro = se ve; transparente = desaparece */
+}
+.niebla {
+  height: 180px; /* alto */
+  background: radial-gradient(circle at 70% 30%, #ffe9a8 0 10%, transparent 11%), linear-gradient(#9cc3d9, #6f8f4e); /* la "foto" */
+  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent); /* prefijo */
+  mask-image: radial-gradient(closest-side, #000 60%, transparent); /* el centro se ve y los bordes se pierden en niebla */
+}</textarea>
+    </div>
+    <h3>Más cosas modernas que mejoran la experiencia</h3>
+    <div class="rejilla">
+      <div class="ficha"><h4>@supports</h4><p>Pregunta al navegador si entiende algo antes de usarlo: <code>@supports (backdrop-filter: blur(1px)) { … }</code>. Así das un plan B a quien no lo tenga.</p></div>
+      <div class="ficha"><h4>prefers-reduced-transparency</h4><p>Quien pide menos transparencia en su sistema suele hacerlo por cansancio visual. Dale fondos opacos (de momento, solo Chrome y Edge).</p></div>
+      <div class="ficha"><h4>forced-colors</h4><p>En los modos de alto contraste (Windows), los filtros y las sombras desaparecen. Comprueba que tus botones siguen teniendo borde.</p></div>
+      <div class="ficha"><h4>will-change: filter</h4><p>Avisa al navegador de que algo se va a animar. Úsalo solo si una animación da tirones, y quítalo después: gasta memoria.</p></div>
+      <div class="ficha"><h4>filter en ::backdrop</h4><p>El fondo que hay detrás de un <code>&lt;dialog&gt;</code> abierto se puede desenfocar: <code>dialog::backdrop { backdrop-filter: blur(4px) }</code>. Se ve en el séptimo bloque.</p></div>
+      <div class="ficha"><h4>image-rendering</h4><p><code>image-rendering: pixelated</code> amplía una imagen pequeña sin suavizarla. Perfecto para pixel art o iconos diminutos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- IX · RECETAS PASO A PASO ================================================ -->
+<section class="lamina" id="recetas" data-nav="Recetas paso a paso">
+  <div class="wrap">
+    <div class="cab"><span class="num">IX</span><span class="latin">Receptarium</span><h2>Tres recetas paso a paso</h2></div>
+    <h3>1 · Una lámina de herbario vintage</h3>
+    <ol class="pasos">
+      <li><b>El papel</b>: un fondo crema y un degradado muy suave en las esquinas, como si el papel hubiera amarilleado.</li>
+      <li><b>La ilustración</b>: una imagen (aquí, un emoji) con <code>sepia(.4) saturate(.8)</code> para envejecerla.</li>
+      <li><b>Integrarla en el papel</b>: <code>mix-blend-mode: multiply</code>, para que el blanco desaparezca y se vean las fibras.</li>
+      <li><b>La etiqueta</b>: letra manuscrita y un borde fino. Unos grados de <code>rotate</code> la hacen artesanal.</li>
+    </ol>
+    <div class="ejemplo" data-alto="300" data-t="Receta 1 · Lámina vintage">
+<textarea class="src" data-lang="html"><figure class="lamina">
+  <span class="planta">🌿</span>
+  <figcaption>Mentha spicata · 1889</figcaption>
+</figure></textarea>
+<textarea class="src" data-lang="css">.lamina {
+  margin: 0 auto; /* centrada */
+  width: 240px; /* ancho */
+  height: 260px; /* alto */
+  display: grid; /* para colocar */
+  place-items: center; /* centrado */
+  background: radial-gradient(ellipse at 0 0, rgb(176 96 62 / 18%), transparent 45%), radial-gradient(ellipse at 100% 100%, rgb(176 96 62 / 18%), transparent 45%), #f4ead2; /* papel amarilleado en las esquinas */
+  border: 1px solid #c9b48e; /* borde fino */
+  box-shadow: 0 10px 25px rgb(59 47 37 / 20%); /* separada de la mesa */
+}
+.planta {
+  font-size: 7rem; /* ilustración grande */
+  filter: sepia(0.4) saturate(0.8); /* envejecida */
+  mix-blend-mode: multiply; /* integrada en el papel */
+}
+figcaption {
+  font: italic 1rem Georgia, serif; /* letra de etiqueta */
+  color: #6b5440; /* tinta sepia */
+  border-top: 1px solid #c9b48e; /* línea de la etiqueta */
+  padding-top: 0.3rem; /* aire */
+  rotate: -2deg; /* un poco torcida */
+}</textarea>
+    </div>
+    <h3>2 · Una tarjeta de cristal que reacciona</h3>
+    <ol class="pasos">
+      <li><b>El cristal de base</b>: la receta de la lámina V (fondo semitransparente, <code>blur</code> y <code>saturate</code>).</li>
+      <li><b>Un brillo que cruza</b>: un <code>::before</code> con un degradado blanco en diagonal, fuera de la tarjeta.</li>
+      <li><b>Al pasar el ratón</b>, el brillo cruza con <code>translate</code> y el cristal se aclara con <code>brightness</code>.</li>
+    </ol>
+    <div class="ejemplo" data-alto="300" data-t="Receta 2 · Cristal con brillo">
+<textarea class="src" data-lang="html"><div class="prado">
+  <div class="cristal">Pasa el ratón</div>
+</div></textarea>
+<textarea class="src" data-lang="css">.prado {
+  height: 260px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: radial-gradient(circle at 25% 35%, #c4807b 0 16%, transparent 17%), radial-gradient(circle at 75% 65%, #e8cf86 0 18%, transparent 19%), linear-gradient(135deg, #8a9a6b, #5b6d42); /* jardín */
+  border-radius: 18px; /* esquinas */
+}
+.cristal {
+  position: relative; /* referencia para el brillo */
+  overflow: hidden; /* el brillo no se sale */
+  padding: 2.4rem 3rem; /* relleno */
+  border-radius: 18px; /* esquinas */
+  background-color: rgb(255 255 255 / 20%); /* semitransparente */
+  -webkit-backdrop-filter: blur(10px) saturate(1.5); /* Safari */
+  backdrop-filter: blur(10px) saturate(1.5); /* cristal */
+  border: 1px solid rgb(255 255 255 / 50%); /* canto */
+  font: bold 1.3rem Georgia, serif; /* letra */
+  color: #2c2219; /* texto oscuro */
+  transition: backdrop-filter 0.4s; /* el cristal cambia suave */
+}
+.cristal::before {
+  content: ""; /* capa del brillo */
+  position: absolute; /* encima */
+  inset: 0; /* del tamaño de la tarjeta */
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 55%) 50%, transparent 70%); /* franja blanca */
+  translate: -120% 0; /* escondida a la izquierda */
+  transition: translate 0.8s; /* cruza despacio */
+}
+.cristal:hover {
+  -webkit-backdrop-filter: blur(10px) saturate(1.5) brightness(1.15); /* Safari */
+  backdrop-filter: blur(10px) saturate(1.5) brightness(1.15); /* más luz */
+}
+.cristal:hover::before {
+  translate: 120% 0; /* el brillo cruza */
+}</textarea>
+    </div>
+    <h3>3 · Un sello de cera recortado</h3>
+    <ol class="pasos">
+      <li><b>La forma</b>: <code>clip-path: polygon()</code> con muchos puntos alternando radio largo y corto, para el borde ondulado del lacre.</li>
+      <li><b>El volumen</b>: un degradado radial con luz arriba a la izquierda.</li>
+      <li><b>La sombra</b>: como <code>clip-path</code> se come la sombra, va en el contenedor, con <code>drop-shadow()</code>.</li>
+    </ol>
+    <div class="ejemplo" data-alto="260" data-t="Receta 3 · Sello de lacre">
+<textarea class="src" data-lang="html"><div class="sombra">
+  <div class="lacre">H</div>
+</div></textarea>
+<textarea class="src" data-lang="css">.sombra {
+  width: 170px; /* ancho */
+  margin: 1.5rem auto; /* centrado */
+  filter: drop-shadow(0 8px 8px rgb(59 47 37 / 40%)); /* la sombra va en el PADRE: el recorte no la toca */
+}
+.lacre {
+  aspect-ratio: 1; /* cuadrado */
+  display: grid; /* para centrar la letra */
+  place-items: center; /* centrada */
+  background: radial-gradient(circle at 35% 30%, #d9786a, #9c3d33 60%, #6e2620); /* cera roja con brillo */
+  color: rgb(255 255 255 / 70%); /* letra grabada */
+  font: italic bold 4rem Georgia, serif; /* inicial */
+  clip-path: polygon(50% 0%, 61% 8%, 75% 4%, 82% 16%, 96% 20%, 93% 34%, 100% 47%, 92% 59%, 96% 74%, 83% 81%, 77% 96%, 62% 93%, 50% 100%, 38% 93%, 23% 96%, 17% 81%, 4% 74%, 8% 59%, 0% 47%, 7% 34%, 4% 20%, 18% 16%, 25% 4%, 39% 8%); /* borde ondulado del lacre */
+}</textarea>
+    </div>
+  </div>
+</section>
+
+<!-- X · CATÁLOGO ============================================================ -->
+<section class="lamina" id="catalogo" data-nav="Catálogo de 80 efectos">
+  <div class="wrap">
+    <div class="cab"><span class="num">X</span><span class="latin">Hortus effectuum</span><h2>El jardín de los 80 efectos</h2></div>
+    <p class="lectura">Ochenta efectos hechos con lo que ya sabes: filtros, cristal, mezclas, recortes, sombras, degradados, pseudo-elementos, transiciones y animaciones. Cada uno se ve en vivo; abre «Ver el código» para el HTML y el CSS comentado.</p>
+    <div class="catalogo">
+      <h3>Catálogo de efectos</h3>
+      <label class="sr" for="catQ">Buscar efecto</label>
+      <input type="search" id="catQ" placeholder="Buscar: cristal, sepia, hoja, brillo, polaroid…">
+      <div class="filtros" id="catF" role="group" aria-label="Filtrar por familia"></div>
+      <p id="catN" style="font-size:.85rem;color:#666;margin:0"></p>
+      <div class="cat-grid" id="catG"></div>
+    </div>
+  </div>
+</section>
+
+<!-- XI · ERRORES =========================================================== -->
+<section class="lamina" id="errores" data-nav="Arregla el código">
+  <div class="wrap">
+    <div class="cab"><span class="num">XI</span><span class="latin">Errata corrige</span><h2>Arregla el código</h2></div>
+    <p class="lectura">Seis efectos que no funcionan. ¿Dónde está el fallo?</p>
+    <div id="fixes"></div>
+  </div>
+</section>
+
+<!-- XII · TEST ============================================================ -->
+<section class="lamina" id="test" data-nav="Test">
+  <div class="wrap">
+    <div class="cab"><span class="num">XII</span><span class="latin">Examen floris</span><h2>Test del herbario</h2></div>
+    <div class="marcador"><span>Aciertos: <b id="qScore">0 / 15</b></span><span><button class="boton sec" type="button" id="qAll">Corregir todo</button> <button class="boton sec" type="button" id="qReset">Empezar de nuevo</button></span></div>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<!-- XIII · CHULETA ======================================================== -->
+<section class="lamina" id="chuleta" data-nav="Chuleta">
+  <div class="wrap">
+    <div class="cab"><span class="num">XIII</span><span class="latin">Memoria brevis</span><h2>La chuleta</h2></div>
+    <div class="desliza"><table class="tabla">
+      <thead><tr><th>Quiero…</th><th>Escribo</th></tr></thead>
+      <tbody>
+        <tr><td>Desenfocar el elemento</td><td><code>filter: blur(4px)</code></td></tr>
+        <tr><td>Blanco y negro, que recupere el color al pasar el ratón</td><td><code>filter: grayscale(1)</code> → <code>:hover { filter: grayscale(0) }</code></td></tr>
+        <tr><td>Foto antigua</td><td><code>filter: sepia(.8) contrast(1.1)</code></td></tr>
+        <tr><td>Cambiar el color de una imagen</td><td><code>filter: hue-rotate(120deg)</code></td></tr>
+        <tr><td>Sombra que siga la forma</td><td><code>filter: drop-shadow(4px 6px 6px rgb(0 0 0 / 30%))</code></td></tr>
+        <tr><td>Contorno de color</td><td>cuatro <code>drop-shadow</code> de 2px (arriba, abajo, izquierda y derecha)</td></tr>
+        <tr><td>Pegatina</td><td>cuatro <code>drop-shadow</code> blancos + uno oscuro al final</td></tr>
+        <tr><td>Deformar de forma orgánica</td><td><code>filter: url(#filtroSVG)</code> con <code>feTurbulence</code> + <code>feDisplacementMap</code></td></tr>
+        <tr><td>Cristal esmerilado</td><td>fondo semitransparente + <code>-webkit-backdrop-filter</code> + <code>backdrop-filter: blur(12px)</code></td></tr>
+        <tr><td>Fundir una imagen con el papel</td><td><code>mix-blend-mode: multiply</code></td></tr>
+        <tr><td>Texto que se invierte sobre el fondo</td><td><code>color: white; mix-blend-mode: difference</code></td></tr>
+        <tr><td>Que la mezcla no se escape</td><td><code>isolation: isolate</code> en el contenedor</td></tr>
+        <tr><td>Recortar en círculo</td><td><code>clip-path: circle(50%)</code></td></tr>
+        <tr><td>Animar un recorte</td><td>dos <code>polygon()</code> con el mismo número de puntos + <code>transition</code></td></tr>
+        <tr><td>Desvanecer los bordes</td><td><code>mask-image: linear-gradient(#000 60%, transparent)</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+</main>
+
+<footer class="pie">
+  <p>Bloque 05 · Efectos visuales · Formación web Juritecnia</p>
+  <p><a href="https://igorhermoso1.github.io/Formaci-n_Juritecnia/">Volver a la plataforma</a> · <a href="#portada">Subir a la portada</a></p>
+</footer>
+
+<script>
+/* =====================================================================
+   EL JARDÍN DE LOS 80 EFECTOS · t: título · c: familia · d: qué hace · h: HTML · s: CSS
+   ===================================================================== */
+const PRADO = `radial-gradient(circle at 75% 25%, #ffe9a8 0 10%, transparent 11%), radial-gradient(ellipse at 20% 110%, #6f8f4e 0 45%, transparent 46%), linear-gradient(#bfd8e6, #f3e6c9)`;
+const CAT = [
+/* ------------------------------- FILTROS ------------------------------- */
+{t:"Foto de abuela",c:"Filtros",d:"Sepia, un poco de contraste y menos saturación: cualquier imagen parece sacada de un álbum de 1920.",h:`<div class="foto"></div>`,s:`.foto {
+  height: 160px; /* alto */
+  background: ${PRADO}; /* la "foto" */
+  filter: sepia(0.8) contrast(1.15) saturate(0.8); /* envejecida */
+  border: 10px solid #fbf6ea; /* marco blanco de foto antigua */
+  box-shadow: 0 6px 16px rgb(0 0 0 / 25%); /* sombra del papel */
+}`},
+{t:"Recupera el color",c:"Filtros",d:"En blanco y negro hasta que pasas el ratón.",h:`<div class="foto"></div>`,s:`.foto {
+  height: 170px; /* alto */
+  background: ${PRADO}; /* la "foto" */
+  filter: grayscale(1); /* sin color */
+  transition: filter 0.5s; /* cambio suave */
+}
+.foto:hover {
+  filter: grayscale(0); /* recupera el color */
+}`},
+{t:"Enfoca al acercarte",c:"Filtros",d:"Borroso hasta que lo señalas, como un objetivo que enfoca.",h:`<p class="enfoca">🌸 Pasa el ratón para enfocar</p>`,s:`.enfoca {
+  font: 1.6rem Georgia, serif; /* letra grande */
+  text-align: center; /* centrado */
+  margin-top: 3rem; /* aire */
+  filter: blur(4px); /* desenfocado */
+  transition: filter 0.4s; /* enfoque suave */
+}
+.enfoca:hover {
+  filter: blur(0); /* nítido */
+}`},
+{t:"Estaciones con hue-rotate",c:"Filtros",d:"El mismo prado cambia de estación girando sus colores.",h:`<div class="prado"></div>`,s:`.prado {
+  height: 170px; /* alto */
+  background: ${PRADO}; /* prado de primavera */
+  animation: estaciones 8s linear infinite; /* recorre las estaciones */
+}
+@keyframes estaciones {
+  50% { filter: hue-rotate(-60deg) saturate(1.3); } /* otoño: verdes que se vuelven ocres */
+}`},
+{t:"Modo noche",c:"Filtros",d:"Oscurece y enfría una escena para que parezca de noche.",h:`<div class="prado"></div>`,s:`.prado {
+  height: 170px; /* alto */
+  background: ${PRADO}; /* prado de día */
+  filter: brightness(0.45) saturate(0.7) hue-rotate(190deg); /* menos luz, menos color y tono frío */
+}`},
+{t:"Negativo de cianotipia",c:"Filtros",d:"invert y un giro de tono imitan las cianotipias botánicas azules.",h:`<span class="cianotipia">🌿</span>`,s:`body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 150px; /* alto */
+  background-color: #1f4e79; /* azul cianotipia */
+}
+.cianotipia {
+  font-size: 7rem; /* ramita grande */
+  filter: grayscale(1) invert(1) brightness(1.4); /* silueta blanca */
+  mix-blend-mode: screen; /* se funde con el azul */
+}`},
+{t:"Duotono con tinta",c:"Filtros",d:"Blanco y negro más una capa de color en multiply: un duotono de revista.",h:`<div class="duo"></div>`,s:`.duo {
+  position: relative; /* referencia para la capa */
+  height: 170px; /* alto */
+  background: ${PRADO}; /* la foto */
+  filter: grayscale(1) contrast(1.2); /* blanco y negro */
+}
+.duo::after {
+  content: ""; /* capa de tinta */
+  position: absolute; /* encima */
+  inset: 0; /* entera */
+  background-color: #b0603e; /* tinta terracota */
+  mix-blend-mode: multiply; /* tiñe solo los claros */
+}`},
+{t:"Brillo de flash",c:"Filtros",d:"Un destello de luz al pulsar.",h:`<button class="flash">📷 Pulsa</button>`,s:`.flash {
+  font-size: 1.4rem; /* tamaño */
+  padding: 1rem 2rem; /* relleno */
+  margin: 3rem auto; /* centrado */
+  display: block; /* para centrar */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* píldora */
+  background-color: #e8cf86; /* mantequilla */
+}
+.flash:active {
+  filter: brightness(1.8) saturate(0.5); /* destello al pulsar */
+}`},
+{t:"Saturación al pasar",c:"Filtros",d:"Los colores se encienden al señalar.",h:`<div class="flores">🌷🌼🌻🪻</div>`,s:`.flores {
+  font-size: 3rem; /* flores grandes */
+  text-align: center; /* centradas */
+  margin-top: 3rem; /* aire */
+  white-space: nowrap; /* las cuatro en una línea */
+  filter: saturate(0.3); /* apagadas */
+  transition: filter 0.4s; /* cambio suave */
+}
+.flores:hover {
+  filter: saturate(1.6); /* encendidas */
+}`},
+{t:"Contraste de grabado",c:"Filtros",d:"Mucho contraste en blanco y negro: parece un grabado en tinta.",h:`<span class="grabado">🌳</span>`,s:`body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 160px; /* alto */
+  background-color: #f4ead2; /* papel */
+}
+.grabado {
+  font-size: 7rem; /* árbol grande */
+  filter: grayscale(1) contrast(3) brightness(0.9); /* blanco y negro muy duro */
+  mix-blend-mode: multiply; /* se integra en el papel */
+}`},
+{t:"Profundidad de campo",c:"Filtros",d:"Lo de atrás borroso y lo de delante nítido.",h:`<div class="escena"><span class="lejos">🌲🌲</span><span class="cerca">🦔</span></div>`,s:`.escena {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background: linear-gradient(#dbe7d2, #f4ecd8); /* bruma */
+}
+.lejos {
+  position: absolute; /* libre */
+  left: 15%; /* posición */
+  bottom: 10px; /* apoyado */
+  font-size: 4rem; /* tamaño */
+  filter: blur(3px); /* borroso: está lejos */
+}
+.cerca {
+  position: absolute; /* libre */
+  right: 15%; /* posición */
+  bottom: 0; /* apoyado */
+  font-size: 5rem; /* grande: está cerca */
+}`},
+{t:"Hoja seca",c:"Filtros",d:"Convierte una hoja verde en una hoja de otoño.",h:`<span class="verde">🍃</span><span class="seca">🍃</span>`,s:`body {
+  display: flex; /* en fila */
+  justify-content: center; /* centradas */
+  gap: 2rem; /* separación */
+  font-size: 5rem; /* hojas grandes */
+  padding-top: 2rem; /* aire */
+}
+.seca {
+  filter: sepia(1) saturate(2.5) hue-rotate(-25deg) brightness(0.9); /* marrón anaranjado */
+}`},
+{t:"Viñeteado antiguo",c:"Filtros",d:"Esquinas oscurecidas con una sombra interior.",h:`<div class="foto"></div>`,s:`.foto {
+  height: 170px; /* alto */
+  background: ${PRADO}; /* la foto */
+  filter: sepia(0.4); /* algo envejecida */
+  box-shadow: inset 0 0 60px 20px rgb(59 47 37 / 70%); /* esquinas oscuras */
+}`},
+{t:"Desenfoque de fondo con ::before",c:"Filtros",d:"El fondo se desenfoca y el texto queda nítido, porque el filtro va en una capa aparte.",h:`<div class="tarjeta"><p>Texto nítido sobre fondo borroso</p></div>`,s:`.tarjeta {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  overflow: hidden; /* el blur no se sale */
+  font: bold 1.2rem Georgia, serif; /* letra */
+}
+.tarjeta::before {
+  content: ""; /* capa del fondo */
+  position: absolute; /* detrás */
+  inset: -10px; /* un poco más grande, para que el borde no quede claro */
+  background: ${PRADO}; /* el fondo */
+  filter: blur(6px); /* SOLO esta capa se desenfoca */
+  z-index: -1; /* detrás del texto */
+}`},
+{t:"Respiración de luz",c:"Filtros",d:"Una luz que sube y baja suavemente, como una vela.",h:`<span class="vela">🕯️</span>`,s:`.vela {
+  display: block; /* para centrar */
+  text-align: center; /* centrada */
+  font-size: 6rem; /* grande */
+  margin-top: 1.5rem; /* aire */
+  animation: respira 2.4s ease-in-out infinite; /* sube y baja */
+}
+@keyframes respira {
+  50% { filter: brightness(1.4) drop-shadow(0 0 18px #ffd27a); } /* más luz y halo */
+}`},
+{t:"Arcoíris de pétalos",c:"Filtros",d:"La misma flor repetida con distinto hue-rotate.",h:`<div class="ramo"><span>🌸</span><span>🌸</span><span>🌸</span><span>🌸</span><span>🌸</span></div>`,s:`.ramo {
+  display: flex; /* en fila */
+  justify-content: center; /* centradas */
+  gap: 0.3rem; /* separación */
+  font-size: min(2.6rem, 11vw); /* tamaño que cabe en la caja */
+  margin-top: 2rem; /* aire */
+}
+.ramo span:nth-child(2) { filter: hue-rotate(60deg); } /* tono girado 60° */
+.ramo span:nth-child(3) { filter: hue-rotate(120deg); } /* 120° */
+.ramo span:nth-child(4) { filter: hue-rotate(180deg); } /* complementario */
+.ramo span:nth-child(5) { filter: hue-rotate(240deg); } /* 240° */`},
+/* ------------------------------- CRISTAL ------------------------------- */
+{t:"Tarjeta de cristal",c:"Cristal",d:"La receta clásica del cristal esmerilado.",h:`<div class="fondo"><div class="cristal">Cristal</div></div>`,s:`.fondo {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: radial-gradient(circle at 30% 40%, #c4807b 0 20%, transparent 21%), radial-gradient(circle at 70% 60%, #e8cf86 0 20%, transparent 21%), #8a9a6b; /* flores */
+}
+.cristal {
+  padding: 1.5rem 3rem; /* relleno */
+  border-radius: 16px; /* esquinas */
+  background-color: rgb(255 255 255 / 20%); /* semitransparente */
+  -webkit-backdrop-filter: blur(12px); /* Safari */
+  backdrop-filter: blur(12px); /* desenfoca lo de detrás */
+  border: 1px solid rgb(255 255 255 / 50%); /* canto */
+  font: bold 1.4rem Georgia, serif; /* letra */
+}`},
+{t:"Cristal ahumado",c:"Cristal",d:"Cristal oscuro: fondo negro semitransparente y menos brillo detrás.",h:`<div class="fondo"><div class="humo">Cristal ahumado</div></div>`,s:`.fondo {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: ${PRADO}; /* prado */
+}
+.humo {
+  padding: 1.4rem 2.4rem; /* relleno */
+  border-radius: 14px; /* esquinas */
+  background-color: rgb(20 15 10 / 35%); /* fondo oscuro con alfa */
+  -webkit-backdrop-filter: blur(8px) brightness(0.7); /* Safari */
+  backdrop-filter: blur(8px) brightness(0.7); /* desenfoca y oscurece */
+  color: #fbf6ea; /* texto claro */
+  font: bold 1.2rem Georgia, serif; /* letra */
+}`},
+{t:"Cristal de color",c:"Cristal",d:"Un cristal teñido de rosa que también aviva los colores.",h:`<div class="fondo"><div class="rosa">Vidriera</div></div>`,s:`.fondo {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: repeating-linear-gradient(45deg, #8a9a6b 0 20px, #e8cf86 20px 40px); /* rayas */
+}
+.rosa {
+  padding: 1.4rem 2.6rem; /* relleno */
+  border-radius: 40px 4px; /* esquinas de hoja */
+  background-color: rgb(196 128 123 / 35%); /* rosa con alfa */
+  -webkit-backdrop-filter: blur(6px) saturate(2); /* Safari */
+  backdrop-filter: blur(6px) saturate(2); /* desenfoca y aviva */
+  font: bold 1.3rem Georgia, serif; /* letra */
+}`},
+{t:"Cristal en blanco y negro",c:"Cristal",d:"Lo que pasa por detrás pierde el color.",h:`<div class="fondo"><div class="gris">Sin color detrás</div></div>`,s:`.fondo {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: ${PRADO}; /* prado de colores */
+}
+.gris {
+  padding: 1.4rem 2rem; /* relleno */
+  background-color: rgb(255 255 255 / 10%); /* casi transparente */
+  -webkit-backdrop-filter: grayscale(1) contrast(1.2); /* Safari */
+  backdrop-filter: grayscale(1) contrast(1.2); /* el fondo se ve en blanco y negro */
+  border: 2px solid #fff; /* marco */
+  font: bold 1.2rem Georgia, serif; /* letra */
+}`},
+{t:"Lupa de botánico",c:"Cristal",d:"Un círculo que amplía lo que hay detrás... con contraste y saturación.",h:`<div class="fondo">🌼🌿🌼🌿🌼<div class="lupa"></div></div>`,s:`.fondo {
+  position: relative; /* referencia */
+  height: 180px; /* alto */
+  font-size: 3rem; /* flores */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #f4ead2; /* papel */
+}
+.lupa {
+  position: absolute; /* encima */
+  width: 110px; /* tamaño */
+  aspect-ratio: 1; /* redonda */
+  border-radius: 50%; /* círculo */
+  border: 6px solid #6b5440; /* montura */
+  -webkit-backdrop-filter: contrast(1.4) saturate(1.8) brightness(1.1); /* Safari */
+  backdrop-filter: contrast(1.4) saturate(1.8) brightness(1.1); /* lo de detrás, más vivo */
+  box-shadow: inset 0 0 20px rgb(255 255 255 / 60%); /* reflejo */
+}`},
+{t:"Barra de navegación de cristal",c:"Cristal",d:"Un menú que deja ver la página al desplazarse por debajo.",h:`<div class="pagina"><nav class="menu">Inicio · Flores · Huerto</nav><p>🌷🌷🌷🌷</p><p>🌻🌻🌻🌻</p></div>`,s:`.pagina {
+  height: 180px; /* alto */
+  overflow: auto; /* se puede desplazar */
+  background: linear-gradient(#c4807b, #8a9a6b); /* fondo */
+  font-size: 2.6rem; /* flores grandes */
+  text-align: center; /* centrado */
+}
+.menu {
+  position: sticky; /* se queda arriba */
+  top: 0; /* pegado arriba */
+  padding: 0.8rem; /* relleno */
+  font: bold 1rem Georgia, serif; /* letra del menú */
+  background-color: rgb(255 255 255 / 30%); /* semitransparente */
+  -webkit-backdrop-filter: blur(10px); /* Safari */
+  backdrop-filter: blur(10px); /* las flores pasan borrosas por debajo */
+}`},
+{t:"Gota de rocío",c:"Cristal",d:"Una gota redonda que deforma la luz de lo que tiene detrás.",h:`<div class="hoja"><span class="gota"></span></div>`,s:`.hoja {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: repeating-linear-gradient(60deg, #5b6d42 0 6px, #6f8f4e 6px 14px); /* nervios de hoja */
+}
+.gota {
+  width: 90px; /* tamaño */
+  aspect-ratio: 1; /* redonda */
+  border-radius: 50%; /* círculo */
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 80%) 0 8%, transparent 20%); /* brillo */
+  -webkit-backdrop-filter: blur(1px) brightness(1.3) saturate(1.5); /* Safari */
+  backdrop-filter: blur(1px) brightness(1.3) saturate(1.5); /* más luz dentro de la gota */
+  box-shadow: 0 6px 12px rgb(0 0 0 / 30%), inset 0 -6px 12px rgb(255 255 255 / 30%); /* volumen */
+}`},
+{t:"Etiqueta escarchada",c:"Cristal",d:"Un precio sobre una foto, legible gracias al cristal.",h:`<div class="foto"><span class="precio">3,50 €</span></div>`,s:`.foto {
+  position: relative; /* referencia */
+  height: 180px; /* alto */
+  background: ${PRADO}; /* la foto */
+}
+.precio {
+  position: absolute; /* encima */
+  right: 12px; /* esquina */
+  bottom: 12px; /* esquina */
+  padding: 0.4rem 0.9rem; /* relleno */
+  border-radius: 999px; /* píldora */
+  background-color: rgb(255 255 255 / 45%); /* semitransparente */
+  -webkit-backdrop-filter: blur(6px); /* Safari */
+  backdrop-filter: blur(6px); /* se lee sobre cualquier foto */
+  font: bold 1.1rem Georgia, serif; /* letra */
+}`},
+{t:"Cristal que se empaña",c:"Cristal",d:"Al pasar el ratón, el cristal se empaña.",h:`<div class="fondo"><div class="vaho">Echa el aliento</div></div>`,s:`.fondo {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: ${PRADO}; /* prado */
+}
+.vaho {
+  padding: 1.5rem 2.4rem; /* relleno */
+  border-radius: 14px; /* esquinas */
+  border: 1px solid rgb(255 255 255 / 60%); /* canto */
+  background-color: rgb(255 255 255 / 10%); /* casi transparente */
+  -webkit-backdrop-filter: blur(0); /* Safari */
+  backdrop-filter: blur(0); /* sin empañar */
+  transition: backdrop-filter 0.6s, -webkit-backdrop-filter 0.6s; /* se anima */
+  font: bold 1.2rem Georgia, serif; /* letra */
+}
+.vaho:hover {
+  -webkit-backdrop-filter: blur(14px) brightness(1.15); /* Safari */
+  backdrop-filter: blur(14px) brightness(1.15); /* empañado */
+}`},
+{t:"Panel de terrario",c:"Cristal",d:"Varias capas de cristal superpuestas a distinta altura.",h:`<div class="fondo"><div class="c c1"></div><div class="c c2"></div></div>`,s:`.fondo {
+  position: relative; /* referencia */
+  height: 180px; /* alto */
+  background: radial-gradient(circle at 25% 50%, #e8cf86 0 18%, transparent 19%), radial-gradient(circle at 75% 40%, #c4807b 0 16%, transparent 17%), #5b6d42; /* flores */
+}
+.c {
+  position: absolute; /* libres */
+  width: 45%; /* ancho */
+  height: 60%; /* alto */
+  border-radius: 14px; /* esquinas */
+  border: 1px solid rgb(255 255 255 / 50%); /* canto */
+  background-color: rgb(255 255 255 / 15%); /* semitransparente */
+  -webkit-backdrop-filter: blur(6px); /* Safari */
+  backdrop-filter: blur(6px); /* cristal */
+}
+.c1 { left: 12%; top: 12%; } /* primer cristal */
+.c2 { left: 38%; top: 30%; } /* segundo, encima del primero */`},
+/* ------------------------------- MEZCLAS ------------------------------- */
+{t:"Tinta sobre papel",c:"Mezclas",d:"multiply funde una ilustración con la textura del papel.",h:`<div class="papel"><span>🌿</span></div>`,s:`.papel {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: repeating-linear-gradient(0deg, #ead9b6 0 2px, #f4e9d0 2px 7px); /* papel con fibras */
+  font-size: 6rem; /* ramita grande */
+}
+.papel span {
+  mix-blend-mode: multiply; /* impresa en el papel */
+}`},
+{t:"Luz de luciérnaga",c:"Mezclas",d:"screen suma luz: los círculos se iluminan al cruzarse.",h:`<div class="noche"><i></i><i></i><i></i></div>`,s:`.noche {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background-color: #1d2617; /* noche en el bosque */
+}
+.noche i {
+  position: absolute; /* libres */
+  width: 90px; /* tamaño */
+  aspect-ratio: 1; /* redondos */
+  border-radius: 50%; /* círculos */
+  mix-blend-mode: screen; /* la luz se suma */
+  top: 30px; /* altura */
+}
+.noche i:nth-child(1) { left: 25%; background: #e8cf86; } /* luz amarilla */
+.noche i:nth-child(2) { left: 38%; background: #8a9a6b; } /* luz verde */
+.noche i:nth-child(3) { left: 51%; background: #c4807b; } /* luz rosa */`},
+{t:"Texto calado",c:"Mezclas",d:"El texto deja ver el prado que hay detrás.",h:`<div class="calado"><h1>FLORA</h1></div>`,s:`.calado {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: ${PRADO}; /* el prado */
+}
+.calado h1 {
+  margin: 0; /* sin margen */
+  width: 100%; /* todo el ancho */
+  text-align: center; /* centrado */
+  font: 900 min(5rem, 22vw) Georgia, serif; /* letra gruesa que cabe en la caja */
+  background-color: #f7f1e3; /* banda de papel */
+  color: #000; /* negro: con screen se vuelve transparente */
+  mix-blend-mode: screen; /* el negro desaparece y se ve el prado */
+}`},
+{t:"Cursor que invierte",c:"Mezclas",d:"Un círculo con difference invierte lo que pisa.",h:`<div class="zona"><h2>Herbario</h2><i class="circulo"></i></div>`,s:`.zona {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #f7f1e3; /* papel */
+  font-family: Georgia, serif; /* letra */
+}
+.zona h2 {
+  font-size: 3rem; /* grande */
+  color: #3b2f25; /* tinta */
+}
+.circulo {
+  position: absolute; /* encima */
+  width: 100px; /* tamaño */
+  aspect-ratio: 1; /* redondo */
+  border-radius: 50%; /* círculo */
+  background-color: #fff; /* blanco */
+  mix-blend-mode: difference; /* invierte lo que hay debajo */
+  animation: pasea 4s ease-in-out infinite alternate; /* se mueve */
+}
+@keyframes pasea {
+  from { translate: -120px 0; } /* izquierda */
+  to { translate: 120px 0; } /* derecha */
+}`},
+{t:"Superposición de acuarela",c:"Mezclas",d:"Manchas de color que se oscurecen al solaparse, como acuarela de verdad.",h:`<div class="papel"><i></i><i></i><i></i></div>`,s:`.papel {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background-color: #fbf6ea; /* papel */
+  isolation: isolate; /* la mezcla se queda aquí */
+}
+.papel i {
+  position: absolute; /* libres */
+  width: 110px; /* tamaño */
+  height: 90px; /* alto */
+  border-radius: 45% 55% 50% 40%; /* manchas irregulares */
+  mix-blend-mode: multiply; /* se oscurecen al solaparse */
+  opacity: 0.85; /* algo transparentes */
+  top: 35px; /* altura */
+}
+.papel i:nth-child(1) { left: 22%; background: #ecc9c3; } /* rosa */
+.papel i:nth-child(2) { left: 38%; background: #c6d7a0; } /* verde */
+.papel i:nth-child(3) { left: 54%; background: #c9bfe0; } /* lavanda */`},
+{t:"Overlay con trama",c:"Mezclas",d:"Una trama de puntos en overlay da textura de impresión.",h:`<div class="foto"></div>`,s:`.foto {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background: ${PRADO}; /* foto */
+}
+.foto::after {
+  content: ""; /* capa de trama */
+  position: absolute; /* encima */
+  inset: 0; /* entera */
+  background: radial-gradient(#000 1px, transparent 1.5px) 0 0 / 6px 6px; /* puntos */
+  mix-blend-mode: overlay; /* textura sin tapar la foto */
+  opacity: 0.5; /* suave */
+}`},
+{t:"Color de una sola capa",c:"Mezclas",d:"El modo color tiñe una foto en blanco y negro con el tono de arriba.",h:`<div class="foto"><i></i></div>`,s:`.foto {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background: ${PRADO}; /* foto */
+  filter: grayscale(1); /* en blanco y negro */
+}
+.foto i {
+  position: absolute; /* encima */
+  inset: 0 50% 0 0; /* solo la mitad izquierda */
+  background-color: #9c8fb5; /* lavanda */
+  mix-blend-mode: color; /* toma el tono y la saturación, respeta la luz */
+}`},
+{t:"Sello que se funde",c:"Mezclas",d:"Un tampón de tinta sobre papel con multiply.",h:`<div class="carta"><span class="tampon">ENVIADO</span></div>`,s:`.carta {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: repeating-linear-gradient(0deg, #efe2c4 0 2px, #f4e9d0 2px 6px); /* papel */
+}
+.tampon {
+  padding: 0.4rem 1rem; /* relleno */
+  border: 4px double #9c3d33; /* marco doble */
+  color: #9c3d33; /* tinta roja */
+  font: bold 1.8rem Georgia, serif; /* letra */
+  rotate: -14deg; /* torcido */
+  mix-blend-mode: multiply; /* se ven las fibras a través */
+  opacity: 0.85; /* tinta gastada */
+}`},
+{t:"Degradado sobre foto (soft-light)",c:"Mezclas",d:"Un degradado cálido en soft-light da luz de atardecer.",h:`<div class="foto"></div>`,s:`.foto {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background: ${PRADO}; /* foto */
+}
+.foto::after {
+  content: ""; /* capa de luz */
+  position: absolute; /* encima */
+  inset: 0; /* entera */
+  background: linear-gradient(120deg, #ff9d5c, transparent 70%); /* luz naranja */
+  mix-blend-mode: soft-light; /* tiñe con suavidad */
+}`},
+{t:"Exclusión de pétalos",c:"Mezclas",d:"exclusion crea colores inesperados donde se cruzan las formas.",h:`<div class="flor"><i></i><i></i><i></i><i></i></div>`,s:`.flor {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background-color: #fbf6ea; /* fondo */
+  isolation: isolate; /* mezcla aislada */
+}
+.flor i {
+  position: absolute; /* libres */
+  left: calc(50% - 30px); /* centrados */
+  top: 25px; /* altura */
+  width: 60px; /* ancho del pétalo */
+  height: 120px; /* largo del pétalo */
+  border-radius: 50%; /* pétalo */
+  background-color: #b0603e; /* terracota */
+  mix-blend-mode: exclusion; /* colores nuevos al cruzarse */
+}
+.flor i:nth-child(2) { rotate: 45deg; } /* segundo pétalo */
+.flor i:nth-child(3) { rotate: 90deg; } /* tercero */
+.flor i:nth-child(4) { rotate: 135deg; } /* cuarto */`},
+/* ------------------------------- RECORTES ------------------------------ */
+{t:"Marco ovalado",c:"Recortes",d:"El retrato oval de los camafeos.",h:`<div class="camafeo"></div>`,s:`.camafeo {
+  width: 150px; /* ancho */
+  height: 180px; /* alto */
+  margin: 0 auto; /* centrado */
+  background: ${PRADO}; /* la foto */
+  clip-path: ellipse(45% 48% at 50% 50%); /* óvalo */
+}`},
+{t:"Hoja",c:"Recortes",d:"Una foto recortada con forma de hoja.",h:`<div class="hoja"></div>`,s:`.hoja {
+  width: 180px; /* ancho */
+  height: 180px; /* alto */
+  margin: 0 auto; /* centrada */
+  background: linear-gradient(135deg, #8a9a6b, #5b6d42); /* verde */
+  clip-path: polygon(50% 0%, 80% 20%, 100% 55%, 75% 90%, 50% 100%, 25% 90%, 0% 55%, 20% 20%); /* hoja */
+}`},
+{t:"Hexágono de colmena",c:"Recortes",d:"Celdas hexagonales para una galería de abejas.",h:`<div class="colmena"><i></i><i></i><i></i></div>`,s:`.colmena {
+  display: flex; /* en fila */
+  justify-content: center; /* centradas */
+  gap: 6px; /* separación */
+  margin-top: 2rem; /* aire */
+}
+.colmena i {
+  width: 90px; /* ancho */
+  aspect-ratio: 1 / 1.15; /* proporción del hexágono */
+  background: linear-gradient(#e8cf86, #c9a24a); /* miel */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* hexágono */
+}`},
+{t:"Banderines",c:"Recortes",d:"La guirnalda de banderines de las fiestas de jardín.",h:`<div class="guirnalda"><i></i><i></i><i></i><i></i><i></i></div>`,s:`.guirnalda {
+  display: flex; /* en fila */
+  justify-content: center; /* centrados */
+  border-top: 2px solid #6b5440; /* la cuerda */
+  margin-top: 2rem; /* aire */
+}
+.guirnalda i {
+  width: 50px; /* ancho */
+  height: 64px; /* alto */
+  clip-path: polygon(0 0, 100% 0, 50% 100%); /* triángulo hacia abajo */
+}
+.guirnalda i:nth-child(odd) { background-color: #c4807b; } /* rosa */
+.guirnalda i:nth-child(even) { background-color: #8a9a6b; } /* salvia */`},
+{t:"Ventana que se abre en círculo",c:"Recortes",d:"Un círculo pequeño que crece hasta mostrarlo todo.",h:`<div class="foto">Pasa el ratón</div>`,s:`.foto {
+  height: 180px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: ${PRADO}; /* foto */
+  font: bold 1.2rem Georgia, serif; /* letra */
+  clip-path: circle(20% at 50% 50%); /* círculo pequeño */
+  transition: clip-path 0.7s; /* se anima */
+}
+.foto:hover {
+  clip-path: circle(75% at 50% 50%); /* lo bastante grande para verlo todo */
+}`},
+{t:"Borde rasgado",c:"Recortes",d:"El borde inferior de un papel rasgado a mano.",h:`<div class="papel">Nota del jardinero</div>`,s:`.papel {
+  height: 150px; /* alto */
+  padding: 1.5rem; /* relleno */
+  background-color: #fbf6ea; /* papel */
+  font: italic 1.3rem Georgia, serif; /* letra */
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 92%, 84% 86%, 76% 95%, 66% 88%, 57% 96%, 47% 87%, 38% 94%, 28% 86%, 19% 95%, 9% 88%, 0 95%); /* dientes del rasgado */
+}`},
+{t:"Estrella de pétalos",c:"Recortes",d:"Una estrella de ocho puntas para una flor geométrica.",h:`<div class="estrella"></div>`,s:`.estrella {
+  width: 170px; /* tamaño */
+  aspect-ratio: 1; /* cuadrada */
+  margin: 0 auto; /* centrada */
+  background: radial-gradient(#e8cf86 20%, #c4807b 70%); /* flor */
+  clip-path: polygon(50% 0%, 61% 25%, 85% 15%, 75% 39%, 100% 50%, 75% 61%, 85% 85%, 61% 75%, 50% 100%, 39% 75%, 15% 85%, 25% 61%, 0% 50%, 25% 39%, 15% 15%, 39% 25%); /* ocho puntas */
+}`},
+{t:"Flecha de jardín",c:"Recortes",d:"El cartel con forma de flecha de los caminos.",h:`<div class="flecha">Al huerto</div>`,s:`.flecha {
+  width: fit-content; /* a la medida del texto */
+  margin: 3rem auto; /* centrada */
+  padding: 0.9rem 3rem 0.9rem 1.2rem; /* relleno: más a la derecha por la punta */
+  background-color: #8a6a4a; /* madera */
+  color: #fbf6ea; /* texto claro */
+  font: bold 1.2rem Georgia, serif; /* letra */
+  clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%); /* flecha */
+}`},
+{t:"Recorte diagonal de sección",c:"Recortes",d:"Una cabecera cortada en diagonal, muy de revista.",h:`<header class="cab">Cuaderno de campo</header>`,s:`.cab {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: linear-gradient(135deg, #5b6d42, #8a9a6b); /* verde */
+  color: #fbf6ea; /* texto claro */
+  font: bold 1.6rem Georgia, serif; /* letra */
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%); /* base en diagonal */
+}`},
+{t:"Revelado de izquierda a derecha",c:"Recortes",d:"inset() anima la aparición como una cortina.",h:`<h2 class="revela">Primavera</h2>`,s:`.revela {
+  font: bold min(3.4rem, 15vw) Georgia, serif; /* grande, sin salirse */
+  text-align: center; /* centrado */
+  color: #5b6d42; /* verde */
+  margin-top: 3rem; /* aire */
+  animation: cortina 2.5s ease-in-out infinite alternate; /* aparece y desaparece */
+}
+@keyframes cortina {
+  from { clip-path: inset(0 100% 0 0); } /* recortado entero desde la derecha */
+  to { clip-path: inset(0 0 0 0); } /* visible entero */
+}`},
+{t:"Gota de agua",c:"Recortes",d:"Una gota con polygon de muchos puntos.",h:`<div class="gota"></div>`,s:`.gota {
+  width: 130px; /* ancho */
+  height: 170px; /* alto */
+  margin: 0 auto; /* centrada */
+  background: radial-gradient(circle at 40% 65%, #ffffff 0 6%, #9cc3d9 20%, #5d8fa8); /* agua con brillo */
+  clip-path: polygon(50% 0%, 70% 30%, 85% 55%, 85% 75%, 70% 93%, 50% 100%, 30% 93%, 15% 75%, 15% 55%, 30% 30%); /* gota */
+}`},
+{t:"Rombos de mosaico",c:"Recortes",d:"Un azulejo de jardín con rombos.",h:`<div class="azulejo"><i></i></div>`,s:`.azulejo {
+  width: 170px; /* tamaño */
+  aspect-ratio: 1; /* cuadrado */
+  margin: 0 auto; /* centrado */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #2f5d62; /* azul azulejo */
+}
+.azulejo i {
+  width: 80%; /* tamaño del rombo */
+  aspect-ratio: 1; /* cuadrado */
+  background: radial-gradient(#e8cf86 30%, #fbf6ea 31%); /* flor central */
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); /* rombo */
+}`},
+{t:"Ojo de cerradura",c:"Recortes",d:"Espiar el jardín por la cerradura, con path().",h:`<div class="cerradura"></div>`,s:`.cerradura {
+  width: 200px; /* ancho fijo: path() usa píxeles */
+  height: 180px; /* alto */
+  margin: 0 auto; /* centrada */
+  background: ${PRADO}; /* el jardín */
+  clip-path: path("M100 20 A40 40 0 0 1 125 92 L140 170 H60 L75 92 A40 40 0 0 1 100 20 Z"); /* círculo arriba y trapecio abajo */
+}`},
+{t:"Recorte con forma de nube",c:"Recortes",d:"Una nube con círculos superpuestos usando mask.",h:`<div class="nube"></div>`,s:`.nube {
+  width: 220px; /* ancho */
+  height: 140px; /* alto */
+  margin: 1rem auto; /* centrada */
+  background: linear-gradient(#ffffff, #dbe7ef); /* nube */
+  -webkit-mask: radial-gradient(circle at 30% 60%, #000 28%, transparent 29%), radial-gradient(circle at 55% 40%, #000 34%, transparent 35%), radial-gradient(circle at 75% 62%, #000 26%, transparent 27%); /* prefijo */
+  mask: radial-gradient(circle at 30% 60%, #000 28%, transparent 29%), radial-gradient(circle at 55% 40%, #000 34%, transparent 35%), radial-gradient(circle at 75% 62%, #000 26%, transparent 27%); /* tres círculos forman la nube */
+}`},
+/* -------------------------- SOMBRAS Y PEGATINAS ------------------------ */
+{t:"Pegatina clásica",c:"Sombras y pegatinas",d:"Borde blanco y sombra oscura con drop-shadow encadenado.",h:`<span class="peg">🌷</span>`,s:`body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 170px; /* alto */
+  background-color: #e9dcbd; /* álbum */
+}
+.peg {
+  font-size: 6rem; /* tamaño */
+  rotate: -8deg; /* torcida */
+  filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 6px 6px rgb(0 0 0 / 35%)); /* borde blanco + sombra final */
+}`},
+{t:"Pegatina que se despega",c:"Sombras y pegatinas",d:"Al pasar el ratón, la sombra crece y la pegatina sube.",h:`<span class="peg">🍄</span>`,s:`body {
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  min-height: 170px; /* alto */
+  background-color: #e9dcbd; /* álbum */
+}
+.peg {
+  font-size: 6rem; /* tamaño */
+  filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 4px 3px rgb(0 0 0 / 30%)); /* pegada */
+  transition: filter 0.3s, translate 0.3s; /* despegue suave */
+}
+.peg:hover {
+  translate: 0 -10px; /* sube */
+  filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 18px 12px rgb(0 0 0 / 25%)); /* sombra más lejos y más suave */
+}`},
+{t:"Contorno de color",c:"Sombras y pegatinas",d:"El contorno que la errata quería conseguir, bien hecho.",h:`<span class="contorno">🌻</span>`,s:`.contorno {
+  display: block; /* para centrar */
+  text-align: center; /* centrado */
+  font-size: 6rem; /* tamaño */
+  margin-top: 1rem; /* aire */
+  filter: drop-shadow(2px 0 0 #5b6d42) drop-shadow(-2px 0 0 #5b6d42) drop-shadow(0 2px 0 #5b6d42) drop-shadow(0 -2px 0 #5b6d42); /* cuatro sombras = contorno */
+}`},
+{t:"Halo de luz",c:"Sombras y pegatinas",d:"drop-shadow desenfocado y de color claro: la flor brilla.",h:`<div class="noche"><span>🌼</span></div>`,s:`.noche {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background-color: #1d2617; /* noche */
+  font-size: 5rem; /* flor grande */
+}
+.noche span {
+  filter: drop-shadow(0 0 12px #ffe9a8) drop-shadow(0 0 30px #e8cf86); /* dos halos de luz */
+}`},
+{t:"Sombra de recortable",c:"Sombras y pegatinas",d:"Sombra dura y desplazada, como un recortable de papel.",h:`<span class="papel">🦋</span>`,s:`.papel {
+  display: block; /* para centrar */
+  text-align: center; /* centrado */
+  font-size: 6rem; /* tamaño */
+  margin-top: 1rem; /* aire */
+  filter: drop-shadow(8px 8px 0 #c9b48e); /* sombra sin desenfoque: papel */
+}`},
+{t:"Sombras en capas",c:"Sombras y pegatinas",d:"Varias box-shadow suaves dan una sombra muy natural.",h:`<div class="tarjeta">Ficha de semillas</div>`,s:`.tarjeta {
+  width: 230px; /* ancho */
+  margin: 2.5rem auto; /* centrada */
+  padding: 1.5rem; /* relleno */
+  border-radius: 12px; /* esquinas */
+  background-color: #fbf6ea; /* papel */
+  font: 1.1rem Georgia, serif; /* letra */
+  box-shadow: 0 1px 2px rgb(59 47 37 / 10%), 0 4px 8px rgb(59 47 37 / 8%), 0 12px 24px rgb(59 47 37 / 8%); /* tres capas: cerca, media y lejos */
+}`},
+{t:"Sombra de color",c:"Sombras y pegatinas",d:"Una sombra del mismo color que el botón, desenfocada: brilla.",h:`<button class="boton">Sembrar</button>`,s:`.boton {
+  display: block; /* para centrar */
+  margin: 3rem auto; /* centrado */
+  padding: 1rem 2.2rem; /* relleno */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* píldora */
+  background-color: #c4807b; /* rosa */
+  color: #fff; /* texto */
+  font: bold 1.1rem Georgia, serif; /* letra */
+  box-shadow: 0 10px 25px -6px #c4807b; /* sombra rosa, recogida hacia dentro */
+}`},
+{t:"Hoja con sombra flotante",c:"Sombras y pegatinas",d:"La hoja flota y su sombra crece y mengua.",h:`<span class="hoja">🍃</span>`,s:`.hoja {
+  display: block; /* para centrar */
+  text-align: center; /* centrada */
+  font-size: 5.5rem; /* tamaño */
+  margin-top: 1rem; /* aire */
+  animation: flota 3s ease-in-out infinite; /* flota */
+}
+@keyframes flota {
+  0%, 100% { translate: 0 0; filter: drop-shadow(0 8px 4px rgb(0 0 0 / 30%)); } /* abajo: sombra cerca */
+  50% { translate: 0 -14px; filter: drop-shadow(0 26px 10px rgb(0 0 0 / 15%)); } /* arriba: sombra lejos */
+}`},
+/* ------------------------------ LUZ Y BRILLO --------------------------- */
+{t:"Destello que cruza",c:"Luz y brillo",d:"Una franja de luz cruza el botón al pasar el ratón.",h:`<button class="brillo">Recolectar</button>`,s:`.brillo {
+  position: relative; /* referencia */
+  overflow: hidden; /* la luz no se sale */
+  display: block; /* para centrar */
+  margin: 3rem auto; /* centrado */
+  padding: 1rem 2.4rem; /* relleno */
+  border: 0; /* sin borde */
+  border-radius: 10px; /* esquinas */
+  background-color: #5b6d42; /* musgo */
+  color: #fff; /* texto */
+  font: bold 1.1rem Georgia, serif; /* letra */
+}
+.brillo::after {
+  content: ""; /* la franja */
+  position: absolute; /* encima */
+  inset: 0; /* entera */
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 50%) 50%, transparent 65%); /* luz */
+  translate: -100% 0; /* fuera, a la izquierda */
+  transition: translate 0.7s; /* cruza */
+}
+.brillo:hover::after {
+  translate: 100% 0; /* cruza a la derecha */
+}`},
+{t:"Rayos de sol",c:"Luz y brillo",d:"Rayos que giran con un degradado cónico repetido.",h:`<div class="sol"></div>`,s:`.sol {
+  width: 170px; /* tamaño */
+  aspect-ratio: 1; /* redondo */
+  margin: 0 auto; /* centrado */
+  border-radius: 50%; /* círculo */
+  background: radial-gradient(#ffe9a8 25%, transparent 26%), repeating-conic-gradient(#e8cf86 0 10deg, transparent 10deg 20deg); /* sol y rayos */
+  animation: gira 20s linear infinite; /* giran despacio */
+}
+@keyframes gira {
+  to { rotate: 1turn; } /* una vuelta */
+}`},
+{t:"Luz de jardín por la noche",c:"Luz y brillo",d:"Un degradado radial imita la luz de un farolillo.",h:`<div class="noche"><span>🏮</span></div>`,s:`.noche {
+  height: 170px; /* alto */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  background: radial-gradient(circle at 50% 45%, rgb(255 210 120 / 55%), transparent 45%), #1d2617; /* luz sobre la noche */
+  font-size: 4rem; /* farolillo */
+}`},
+{t:"Brillo de nácar",c:"Luz y brillo",d:"Un degradado cónico tornasolado, como el interior de una concha.",h:`<div class="nacar"></div>`,s:`.nacar {
+  width: 170px; /* tamaño */
+  aspect-ratio: 1; /* redondo */
+  margin: 0 auto; /* centrado */
+  border-radius: 50%; /* círculo */
+  background: conic-gradient(from 90deg, #fbe7ef, #e2f0e8, #e7e2f6, #fbf1dc, #fbe7ef); /* tonos pastel */
+  filter: saturate(1.4); /* más vivo */
+  box-shadow: inset 0 0 30px rgb(255 255 255 / 80%); /* reflejo */
+}`},
+{t:"Neón de huerto",c:"Luz y brillo",d:"Texto que brilla con varias text-shadow.",h:`<h2 class="neon">Huerto</h2>`,s:`body {
+  background-color: #1d2617; /* noche */
+}
+.neon {
+  text-align: center; /* centrado */
+  margin-top: 2.5rem; /* aire */
+  font: italic bold 3.4rem Georgia, serif; /* letra */
+  color: #f3ffe0; /* casi blanco */
+  text-shadow: 0 0 4px #c6ff8a, 0 0 12px #8acb4e, 0 0 28px #5b6d42; /* tres capas de brillo */
+}`},
+{t:"Vidrio tallado",c:"Luz y brillo",d:"Reflejos en diagonal sobre un fondo de color.",h:`<div class="vidrio">Botica</div>`,s:`.vidrio {
+  width: min(230px, 100%); /* ancho, sin pasarse de la caja */
+  box-sizing: border-box; /* el relleno queda dentro del ancho */
+  margin: 2rem auto; /* centrado */
+  padding: 2rem; /* relleno */
+  text-align: center; /* centrado */
+  border-radius: 14px; /* esquinas */
+  background: linear-gradient(135deg, rgb(255 255 255 / 45%) 0 20%, transparent 20% 45%, rgb(255 255 255 / 25%) 45% 55%, transparent 55%), #6f9a8a; /* reflejos sobre verde botica */
+  color: #fff; /* texto */
+  font: bold 1.5rem Georgia, serif; /* letra */
+}`},
+{t:"Pulso de luciérnagas",c:"Luz y brillo",d:"Puntos que se encienden por turnos.",h:`<div class="noche"><i></i><i></i><i></i><i></i></div>`,s:`.noche {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background-color: #1d2617; /* noche */
+}
+.noche i {
+  position: absolute; /* libres */
+  width: 10px; /* tamaño */
+  aspect-ratio: 1; /* redondas */
+  border-radius: 50%; /* círculos */
+  background-color: #ffe9a8; /* luz */
+  box-shadow: 0 0 14px 4px #e8cf86; /* halo */
+  animation: luz 2s ease-in-out infinite; /* se encienden y apagan */
+}
+.noche i:nth-child(1) { left: 20%; top: 30%; } /* posición */
+.noche i:nth-child(2) { left: 45%; top: 60%; animation-delay: 0.5s; } /* posición y retraso */
+.noche i:nth-child(3) { left: 70%; top: 25%; animation-delay: 1s; } /* posición y retraso */
+.noche i:nth-child(4) { left: 85%; top: 70%; animation-delay: 1.5s; } /* posición y retraso */
+@keyframes luz {
+  50% { opacity: 0.1; } /* apagada a mitad */
+}`},
+{t:"Foco que sigue",c:"Luz y brillo",d:"Un círculo de luz recorre una escena oscura.",h:`<div class="escena"></div>`,s:`.escena {
+  height: 170px; /* alto */
+  background: radial-gradient(circle 70px at var(--x, 30%) 50%, transparent 0 60%, rgb(15 12 8 / 85%) 100%), ${PRADO}; /* oscuridad con un agujero de luz */
+  animation: foco 4s ease-in-out infinite alternate; /* el foco se mueve */
+}
+@property --x {
+  syntax: "<percentage>"; /* la variable es un porcentaje */
+  inherits: false; /* no se hereda */
+  initial-value: 30%; /* valor de partida */
+}
+@keyframes foco {
+  to { --x: 70%; } /* la luz viaja a la derecha */
+}`},
+/* --------------------------------- TEXTO ------------------------------- */
+{t:"Texto de acuarela",c:"Texto",d:"Un degradado dentro del texto con background-clip.",h:`<h2 class="acuarela">Jardín</h2>`,s:`.acuarela {
+  text-align: center; /* centrado */
+  margin-top: 2.5rem; /* aire */
+  font: italic bold 4rem Georgia, serif; /* letra grande */
+  background: linear-gradient(120deg, #c4807b, #e8cf86, #8a9a6b); /* degradado de acuarela */
+  -webkit-background-clip: text; /* el fondo solo dentro de las letras (prefijo) */
+  background-clip: text; /* el fondo solo dentro de las letras */
+  color: transparent; /* letras transparentes para ver el fondo */
+}`},
+{t:"Texto con contorno",c:"Texto",d:"Letras huecas con -webkit-text-stroke.",h:`<h2 class="hueco">Herbario</h2>`,s:`.hueco {
+  text-align: center; /* centrado */
+  margin-top: 2.5rem; /* aire */
+  font: bold 3.6rem Georgia, serif; /* letra */
+  color: transparent; /* sin relleno */
+  -webkit-text-stroke: 2px #5b6d42; /* solo el trazo */
+}`},
+{t:"Texto grabado",c:"Texto",d:"Una sombra clara y una oscura dan relieve hundido.",h:`<h2 class="grabado">Semillero</h2>`,s:`body {
+  background-color: #d9cbb0; /* madera clara */
+}
+.grabado {
+  text-align: center; /* centrado */
+  margin-top: 2.5rem; /* aire */
+  font: bold 3.2rem Georgia, serif; /* letra */
+  color: #b9a685; /* casi del color del fondo */
+  text-shadow: 1px 1px 0 #f4ead2, -1px -1px 0 #8a7656; /* luz abajo, sombra arriba: hundido */
+}`},
+{t:"Subrayado de rotulador",c:"Texto",d:"Un subrayado grueso e irregular hecho con un degradado.",h:`<p>El <mark>tomillo</mark> florece en primavera.</p>`,s:`p {
+  font: 1.7rem Georgia, serif; /* letra */
+  text-align: center; /* centrado */
+  margin-top: 3rem; /* aire */
+}
+mark {
+  background: linear-gradient(100deg, transparent 2%, #e8cf86 3% 96%, transparent 97%) 0 85% / 100% 40% no-repeat; /* banda baja, como un rotulador */
+  color: inherit; /* texto normal */
+}`},
+{t:"Letra capital iluminada",c:"Texto",d:"La primera letra grande, de color y con sombra, como en los libros antiguos.",h:`<p class="manuscrito">Había una vez un jardín donde las rosas crecían entre las piedras y la lavanda perfumaba el camino.</p>`,s:`.manuscrito {
+  font: 1.05rem/1.6 Georgia, serif; /* letra */
+  padding: 1rem; /* aire */
+}
+.manuscrito::first-letter {
+  float: left; /* la capital se queda a la izquierda */
+  font-size: 3.6rem; /* grande */
+  line-height: 0.9; /* ajustada */
+  margin-right: 0.4rem; /* separación */
+  color: #9c3d33; /* rojo iluminado */
+  text-shadow: 2px 2px 0 #e8cf86; /* sombra dorada */
+}`},
+{t:"Texto desenfocado que aparece",c:"Texto",d:"Las letras llegan borrosas y se enfocan.",h:`<h2 class="aparece">Lavanda</h2>`,s:`.aparece {
+  text-align: center; /* centrado */
+  margin-top: 2.5rem; /* aire */
+  font: italic bold 2.8rem Georgia, serif; /* letra */
+  white-space: nowrap; /* en una sola línea, aunque se separen las letras */
+  color: #7a6a9c; /* lavanda */
+  animation: enfoca 2.4s ease-out infinite alternate; /* se enfoca */
+}
+@keyframes enfoca {
+  from { filter: blur(10px); opacity: 0; letter-spacing: 0.5em; } /* borroso, invisible y separado */
+  to { filter: blur(0); opacity: 1; letter-spacing: 0; } /* nítido */
+}`},
+{t:"Texto sobre foto con velo",c:"Texto",d:"Un velo en degradado para que el texto se lea sobre una imagen.",h:`<div class="foto"><h3>Rosaleda</h3></div>`,s:`.foto {
+  height: 170px; /* alto */
+  display: flex; /* para colocar */
+  align-items: flex-end; /* texto abajo */
+  padding: 1rem; /* relleno */
+  background: linear-gradient(transparent 40%, rgb(30 22 15 / 75%)), ${PRADO}; /* velo oscuro abajo */
+}
+.foto h3 {
+  margin: 0; /* sin margen */
+  color: #fbf6ea; /* texto claro, legible sobre el velo */
+  font: italic bold 2rem Georgia, serif; /* letra */
+}`},
+{t:"Sello circular",c:"Texto",d:"Texto en círculo usando rotaciones con una variable.",h:`<div class="sello"><span style="--i:0">H</span><span style="--i:1">E</span><span style="--i:2">R</span><span style="--i:3">B</span><span style="--i:4">A</span><span style="--i:5">R</span><span style="--i:6">I</span><span style="--i:7">O</span></div>`,s:`.sello {
+  position: relative; /* referencia */
+  width: 160px; /* tamaño */
+  aspect-ratio: 1; /* redondo */
+  margin: 0.5rem auto; /* centrado */
+  border-radius: 50%; /* círculo */
+  border: 2px solid #b0603e; /* borde */
+  animation: gira 12s linear infinite; /* gira despacio */
+}
+.sello span {
+  position: absolute; /* cada letra, libre */
+  left: 50%; /* parte del centro */
+  top: 6px; /* arriba del todo */
+  font: bold 1.3rem Georgia, serif; /* letra */
+  color: #b0603e; /* terracota */
+  transform-origin: 0 74px; /* gira alrededor del centro del círculo */
+  rotate: calc(var(--i) * 45deg); /* cada letra, 45° más */
+}
+@keyframes gira {
+  to { rotate: 1turn; } /* una vuelta */
+}`},
+/* ------------------------------ MOVIMIENTO ----------------------------- */
+{t:"Flor que se mece",c:"Movimiento",d:"Una flor que se balancea desde la base.",h:`<span class="flor">🌷</span>`,s:`.flor {
+  display: block; /* para centrar */
+  width: fit-content; /* a su medida */
+  margin: 1rem auto; /* centrada */
+  font-size: 6rem; /* grande */
+  transform-origin: 50% 100%; /* gira desde el tallo */
+  animation: mece 3s ease-in-out infinite; /* se balancea */
+}
+@keyframes mece {
+  0%, 100% { rotate: -8deg; } /* a un lado */
+  50% { rotate: 8deg; } /* al otro */
+}`},
+{t:"Pétalos que caen",c:"Movimiento",d:"Pétalos que caen girando con una variable de retraso.",h:`<div class="cielo"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i></div>`,s:`.cielo {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  overflow: hidden; /* los pétalos no se salen */
+  background: linear-gradient(#f9e8e5, #f7f1e3); /* cielo rosado */
+}
+.cielo i {
+  position: absolute; /* libres */
+  top: -20px; /* empiezan arriba */
+  left: calc(15% + var(--i) * 22%); /* repartidos */
+  width: 16px; /* ancho */
+  height: 12px; /* alto */
+  border-radius: 70% 0 70% 0; /* forma de pétalo */
+  background-color: #ecc9c3; /* rosa */
+  animation: cae 4s linear infinite; /* caen */
+  animation-delay: calc(var(--i) * -1s); /* cada uno empieza en un momento distinto */
+}
+@keyframes cae {
+  to { translate: 40px 200px; rotate: 360deg; } /* bajan girando */
+}`},
+{t:"Brote que crece",c:"Movimiento",d:"Un tallo que crece con scale desde abajo.",h:`<div class="maceta"><span class="tallo"></span></div>`,s:`.maceta {
+  position: relative; /* referencia */
+  width: 90px; /* ancho */
+  height: 60px; /* alto */
+  margin: 110px auto 0; /* centrada y abajo */
+  background-color: #b0603e; /* barro */
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%); /* forma de maceta */
+  overflow: visible; /* el tallo puede salir */
+}
+.tallo {
+  position: absolute; /* encima */
+  left: 50%; /* centrado */
+  bottom: 100%; /* sale por arriba */
+  width: 6px; /* grosor */
+  height: 90px; /* largo */
+  background-color: #6f8f4e; /* verde */
+  transform-origin: bottom; /* crece desde abajo */
+  animation: crece 2.5s ease-out infinite; /* crece */
+}
+@keyframes crece {
+  from { scale: 1 0; } /* sin altura */
+}`},
+{t:"Mariposa que aletea",c:"Movimiento",d:"Una mariposa aplastada en un eje para simular el aleteo.",h:`<span class="mariposa">🦋</span>`,s:`.mariposa {
+  display: block; /* para centrar */
+  width: fit-content; /* a su medida */
+  margin: 2rem auto; /* centrada */
+  font-size: 5rem; /* grande */
+  animation: aletea 0.3s ease-in-out infinite alternate, vuela 4s ease-in-out infinite; /* dos animaciones a la vez */
+}
+@keyframes aletea {
+  to { scale: 0.4 1; } /* se estrecha: alas cerradas */
+}
+@keyframes vuela {
+  50% { translate: 40px -20px; } /* sube y se desplaza */
+}`},
+{t:"Tarjeta que se gira",c:"Movimiento",d:"Una ficha de semilla con dos caras, al estilo carta.",h:`<div class="ficha"><div class="cara">🌻</div><div class="cara dorso">Girasol · siembra en abril</div></div>`,s:`.ficha {
+  position: relative; /* referencia */
+  width: 180px; /* ancho */
+  height: 150px; /* alto */
+  margin: 0.5rem auto; /* centrada */
+  transform-style: preserve-3d; /* las caras viven en 3D */
+  transition: rotate 0.8s; /* giro suave */
+}
+.ficha:hover {
+  rotate: y 180deg; /* gira sobre el eje vertical */
+}
+.cara {
+  position: absolute; /* las dos caras, una encima de otra */
+  inset: 0; /* del tamaño de la ficha */
+  display: grid; /* para centrar */
+  place-items: center; /* centrado */
+  border-radius: 14px; /* esquinas */
+  background-color: #e8cf86; /* mantequilla */
+  font: 4rem Georgia, serif; /* tamaño */
+  backface-visibility: hidden; /* no se ve por detrás */
+}
+.dorso {
+  rotate: y 180deg; /* el dorso ya está girado */
+  background-color: #8a9a6b; /* salvia */
+  color: #fff; /* texto */
+  font-size: 1.1rem; /* letra */
+  padding: 1rem; /* relleno */
+  text-align: center; /* centrado */
+}`},
+{t:"Ondas en el estanque",c:"Movimiento",d:"Círculos que crecen y se desvanecen.",h:`<div class="estanque"><i></i><i></i><i></i></div>`,s:`.estanque {
+  position: relative; /* referencia */
+  height: 170px; /* alto */
+  background: radial-gradient(#9cc3d9, #5d8fa8); /* agua */
+  overflow: hidden; /* las ondas no se salen */
+}
+.estanque i {
+  position: absolute; /* encima */
+  left: 50%; /* centro */
+  top: 50%; /* centro */
+  width: 20px; /* tamaño inicial */
+  aspect-ratio: 1; /* redondas */
+  margin: -10px; /* centradas en su punto */
+  border-radius: 50%; /* círculo */
+  border: 2px solid rgb(255 255 255 / 70%); /* la onda */
+  animation: onda 3s ease-out infinite; /* crece */
+}
+.estanque i:nth-child(2) { animation-delay: 1s; } /* segunda onda */
+.estanque i:nth-child(3) { animation-delay: 2s; } /* tercera onda */
+@keyframes onda {
+  to { scale: 12; opacity: 0; } /* crece y desaparece */
+}`}
+];
+
+/* =====================================================================
+   MOTOR DEL HERBARIO
+   ===================================================================== */
+(() => {
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- resaltado de código ---------- */
+function hlCssLinea(code) {
+  const decl = s => s.replace(/([\w-]+)(\s*:\s*)([^;]*)(;?)/g, (m, p, c, v, f) => `<span class="h-p">${p}</span>${c}<span class="h-v">${v}</span>${f}`);
+  let m;
+  if (/^\s*@/.test(code)) return code.replace(/(@[\w-]+)/, '<span class="h-at">$1</span>');
+  if ((m = code.match(/^(\s*)([^{]+)\{(.*)\}(\s*)$/))) return `${m[1]}<span class="h-s">${m[2]}</span>{${decl(m[3])}}${m[4]}`;
+  if (code.includes("{")) return code.replace(/^(\s*)([^{]*)\{/, '$1<span class="h-s">$2</span>{');
+  if (/^\s*[\w-]+\s*:/.test(code)) return decl(code);
+  return code;
+}
+const hlCss = src => esc(src).split("\n").map(l => { const i = l.indexOf("/*"); return i < 0 ? hlCssLinea(l) : hlCssLinea(l.slice(0, i)) + `<span class="h-c">${l.slice(i)}</span>`; }).join("\n");
+const hlHtml = src => esc(src).replace(/(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g, (m, a, t, at, z) => `${a}<span class="h-t">${t}</span>${at.replace(/([\w-:]+)(=)(&quot;.*?&quot;)/g, '<span class="h-a">$1</span>$2<span class="h-q">$3</span>')}${z}`);
+let nCaja = 0;
+function cajaCodigo(lang, src, titulo) {
+  const c = el("div", "caja"), id = "cod" + (++nCaja);
+  c.innerHTML = `<div class="caja-t">${esc(titulo)} <button class="copiar" type="button" data-copia="${id}">Copiar</button></div><pre id="${id}">${lang === "css" ? hlCss(src) : hlHtml(src)}</pre>`;
+  return c;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copiar"); if (!b) return; const n = document.getElementById(b.dataset.copia);
+  (navigator.clipboard ? navigator.clipboard.writeText(n.textContent) : Promise.reject()).then(() => { b.textContent = "¡Copiado!"; setTimeout(() => b.textContent = "Copiar", 1400); },
+    () => { const r = document.createRange(); r.selectNodeContents(n); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Ctrl + C"; });
+});
+
+/* ---------- ejemplos en vivo (iframe perezoso) ---------- */
+const BASE = "body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;color:#222;background:#fff}";
+const doc = (h, c) => `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}</style><style>${c}</style></head><body>${h}</body></html>`;
+const perezosos = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting && x.target._doc) { x.target.srcdoc = x.target._doc; x.target._doc = null; perezosos.unobserve(x.target); } }), { rootMargin: "500px" });
+function iframe(h, c, alto, titulo, ajusta) {
+  const f = el("iframe"); f.title = titulo; f._doc = doc(h, ajusta ? c : "html{overflow:hidden}" + c); /* las vistas del catálogo no deben mostrar barras */ if (alto) f.style.setProperty("--alto", alto + "px");
+  if (ajusta) f.addEventListener("load", () => { try { const d = f.contentDocument, a = () => f.style.setProperty("--alto", Math.min(Math.max(alto, d.documentElement.scrollHeight), 760) + "px"); a(); setTimeout(a, 500); } catch (e) {} });
+  perezosos.observe(f); return f;
+}
+$$(".ejemplo").forEach(ej => {
+  const [h, c] = ["html", "css"].map(l => (ej.querySelector(`.src[data-lang="${l}"]`) || {}).value || "");
+  const vivo = el("div", "ej-vivo"); vivo.append(iframe(h, c, +ej.dataset.alto || 220, "Ejemplo: " + ej.dataset.t, true));
+  const cod = el("div", "ej-codigo"); if (h) cod.append(cajaCodigo("html", h, "HTML")); cod.append(cajaCodigo("css", c, "CSS"));
+  ej.append(el("div", "ej-cab", `<span>${esc(ej.dataset.t)}</span><span>en vivo</span>`), vivo, cod);
+});
+
+/* ---------- menú y progreso ---------- */
+const ZONAS = $$("[data-nav]"), ul = $("#navUl");
+ZONAS.forEach(z => { const li = el("li"); li.innerHTML = `<a href="#${z.id}">${esc(z.dataset.nav)}</a>`; ul.append(li); });
+$("#navL").onclick = () => ul.scrollBy({ left: -240, behavior: "smooth" }); $("#navR").onclick = () => ul.scrollBy({ left: 240, behavior: "smooth" });
+const links = $$("a", ul); let actual = -1;
+function alScroll() {
+  const vh = innerHeight, tot = document.documentElement.scrollHeight - vh; $("#prog").style.scale = `${tot > 0 ? scrollY / tot : 0} 1`;
+  let i = 0; ZONAS.forEach((z, k) => { if (z.getBoundingClientRect().top < vh * .4) i = k; });
+  if (i !== actual) { actual = i; links.forEach((a, k) => a.setAttribute("aria-current", k === i)); const a = links[i]; ul.scrollTo({ left: a.offsetLeft - ul.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" }); }
+}
+let pend = false; addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; alScroll(); }); } }, { passive: true }); alScroll();
+
+/* ---------- pétalos de la portada ---------- */
+if (!QUIETO) { const P = $("#petalos"), C = ["#ecc9c3", "#f4dfc8", "#e3e9cf", "#e6dcef"];
+  for (let k = 0; k < 16; k++) { const p = el("i", "petalo"); p.style.cssText = `left:${Math.random() * 100}%;--d:${(Math.random() * 14).toFixed(1)};--dur:${(10 + Math.random() * 8).toFixed(1)}s;--x:${(Math.random() * 160 - 40).toFixed(0)}px;--c:${C[k % 4]}`; P.append(p); } }
+
+/* ---------- LAB · la prensa de flores (filter) ---------- */
+{
+  const F = [["blur", 0, 10, .5, 0, "px"], ["brightness", 0, 2, .05, 1, ""], ["contrast", 0, 3, .05, 1, ""], ["grayscale", 0, 1, .05, 0, ""], ["sepia", 0, 1, .05, 0, ""], ["saturate", 0, 3, .05, 1, ""], ["hue-rotate", 0, 360, 5, 0, "deg"], ["invert", 0, 1, .05, 0, ""], ["opacity", 0, 1, .05, 1, ""]];
+  const M = $("#prensaMandos"), V = $("#prensaVista"), out = $("#prensaCss");
+  F.forEach(([n, mn, mx, st, v, u]) => M.insertAdjacentHTML("beforeend", `<label>${n} <output id="pO-${n}">${v}${u}</output><input type="range" data-f="${n}" min="${mn}" max="${mx}" step="${st}" value="${v}"></label>`));
+  const RECETAS = { "Original": {}, "Foto de abuela": { sepia: .8, contrast: 1.15, saturate: .8 }, "Otoño": { "hue-rotate": 330, saturate: 1.4, sepia: .25 }, "Noche": { brightness: .45, saturate: .7, "hue-rotate": 190 }, "Cianotipia": { grayscale: 1, sepia: 1, "hue-rotate": 170, saturate: 2.6, brightness: .9 }, "Sueño": { blur: 2, brightness: 1.15, saturate: 1.3 } };
+  const R = $("#prensaRecetas");
+  Object.keys(RECETAS).forEach(n => { const b = el("button", "chip", n); b.type = "button"; b.onclick = () => { $$("input", M).forEach(i => { const f = F.find(x => x[0] === i.dataset.f); i.value = RECETAS[n][i.dataset.f] ?? f[4]; }); up(); }; R.append(b); });
+  const up = () => {
+    const partes = []; $$("input", M).forEach(i => { const f = F.find(x => x[0] === i.dataset.f); $("#pO-" + f[0]).textContent = i.value + f[5]; if (+i.value !== f[4]) partes.push(`${f[0]}(${i.value}${f[5]})`); });
+    const v = partes.join(" ") || "none"; V.style.filter = v === "none" ? "" : v;
+    out.innerHTML = hlCss(`.prado {\n  filter: ${v}; /* ${partes.length ? "se aplican de izquierda a derecha" : "sin filtro"} */\n}`);
+  };
+  M.addEventListener("input", up); up();
+}
+
+/* ---------- LAB · la fábrica de pegatinas ---------- */
+{
+  const V = $("#pegVista"), F = $("#pegFlores");
+  ["🌷", "🍄", "🌿", "🐝", "🌻", "🦔", "🍓", "🐌"].forEach((f, k) => { const b = el("button", "chip", f); b.type = "button"; b.setAttribute("aria-pressed", k === 0); b.setAttribute("aria-label", "Pegatina " + (k + 1)); b.onclick = () => { V.textContent = f; $$(".chip", F).forEach(x => x.setAttribute("aria-pressed", x === b)); }; F.append(b); });
+  const up = () => {
+    const g = +$("#pegG").value, c = $("#pegC").value, s = +$("#pegS").value, r = +$("#pegR").value;
+    $("#pegGO").textContent = g + "px"; $("#pegSO").textContent = s + "px"; $("#pegRO").textContent = r + "deg";
+    const capas = g ? [[g, 0, "derecha"], [-g, 0, "izquierda"], [0, g, "abajo"], [0, -g, "arriba"]] : [];
+    if (g >= 4) capas.push([g * .7, g * .7, "diagonal"], [-g * .7, -g * .7, "diagonal opuesta"]);
+    const lin = capas.map(([x, y, d]) => [`drop-shadow(${+x.toFixed(1)}px ${+y.toFixed(1)}px 0 ${c})`, `borde: ${d}`]);
+    if (s) lin.push([`drop-shadow(0 ${Math.round(s * .6)}px ${s}px rgb(59 47 37 / 35%))`, "la última: sombra de toda la pegatina"]);
+    V.style.filter = lin.map(l => l[0]).join(" ") || ""; V.style.rotate = r + "deg";
+    $("#pegCss").innerHTML = hlCss(`.pegatina {\n  rotate: ${r}deg; /* torcida, como pegada a mano */\n  filter:${lin.length ? "\n" + lin.map((l, i) => `    ${l[0]}${i === lin.length - 1 ? ";" : ""} /* ${l[1]} */`).join("\n") : " none;"}\n}`);
+  };
+  ["pegG", "pegC", "pegS", "pegR"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- LAB · el deformador (filtro SVG) ---------- */
+{
+  const T = $("#dTurb"), D = $("#dMap"); let anim = 0, t0 = 0;
+  const up = () => {
+    const f = +$("#dF").value, s = +$("#dS").value, tipo = $("#dT").value; $("#dFO").textContent = f; $("#dSO").textContent = s;
+    T.setAttribute("baseFrequency", f); T.setAttribute("type", tipo); D.setAttribute("scale", s);
+    $("#dCss").innerHTML = hlHtml(`<filter id="deforma">\n  <feTurbulence type="${tipo}" baseFrequency="${f}" numOctaves="2" />\n  <feDisplacementMap in="SourceGraphic" scale="${s}" />\n</filter>`) + "\n\n" + hlCss(`.titulo {\n  filter: url(#deforma); /* el filtro SVG deforma el texto */\n}`);
+  };
+  const mueve = t => { if (!$("#dA").checked) return anim = 0; const f = +$("#dF").value; T.setAttribute("baseFrequency", `${f} ${(f * (1 + .25 * Math.sin(t / 900))).toFixed(4)}`); T.setAttribute("seed", Math.floor(t / 1600) % 50); anim = requestAnimationFrame(mueve); };
+  ["dF", "dS", "dT"].forEach(i => $("#" + i).addEventListener("input", up));
+  $("#dA").addEventListener("change", e => { if (e.target.checked && !QUIETO && !anim) anim = requestAnimationFrame(mueve); if (!e.target.checked) up(); });
+  if (QUIETO) $("#dA").disabled = true;
+  up();
+}
+
+/* ---------- LAB · el invernadero (backdrop-filter) ---------- */
+{
+  const C = $("#cTarjeta");
+  const up = () => {
+    const b = +$("#cB").value, s = +$("#cS").value, l = +$("#cL").value, a = +$("#cA").value, col = $("#cC").value;
+    $("#cBO").textContent = b + "px"; $("#cSO").textContent = s; $("#cLO").textContent = l; $("#cAO").textContent = a + "%";
+    const r = parseInt(col.slice(1, 3), 16), g = parseInt(col.slice(3, 5), 16), bl = parseInt(col.slice(5, 7), 16);
+    const bf = `blur(${b}px) saturate(${s}) brightness(${l})`, fondo = `rgb(${r} ${g} ${bl} / ${a}%)`;
+    C.style.backgroundColor = fondo; C.style.webkitBackdropFilter = bf; C.style.backdropFilter = bf; C.style.border = "1px solid rgb(255 255 255 / 45%)"; C.style.boxShadow = "0 10px 30px rgb(0 0 0 / 15%)";
+    $("#cCss").innerHTML = hlCss(`.cristal {\n  background-color: ${fondo}; /* ${a >= 100 ? "¡opaco!: tapa el fondo y el cristal no se ve" : "semitransparente"} */\n  -webkit-backdrop-filter: ${bf}; /* Safari */\n  backdrop-filter: ${bf}; /* lo de detrás, retocado */\n  border: 1px solid rgb(255 255 255 / 45%); /* canto del cristal */\n}`);
+  };
+  ["cB", "cS", "cL", "cA", "cC"].forEach(i => $("#" + i).addEventListener("input", up)); up();
+}
+
+/* ---------- LAB · el tintero (mix-blend-mode) ---------- */
+{
+  const MODOS = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+  const B = $("#tModos"), E = $("#tEsc");
+  const pon = m => { $$(".gota-t, #tTit", E).forEach(x => x.style.mixBlendMode = m); $$(".chip", B).forEach(x => x.setAttribute("aria-pressed", x.textContent === m));
+    $("#tCss").innerHTML = hlCss(`.gota, .titulo {\n  mix-blend-mode: ${m}; /* cómo se mezclan con lo de abajo */\n}`); };
+  MODOS.forEach(m => { const b = el("button", "chip", m); b.type = "button"; b.onclick = () => pon(m); B.append(b); });
+  pon("multiply");
+}
+
+/* ---------- LAB · las tijeras (clip-path con puntos arrastrables) ---------- */
+{
+  const FORMAS = {
+    "Cuadrado": [[0,0],[50,0],[100,0],[100,50],[100,100],[50,100],[0,100],[0,50]],
+    "Octógono": [[30,0],[70,0],[100,30],[100,70],[70,100],[30,100],[0,70],[0,30]],
+    "Hoja": [[50,0],[80,20],[100,55],[75,90],[50,100],[25,90],[0,55],[20,20]],
+    "Rombo": [[50,0],[75,25],[100,50],[75,75],[50,100],[25,75],[0,50],[25,25]],
+    "Estrella": [[50,0],[62,38],[100,50],[62,62],[50,100],[38,62],[0,50],[38,38]],
+    "Triángulo": [[50,0],[62,25],[75,50],[88,75],[100,100],[50,100],[0,100],[25,50]],
+    "Flecha": [[0,30],[60,30],[60,0],[100,50],[60,100],[60,70],[0,70],[0,50]],
+    "Casita": [[50,0],[100,40],[90,40],[90,100],[10,100],[10,40],[0,40],[25,20]]
+  };
+  const nombres = Object.keys(FORMAS), V = $("#tijVista"), M = $("#tijMarco"), out = $("#tijCss"), B = $("#tijFormas");
+  let pts = FORMAS.Hoja.map(p => [...p]), forma = "Hoja";
+  const asas = pts.map((_, i) => { const a = el("span", "asa"); a.tabIndex = 0; a.setAttribute("role", "slider"); a.setAttribute("aria-label", "Punto " + (i + 1) + " del recorte"); M.append(a); return a; });
+  const pinta = () => {
+    const poly = `polygon(${pts.map(([x, y]) => `${Math.round(x)}% ${Math.round(y)}%`).join(", ")})`; V.style.clipPath = poly;
+    asas.forEach((a, i) => { a.style.left = pts[i][0] + "%"; a.style.top = pts[i][1] + "%"; a.setAttribute("aria-valuetext", `${Math.round(pts[i][0])}%, ${Math.round(pts[i][1])}%`); });
+    out.innerHTML = hlCss(`.recorte {\n  clip-path: ${poly}; /* ${forma === "a mano" ? "cortado a mano" : forma.toLowerCase()}: 8 puntos */\n  transition: clip-path 0.8s; /* se anima a otra forma de 8 puntos */\n}`);
+    $$(".chip", B).forEach(x => x.setAttribute("aria-pressed", x.textContent === forma));
+  };
+  const elige = n => { forma = n; pts = FORMAS[n].map(p => [...p]); pinta(); };
+  nombres.forEach(n => { const b = el("button", "chip", n); b.type = "button"; b.onclick = () => elige(n); B.append(b); });
+  asas.forEach((a, i) => {
+    a.addEventListener("pointerdown", e => { a.setPointerCapture(e.pointerId); V.style.transition = "none"; });
+    a.addEventListener("pointermove", e => { if (!a.hasPointerCapture(e.pointerId)) return; const r = M.getBoundingClientRect();
+      pts[i] = [Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)), Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100))]; forma = "a mano"; pinta(); });
+    a.addEventListener("pointerup", () => V.style.transition = "");
+    a.addEventListener("keydown", e => { const d = { ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2] }[e.key]; if (!d) return; e.preventDefault();
+      pts[i] = [Math.min(100, Math.max(0, pts[i][0] + d[0])), Math.min(100, Math.max(0, pts[i][1] + d[1]))]; forma = "a mano"; pinta(); });
+  });
+  $("#tijAnim").onclick = () => elige(nombres[(nombres.indexOf(forma) + 1) % nombres.length]);
+  pinta();
+}
+
+/* ---------- catálogo de 80 efectos ---------- */
+{
+  const G = $("#catG"), F = $("#catF"), Q = $("#catQ"); let fam = "Todos";
+  ["Todos", ...new Set(CAT.map(x => x.c))].forEach(c => { const b = el("button", "chip", c); b.type = "button"; b.setAttribute("aria-pressed", c === "Todos"); b.onclick = () => { fam = c; $$(".chip", F).forEach(x => x.setAttribute("aria-pressed", x === b)); filtra(); }; F.append(b); });
+  CAT.forEach((x, i) => {
+    const art = el("article", "efecto"); art._txt = (x.t + " " + x.d + " " + x.c + " " + x.s).toLowerCase(); art._c = x.c;
+    art.append(iframe(x.h, x.s, 0, "Efecto " + (i + 1) + ": " + x.t, false));
+    const info = el("div", "info", `<span class="num-e">Nº ${String(i + 1).padStart(2, "0")}</span><h4>${esc(x.t)}</h4><p>${esc(x.d)}</p><div class="tags"><span>${esc(x.c)}</span></div>`);
+    const det = el("details"); det.innerHTML = "<summary>Ver el código</summary>";
+    det.addEventListener("toggle", () => { if (!det.open || det._ok) return; det._ok = true; const cod = el("div", "ej-codigo"); cod.append(cajaCodigo("html", x.h, "HTML"), cajaCodigo("css", x.s, "CSS")); det.append(cod); });
+    info.append(det); art.append(info); G.append(art);
+  });
+  const filtra = () => { const q = Q.value.trim().toLowerCase(); let n = 0; $$(".efecto", G).forEach(a => { const v = (fam === "Todos" || a._c === fam) && (!q || a._txt.includes(q)); a.hidden = !v; if (v) n++; }); $("#catN").textContent = `${n} de ${CAT.length} efectos`; };
+  Q.addEventListener("input", filtra); filtra();
+}
+
+/* ---------- errores y test ---------- */
+const FIX = [
+ {q:"Quería un contorno rojo alrededor de la flor, pero no aparece nada.",code:".flor {\n  filter: drop-shadow(0 0 0 red);\n}",o:["Una sombra sin desplazamiento ni desenfoque queda escondida debajo: hacen falta cuatro drop-shadow desplazados","Falta escribir !important","drop-shadow solo funciona con imágenes JPG"],a:0,e:"drop-shadow no tiene spread: con 0 0 0 la sombra mide lo mismo que la figura y queda tapada."},
+ {q:"La tarjeta de cristal no desenfoca nada de lo que hay detrás.",code:".cristal {\n  background-color: white;\n  backdrop-filter: blur(12px);\n}",o:["El fondo es opaco: tiene que ser semitransparente, por ejemplo rgb(255 255 255 / 20%)","backdrop-filter no admite blur","Hay que poner filter en lugar de backdrop-filter"],a:0,e:"Si el fondo de la tarjeta tapa lo de detrás, no hay nada que ver a través del cristal."},
+ {q:"En el iPhone de un alumno, el cristal no funciona.",code:".cristal {\n  background-color: rgb(255 255 255 / 20%);\n  backdrop-filter: blur(12px);\n}",o:["Falta la línea con prefijo para Safari: -webkit-backdrop-filter: blur(12px);","Safari no admite rgb() con barra","Hay que poner el blur en px y en rem a la vez"],a:0,e:"Escribe siempre las dos líneas: -webkit-backdrop-filter y backdrop-filter."},
+ {q:"Recorté la tarjeta en forma de hoja y su sombra ha desaparecido.",code:".hoja {\n  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);\n  filter: drop-shadow(0 6px 8px rgb(0 0 0 / 30%));\n}",o:["El recorte se aplica después del filtro y se lleva la sombra: pon el drop-shadow en un elemento padre","drop-shadow no admite rgb()","polygon() necesita ocho puntos"],a:0,e:"Primero el filtro, después el recorte: las tijeras cortan también la sombra."},
+ {q:"La transición de la galería salta de golpe en lugar de ser suave.",code:".foto {\n  filter: grayscale(1) blur(2px);\n  transition: filter 0.5s;\n}\n.foto:hover {\n  filter: blur(0) grayscale(0);\n}",o:["Las funciones están en distinto orden en los dos estados: escríbelas en el mismo orden","transition no admite filter","Falta un will-change"],a:0,e:"Para interpolar, el navegador empareja las funciones por posición. Si el orden cambia, salta."},
+ {q:"El texto con difference debería invertirse solo sobre el cartel, pero también cambia el fondo de toda la página.",code:".cartel h1 {\n  color: white;\n  mix-blend-mode: difference;\n}",o:["Falta isolation: isolate en el contenedor .cartel para que la mezcla no se escape","difference solo funciona con texto negro","Hay que usar background-blend-mode"],a:0,e:"Sin aislar, la mezcla llega hasta el fondo de la página."}
+];
+const TEST = [
+ {q:"¿Qué diferencia hay entre <code>filter</code> y <code>backdrop-filter</code>?",o:["filter retoca el elemento; backdrop-filter retoca lo que hay detrás de él","Ninguna, son sinónimos","backdrop-filter solo funciona con imágenes"],a:0,e:"filter = el elemento y sus hijos. backdrop-filter = lo que se ve a través."},
+ {q:"¿En qué orden se aplican las funciones de <code>filter: sepia(1) hue-rotate(90deg)</code>?",o:["De izquierda a derecha: primero sepia y luego el giro","Todas a la vez","De derecha a izquierda"],a:0,e:"La salida de cada función es la entrada de la siguiente."},
+ {q:"¿Qué valor de <code>brightness()</code> deja el elemento igual?",o:["0","1","100"],a:1,e:"1 = 100 %. 0 es negro y 2, el doble de luz."},
+ {q:"¿Por qué <code>drop-shadow()</code> y no <code>box-shadow</code> para un PNG recortado?",o:["Porque drop-shadow sigue la forma real y box-shadow la caja rectangular","Porque box-shadow no admite color","Porque drop-shadow es más rápido siempre"],a:0,e:"Las zonas transparentes no proyectan sombra con drop-shadow."},
+ {q:"¿Por qué <code>drop-shadow(0 0 0 red)</code> no dibuja nada?",o:["Porque la sombra queda exactamente debajo de la figura, del mismo tamaño","Porque red no es un color válido","Porque falta el spread"],a:0,e:"Sin desplazamiento ni desenfoque, la figura tapa su sombra. (Y drop-shadow ni siquiera tiene spread.)"},
+ {q:"En la cadena de una pegatina, ¿dónde va la sombra oscura?",o:["La primera","La última, para que sombree la figura con su borde blanco","En medio"],a:1,e:"Cada drop-shadow se calcula sobre el resultado anterior: la última ve ya el borde blanco."},
+ {q:"¿Qué dos piezas de SVG se usan para deformar un texto de forma orgánica?",o:["feTurbulence y feDisplacementMap","feBlend y feFlood","clipPath y mask"],a:0,e:"La turbulencia genera el ruido y el mapa de desplazamiento empuja los píxeles."},
+ {q:"¿Qué necesita sí o sí una tarjeta para que se vea el <code>backdrop-filter</code>?",o:["Un borde","Un fondo semitransparente","position: absolute"],a:1,e:"Si el fondo es opaco, tapa lo que hay detrás."},
+ {q:"¿Qué se recomienda para Safari con <code>backdrop-filter</code> (noviembre de 2026)?",o:["Nada, todos los Safari lo entienden igual","Escribir también -webkit-backdrop-filter con el mismo valor","Usar filter en su lugar"],a:1,e:"Hay versiones en las que la propiedad sin prefijo falla."},
+ {q:"<code>mix-blend-mode: multiply</code> sobre un fondo de papel…",o:["…hace desaparecer el blanco de la imagen y la funde con el papel","…aclara la imagen","…invierte los colores"],a:0,e:"multiply funciona como tinta sobre papel: el blanco no aporta nada."},
+ {q:"¿Para qué sirve <code>isolation: isolate</code>?",o:["Para que la mezcla de los hijos no se escape del contenedor","Para desactivar el filtro","Para que el elemento no reciba clics"],a:0,e:"Crea un grupo aparte: lo que se mezcla dentro no ve lo de fuera."},
+ {q:"¿Qué hace <code>clip-path: circle(40% at 50% 50%)</code>?",o:["Recorta en un círculo de radio 40 % centrado","Dibuja un borde circular","Añade una sombra redonda"],a:0,e:"Primero el radio y, tras at, el centro."},
+ {q:"¿Qué condición hay para animar entre dos <code>polygon()</code>?",o:["Ninguna","Que tengan el mismo número de puntos","Que sean triángulos"],a:1,e:"El navegador empareja los puntos uno a uno."},
+ {q:"¿Qué diferencia hay entre <code>clip-path</code> y <code>mask-image</code>?",o:["clip-path corta en seco; la máscara permite bordes suaves y semitransparencias","Ninguna","mask-image solo admite imágenes PNG"],a:0,e:"Con un degradado como máscara, el elemento se desvanece poco a poco."},
+ {q:"<code>prefers-reduced-transparency</code> en noviembre de 2026…",o:["…funciona igual en todos los navegadores","…solo lo entienden Chrome y Edge: úsalo como mejora, no como única solución","…no existe"],a:1,e:"Safari no lo admite y Firefox lo tiene desactivado por defecto (caniuse, nov. 2026)."}
+];
+function bloque(host, lista, alPuntuar) {
+  const h = $(host), cards = [];
+  lista.forEach((it, i) => {
+    const c = el("div", "q"); c.innerHTML = `<p class="qq">${i + 1}. ${it.q}</p>`; if (it.code) c.append(cajaCodigo("css", it.code, "CSS"));
+    const ops = el("div"); it.o.map((_, k) => k).sort(() => Math.random() - .5).forEach(k => { const l = el("label", "opt"); l.innerHTML = `<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${esc(it.o[k])}</span>`; ops.append(l); });
+    const ex = el("div", "ex", it.e); c.append(ops, ex);
+    c.corrige = () => { $$(".opt", c).forEach(l => { l.classList.remove("right", "wrong"); const v = +$("input", l).value; if (v === it.a) l.classList.add("right"); else if ($("input", l).checked) l.classList.add("wrong"); }); ex.classList.add("show"); };
+    c.limpia = () => { $$("input", c).forEach(x => x.checked = false); $$(".opt", c).forEach(l => l.classList.remove("right", "wrong")); ex.classList.remove("show"); };
+    c.bien = () => { const s = $("input:checked", c); return !!s && +s.value === it.a; };
+    ops.addEventListener("change", () => { c.corrige(); alPuntuar && alPuntuar(); }); cards.push(c); h.append(c);
+  });
+  return cards;
+}
+bloque("#fixes", FIX);
+{ let cards; const up = () => { const n = cards.filter(c => c.bien()).length; $("#qScore").textContent = `${n} / ${TEST.length}` + (n === TEST.length ? " · ¡herbario completo!" : ""); };
+  cards = bloque("#quiz", TEST, up); $("#qAll").onclick = () => { cards.forEach(c => c.corrige()); up(); }; $("#qReset").onclick = () => { cards.forEach(c => c.limpia()); up(); }; }
+})();
+
+</script>
+</body>
+</html>
