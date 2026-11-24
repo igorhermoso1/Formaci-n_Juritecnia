@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isla Hover · ratón y toque sin JavaScript</title>
+<meta name="description" content="Bloque 06 · Ratón y toque sin JavaScript: hover y pointer, estados del botón, :has() con el ratón, seguir al ratón solo con CSS, @starting-style, interestfor y touch-action. Plataformas de 8 bits.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 8%27 shape-rendering=%27crispEdges%27%3E%3Crect width=%278%27 height=%278%27 fill=%27%23f8b800%27/%3E%3Crect width=%278%27 height=%271%27 fill=%27%23000%27/%3E%3Crect y=%277%27 width=%278%27 height=%271%27 fill=%27%23000%27/%3E%3Crect width=%271%27 height=%278%27 fill=%27%23000%27/%3E%3Crect x=%277%27 width=%271%27 height=%278%27 fill=%27%23000%27/%3E%3Crect x=%273%27 y=%272%27 width=%272%27 height=%271%27 fill=%27%23fff%27/%3E%3Crect x=%275%27 y=%272%27 width=%271%27 height=%272%27 fill=%27%23fff%27/%3E%3Crect x=%274%27 y=%274%27 width=%271%27 height=%271%27 fill=%27%23fff%27/%3E%3Crect x=%274%27 y=%276%27 width=%271%27 height=%271%27 fill=%27%23fff%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   ISLA HOVER · plataformas de 8 bits a pleno día
+   ===================================================================== */
+:root{
+  --cielo:#6b8cff; --cielo2:#a9c1ff; --nube:#fff;
+  --ladrillo:#c84c0c; --ladrillo2:#8a2f04; --junta:#ffcea8;
+  --oro:#f8b800; --oro2:#b86800; --oro3:#fff1a8;
+  --tubo:#2fae3b; --tubo2:#156b1d; --tubo3:#9df08f;
+  --tierra:#e09050; --tierra2:#7a3d14; --hierba:#5ad13c;
+  --rojo:#e3262b; --tinta:#16121f; --papel:#fff8e8; --papel2:#ffe9c2; --gris:#5b5470;
+  --f-pix:'Pixelify Sans', system-ui, sans-serif; --f-code:'JetBrains Mono', ui-monospace, monospace;
+  --ancho:min(1100px, 100% - 2rem);
+  --borde:0 -4px 0 0 var(--tinta), 0 4px 0 0 var(--tinta), -4px 0 0 0 var(--tinta), 4px 0 0 0 var(--tinta);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:6.6rem;background:var(--cielo)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* letra pixel legible: Pixelify Sans grande, con aire y sin mayúsculas sostenidas */
+body{margin:0;color:var(--tinta);font:400 clamp(1.08rem, 1rem + .3vw, 1.22rem)/1.65 var(--f-pix);letter-spacing:.01em;overflow-x:clip;background:var(--cielo)}
+html{scrollbar-color:var(--oro) var(--tierra2)}
+a{color:#1a3fd1;text-underline-offset:3px;text-decoration-thickness:2px}
+a:hover{color:var(--rojo)}
+:focus-visible{outline:4px solid var(--rojo);outline-offset:3px}
+b,strong{font-weight:700}
+code{font-family:var(--f-code);font-size:.82em;background:#ffe3a6;color:#5a2500;padding:.08em .35em;border-radius:2px;letter-spacing:0}
+.skip{position:fixed;left:1rem;top:-4rem;z-index:999;background:var(--oro);color:var(--tinta);padding:.6rem 1rem;font-weight:700;transition:top .2s}
+.skip:focus{top:1rem}
+.wrap{width:var(--ancho);margin-inline:auto;position:relative}
+.px{image-rendering:pixelated}
+
+/* ---------- HUD ---------- */
+.hud{position:sticky;top:0;z-index:50;background:var(--tinta);color:#fff;box-shadow:0 4px 0 #000}
+.hud-in{display:flex;align-items:center;gap:.8rem;width:min(1240px, 100% - 1rem);margin-inline:auto;padding:.45rem 0}
+.hud-logo{font:700 1.15rem/1 var(--f-pix);color:var(--oro);text-shadow:2px 2px 0 var(--ladrillo);white-space:nowrap;text-decoration:none}
+.hud-nav{flex:1;display:flex;align-items:center;gap:.3rem;min-width:0}
+.nav-arr{flex:none;width:2.1rem;height:2.1rem;border:0;background:var(--ladrillo);color:#fff;font:700 .9rem var(--f-pix);cursor:pointer;box-shadow:inset -3px -3px 0 var(--ladrillo2), inset 3px 3px 0 #ff8a52}
+.nav-arr:hover{background:var(--oro);color:var(--tinta)}
+#navUl{flex:1;display:flex;gap:.3rem;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
+#navUl a{display:block;white-space:nowrap;padding:.35rem .7rem;font:500 .95rem/1.2 var(--f-pix);color:#fff;text-decoration:none;background:#2b2440}
+#navUl a:hover{background:#3d3360;color:var(--oro)}
+#navUl a[aria-current="true"]{background:var(--oro);color:var(--tinta)}
+.hud-stats{display:flex;gap:.9rem;align-items:center;font:600 1rem/1 var(--f-pix);white-space:nowrap}
+.hud-stats .mini{display:inline-block;width:14px;height:18px;vertical-align:-3px;background:var(--spr-moneda) 0 0/100% 100%;image-rendering:pixelated}
+#hudEst{color:var(--oro)}
+.son{border:0;background:#2b2440;color:#fff;font:600 .85rem var(--f-pix);padding:.35rem .55rem;cursor:pointer}
+.son[aria-pressed="true"]{background:var(--tubo);color:#fff}
+#prog{display:block;height:5px;background:var(--oro);transform-origin:left;scale:0 1}
+@media (max-width:760px){.hud-logo{display:none}.hud-stats .tx{display:none}}
+
+/* ---------- portada ---------- */
+.portada{position:relative;overflow:hidden;min-height:min(92vh, 760px);background:linear-gradient(var(--cielo) 0 70%, var(--cielo2));display:grid;align-content:center;isolation:isolate}
+.portada .celdas{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8, 1fr);grid-template-rows:repeat(4, 1fr);z-index:0}
+.portada .celdas i{display:block}
+.nube{position:absolute;width:128px;height:64px;background:var(--spr-nube) 0 0/100% 100%;image-rendering:pixelated;top:var(--y);left:var(--x);z-index:1;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.nube{animation:deriva var(--t, 60s) linear infinite}}
+@keyframes deriva{from{translate:0 0}50%{translate:40px 0}to{translate:0 0}}
+.colina{position:absolute;bottom:64px;width:var(--w, 260px);aspect-ratio:2/1;left:var(--x);background:#38b93f;border-radius:50% 50% 0 0/100% 100% 0 0;box-shadow:inset 0 0 0 4px var(--tinta);z-index:1;pointer-events:none}
+.colina::after{content:"";position:absolute;left:30%;top:30%;width:14px;height:22px;background:var(--tinta);box-shadow:30px 0 var(--tinta)}
+.colina.lejos{background:#7fd96a;bottom:64px;--w:380px;z-index:0;box-shadow:inset 0 0 0 4px var(--tinta)}
+.colina.lejos::after{display:none}
+.suelo{position:absolute;left:0;right:0;bottom:0;height:64px;background:var(--spr-suelo) 0 0/64px 64px;image-rendering:pixelated;z-index:2;pointer-events:none;border-top:4px solid var(--tinta)}
+.portada .wrap{z-index:3;text-align:center;padding:4.5rem 0 9rem;pointer-events:none}
+.portada .wrap :is(button, a){pointer-events:auto}
+.supra{display:inline-block;font:600 1rem/1 var(--f-pix);background:var(--tinta);color:var(--oro);padding:.45rem .8rem;box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+.titulo{margin:1rem 0 .3rem;font:700 clamp(3rem, 2rem + 6vw, 6.4rem)/.95 var(--f-pix);color:#fff;letter-spacing:.02em;
+  text-shadow:4px 0 var(--tinta), -4px 0 var(--tinta), 0 4px var(--tinta), 0 -4px var(--tinta), 4px 4px var(--tinta), -4px -4px var(--tinta), 4px -4px var(--tinta), -4px 4px var(--tinta), 9px 9px 0 var(--ladrillo)}
+.titulo span{color:var(--oro)}
+.lema{max-width:40rem;margin:.8rem auto 0;font:500 clamp(1.1rem, 1rem + .4vw, 1.35rem)/1.5 var(--f-pix);color:var(--tinta);background:rgba(255,248,232,.92);padding:.7rem 1rem;box-shadow:var(--borde)}
+.fila-bloques{display:flex;justify-content:center;gap:0;margin-top:2.4rem;pointer-events:none}
+.fila-bloques > *{pointer-events:auto}
+.ladr{width:56px;height:56px;background:var(--spr-ladrillo) 0 0/100% 100%;image-rendering:pixelated}
+
+/* el héroe: Puntero, una flecha de ratón con piernas; sus ojos siguen al ratón solo con CSS */
+.puntero{position:absolute;bottom:64px;left:12%;width:72px;height:96px;z-index:3;border:0;padding:0;background:var(--spr-puntero) 0 0/100% 100%;image-rendering:pixelated;cursor:pointer}
+.puntero .ojo{position:absolute;top:38px;width:12px;height:12px;background:#fff;box-shadow:0 0 0 3px var(--tinta)}
+.puntero .ojo:nth-child(1){left:7px}.puntero .ojo:nth-child(2){left:24px}
+.puntero .ojo::after{content:"";position:absolute;left:3px;top:3px;width:6px;height:6px;background:var(--tinta);translate:var(--ox, 0) var(--oy, 0);transition:translate .15s steps(2)}
+.portada:has(.celdas i:nth-child(8n+1):hover){--ox:-3px}.portada:has(.celdas i:nth-child(8n+2):hover){--ox:-3px}
+.portada:has(.celdas i:nth-child(8n+3):hover){--ox:-2px}.portada:has(.celdas i:nth-child(8n+4):hover){--ox:0px}
+.portada:has(.celdas i:nth-child(8n+5):hover){--ox:2px}.portada:has(.celdas i:nth-child(8n+6):hover){--ox:3px}
+.portada:has(.celdas i:nth-child(8n+7):hover){--ox:3px}.portada:has(.celdas i:nth-child(8n):hover){--ox:3px}
+.portada:has(.celdas i:nth-child(-n+8):hover){--oy:-3px}.portada:has(.celdas i:nth-child(n+9):nth-child(-n+16):hover){--oy:-1px}
+.portada:has(.celdas i:nth-child(n+17):nth-child(-n+24):hover){--oy:2px}.portada:has(.celdas i:nth-child(n+25):hover){--oy:3px}
+.bocadillo-p{position:absolute;bottom:170px;left:calc(12% + 50px);z-index:3;background:#fff;padding:.4rem .7rem;font:600 .95rem/1.3 var(--f-pix);box-shadow:var(--borde);pointer-events:none;max-width:16rem;text-align:left}
+@media (hover: none), (max-width: 600px){.bocadillo-p{display:none}}
+.bocadillo-p::after{content:"";position:absolute;left:12px;bottom:-14px;width:12px;height:10px;background:var(--tinta)}
+
+/* tubería con moneda escondida (sale al pasar el ratón) */
+.tubo{position:absolute;bottom:64px;right:10%;width:96px;height:120px;z-index:3}
+.tubo::before{content:"";position:absolute;inset:0 0 auto;height:40px;background:linear-gradient(90deg, var(--tubo3) 0 12%, var(--tubo) 12% 70%, var(--tubo2) 70%);box-shadow:var(--borde)}
+.tubo::after{content:"";position:absolute;left:8px;right:8px;top:44px;bottom:0;background:linear-gradient(90deg, var(--tubo3) 0 12%, var(--tubo) 12% 70%, var(--tubo2) 70%);box-shadow:-4px 0 0 0 var(--tinta), 4px 0 0 0 var(--tinta)}
+.tubo .moneda{position:absolute;left:30px;top:6px;z-index:-1;transition:translate .35s steps(5)}
+.tubo:hover .moneda, .tubo:focus-within .moneda{translate:0 -64px}
+
+/* ---------- bloque ? = moneda ---------- */
+.moneda{appearance:none;border:0;padding:0;cursor:pointer;display:inline-block;vertical-align:middle;width:32px;height:40px;background:var(--spr-moneda) 0 0/100% 100%;image-rendering:pixelated}
+.moneda.cogida{visibility:hidden;pointer-events:none}
+.bloque-q{appearance:none;border:0;padding:0;cursor:pointer;width:56px;height:56px;position:relative;background:var(--spr-pregunta) 0 0/100% 100%;image-rendering:pixelated}
+.bloque-q:hover{filter:brightness(1.12)}
+.bloque-q:active{translate:0 -8px}
+.bloque-q.cogida{background-image:var(--spr-usado);cursor:default}
+.bloque-q.oculto{opacity:0}
+.bloque-q.oculto:hover, .bloque-q.oculto:focus-visible, .bloque-q.oculto.cogida{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .bloque-q:not(.cogida){animation:brilla 1.2s steps(3) infinite}
+  .bloque-q.golpe{animation:golpe .25s steps(3)}
+}
+@keyframes brilla{50%{filter:brightness(1.18)}}
+@keyframes golpe{50%{translate:0 -14px}}
+.salta{position:fixed;z-index:300;width:28px;height:32px;background:var(--spr-moneda) 0 0/100% 100%;image-rendering:pixelated;pointer-events:none;animation:salta .7s steps(7) forwards}
+@keyframes salta{to{translate:0 -90px;opacity:0}}
+.punto{position:fixed;z-index:300;pointer-events:none;font:700 1.1rem/1 var(--f-pix);color:#fff;text-shadow:2px 2px 0 var(--tinta);animation:punto .9s steps(9) forwards}
+@keyframes punto{to{translate:0 -50px;opacity:0}}
+.suelto{position:absolute;right:var(--x, 3%);top:var(--y, 1.2rem)}
+
+/* ---------- zonas (niveles) ---------- */
+main{background:var(--cielo)}
+.zona{position:relative;padding:4.5rem 0 6rem;background:var(--fondo, var(--cielo))}
+.zona:nth-of-type(even){--fondo:#8aa6ff}
+.zona::after{content:"";position:absolute;left:0;right:0;bottom:0;height:32px;background:var(--spr-suelo) 0 0/32px 32px;image-rendering:pixelated;border-top:4px solid var(--tinta)}
+.cartel{display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:1.6rem}
+.cartel .num{font:700 1rem/1 var(--f-pix);background:var(--tinta);color:var(--oro);padding:.55rem .75rem}
+.cartel h2{margin:0;font:700 clamp(2rem, 1.4rem + 2.6vw, 3.2rem)/1.05 var(--f-pix);color:#fff;text-shadow:3px 0 var(--tinta), -3px 0 var(--tinta), 0 3px var(--tinta), 0 -3px var(--tinta), 6px 6px 0 var(--ladrillo)}
+.panel{background:var(--papel);padding:1.4rem 1.6rem;box-shadow:var(--borde), 10px 10px 0 4px rgba(0,0,0,.25);margin:1.2rem 4px}
+.panel > :first-child{margin-top:0}.panel > :last-child{margin-bottom:0}
+.panel h3{font:700 1.5rem/1.2 var(--f-pix);margin:1.6rem 0 .6rem;color:var(--ladrillo)}
+.panel p, .panel li{max-width:72ch}
+.analogia{background:#e8f7ff;border-left:8px solid #1a3fd1;padding:.8rem 1rem;margin:1rem 0}
+.ojo-cuidado{background:#ffe5e5;border-left:8px solid var(--rojo);padding:.8rem 1rem;margin:1rem 0}
+.ojo-cuidado::before{content:"¡OJO! ";font-weight:700;color:var(--rojo)}
+.analogia::before{content:"IMAGINA: ";font-weight:700;color:#1a3fd1}
+.tabla{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.98rem;background:#fff}
+.tabla th, .tabla td{border:3px solid var(--tinta);padding:.5rem .7rem;text-align:left;vertical-align:top}
+.tabla th{background:var(--oro)}
+.tabla-scroll{overflow-x:auto}
+.compat{display:inline-block;font:600 .85rem/1.2 var(--f-pix);background:var(--tinta);color:#fff;padding:.3rem .55rem;margin:.2rem 0}
+.compat.exp{background:var(--rojo)}
+.dos{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr));gap:1.2rem}
+.lista-pasos{counter-reset:p;list-style:none;padding:0}
+.lista-pasos li{counter-increment:p;position:relative;padding-left:2.8rem;margin:.6rem 0}
+.lista-pasos li::before{content:counter(p);position:absolute;left:0;top:0;width:2rem;height:2rem;display:grid;place-items:center;background:var(--oro);font-weight:700;box-shadow:var(--borde)}
+
+/* ---------- ejemplos en vivo ---------- */
+.ejemplo{margin:1.8rem 4px;background:#fff;box-shadow:var(--borde), 10px 10px 0 4px rgba(0,0,0,.25)}
+.ejemplo .src{display:none}
+.ej-cab{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 1rem;font:600 1rem/1.4 var(--f-pix);color:#fff;background:var(--ladrillo);border-bottom:4px solid var(--tinta)}
+.ej-cab span:last-child{color:var(--oro)}
+.ej-vivo iframe{display:block;width:100%;border:0;height:var(--alto, 220px);background:#fff}
+.ej-codigo{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 330px), 1fr));background:#1b1630;border-top:4px solid var(--tinta)}
+.caja{min-width:0}
+.caja + .caja{border-left:3px solid #000}
+.caja-t{display:flex;justify-content:space-between;align-items:center;padding:.5rem .8rem;font:600 .95rem/1 var(--f-pix);color:#c9c1e8}
+.copiar{font:700 .9rem/1 var(--f-pix);background:var(--oro);color:var(--tinta);border:0;padding:.45rem .7rem;cursor:pointer;box-shadow:inset -3px -3px 0 var(--oro2)}
+.copiar:hover{background:#fff}
+.caja pre{margin:0;padding:.3rem 1rem 1rem;overflow:auto;max-height:480px;font:400 .84rem/1.6 var(--f-code);color:#eee8ff;tab-size:2;scrollbar-color:var(--oro) #1b1630}
+.h-c{color:#9d95c2;font-style:italic}.h-s{color:#ffcf4a}.h-p{color:#7fe3ff}.h-v{color:#ffb0a0}.h-t{color:#ff8a8a}.h-a{color:#9df08f}.h-q{color:#ffe0a8}.h-at{color:#d6a8ff}
+
+/* ---------- laboratorio de la linterna ---------- */
+.lab{background:var(--papel2);padding:1.2rem;box-shadow:var(--borde), 10px 10px 0 4px rgba(0,0,0,.25);margin:1.6rem 4px}
+.lab-t{font:700 1.35rem/1.2 var(--f-pix);margin:0 0 .3rem}
+.lab-ctl{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;margin:.6rem 0 1rem}
+.lab-ctl label{display:flex;gap:.4rem;align-items:center;cursor:pointer}
+.lab-ctl input{accent-color:var(--ladrillo);width:1.2rem;height:1.2rem}
+.cueva{--x:50%;--y:50%;position:relative;height:340px;background:#130e22;overflow:hidden;box-shadow:var(--borde);isolation:isolate}
+.cueva .celdas{position:absolute;inset:0;display:grid;grid-template-columns:repeat(var(--n, 5), 1fr);z-index:3}
+.cueva .celdas i{display:block}
+.lab:has(#verRejilla:checked) .cueva .celdas i{outline:1px dashed rgba(255,255,255,.45);outline-offset:-1px}
+.lab:has(#verRejilla:checked) .cueva .celdas i:hover{background:rgba(248,184,0,.25)}
+.cueva .fondo-cueva{position:absolute;inset:0;background:var(--spr-ladrillo) 0 0/48px 48px;image-rendering:pixelated;filter:saturate(.7)}
+.cueva .luz{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle 110px at var(--x) var(--y), transparent 0 60%, rgba(10,6,20,.97) 100%)}
+@property --x{syntax:"<percentage>";inherits:true;initial-value:50%}
+@property --y{syntax:"<percentage>";inherits:true;initial-value:50%}
+.cueva{transition:--x .25s, --y .25s}
+.lab:has(#lentaLuz:checked) .cueva{transition-duration:1.2s}
+.cueva:has(.celdas i:nth-child(5n+1):hover){--x:10%}.cueva:has(.celdas i:nth-child(5n+2):hover){--x:30%}.cueva:has(.celdas i:nth-child(5n+3):hover){--x:50%}
+.cueva:has(.celdas i:nth-child(5n+4):hover){--x:70%}.cueva:has(.celdas i:nth-child(5n):hover){--x:90%}
+.cueva:has(.celdas i:nth-child(-n+5):hover){--y:10%}.cueva:has(.celdas i:nth-child(n+6):nth-child(-n+10):hover){--y:30%}
+.cueva:has(.celdas i:nth-child(n+11):nth-child(-n+15):hover){--y:50%}.cueva:has(.celdas i:nth-child(n+16):nth-child(-n+20):hover){--y:70%}
+.cueva:has(.celdas i:nth-child(n+21):hover){--y:90%}
+/* la moneda va encima de la rejilla para poder pulsarla; solo se ve con la luz encima (celda 20: columna 5, fila 4) */
+.cueva .moneda{position:absolute;left:calc(90% - 16px);top:calc(70% - 20px);z-index:4;opacity:0;transition:opacity .3s}
+.cueva:has(.moneda:is(:hover, :focus-visible)){--x:90%;--y:70%}
+.cueva:has(.celdas i:nth-child(20):hover) .moneda,.cueva .moneda:is(:hover, :focus-visible){opacity:1}
+.cueva .letrero{position:absolute;left:8%;top:12%;font:700 1.3rem var(--f-pix);color:var(--oro);z-index:1}
+.cueva .letrero2{position:absolute;left:46%;top:44%;font:700 1.1rem var(--f-pix);color:#fff;z-index:1}
+
+/* ---------- misiones ---------- */
+.mision{position:relative;margin:2.6rem 4px;background:var(--papel);box-shadow:var(--borde), 10px 10px 0 4px rgba(0,0,0,.25)}
+.mis-cab{display:flex;align-items:center;gap:1rem;padding:.9rem 1.2rem;background:var(--oro);border-bottom:4px solid var(--tinta)}
+.mis-cab .bug{flex:none;width:48px;height:48px;background:var(--spr-pregunta) 0 0/100% 100%;image-rendering:pixelated}
+.mision.ganada .mis-cab{background:var(--hierba)}
+.mision.ganada .bug{background-image:var(--spr-estrella)}
+.mis-cab small{display:block;font:700 .95rem/1.3 var(--f-pix);color:var(--ladrillo2)}
+.mision.ganada .mis-cab small{color:#0b4a12}
+.mis-cab h4{margin:.1rem 0 0;font:700 1.35rem/1.2 var(--f-pix)}
+.mis-cuerpo{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);gap:1.2rem;padding:1rem 1.2rem 1.2rem}
+.mis-cuerpo .enun{margin:.2rem 0 .8rem}
+.mis-codigo{font:400 .86rem/1.75 var(--f-code);background:#1b1630;color:#eee8ff;padding:.9rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:var(--borde)}
+.mis-codigo input{font:700 .86rem/1.3 var(--f-code);background:#352c55;color:var(--oro);border:0;border-bottom:3px solid var(--oro);padding:.15rem .3rem;width:var(--w, 12ch);max-width:100%}
+.mis-codigo input:focus{outline:2px solid #7fe3ff}
+.mision.ganada .mis-codigo input{color:#9df08f;border-color:#9df08f}
+.mis-vivo iframe{display:block;width:100%;height:300px;border:0;background:#fff;box-shadow:var(--borde)}
+.mis-estado{margin:.7rem 0 0;font-weight:600;color:var(--gris)}
+.mision.ganada .mis-estado{color:#0b6e1a}
+.mis-botones{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+.mis-pista{display:none;margin-top:.6rem;padding:.6rem .8rem;background:#e8f7ff;border-left:6px solid #1a3fd1;font-size:1rem}
+.mis-pista.ver{display:block}
+@media (max-width:820px){.mis-cuerpo{grid-template-columns:minmax(0, 1fr)}}
+.boton{font:700 1rem/1 var(--f-pix);border:0;padding:.65rem 1rem;cursor:pointer;background:var(--ladrillo);color:#fff;box-shadow:inset -4px -4px 0 var(--ladrillo2), inset 4px 4px 0 #ff8a52}
+.boton:hover{background:var(--oro);color:var(--tinta);box-shadow:inset -4px -4px 0 var(--oro2), inset 4px 4px 0 var(--oro3)}
+.boton:active{translate:0 2px}
+.boton.sec{background:#1a3fd1;box-shadow:inset -4px -4px 0 #0c2386, inset 4px 4px 0 #6f8cff}
+.boton.peq{font-size:.9rem;padding:.5rem .8rem}
+
+/* ---------- test, errores, chuleta, meta ---------- */
+.q{background:#fff;padding:1rem 1.2rem;margin:1rem 4px;box-shadow:var(--borde)}
+.qq{font-weight:700;margin:0 0 .6rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .6rem;border:3px solid transparent;cursor:pointer}
+.opt:hover{background:#fff3cf}
+.opt.right{border-color:#1f9e2c;background:#e4ffd9}
+.opt.wrong{border-color:var(--rojo);background:#ffe1e1}
+.opt input{margin-top:.45rem;accent-color:var(--ladrillo)}
+.ex{display:none;margin-top:.6rem;padding:.6rem .8rem;border-left:6px solid #1f9e2c;background:#effbe9;font-size:1rem}
+.ex.show{display:block}
+.marcador{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.8rem;background:var(--tinta);color:#fff;padding:.8rem 1.2rem;margin:1rem 4px;font-weight:600}
+.marcador b{color:var(--oro);font-size:1.3rem}
+.chuleta{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:1rem}
+.chuleta div{background:#fff;padding:.9rem 1rem;box-shadow:var(--borde)}
+.chuleta b{display:block;color:var(--ladrillo);margin-bottom:.3rem}
+.meta{display:grid;grid-template-columns:150px 1fr;gap:1.5rem;align-items:end}
+@media (max-width:560px){.meta{grid-template-columns:110px 1fr;gap:.6rem}.meta .mastil{margin-left:6px}}
+.mastil{position:relative;width:24px;height:320px;margin-left:30px;background:linear-gradient(90deg, #9df08f, #2fae3b);box-shadow:var(--borde)}
+.mastil::before{content:"";position:absolute;left:-6px;top:-30px;width:36px;height:36px;background:var(--oro);box-shadow:var(--borde)}
+.bandera{position:absolute;left:28px;bottom:calc(var(--alza, 0) * 250px + 8px);width:72px;height:48px;background:var(--spr-bandera) 0 0/100% 100%;image-rendering:pixelated;transition:bottom 1.2s steps(12)}
+.marca{font:700 clamp(2.4rem, 2rem + 2vw, 3.6rem)/1 var(--f-pix);color:var(--ladrillo);text-shadow:3px 3px 0 var(--oro)}
+.desglose{display:grid;grid-template-columns:auto auto;gap:.3rem 1.2rem;justify-content:start;font-size:1.1rem}
+footer{background:var(--tinta);color:#d8d2ee;padding:2rem 0;font-size:1rem}
+footer a{color:var(--oro)}
+.oculto-v{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="hud">
+  <div class="hud-in">
+    <a class="hud-logo" href="#inicio">ISLA HOVER</a>
+    <nav class="hud-nav" aria-label="Niveles de la página">
+      <button class="nav-arr" id="navL" type="button" aria-label="Niveles anteriores">◀</button>
+      <ul id="navUl"></ul>
+      <button class="nav-arr" id="navR" type="button" aria-label="Niveles siguientes">▶</button>
+    </nav>
+    <div class="hud-stats" aria-live="polite">
+      <span><i class="mini" aria-hidden="true"></i> <span class="tx">×</span> <b id="hudMon">0</b>/<span id="hudMonT">0</span></span>
+      <span><span class="tx">★</span> <b id="hudEst">0</b>/<span id="hudEstT">5</span></span>
+      <span class="tx" id="hudScore">000000</span>
+      <button class="son" id="sonido" type="button" aria-pressed="false" aria-label="Sonido">♪</button>
+    </div>
+  </div>
+  <span id="prog" aria-hidden="true"></span>
+</header>
+
+<div class="portada" id="inicio" data-nav="Inicio">
+  <div class="celdas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <span class="nube" style="--x:8%;--y:12%;--t:50s" aria-hidden="true"></span>
+  <span class="nube" style="--x:62%;--y:7%;--t:70s" aria-hidden="true"></span>
+  <span class="nube" style="--x:84%;--y:30%;--t:44s" aria-hidden="true"></span>
+  <span class="colina lejos" style="--x:-4%" aria-hidden="true"></span>
+  <span class="colina" style="--x:58%;--w:220px" aria-hidden="true"></span>
+  <div class="wrap">
+    <span class="supra">BLOQUE 06 · NIVEL 2</span>
+    <h1 class="titulo">ISLA <span>HOVER</span></h1>
+    <p class="lema">Ratón y dedo <b>sin JavaScript</b>: lo que pasa cuando el puntero se acerca, se posa, pulsa o se va.</p>
+    <div class="fila-bloques">
+      <span class="ladr" aria-hidden="true"></span>
+      <button class="moneda bloque-q" data-id="q1" aria-label="Bloque sorpresa: golpéalo para sacar una moneda"></button>
+      <span class="ladr" aria-hidden="true"></span>
+      <button class="moneda bloque-q" data-id="q2" aria-label="Bloque sorpresa: golpéalo para sacar una moneda"></button>
+      <span class="ladr" aria-hidden="true"></span>
+      <button class="moneda bloque-q oculto" data-id="s-oculto" aria-label="Bloque escondido"></button>
+    </div>
+  </div>
+  <button class="puntero" id="puntero" type="button" aria-label="Puntero, el protagonista"><span class="ojo"></span><span class="ojo"></span></button>
+  <p class="bocadillo-p" aria-hidden="true">Mueve el ratón: te sigo con los ojos y no llevo nada de JavaScript.</p>
+  <div class="tubo"><button class="moneda" data-id="s-tubo" aria-label="Moneda escondida en la tubería"></button></div>
+  <span class="suelo" aria-hidden="true"></span>
+</div>
+
+<main id="contenido">
+
+<!-- ================= 0 · el mapa ================= -->
+<section class="zona" id="mapa" data-nav="Mapa">
+  <div class="wrap">
+    <div class="cartel"><span class="num">6-2</span><h2>El mapa de la isla</h2></div>
+    <div class="panel">
+      <p>En <a href="Scroll-Quest.html">Scroll Quest</a> la rueda del ratón movía las animaciones. Aquí nos fijamos en el <b>otro mando</b>: el puntero. Dónde está, si se ha posado encima, si pulsa… y la pregunta que casi nadie se hace: <b>¿y si no hay ratón, sino un dedo?</b></p>
+      <div class="analogia">un parque acuático. El ratón es un visitante que puede quedarse mirando una atracción sin subir (eso es <b>hover</b>). El dedo no puede «mirar»: o toca o no toca. Si una atracción solo se abre mirándola, el que va con dedo nunca la verá.</div>
+      <h3>Lo que ya sabes y aquí no se repite</h3>
+      <ul>
+        <li>Los cursores (<code>cursor: pointer</code> y compañía): <a href="../SegundoBloque/Favicon-Fuentes-Cursores.html">Favicon, fuentes y cursores</a>.</li>
+        <li><code>pointer-events: none</code>: <a href="../ExtraGrid/Textos-Macedonia-Punk.html">Textos y macedonia</a>.</li>
+        <li><code>transition</code> y <code>transform</code>: <a href="../TercerBloque/Transition-Solar.html">Transition</a> y <a href="../TercerBloque/Transform-Solar.html">Transform</a>.</li>
+        <li><code>@property</code>: <a href="../ExtraGrid/Trucos-CSS-Trattoria.html">Trucos CSS</a>. Los selectores <code>:has()</code>, <code>:not()</code> y <code>+</code>: <a href="../CuartoBloque/Selectores-Comic.html">Selectores</a>.</li>
+        <li><code>@media (hover: hover)</code> y <code>prefers-reduced-motion</code> como norma: mundo 10 de <a href="Scroll-Quest.html#normas">Scroll Quest</a>. Aquí lo llevamos más lejos.</li>
+      </ul>
+      <h3>Cómo se juega</h3>
+      <ul>
+        <li>Los <b>bloques ?</b> sueltan monedas al golpearlos (clic o Intro). Hay <b>monedas secretas</b> que solo salen con el ratón encima: en una tubería, en un bloque invisible, en una cueva oscura…</li>
+        <li>Cada nivel tiene una <b>misión</b>: rellenas los huecos del CSS y la vista cambia al momento. Cada misión ganada es una <b>estrella</b>.</li>
+        <li>Al final, el test sube la <b>bandera</b> de la meta. Todo se guarda en este navegador.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 1 · ratón o dedo ================= -->
+<section class="zona" id="dispositivo" data-nav="1 · ¿Ratón o dedo?">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 1</span><h2>¿Ratón o dedo?</h2></div>
+    <button class="moneda bloque-q suelto" data-id="q3" aria-label="Bloque sorpresa"></button>
+    <div class="panel">
+      <p>CSS puede <b>preguntar al dispositivo</b> cómo se maneja. Son cuatro preguntas, todas con <code>@media</code>:</p>
+      <div class="tabla-scroll"><table class="tabla">
+        <tr><th>Pregunta</th><th>Valores</th><th>Qué significa</th></tr>
+        <tr><td><code>hover</code></td><td><code>hover</code> · <code>none</code></td><td>¿El puntero <b>principal</b> puede quedarse encima de algo sin pulsar? Ratón: sí. Dedo: no.</td></tr>
+        <tr><td><code>pointer</code></td><td><code>fine</code> · <code>coarse</code> · <code>none</code></td><td>¿El puntero principal es <b>preciso</b>? Ratón o lápiz: <code>fine</code>. Dedo: <code>coarse</code> (grueso). Sin puntero (solo teclado o mando de la tele): <code>none</code>.</td></tr>
+        <tr><td><code>any-hover</code></td><td><code>hover</code> · <code>none</code></td><td>Lo mismo, pero mirando <b>todos</b> los punteros conectados, no solo el principal.</td></tr>
+        <tr><td><code>any-pointer</code></td><td><code>fine</code> · <code>coarse</code> · <code>none</code></td><td>¿Hay <b>alguno</b> fino o grueso? Una tableta con ratón Bluetooth tiene los dos.</td></tr>
+      </table></div>
+      <p>Funcionan en todos los navegadores desde hace años (Chrome 41, Safari 9, Firefox 64).</p>
+    </div>
+
+    <div class="ejemplo" data-alto="230" data-t="El detector: tu dispositivo, visto por CSS">
+<textarea class="src" data-lang="html"><div class="detector">
+  <p>¿Se puede posar encima? <b class="si-hover">Sí: hay ratón</b><b class="no-hover">No: es un dedo</b></p>
+  <p>¿Puntero preciso? <b class="fino">Fino (ratón o lápiz)</b><b class="grueso">Grueso (dedo)</b></p>
+  <p>¿Hay algún ratón conectado? <b class="algun">Sí, alguno</b><b class="ninguno">Ninguno</b></p>
+</div></textarea>
+<textarea class="src" data-lang="css">.detector {
+  font: 600 1.1rem system-ui, sans-serif; /* letra del detector */
+}
+.detector b {
+  display: none; /* todas las respuestas, ocultas al principio */
+  margin-left: 0.5rem; /* separadas de la pregunta */
+  padding: 0.2rem 0.6rem; /* aire dentro de la etiqueta */
+  background-color: #f8b800; /* amarillo de bloque */
+  border: 3px solid #16121f; /* borde de píxel */
+}
+@media (hover: hover) {
+  .si-hover {
+    display: inline-block; /* el puntero principal puede quedarse encima */
+  }
+}
+@media (hover: none) {
+  .no-hover {
+    display: inline-block; /* el principal no puede: pantalla táctil */
+  }
+}
+@media (pointer: fine) {
+  .fino {
+    display: inline-block; /* ratón, panel táctil o lápiz */
+  }
+}
+@media (pointer: coarse) {
+  .grueso {
+    display: inline-block; /* un dedo: poca precisión */
+  }
+}
+@media (any-hover: hover) {
+  .algun {
+    display: inline-block; /* algún puntero conectado sabe hacer hover */
+  }
+}
+@media (any-hover: none) {
+  .ninguno {
+    display: inline-block; /* ninguno sabe */
+  }
+}</textarea>
+    </div>
+
+    <div class="panel">
+      <h3>Pruébalo sin móvil</h3>
+      <ol class="lista-pasos">
+        <li>Abre las DevTools (<b>F12</b>) y pulsa el icono del móvil (<b>Ctrl + Mayús + M</b>).</li>
+        <li>Elige un móvil en la lista de arriba y recarga.</li>
+        <li>El detector cambia a «No: es un dedo» y «Grueso». Chrome simula el táctil, y con él cambian <code>hover</code> y <code>pointer</code>.</li>
+      </ol>
+      <h3>Para qué sirve: dos decisiones</h3>
+      <ul>
+        <li><b>Los efectos de hover, solo donde hay hover.</b> En un móvil, el primer toque «activa» el <code>:hover</code> y se queda pegado hasta que tocas otra cosa. El botón se queda levantado, como si nada.</li>
+        <li><b>Con dedo, botones más grandes.</b> La norma de accesibilidad WCAG 2.2 pide un objetivo de al menos <b>24 × 24 px</b> (nivel AA, criterio 2.5.8) y recomienda <b>44 × 44 px</b> (nivel AAA, criterio 2.5.5).</li>
+      </ul>
+      <div class="ojo-cuidado"><code>hover: none</code> no significa «móvil». Un portátil con pantalla táctil tiene ratón como puntero principal, y un móvil con ratón Bluetooth también existe. Pregunta por <b>lo que hace</b> el puntero, no por el tamaño de la pantalla.</div>
+    </div>
+
+    <div class="ejemplo" data-alto="190" data-t="Hover solo con ratón y botones gordos para el dedo">
+<textarea class="src" data-lang="html"><button class="boton">Saltar</button>
+<button class="boton">Correr</button></textarea>
+<textarea class="src" data-lang="css">.boton {
+  min-height: 2.5rem; /* 40px: cómodo con ratón */
+  padding: 0 1rem; /* aire a los lados */
+  font: 700 1.1rem system-ui, sans-serif; /* letra */
+  color: #fff; /* texto blanco */
+  background-color: #c84c0c; /* ladrillo */
+  border: 4px solid #16121f; /* borde de píxel */
+  cursor: pointer; /* manita */
+  transition: translate 0.15s, background-color 0.15s; /* cambios suaves */
+}
+@media (hover: hover) {
+  .boton:hover {
+    translate: 0 -4px; /* se levanta, pero solo si hay ratón */
+    background-color: #e3262b; /* y se enciende */
+  }
+}
+.boton:focus-visible {
+  outline: 4px dashed #1a3fd1; /* el teclado también ve dónde está */
+  outline-offset: 3px; /* separado del borde */
+}
+@media (pointer: coarse) {
+  .boton {
+    min-height: 3rem; /* 48px: más de los 44 recomendados */
+    padding: 0 1.6rem; /* más ancho para el pulgar */
+  }
+}</textarea>
+    </div>
+
+    <div class="mision-host" data-m="fantasma"></div>
+  </div>
+</section>
+
+<!-- ================= 2 · estados ================= -->
+<section class="zona" id="estados" data-nav="2 · Los estados">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 2</span><h2>Encima, foco y golpe</h2></div>
+    <div class="panel">
+      <p>Un botón vive cinco momentos. Cada uno tiene su pseudoclase y el alumno las mezcla a menudo:</p>
+      <div class="tabla-scroll"><table class="tabla">
+        <tr><th>Pseudoclase</th><th>Cuándo</th><th>Con dedo</th></tr>
+        <tr><td><code>:hover</code></td><td>El puntero está encima.</td><td>Se activa al tocar y se queda pegado.</td></tr>
+        <tr><td><code>:focus</code></td><td>El elemento tiene el foco (por clic, por toque o por tabulador).</td><td>Sí.</td></tr>
+        <tr><td><code>:focus-visible</code></td><td>Tiene el foco <b>y</b> el navegador cree que conviene enseñarlo: sobre todo al llegar con el tabulador.</td><td>Casi nunca.</td></tr>
+        <tr><td><code>:focus-within</code></td><td>Él <b>o algo de dentro</b> tiene el foco. Ideal para formularios y menús.</td><td>Sí.</td></tr>
+        <tr><td><code>:active</code></td><td>Mientras se está pulsando: del «clic abajo» al «clic arriba».</td><td>Mientras el dedo apoya (en iOS, solo si la página tiene algún listener táctil: ponle el efecto también con <code>:focus-visible</code>).</td></tr>
+      </table></div>
+      <div class="analogia">un bloque ? de los juegos de plataformas. <b>Hover</b> es saltar cerca y que brille. <b>Focus-visible</b> es que el bloque lleve una flecha encima porque llegas sin mirar. <b>Active</b> es el cabezazo: el bloque sube un poco y vuelve.</div>
+      <h3>El orden importa: LoVe HAte</h3>
+      <p>Si escribes varias con la misma especificidad, gana la última. Por eso el orden clásico es <code>:link</code>, <code>:visited</code>, <code>:hover</code>, <code>:focus</code>, <code>:active</code> («LoVe HAte»: L, V, H, A). Si pones <code>:hover</code> después de <code>:active</code>, el golpe no se ve nunca: mientras pulsas, también estás encima, y el hover lo tapa.</p>
+    </div>
+
+    <div class="ejemplo" data-alto="220" data-t="El bloque ?: brilla, se marca y recibe el cabezazo">
+<textarea class="src" data-lang="html"><button class="bloque" aria-label="Bloque sorpresa">?</button></textarea>
+<textarea class="src" data-lang="css">body {
+  display: grid; /* para centrar */
+  place-items: center; /* el bloque en el centro */
+  min-height: 180px; /* alto del escenario */
+  background-color: #6b8cff; /* cielo */
+}
+.bloque {
+  width: 5rem; /* ancho del bloque */
+  height: 5rem; /* alto del bloque */
+  font: 900 2.6rem monospace; /* el signo ? grande */
+  color: #fff; /* signo blanco */
+  background-color: #f8b800; /* amarillo */
+  border: 4px solid #16121f; /* borde de píxel */
+  box-shadow: inset -6px -6px 0 #b86800; /* sombra interior: volumen */
+  cursor: pointer; /* manita */
+  transition: translate 0.08s; /* el golpe es rápido */
+}
+.bloque:hover {
+  background-color: #ffd23f; /* brilla al acercarse */
+}
+.bloque:focus-visible {
+  outline: 4px dashed #e3262b; /* marca de teclado */
+  outline-offset: 6px; /* un poco separada */
+}
+.bloque:active {
+  translate: 0 -14px; /* el cabezazo: sube mientras pulsas */
+  box-shadow: inset 6px 6px 0 #b86800; /* la sombra cambia de lado: hundido */
+}</textarea>
+    </div>
+    <div class="panel">
+      <p><b>Prueba con el teclado:</b> haz clic en el cielo del ejemplo y pulsa el tabulador. Aparece el borde rojo de rayas. Si haces clic con el ratón, no sale: eso es <code>:focus-visible</code> decidiendo por ti.</p>
+      <div class="ojo-cuidado">Nunca <code>outline: none</code> sin poner otra cosa. Quien navega con teclado se queda sin saber dónde está.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 · :has y los vecinos ================= -->
+<section class="zona" id="vecinos" data-nav="3 · :has() y vecinos">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 3</span><h2>Los vecinos se enteran</h2></div>
+    <button class="moneda bloque-q suelto" data-id="q4" aria-label="Bloque sorpresa"></button>
+    <div class="panel">
+      <p>Hasta hace poco, el <code>:hover</code> solo cambiaba al propio elemento o a sus hijos. Con <code>:has()</code> (todos los navegadores desde diciembre de 2023), <b>el padre se entera</b> de que alguien de dentro tiene el ratón encima, y puede cambiar a <b>los demás</b>.</p>
+      <div class="analogia">una fila de bloques en un nivel. <code>.fila:has(.carta:hover)</code> se lee: «la fila que <b>tiene dentro</b> una carta con el ratón encima». A partir de ahí puedes apagar a todas las que <b>no</b> son esa.</div>
+    </div>
+
+    <div class="ejemplo" data-alto="230" data-t="Las demás se apagan">
+<textarea class="src" data-lang="html"><div class="fila">
+  <button class="carta">Seta</button>
+  <button class="carta">Flor</button>
+  <button class="carta">Estrella</button>
+  <button class="carta">Moneda</button>
+</div></textarea>
+<textarea class="src" data-lang="css">.fila {
+  display: flex; /* en fila */
+  flex-wrap: wrap; /* si no caben, bajan */
+  gap: 1rem; /* separación */
+}
+.carta {
+  width: 7rem; /* ancho */
+  height: 9rem; /* alto */
+  font: 700 1.1rem system-ui, sans-serif; /* letra */
+  background-color: #f8b800; /* amarillo */
+  border: 4px solid #16121f; /* borde de píxel */
+  cursor: pointer; /* manita */
+  transition: opacity 0.25s, scale 0.25s, filter 0.25s; /* cambios suaves */
+}
+.fila:has(.carta:is(:hover, :focus-visible)) .carta:not(:hover, :focus-visible) {
+  opacity: 0.4; /* las demás, casi transparentes */
+  scale: 0.94; /* un poco más pequeñas */
+  filter: grayscale(1); /* y en gris */
+}</textarea>
+    </div>
+    <div class="panel">
+      <p>Fíjate en <code>:is(:hover, :focus-visible)</code>: el mismo efecto para el ratón y para el teclado. Cuesta media línea y nadie se queda fuera.</p>
+      <h3>El efecto dock: crecen el elegido y sus vecinos</h3>
+      <p>Como el dock del Mac: el icono que señalas crece mucho y los de al lado, un poco. Para el de <b>después</b> se usa <code>:hover + a</code> (de toda la vida). Para el de <b>antes</b> hace falta <code>:has()</code>: <code>a:has(+ a:hover)</code> se lee «el enlace cuyo siguiente hermano tiene el ratón encima».</p>
+    </div>
+
+    <div class="ejemplo" data-alto="200" data-t="Efecto dock con :has() y el selector +">
+<textarea class="src" data-lang="html"><nav class="dock">
+  <a href="#">🍄</a>
+  <a href="#">🌸</a>
+  <a href="#">⭐</a>
+  <a href="#">🪙</a>
+  <a href="#">🐢</a>
+  <a href="#">🏰</a>
+  <a href="#">🚩</a>
+</nav></textarea>
+<textarea class="src" data-lang="css">body {
+  display: grid; /* para colocar el dock */
+  place-items: end center; /* abajo y centrado */
+  min-height: 160px; /* alto del escenario */
+}
+.dock {
+  display: flex; /* iconos en fila */
+  align-items: flex-end; /* apoyados abajo, como en un dock */
+  gap: 0.4rem; /* separación */
+  padding: 0.5rem 0.8rem; /* aire dentro */
+  background-color: #16121f; /* barra oscura */
+}
+.dock a {
+  font-size: 2rem; /* tamaño del icono */
+  text-decoration: none; /* sin subrayado */
+  transform-origin: bottom; /* crece hacia arriba */
+  transition: scale 0.2s; /* crecer suave */
+}
+.dock a:is(:hover, :focus-visible) {
+  scale: 1.7; /* el señalado, mucho */
+}
+.dock a:has(+ a:is(:hover, :focus-visible)),
+.dock a:is(:hover, :focus-visible) + a {
+  scale: 1.35; /* los vecinos pegados, algo */
+}
+.dock a:has(+ a + a:is(:hover, :focus-visible)),
+.dock a:is(:hover, :focus-visible) + a + a {
+  scale: 1.12; /* los de dos puestos más allá, un poquito */
+}</textarea>
+    </div>
+
+    <div class="mision-host" data-m="apaga"></div>
+  </div>
+</section>
+
+<!-- ================= 4 · seguir al ratón ================= -->
+<section class="zona" id="seguir" data-nav="4 · Seguir al ratón">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 4</span><h2>Seguir al ratón sin JavaScript</h2></div>
+    <div class="panel">
+      <p>En el temario, el «foco de luz que sigue al ratón» está fuera porque se hace con JavaScript (<code>pointermove</code>: el navegador avisa de las coordenadas exactas). <b>Pero hay un truco solo con CSS</b> que da un resultado muy parecido. Los ojos de Puntero, en la portada, lo usan.</p>
+      <div class="analogia">un suelo de baldosas invisibles. No sabes dónde está el pie exactamente, pero sí <b>qué baldosa pisa</b>. Si cada baldosa dice «estoy en la columna 2 y la fila 4», ya sabes por dónde anda.</div>
+      <ol class="lista-pasos">
+        <li>Cubres la caja con una <b>rejilla de celdas</b> vacías (<code>&lt;i&gt;</code>), por ejemplo 5 × 5 = 25.</li>
+        <li>Cada celda, al tener el ratón encima, es <code>:hover</code>. La caja lo sabe con <code>:has()</code>.</li>
+        <li>Las <b>columnas</b> se reconocen con <code>nth-child(5n+1)</code>, <code>5n+2</code>… (la 1, la 6, la 11… son la columna 1).</li>
+        <li>Las <b>filas</b> se reconocen con rangos: <code>nth-child(-n+5)</code> son las 5 primeras; <code>nth-child(n+6):nth-child(-n+10)</code>, de la 6 a la 10.</li>
+        <li>Cada regla guarda una posición en una variable: <code>--x</code> para la columna y <code>--y</code> para la fila. Con 5 reglas para columnas y 5 para filas cubres las 25 celdas.</li>
+        <li>La luz es un <code>radial-gradient</code> colocado en <code>var(--x) var(--y)</code>. Registrando las variables con <code>@property</code>, la luz <b>se desliza</b> entre celdas en vez de saltar.</li>
+      </ol>
+    </div>
+
+    <div class="ejemplo" data-alto="300" data-t="Linterna con una rejilla de 25 celdas">
+<textarea class="src" data-lang="html"><div class="cueva">
+  <p class="tesoro">Aquí estaba el tesoro</p>
+  <div class="rejilla"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div></textarea>
+<textarea class="src" data-lang="css">@property --x {
+  syntax: "<percentage>"; /* la variable es un porcentaje: así se puede animar */
+  inherits: true; /* los hijos la heredan */
+  initial-value: 50%; /* empieza en el centro */
+}
+@property --y {
+  syntax: "<percentage>"; /* lo mismo para la fila */
+  inherits: true; /* se hereda */
+  initial-value: 50%; /* centro */
+}
+body {
+  margin: 0; /* sin márgenes */
+}
+.cueva {
+  position: relative; /* referencia para las capas */
+  height: 280px; /* alto de la cueva */
+  background-color: #6b3c1f; /* pared de ladrillo */
+  font: 700 1.4rem monospace; /* letra */
+  color: #f8b800; /* texto dorado */
+  transition: --x 0.3s, --y 0.3s; /* la luz se desliza entre celdas */
+}
+.tesoro {
+  position: absolute; /* colocado a mano */
+  left: 60%; /* a la derecha */
+  top: 65%; /* abajo */
+  margin: 0; /* sin márgenes */
+}
+.cueva::after {
+  content: ""; /* capa vacía: la oscuridad */
+  position: absolute; /* encima de todo */
+  inset: 0; /* ocupa toda la cueva */
+  background: radial-gradient(circle 90px at var(--x) var(--y), transparent 50%, #0b0714 100%); /* agujero de luz donde dicen las variables */
+}
+.rejilla {
+  position: absolute; /* encima de la oscuridad */
+  inset: 0; /* toda la cueva */
+  z-index: 1; /* por encima del ::after */
+  display: grid; /* rejilla */
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas: 25 celdas = 5 filas */
+}
+.cueva:has(.rejilla i:nth-child(5n+1):hover) { --x: 10%; } /* columna 1 */
+.cueva:has(.rejilla i:nth-child(5n+2):hover) { --x: 30%; } /* columna 2 */
+.cueva:has(.rejilla i:nth-child(5n+3):hover) { --x: 50%; } /* columna 3 */
+.cueva:has(.rejilla i:nth-child(5n+4):hover) { --x: 70%; } /* columna 4 */
+.cueva:has(.rejilla i:nth-child(5n):hover) { --x: 90%; } /* columna 5 */
+.cueva:has(.rejilla i:nth-child(-n+5):hover) { --y: 10%; } /* fila 1: celdas 1 a 5 */
+.cueva:has(.rejilla i:nth-child(n+6):nth-child(-n+10):hover) { --y: 30%; } /* fila 2: 6 a 10 */
+.cueva:has(.rejilla i:nth-child(n+11):nth-child(-n+15):hover) { --y: 50%; } /* fila 3: 11 a 15 */
+.cueva:has(.rejilla i:nth-child(n+16):nth-child(-n+20):hover) { --y: 70%; } /* fila 4: 16 a 20 */
+.cueva:has(.rejilla i:nth-child(n+21):hover) { --y: 90%; } /* fila 5: 21 a 25 */</textarea>
+    </div>
+
+    <div class="lab" id="labCueva">
+      <p class="lab-t">LABORATORIO · La cueva oscura</p>
+      <p>Pasa el ratón. Enciende la rejilla para ver las 25 baldosas. En algún rincón hay algo que brilla…</p>
+      <div class="lab-ctl">
+        <label><input type="checkbox" id="verRejilla"> Ver la rejilla</label>
+        <label><input type="checkbox" id="lentaLuz"> Luz lenta (transición de 1,2 s)</label>
+      </div>
+      <div class="cueva">
+        <span class="fondo-cueva" aria-hidden="true"></span>
+        <span class="letrero">CUEVA 6-2</span>
+        <span class="letrero2">¿hay alguien?</span>
+        <span class="luz" aria-hidden="true"></span>
+        <div class="celdas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="moneda" data-id="s-cueva" aria-label="Moneda escondida en la cueva"></button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Los límites del truco (que debes conocer)</h3>
+      <ul>
+        <li><b>Va a saltos.</b> La posición es la de la celda, no la del ratón. Más celdas, más precisión, pero también más reglas: con 10 × 10 son 20 reglas.</li>
+        <li><b>La rejilla tapa lo de debajo.</b> Las celdas están encima, así que lo de debajo no recibe clics. Lo que tenga que pulsarse va <b>por encima</b> de la rejilla, con <code>z-index</code>. En la cueva, la moneda está encima. Por eso puedes cogerla.</li>
+        <li><b>Con dedo no sirve.</b> No hay hover que seguir. Encierra el efecto en <code>@media (hover: hover)</code> o, como aquí, que sin él la caja se vea bien igualmente.</li>
+        <li>La versión exacta, con coordenadas al píxel, llega con JavaScript en el bloque 10.</li>
+      </ul>
+      <h3>La misma idea, en 3D: una tarjeta que se inclina</h3>
+      <p>Con solo 3 × 3 celdas basta: si el ratón está a la izquierda, la tarjeta gira sobre el eje Y hacia ese lado; si está arriba, gira sobre el eje X.</p>
+      <div class="ojo-cuidado">La rejilla <b>no puede ir dentro de la tarjeta que gira</b>. Si gira con ella, la celda se aparta de debajo del ratón, se pierde el hover, la tarjeta vuelve, la celda regresa… y la tarjeta tiembla sin parar. Por eso la rejilla va en la <code>.zona</code>, quieta, y la tarjeta gira debajo.</div>
+    </div>
+
+    <div class="ejemplo" data-alto="300" data-t="Tarjeta que se inclina hacia el ratón (3 × 3 celdas)">
+<textarea class="src" data-lang="html"><div class="escena">
+  <div class="zona">
+    <div class="tarjeta">Carta del nivel 6</div>
+    <div class="rejilla"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+</div></textarea>
+<textarea class="src" data-lang="css">.escena {
+  display: grid; /* para centrar */
+  place-items: center; /* zona en el centro */
+  min-height: 260px; /* alto del escenario */
+  perspective: 600px; /* distancia del ojo: sin ella no hay 3D */
+}
+.zona {
+  --rx: 0deg; /* giro arriba-abajo, en reposo */
+  --ry: 0deg; /* giro izquierda-derecha, en reposo */
+  position: relative; /* referencia para la rejilla */
+  width: 200px; /* ancho */
+  height: 220px; /* alto */
+}
+.tarjeta {
+  height: 100%; /* ocupa la zona */
+  display: grid; /* para centrar el texto */
+  place-items: center; /* texto en el centro */
+  font: 700 1.2rem monospace; /* letra */
+  background-color: #f8b800; /* amarillo */
+  border: 4px solid #16121f; /* borde de píxel */
+  box-shadow: 8px 8px 0 #16121f; /* sombra dura */
+  transform: rotateX(var(--rx)) rotateY(var(--ry)); /* el giro sale de las variables */
+  transition: transform 0.25s; /* giro suave */
+}
+.rejilla {
+  position: absolute; /* encima de la tarjeta, pero fuera de ella: no gira */
+  inset: 0; /* cubre la zona */
+  display: grid; /* rejilla */
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+}
+.zona:has(i:nth-child(3n+1):hover) { --ry: -18deg; } /* ratón a la izquierda */
+.zona:has(i:nth-child(3n):hover) { --ry: 18deg; } /* ratón a la derecha */
+.zona:has(i:nth-child(-n+3):hover) { --rx: 14deg; } /* ratón arriba */
+.zona:has(i:nth-child(n+7):hover) { --rx: -14deg; } /* ratón abajo */</textarea>
+    </div>
+
+    <div class="mision-host" data-m="linterna"></div>
+  </div>
+</section>
+
+<!-- ================= 5 · @starting-style ================= -->
+<section class="zona" id="entrar" data-nav="5 · Entrar y salir">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 5</span><h2>Aparecer con estilo</h2></div>
+    <button class="moneda bloque-q suelto" data-id="q5" aria-label="Bloque sorpresa"></button>
+    <div class="panel">
+      <p>Un clásico del ratón: al pasar por encima aparece un globo de ayuda, o al pulsar se abre una ventanita (<code>popover</code>, que viste en el bloque 3). Lo normal es esconderlo con <code>display: none</code>… y entonces <b>la transición no funciona</b>: aparece de golpe.</p>
+      <p>Pasa por dos motivos. Los dos tienen arreglo desde 2024, en todos los navegadores (Chrome 117, Safari 17.5 y Firefox 129):</p>
+      <div class="tabla-scroll"><table class="tabla">
+        <tr><th>Problema</th><th>Arreglo</th></tr>
+        <tr><td>Un elemento que pasa de <code>display: none</code> a visible <b>no tiene «antes»</b>: el navegador lo pinta directamente en su estado final, así que no hay nada desde donde transicionar.</td><td><code>@starting-style { … }</code>: le dices <b>desde dónde sale</b> la primera vez que se pinta.</td></tr>
+        <tr><td><code>display</code> no tiene valores intermedios (no existe «medio <code>none</code>»). Al cerrar, desaparece en el acto y no se ve el fundido de salida.</td><td><code>transition: display 0.4s allow-discrete</code>: espera a que termine la transición y <b>solo entonces</b> cambia <code>display</code>.</td></tr>
+      </table></div>
+      <div class="analogia">una tubería de los juegos de plataformas. <code>@starting-style</code> es el personaje <b>metido dentro del tubo</b> antes de salir. <code>allow-discrete</code> es la regla de que no desaparezca hasta haberse metido del todo.</div>
+      <p>En un <code>popover</code> se añade una tercera pieza: <code>overlay … allow-discrete</code>, para que siga en la capa superior (encima de todo) mientras se va.</p>
+    </div>
+
+    <div class="ejemplo" data-alto="300" data-t="Popover que entra y sale con transición">
+<textarea class="src" data-lang="html"><button class="abrir" popovertarget="seta">Golpear el bloque</button>
+<div id="seta" popover>
+  <p>¡Ha salido una seta!</p>
+  <button popovertarget="seta" popovertargetaction="hide">Cerrar</button>
+</div></textarea>
+<textarea class="src" data-lang="css">.abrir {
+  font: 700 1.1rem system-ui, sans-serif; /* letra */
+  padding: 0.6rem 1rem; /* aire */
+  background-color: #f8b800; /* amarillo */
+  border: 4px solid #16121f; /* borde de píxel */
+  cursor: pointer; /* manita */
+}
+#seta {
+  padding: 1rem 1.4rem; /* aire dentro */
+  font: 700 1.2rem system-ui, sans-serif; /* letra */
+  border: 4px solid #16121f; /* borde de píxel */
+  background-color: #fff8e8; /* papel */
+  opacity: 0; /* cerrado: transparente (también es el final de la salida) */
+  translate: 0 40px; /* cerrado: más abajo */
+  transition: opacity 0.4s, translate 0.4s, display 0.4s allow-discrete, overlay 0.4s allow-discrete; /* display y overlay esperan al final */
+}
+#seta:popover-open {
+  opacity: 1; /* abierto: visible */
+  translate: 0 0; /* abierto: en su sitio */
+}
+@starting-style {
+  #seta:popover-open {
+    opacity: 0; /* desde dónde sale al abrir */
+    translate: 0 40px; /* sube desde abajo, como de un tubo */
+  }
+}</textarea>
+    </div>
+
+    <div class="panel">
+      <h3>Lo mismo con hover: un globo de ayuda</h3>
+      <p>El globo está dentro del botón con <code>display: none</code>. Al pasar el ratón (o llegar con el teclado) pasa a <code>display: block</code>, y <code>@starting-style</code> le da el punto de partida del fundido.</p>
+    </div>
+    <div class="ejemplo" data-alto="200" data-t="Globo de ayuda que aparece al pasar el ratón">
+<textarea class="src" data-lang="html"><button class="ayuda">Saltar <span class="globo">Pulsa A para saltar más alto</span></button></textarea>
+<textarea class="src" data-lang="css">body {
+  padding-top: 4.5rem; /* sitio para el globo, que sale por arriba */
+}
+.ayuda {
+  position: relative; /* el globo se coloca respecto al botón */
+  font: 700 1.1rem system-ui, sans-serif; /* letra */
+  padding: 0.6rem 1rem; /* aire */
+  background-color: #2fae3b; /* verde tubería */
+  color: #fff; /* texto blanco */
+  border: 4px solid #16121f; /* borde de píxel */
+}
+.globo {
+  display: none; /* escondido de verdad: no ocupa ni se lee */
+  position: absolute; /* flota */
+  bottom: calc(100% + 10px); /* encima del botón */
+  left: 0; /* alineado a la izquierda */
+  width: max-content; /* tan ancho como el texto */
+  padding: 0.4rem 0.7rem; /* aire */
+  font-size: 0.95rem; /* letra algo menor */
+  color: #16121f; /* texto oscuro */
+  background-color: #fff; /* globo blanco */
+  border: 3px solid #16121f; /* borde */
+  opacity: 0; /* estado de salida */
+  transition: opacity 0.3s, display 0.3s allow-discrete; /* fundido de ida y de vuelta */
+}
+.ayuda:is(:hover, :focus-visible) .globo {
+  display: block; /* aparece */
+  opacity: 1; /* visible */
+}
+@starting-style {
+  .ayuda:is(:hover, :focus-visible) .globo {
+    opacity: 0; /* punto de partida del fundido */
+  }
+}</textarea>
+    </div>
+
+    <div class="mision-host" data-m="tubo"></div>
+  </div>
+</section>
+
+<!-- ================= 6 · interestfor ================= -->
+<section class="zona" id="interes" data-nav="6 · interestfor">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 6</span><h2>Mostrar interés</h2></div>
+    <div class="panel">
+      <p><span class="compat exp">Experimental · Chrome y Edge 142+</span> <span class="compat">Safari y Firefox: todavía no (MDN, 19-11-2026)</span></p>
+      <p>El globo del nivel anterior tiene un fallo: está <b>dentro</b> del botón. Si quieres una tarjeta grande con una ficha o una vista previa de un enlace, no cabe ahí. Para eso llega un atributo HTML nuevo, <code>interestfor</code>: es como <code>popovertarget</code>, pero se activa <b>al mostrar interés</b> y no al pulsar.</p>
+      <ul>
+        <li><b>Con ratón:</b> al posarse encima un momento.</li>
+        <li><b>Con teclado:</b> al llegar con el tabulador.</li>
+        <li><b>Con dedo:</b> con una pulsación larga.</li>
+      </ul>
+      <p>El elemento que se abre es un <code>popover="hint"</code>: un popover «de pista» que se cierra solo cuando el interés se va, y que no cierra los demás popovers abiertos.</p>
+      <div class="tabla-scroll"><table class="tabla">
+        <tr><th>Pieza</th><th>Para qué</th></tr>
+        <tr><td><code>interestfor="id"</code></td><td>En un <code>&lt;a&gt;</code> o un <code>&lt;button&gt;</code>: qué popover abre.</td></tr>
+        <tr><td><code>popover="hint"</code></td><td>En la tarjeta que se abre.</td></tr>
+        <tr><td><code>interest-delay: 0.3s 0.2s</code></td><td>CSS: cuánto espera antes de abrir y antes de cerrar (para que no se abra al pasar de largo).</td></tr>
+        <tr><td><code>:interest-source</code></td><td>CSS: el enlace mientras su tarjeta está abierta. Sirve para marcarlo.</td></tr>
+      </table></div>
+      <div class="ojo-cuidado">Es experimental: en Safari y Firefox <b>no pasa nada</b>. Úsalo solo para extras. En el ejemplo, el enlace lleva a la ficha completa, que funciona en cualquier navegador. La tarjeta flotante es un regalo para quien tiene Chrome.</div>
+    </div>
+
+    <div class="ejemplo" data-alto="330" data-t="Vista previa al posarse en un enlace">
+<textarea class="src" data-lang="html"><p class="aviso">Tu navegador aún no entiende interestfor: el enlace funciona igual.</p>
+<p>Pasa el ratón por <a href="#ficha-completa" interestfor="ficha">la ficha de Puntero</a> y espera un momento.</p>
+<div id="ficha" popover="hint">
+  <b>Puntero</b><br>
+  Flecha de ratón con piernas.<br>
+  Nivel 6 · 3 vidas
+</div>
+<h2 id="ficha-completa">Ficha completa</h2>
+<p>Puntero nació en un menú desplegable y sueña con hacer hover en la luna.</p></textarea>
+<textarea class="src" data-lang="css">body {
+  font: 1.05rem/1.6 system-ui, sans-serif; /* letra */
+}
+.aviso {
+  display: none; /* el aviso, escondido si el navegador lo entiende */
+  padding: 0.4rem 0.7rem; /* aire */
+  background-color: #ffe5e5; /* rosa de aviso */
+}
+@supports not (interest-delay: 0s) {
+  .aviso {
+    display: block; /* navegador sin interestfor: se avisa */
+  }
+}
+a[interestfor] {
+  interest-delay: 0.3s 0.2s; /* espera 0,3 s para abrir y 0,2 s para cerrar */
+}
+a:interest-source {
+  background-color: #f8b800; /* el enlace se marca mientras su tarjeta está abierta */
+}
+#ficha {
+  margin: 0; /* sin el margen automático del popover */
+  inset: auto; /* sin la posición centrada por defecto */
+  top: 7rem; /* colocado bajo el párrafo */
+  left: 1rem; /* a la izquierda */
+  padding: 0.8rem 1rem; /* aire */
+  background-color: #fff8e8; /* papel */
+  border: 4px solid #16121f; /* borde de píxel */
+  box-shadow: 6px 6px 0 #16121f; /* sombra dura */
+}</textarea>
+    </div>
+    <div class="panel">
+      <p>Fíjate en que <b>todo es HTML y CSS</b>. Hasta 2025, esta tarjeta de vista previa (la de los enlaces de la Wikipedia o de los perfiles en las redes) pedía un buen trozo de JavaScript: esperar, abrir, cerrar al salir, no cerrarla si el ratón pasa del enlace a la tarjeta… Ahora es un atributo.</p>
+      <button class="moneda bloque-q" data-id="q6" aria-label="Bloque sorpresa"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7 · dedos ================= -->
+<section class="zona" id="dedos" data-nav="7 · Dedos">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 7</span><h2>El mando táctil</h2></div>
+    <div class="panel">
+      <p>Cuando la página es un juego, un mando o un carrusel, el dedo se pelea con el navegador: el navegador cree que quieres hacer zoom, seleccionar texto o desplazarte. Tres propiedades lo ordenan:</p>
+      <div class="tabla-scroll"><table class="tabla">
+        <tr><th>Propiedad</th><th>Qué hace</th><th>Cuándo</th></tr>
+        <tr><td><code>touch-action: manipulation</code></td><td>Permite desplazarse y hacer zoom con dos dedos, pero <b>quita el zoom por doble toque</b>. Sin él, el navegador espera un instante para ver si llega un segundo toque.</td><td>Botones que se pulsan rápido varias veces.</td></tr>
+        <tr><td><code>touch-action: pan-y</code></td><td>Solo deja desplazarse en vertical: el gesto horizontal queda para ti.</td><td>Una zona que se arrastra de lado dentro de una página que baja.</td></tr>
+        <tr><td><code>touch-action: none</code></td><td>El navegador no hace <b>nada</b> con el dedo en ese elemento.</td><td>Solo un lienzo de dibujo o de juego (con JavaScript).</td></tr>
+        <tr><td><code>user-select: none</code></td><td>Que una pulsación larga no seleccione el texto del botón.</td><td>Botones de mando. <b>Nunca</b> en textos que alguien querría copiar.</td></tr>
+        <tr><td><code>-webkit-tap-highlight-color</code></td><td>El recuadro gris o azul que pintan los móviles al tocar un enlace.</td><td>Si lo quitas (<code>transparent</code>), pon tu propio <code>:active</code>.</td></tr>
+      </table></div>
+      <p><code>touch-action</code> funciona en todos (Safari desde la 13). <code>user-select</code> sin prefijo llegó a Safari en la versión 27.3. Hasta que todo el mundo la tenga, escribe también <code>-webkit-user-select</code>.</p>
+      <div class="ojo-cuidado"><code>touch-action: none</code> en el <code>body</code> deja la página sin desplazamiento y sin zoom en el móvil. Es un error de accesibilidad grave: aplícalo solo al elemento que lo necesita.</div>
+    </div>
+
+    <div class="ejemplo" data-alto="200" data-t="Un mando de botones para el dedo">
+<textarea class="src" data-lang="html"><div class="mando">
+  <button aria-label="Izquierda">◀</button>
+  <button aria-label="Derecha">▶</button>
+  <button class="a">A</button>
+  <button class="b">B</button>
+</div></textarea>
+<textarea class="src" data-lang="css">.mando {
+  display: flex; /* botones en fila */
+  gap: 0.8rem; /* separación: que el pulgar no toque dos */
+  padding: 1rem; /* aire */
+  background-color: #5b5470; /* carcasa gris */
+  width: max-content; /* tan ancho como los botones */
+}
+.mando button {
+  min-width: 3.5rem; /* 56px: de sobra para el dedo */
+  min-height: 3.5rem; /* alto igual */
+  font: 900 1.4rem monospace; /* letra */
+  color: #fff; /* símbolo blanco */
+  background-color: #16121f; /* botón oscuro */
+  border: 0; /* sin borde */
+  border-radius: 50%; /* redondo */
+  box-shadow: 0 5px 0 #000; /* relieve hacia abajo */
+  touch-action: manipulation; /* sin zoom por doble toque: responde al instante */
+  -webkit-user-select: none; /* Safari antiguo: no seleccionar al mantener */
+  user-select: none; /* ni seleccionar el texto */
+  -webkit-tap-highlight-color: transparent; /* sin el recuadro del móvil… */
+}
+.mando button:active {
+  translate: 0 5px; /* …porque ya hay respuesta propia: el botón se hunde */
+  box-shadow: 0 0 0 #000; /* y pierde el relieve */
+}
+.mando .a {
+  background-color: #e3262b; /* botón A rojo */
+}
+.mando .b {
+  background-color: #1a3fd1; /* botón B azul */
+}</textarea>
+    </div>
+
+    <div class="mision-host" data-m="dedos"></div>
+  </div>
+</section>
+
+<!-- ================= 8 · reglas de oro ================= -->
+<section class="zona" id="reglas" data-nav="8 · Reglas de oro">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 8</span><h2>Las 6 reglas de oro</h2></div>
+    <button class="moneda bloque-q suelto" data-id="q7" aria-label="Bloque sorpresa"></button>
+    <div class="panel">
+      <ol class="lista-pasos">
+        <li><b>El hover es un extra, nunca el único camino.</b> Si algo solo aparece al pasar el ratón, quien va con dedo o con teclado no lo ve. Lo importante, a la vista o a un clic.</li>
+        <li><b>Lo que hace el ratón, lo hace el teclado.</b> Escribe <code>:is(:hover, :focus-visible)</code> en lugar de <code>:hover</code> a secas.</li>
+        <li><b>Efectos de hover dentro de <code>@media (hover: hover)</code></b>, para que no se queden pegados en el móvil.</li>
+        <li><b>Con dedo, objetivos grandes:</b> 24 × 24 px como mínimo, 44 × 44 px mejor, y separados.</li>
+        <li><b>Movimiento con permiso:</b> lo que se mueve mucho (inclinaciones, saltos) va dentro de <code>@media (prefers-reduced-motion: no-preference)</code>.</li>
+        <li><b>Lo experimental, como regalo:</b> <code>interestfor</code> hoy solo en Chrome y Edge. Que sin él la página funcione igual.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9 · errores ================= -->
+<section class="zona" id="errores" data-nav="9 · Arregla">
+  <div class="wrap">
+    <div class="cartel"><span class="num">NIVEL 9</span><h2>Bloques rotos</h2></div>
+    <div class="panel"><p>Seis trozos de CSS con un fallo cada uno. Elige qué pasa.</p></div>
+    <div id="fixes"></div>
+  </div>
+</section>
+
+<!-- ================= 10 · test ================= -->
+<section class="zona" id="test" data-nav="10 · Test">
+  <div class="wrap">
+    <div class="cartel"><span class="num">CASTILLO</span><h2>El test final</h2></div>
+    <div class="marcador"><span>ACIERTOS <b id="qScore">0 / 10</b></span><span><button class="boton peq" type="button" id="qAll">CORREGIR TODO</button> <button class="boton sec peq" type="button" id="qReset">BORRAR</button></span></div>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<!-- ================= chuleta ================= -->
+<section class="zona" id="chuleta" data-nav="Chuleta">
+  <div class="wrap">
+    <div class="cartel"><span class="num">EXTRA</span><h2>La chuleta</h2></div>
+    <div class="chuleta">
+      <div><b>¿Hay ratón?</b><code>@media (hover: hover)</code><br><code>@media (pointer: coarse)</code> = dedo<br><code>any-hover</code>, <code>any-pointer</code> = alguno</div>
+      <div><b>Estados</b><code>:hover</code> · <code>:focus-visible</code> · <code>:focus-within</code> · <code>:active</code><br>Orden: LoVe HAte</div>
+      <div><b>Los vecinos</b><code>.fila:has(.c:hover) .c:not(:hover)</code><br>Antes: <code>a:has(+ a:hover)</code><br>Después: <code>a:hover + a</code></div>
+      <div><b>Seguir al ratón</b>Rejilla de celdas + <code>:has(i:nth-child(5n+1):hover)</code> → <code>--x</code><br>Filas: <code>nth-child(n+6):nth-child(-n+10)</code></div>
+      <div><b>Aparecer</b><code>@starting-style { … }</code><br><code>transition: display .3s allow-discrete</code><br>Popover: también <code>overlay</code></div>
+      <div><b>Interés</b><code>&lt;a interestfor="id"&gt;</code> + <code>popover="hint"</code><br><code>interest-delay</code> · <code>:interest-source</code></div>
+      <div><b>Dedos</b><code>touch-action: manipulation</code><br><code>user-select: none</code> (+ <code>-webkit-</code>)<br><code>-webkit-tap-highlight-color</code></div>
+      <div><b>Siempre</b>Teclado = ratón · objetivos de 44 px · <code>prefers-reduced-motion</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= meta ================= -->
+<section class="zona" id="meta" data-nav="Meta">
+  <div class="wrap">
+    <div class="cartel"><span class="num">FIN</span><h2>¡Meta!</h2></div>
+    <div class="panel meta">
+      <div class="mastil" aria-hidden="true"><span class="bandera" id="bandera"></span></div>
+      <div>
+        <p>La bandera sube con tus puntos: <b>10</b> por moneda, <b>50</b> por moneda secreta, <b>100</b> por estrella y <b>20</b> por acierto del test.</p>
+        <p class="marca" id="finScore">000000</p>
+        <p id="finRango"></p>
+        <div class="desglose" id="finDesglose"></div>
+        <p><button class="boton sec peq" type="button" id="borraPartida">EMPEZAR DE NUEVO</button></p>
+        <button class="moneda bloque-q" data-id="q8" aria-label="Último bloque sorpresa"></button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Isla Hover · Bloque 06, nivel 2 · Formación web Juritecnia. Viene de <a href="Scroll-Quest.html">Scroll Quest</a> · <a href="../index.html">Índice de la plataforma</a>.</p>
+    <p>Compatibilidad comprobada en MDN browser-compat-data (19-11-2026) y probada en Chrome 157. Sprites dibujados en código, sin imágenes.</p>
+  </div>
+</footer>
+
+<script>
+/* =====================================================================
+   DATOS · sprites, misiones, errores y test
+   ===================================================================== */
+/* sprites: cada letra es un color, el punto es transparente */
+const PAL = { K: "#16121f", Y: "#f8b800", y: "#b86800", w: "#ffffff", W: "#fff1a8", R: "#c84c0c", r: "#8a2f04", J: "#ffcea8", T: "#e09050", t: "#7a3d14", H: "#5ad13c", h: "#2f8a1f", X: "#e3262b", B: "#1a3fd1", C: "#c8d8ff" };
+const SPR = {
+  pregunta: [["KKKKKKKKKKKK", "KyYYYYYYYYyK", "KYYYwwwwYYYK", "KYYwwyywwYYK", "KYYyyYYwwyYK", "KYYYYYwwyYYK", "KYYYYwwyYYYK", "KYYYYyyYYYYK", "KYYYYwwYYYYK", "KYYYYyyYYYYK", "KyYYYYYYYYyK", "KKKKKKKKKKKK"]],
+  usado: [["KKKKKKKKKKKK", "KtTTTTTTTTtK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KTTTTTTTTTTK", "KtTTTTTTTTtK", "KKKKKKKKKKKK"]],
+  ladrillo: [["JJJJJJJJ", "RRRJRRRR", "RRRJRRRR", "rrrJrrrr", "JJJJJJJJ", "RRRRRRRJ", "RRRRRRRJ", "rrrrrrrJ"]],
+  suelo: [["HHHHHHHH", "hHhHHhHh", "TTTTtTTT", "TTTTTTTT", "TtTTTTTT", "TTTTTTtT", "TTTtTTTT", "TTTTTTTT"]],
+  nube: [["......KKKK......", "....KKwwwwKK....", "..KKwwwwwwwwKK..", ".KwwwwwwwwwwwwK.", "KwwwwwwwwwwwwwwK", "KwwwwwwwwwwwwwwK", ".KCCwwwwwwwwCCK.", "..KKKKKKKKKKKK.."]],
+  moneda: [["..KKKK..", ".KYYYYK.", "KYWYYYyK", "KYWYyYyK", "KYWYyYyK", "KYWYyYyK", "KYWYyYyK", "KYYYYYyK", ".KyyyyK.", "..KKKK.."]],
+  puntero: [["KK................", "KwK...............", "KwwK..............", "KwwwK.............", "KwwwwK............", "KwwwwwK...........", "KXXXXXXK..........", "KXXXXXXXK.........", "KwwwwwwwwK........", "KwwwwwwwwwK.......", "KwwwwwwwwwwK......", "KwwwwwwwwwwwK.....", "KwwwwwwwwwwwwK....", "KwwwwwwwwwwwwwK...", "KwwwwwwwKKKKKKKK..", "KwwwKwwwK.........", "KwwK.KwwwK........", "KwK..KwwwK........", "KK....KwwwK.......", "......KKKKK.......", "..KK....KK........", "..KK....KK........", ".KBBK..KBBK.......", ".KBBBK.KBBBK......"]],
+  estrella: [[".....KK.....", "....KYYK....", "....KYYK....", "KKKKYYYYKKKK", "KYYYYYYYYYYK", ".KYYKYYKYYK.", "..KYKYYKYK..", "..KYYYYYYK..", ".KYYYYYYYYK.", ".KYYYKKYYYK.", "KYYKK..KKYYK", "KKK......KKK"]],
+  bandera: [["KKKKKKKKKKKK", "KXXXXXXXXXK.", "KXXwwXXXXK..", "KXwwwwXXK...", "KXXwwXXK....", "KXXXXXK.....", "KXXXXK......", "KKKKK......."]]
+};
+
+/* misiones: [[n]] es un hueco que rellena el alumno; ok[n] valida ese hueco */
+const sinEsp = v => v.replace(/\s+/g, "");
+const MISIONES = [
+{id:"fantasma", t:"El botón que se queda levantado", h:"#e3262b",
+ enun:"En el móvil, el botón se queda levantado después de tocarlo. Rellena los huecos: el levantamiento solo <b>donde el puntero puede posarse</b>, y los botones grandes solo <b>cuando el puntero es grueso</b> (un dedo).",
+ css:`.boton {
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  font: 700 1.1rem system-ui;
+  background-color: #f8b800;
+  border: 4px solid #16121f;
+  transition: translate 0.15s;
+}
+@media ([[0]]) {
+  .boton:hover {
+    translate: 0 -6px;
+  }
+}
+@media ([[1]]) {
+  .boton {
+    min-height: 3rem;
+  }
+}`, w:[12, 14], ok:[v => /^hover:hover$/.test(sinEsp(v)), v => /^(any-)?pointer:coarse$/.test(sinEsp(v))],
+ html:`<button class="boton">Saltar</button> <button class="boton">Correr</button>`, base:"body{padding:2rem 1rem}",
+ pista:"Las dos son preguntas de @media del nivel 1: una sobre si se puede «posar» (hover) y otra sobre la precisión del puntero (pointer). Se escriben como nombre: valor."},
+{id:"apaga", t:"La fila que no se entera", h:"#2fae3b",
+ enun:"Al pasar el ratón por una carta, las demás deberían apagarse. Rellena el selector: «la fila que <b>tiene</b> una carta con el ratón encima» y, dentro, «las cartas que <b>no</b> tienen el ratón encima».",
+ css:`.fila {
+  display: flex;
+  gap: 1rem;
+}
+.carta {
+  width: 6rem;
+  height: 8rem;
+  background-color: #f8b800;
+  border: 4px solid #16121f;
+  transition: opacity 0.25s, scale 0.25s;
+}
+.fila[[0]] .carta[[1]] {
+  opacity: 0.35;
+  scale: 0.92;
+}`, w:[18, 12], ok:[v => /^:has\(\.carta:hover\)$/.test(sinEsp(v)), v => /^:not\(:hover\)$/.test(sinEsp(v))],
+ html:`<div class="fila"><div class="carta"></div><div class="carta"></div><div class="carta"></div></div>`, base:"body{padding:2rem 1rem}",
+ pista:"El primer hueco empieza con dos puntos y es la pseudoclase que «mira dentro»: :has(…). El segundo es la que niega: :not(…). Las dos llevan :hover dentro."},
+{id:"linterna", t:"La linterna bizca", h:"#1a3fd1",
+ enun:"La linterna se mueve bien en el centro, pero no en los lados. La rejilla tiene <b>3 columnas</b> (9 celdas). Escribe la fórmula de <code>nth-child</code> de la <b>columna izquierda</b> (celdas 1, 4 y 7) y la de la <b>derecha</b> (3, 6 y 9).",
+ css:`.caja {
+  position: relative;
+  height: 240px;
+  background: radial-gradient(circle 70px at var(--x, 50%) var(--y, 50%), #f8b800 0 40%, #16121f 100%);
+}
+.rejilla {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.caja:has(i:nth-child([[0]]):hover) { --x: 15%; }
+.caja:has(i:nth-child(3n+2):hover) { --x: 50%; }
+.caja:has(i:nth-child([[1]]):hover) { --x: 85%; }
+.caja:has(i:nth-child(-n+3):hover) { --y: 15%; }
+.caja:has(i:nth-child(n+4):nth-child(-n+6):hover) { --y: 50%; }
+.caja:has(i:nth-child(n+7):hover) { --y: 85%; }`, w:[6, 6], ok:[v => /^3n\+1$/.test(sinEsp(v)), v => /^3n(\+0|\+3)?$/.test(sinEsp(v))],
+ html:`<div class="caja"><div class="rejilla"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`, base:"body{margin:0}",
+ pista:"Mira la del centro: 3n+2 da 2, 5, 8. Para 1, 4, 7 cambia el número que se suma. Para 3, 6, 9 basta con «3n» (o 3n+3)."},
+{id:"tubo", t:"La seta que sale de golpe", h:"#b86800",
+ enun:"La ventanita aparece de golpe y al cerrarse desaparece sin fundido. Rellena: que <code>display</code> <b>espere al final</b> de la transición y la regla que dice <b>desde dónde sale</b> al abrirse.",
+ css:`#seta {
+  padding: 1rem;
+  border: 4px solid #16121f;
+  opacity: 0;
+  translate: 0 40px;
+  transition: opacity 0.5s, translate 0.5s, display 0.5s [[0]], overlay 0.5s allow-discrete;
+}
+#seta:popover-open {
+  opacity: 1;
+  translate: 0 0;
+}
+[[1]] {
+  #seta:popover-open {
+    opacity: 0;
+    translate: 0 40px;
+  }
+}`, w:[14, 15], ok:[/^allow-discrete$/, /^@starting-style$/],
+ html:`<button popovertarget="seta">Abrir</button><div id="seta" popover>¡Una seta! <button popovertarget="seta" popovertargetaction="hide">Cerrar</button></div>`, base:"body{padding:1rem;font:700 1.1rem system-ui}",
+ pista:"El primero es la misma palabra que ya lleva overlay. El segundo es una regla con arroba que habla del «estilo de salida» (starting style)."},
+{id:"dedos", t:"El mando torpe", h:"#5b5470",
+ enun:"En el móvil, pulsar dos veces rápido el botón A hace zoom y mantenerlo selecciona la letra. Rellena: que <b>no haya zoom por doble toque</b> y que el texto <b>no se pueda seleccionar</b>.",
+ css:`.mando button {
+  min-width: 3.5rem;
+  min-height: 3.5rem;
+  font: 900 1.4rem monospace;
+  color: #fff;
+  background-color: #e3262b;
+  border: 0;
+  border-radius: 50%;
+  touch-action: [[0]];
+  -webkit-user-select: none;
+  user-select: [[1]];
+}`, w:[13, 6], ok:[/^manipulation$/, /^none$/],
+ html:`<div class="mando"><button>A</button> <button>B</button></div>`, base:"body{padding:2rem 1rem}",
+ pista:"touch-action tiene un valor pensado justo para botones: deja desplazar y hacer zoom con dos dedos, pero no el doble toque. Para no seleccionar, el valor es el mismo que en la línea de -webkit-."}
+];
+
+const FIX = [
+ {q:"En el móvil, el botón se queda levantado después de tocarlo.",code:".boton:hover {\n  translate: 0 -4px;\n}",o:["Falta meter el efecto dentro de @media (hover: hover)","translate no funciona en móviles","Hay que usar :active en lugar de :hover siempre"],a:0,e:"En pantallas táctiles el primer toque activa :hover y se queda pegado. Con @media (hover: hover) el efecto solo existe donde hay ratón."},
+ {q:"Con el teclado no se sabe en qué botón estás.",code:"button:focus {\n  outline: none;\n}",o:["Se ha quitado el contorno de foco sin poner otro: usa :focus-visible con un outline propio","Los botones no reciben el foco","Falta tabindex=\"5\""],a:0,e:"Quitar el outline está bien solo si pones otra marca visible. Y nunca tabindex positivo."},
+ {q:"El bloque no se hunde al pulsarlo.",code:".bloque:active {\n  translate: 0 -12px;\n}\n.bloque:hover {\n  translate: 0 0;\n}",o:["El :hover va después y gana: mientras pulsas también estás encima. Pon :active el último","translate no funciona con :active","Falta !important en :hover"],a:0,e:"Misma especificidad: gana la última regla. Orden LoVe HAte: link, visited, hover, focus, active."},
+ {q:"En el móvil, la página ya no se desplaza ni deja hacer zoom.",code:"body {\n  touch-action: none;\n}",o:["touch-action: none en el body anula desplazamiento y zoom: aplícalo solo al elemento que lo necesita","Falta overflow: auto","El móvil no entiende touch-action"],a:0,e:"none quita al navegador todos los gestos del dedo. Para botones basta manipulation."},
+ {q:"El globo de ayuda aparece de golpe, sin fundido.",code:".globo {\n  display: none;\n  opacity: 0;\n  transition: opacity 0.3s;\n}\n.ayuda:hover .globo {\n  display: block;\n  opacity: 1;\n}",o:["Falta @starting-style con opacity: 0 (y display … allow-discrete para la salida)","opacity no se puede transicionar","Hay que usar visibility en vez de display"],a:0,e:"Al salir de display: none no hay «antes»: @starting-style se lo da. allow-discrete retrasa el cambio de display al cerrar."},
+ {q:"Pusimos la rejilla de celdas en la tarjeta y ahora su botón no se puede pulsar.",code:".rejilla {\n  position: absolute;\n  inset: 0;\n  z-index: 5;\n}",o:["La rejilla tapa el botón: dale al botón position: relative y un z-index mayor","Las celdas <i> no admiten :hover","Falta pointer-events: auto en las celdas"],a:0,e:"Lo que está debajo de la rejilla no recibe clics. Lo pulsable va por encima."}
+];
+
+const TEST = [
+ {q:"¿Qué dice <code>@media (hover: none)</code>?",o:["Que el puntero principal no puede posarse encima sin pulsar (lo típico con el dedo)","Que el usuario ha desactivado los efectos","Que la pantalla mide menos de 768 px"],a:0,e:"Habla de lo que puede hacer el puntero, no del tamaño de la pantalla."},
+ {q:"¿Qué diferencia hay entre <code>hover</code> y <code>any-hover</code>?",o:["hover mira el puntero principal; any-hover, todos los conectados","Ninguna","any-hover solo funciona en Safari"],a:0,e:"Una tableta táctil con ratón Bluetooth: hover: none, pero any-hover: hover."},
+ {q:"¿Por qué <code>:focus-visible</code> y no <code>:focus</code> para el contorno?",o:["Porque solo se muestra cuando conviene, sobre todo al llegar con el teclado, y no tras cada clic","Porque :focus está obsoleto","Porque :focus no funciona en botones"],a:0,e:"Quien usa ratón no ve el contorno al hacer clic; quien usa teclado, sí."},
+ {q:"Tienes <code>:active</code> antes que <code>:hover</code> en el CSS. ¿Qué pasa al pulsar?",o:["El efecto de :active no se ve: gana :hover, que va después","Se ven los dos mezclados","El botón no se puede pulsar"],a:0,e:"Mientras pulsas también estás encima. Orden recomendado: link, visited, hover, focus, active."},
+ {q:"¿Qué selecciona <code>.fila:has(.carta:hover) .carta:not(:hover)</code>?",o:["Las cartas de una fila que tiene una carta bajo el ratón, menos esa carta","La carta que está bajo el ratón","Todas las filas"],a:0,e:"Primero la fila que tiene una carta con hover; luego, dentro, las que no la tienen."},
+ {q:"En una rejilla de 5 columnas, ¿qué celdas son la primera columna?",o:["nth-child(5n+1)","nth-child(-n+5)","nth-child(n+5)"],a:0,e:"5n+1 = 1, 6, 11, 16, 21. (-n+5 es la primera fila.)"},
+ {q:"¿Por qué se registra <code>--x</code> con <code>@property</code> en el truco de la linterna?",o:["Para que el navegador sepa que es un porcentaje y pueda transicionarlo: si no, salta","Porque sin @property las variables no funcionan en :has()","Para que funcione en móviles"],a:0,e:"Una variable sin tipo no se interpola: cambia de golpe."},
+ {q:"¿Qué hacen <code>@starting-style</code> y <code>allow-discrete</code>?",o:["@starting-style da el punto de partida al aparecer; allow-discrete retrasa el cambio de display hasta el final de la transición","Los dos desactivan las animaciones","Sirven solo para el scroll"],a:0,e:"Juntos permiten animar la entrada y la salida de algo que estaba con display: none."},
+ {q:"¿Qué hace <code>&lt;a href=\"…\" interestfor=\"ficha\"&gt;</code> en noviembre de 2026?",o:["En Chrome y Edge abre el popover #ficha al posarse encima (o al llegar con el teclado); en Safari y Firefox el enlace funciona normal y no abre nada","Abre la ficha en todos los navegadores","Impide que el enlace navegue"],a:0,e:"Es experimental: úsalo solo como extra, con algo que funcione sin él."},
+ {q:"¿Para qué <code>touch-action: manipulation</code> en un botón?",o:["Para quitar el zoom por doble toque y que responda al instante","Para que el botón no se pueda pulsar","Para que se pueda arrastrar"],a:0,e:"Deja desplazarse y hacer zoom con dos dedos, pero sin la espera del doble toque."}
+];
+
+/* =====================================================================
+   MOTOR DE ISLA HOVER
+   ===================================================================== */
+(() => {
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- resaltado de código ---------- */
+function hlCssLinea(code) {
+  const decl = s => s.replace(/([\w-]+)(\s*:\s*)([^;]*)(;?)/g, (m, p, c, v, f) => `<span class="h-p">${p}</span>${c}<span class="h-v">${v}</span>${f}`);
+  let m;
+  if (/^\s*@/.test(code)) return code.replace(/(@[\w-]+)/, '<span class="h-at">$1</span>');
+  if ((m = code.match(/^(\s*)([^{]+)\{(.*)\}(\s*)$/))) return `${m[1]}<span class="h-s">${m[2]}</span>{${decl(m[3])}}${m[4]}`;
+  if (code.includes("{")) return code.replace(/^(\s*)([^{]*)\{/, '$1<span class="h-s">$2</span>{');
+  if (/^\s*[\w-]+\s*:/.test(code)) return decl(code);
+  return code;
+}
+const hlCss = src => esc(src).split("\n").map(l => { const i = l.indexOf("/*"); return i < 0 ? hlCssLinea(l) : hlCssLinea(l.slice(0, i)) + `<span class="h-c">${l.slice(i)}</span>`; }).join("\n");
+const hlHtml = src => esc(src).replace(/(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g, (m, a, t, at, z) => `${a}<span class="h-t">${t}</span>${at.replace(/([\w-:]+)(=)(&quot;.*?&quot;)/g, '<span class="h-a">$1</span>$2<span class="h-q">$3</span>')}${z}`);
+let nCaja = 0;
+function cajaCodigo(lang, src, titulo) {
+  const c = el("div", "caja"), id = "cod" + (++nCaja);
+  c.innerHTML = `<div class="caja-t">${esc(titulo)} <button class="copiar" type="button" data-copia="${id}">Copiar</button></div><pre id="${id}">${lang === "css" ? hlCss(src) : hlHtml(src)}</pre>`;
+  return c;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copiar"); if (!b) return; const n = document.getElementById(b.dataset.copia);
+  (navigator.clipboard ? navigator.clipboard.writeText(n.textContent) : Promise.reject()).then(() => { b.textContent = "¡Copiado!"; setTimeout(() => b.textContent = "Copiar", 1400); },
+    () => { const r = document.createRange(); r.selectNodeContents(n); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Ctrl + C"; });
+});
+
+/* ---------- ejemplos en vivo (iframe perezoso) ---------- */
+const BASE = "body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;color:#222;background:#fff}";
+const doc = (h, c) => `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}</style><style>${c}</style></head><body>${h}</body></html>`;
+const perezosos = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting && x.target._doc) { x.target.srcdoc = x.target._doc; x.target._doc = null; perezosos.unobserve(x.target); } }), { rootMargin: "500px" });
+function iframe(h, c, alto, titulo, ajusta) {
+  const f = el("iframe"); f.title = titulo; f._doc = doc(h, ajusta ? c : "html{overflow:hidden}" + c); /* las vistas del catálogo no deben mostrar barras */ if (alto) f.style.setProperty("--alto", alto + "px");
+  if (ajusta) f.addEventListener("load", () => { try { const d = f.contentDocument, a = () => f.style.setProperty("--alto", Math.min(Math.max(alto, d.documentElement.scrollHeight), 760) + "px"); a(); setTimeout(a, 500); } catch (e) {} });
+  perezosos.observe(f); return f;
+}
+$$(".ejemplo").forEach(ej => {
+  const [h, c] = ["html", "css"].map(l => (ej.querySelector(`.src[data-lang="${l}"]`) || {}).value || "");
+  const vivo = el("div", "ej-vivo"); vivo.append(iframe(h, c, +ej.dataset.alto || 220, "Ejemplo: " + ej.dataset.t, true));
+  const cod = el("div", "ej-codigo"); if (h) cod.append(cajaCodigo("html", h, "HTML")); cod.append(cajaCodigo("css", c, "CSS"));
+  ej.append(el("div", "ej-cab", `<span>${esc(ej.dataset.t)}</span><span>en vivo</span>`), vivo, cod);
+});
+
+/* ---------- menú y progreso ---------- */
+const ZONAS = $$("[data-nav]"), ul = $("#navUl");
+ZONAS.forEach(z => { const li = el("li"); li.innerHTML = `<a href="#${z.id}">${esc(z.dataset.nav)}</a>`; ul.append(li); });
+$("#navL").onclick = () => ul.scrollBy({ left: -240, behavior: "smooth" }); $("#navR").onclick = () => ul.scrollBy({ left: 240, behavior: "smooth" });
+const links = $$("a", ul); let actual = -1;
+function alScroll() {
+  const vh = innerHeight, tot = document.documentElement.scrollHeight - vh; $("#prog").style.scale = `${tot > 0 ? scrollY / tot : 0} 1`;
+  let i = 0; ZONAS.forEach((z, k) => { if (z.getBoundingClientRect().top < vh * .4) i = k; });
+  if (i !== actual) { actual = i; links.forEach((a, k) => a.setAttribute("aria-current", k === i)); const a = links[i]; ul.scrollTo({ left: a.offsetLeft - ul.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" }); }
+}
+let pend = false; addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; alScroll(); }); } }, { passive: true }); alScroll();
+
+/* ---------- sprites (dibujados desde las rejillas de SPR) ---------- */
+const sprite = frames => {
+  const w = frames[0][0].length, h = frames[0].length, cv = document.createElement("canvas"); cv.width = w * frames.length; cv.height = h;
+  const g = cv.getContext("2d"); frames.forEach((f, k) => f.forEach((fila, y) => [...fila].forEach((ch, x) => { if (PAL[ch]) { g.fillStyle = PAL[ch]; g.fillRect(k * w + x, y, 1, 1); } })));
+  return cv.toDataURL();
+};
+for (const n in SPR) document.documentElement.style.setProperty("--spr-" + n, `url(${sprite(SPR[n])})`);
+
+/* ---------- partida guardada ---------- */
+const CLAVE = "isla6:partida";
+let E = { mon: {}, mis: {}, misv: {}, test: 0, sfx: false };
+try { E = Object.assign(E, JSON.parse(localStorage.getItem(CLAVE)) || {}); } catch (e) {}
+const guarda = () => { try { localStorage.setItem(CLAVE, JSON.stringify(E)); } catch (e) {} };
+
+/* ---------- sonido (apagado por defecto) ---------- */
+let AC = null;
+const pita = (notas, dur = .07) => { if (!E.sfx) return; try { AC = AC || new AudioContext(); notas.forEach((f, i) => { const o = AC.createOscillator(), v = AC.createGain(); o.type = "square"; o.frequency.value = f; v.gain.value = .05; o.connect(v).connect(AC.destination); const t = AC.currentTime + i * dur; o.start(t); o.stop(t + dur * .9); }); } catch (e) {} };
+const bSon = $("#sonido"); bSon.setAttribute("aria-pressed", E.sfx); bSon.onclick = () => { E.sfx = !E.sfx; bSon.setAttribute("aria-pressed", E.sfx); guarda(); pita([660, 880]); };
+
+/* ---------- monedas ---------- */
+const VIRTUALES = ["s-puntero"];
+const MONEDAS = [...new Set([...$$(".moneda").map(m => m.dataset.id), ...VIRTUALES])];
+const valor = id => id.startsWith("s-") ? 50 : 10;
+const puntos = () => Object.keys(E.mon).filter(id => MONEDAS.includes(id)).reduce((s, id) => s + valor(id), 0) + Object.keys(E.mis).length * 100 + E.test * 20;
+const MAX = MONEDAS.reduce((s, id) => s + valor(id), 0) + MISIONES.length * 100 + TEST.length * 20;
+function hud() {
+  $("#hudScore").textContent = String(puntos()).padStart(6, "0");
+  $("#hudMon").textContent = Object.keys(E.mon).filter(id => MONEDAS.includes(id)).length; $("#hudMonT").textContent = MONEDAS.length;
+  $("#hudEst").textContent = Object.keys(E.mis).length; $("#hudEstT").textContent = MISIONES.length;
+  pintaFin();
+}
+const flota = (x, y, txt) => { const p = el("span", "punto", txt); p.style.left = x + "px"; p.style.top = y + "px"; document.body.append(p); setTimeout(() => p.remove(), 950); };
+function coge(id, x, y) {
+  if (E.mon[id]) return; E.mon[id] = 1; guarda(); hud();
+  const s = el("span", "salta"); s.style.left = x + "px"; s.style.top = y - 30 + "px"; document.body.append(s); setTimeout(() => s.remove(), 750);
+  flota(x + 30, y - 20, "+" + valor(id)); pita(id.startsWith("s-") ? [988, 1319, 1568, 2093] : [988, 1319]);
+  $$(`.moneda[data-id="${id}"]`).forEach(m => m.classList.add("cogida"));
+}
+$$(".moneda").forEach(m => {
+  if (E.mon[m.dataset.id]) m.classList.add("cogida"); m.type = "button";
+  m.addEventListener("click", () => { const r = m.getBoundingClientRect(); if (m.classList.contains("bloque-q") && !E.mon[m.dataset.id]) { m.classList.remove("golpe"); void m.offsetWidth; m.classList.add("golpe"); } coge(m.dataset.id, r.left + r.width / 2 - 14, r.top); });
+});
+/* Puntero: cinco toques dan premio */
+{ let n = 0; $("#puntero").addEventListener("click", e => { pita([440 + n * 110]); if (++n === 5) coge("s-puntero", e.clientX, e.clientY); }); }
+
+/* ---------- misiones ---------- */
+const norma = v => v.trim().replace(/\s+/g, " ").replace(/;$/, "").toLowerCase();
+MISIONES.forEach((m, k) => {
+  const host = $(`.mision-host[data-m="${m.id}"]`); if (!host) return;
+  const art = el("article", "mision"); art.id = "mis-" + m.id;
+  let cod = hlCss(m.css); m.w.forEach((w, n) => { cod = cod.replace(`[[${n}]]`, `<input type="text" spellcheck="false" autocomplete="off" aria-label="Hueco ${n + 1} de la misión" style="--w:${w + 2}ch" data-n="${n}">`); });
+  art.innerHTML = `<div class="mis-cab"><span class="bug" aria-hidden="true"></span><div><small>MISIÓN ${k + 1} DE ${MISIONES.length}</small><h4>${esc(m.t)}</h4></div></div>
+    <div class="mis-cuerpo"><div><p class="enun">${m.enun}</p><div class="mis-codigo">${cod}</div><p class="mis-estado" aria-live="polite">Escribe en los huecos amarillos. La vista se actualiza sola.</p>
+    <div class="mis-botones"><button class="boton sec peq" type="button">PISTA</button></div><div class="mis-pista">${m.pista}</div></div><div class="mis-vivo"></div></div>`;
+  host.replaceWith(art);
+  const ins = $$("input", art), est = $(".mis-estado", art), f = el("iframe"); f.title = "Vista de la misión: " + m.t; $(".mis-vivo", art).append(f);
+  $(".mis-botones button", art).onclick = () => $(".mis-pista", art).classList.toggle("ver");
+  const pinta = () => { let c = m.css; ins.forEach((x, n) => { c = c.replace(`[[${n}]]`, x.value.replace(/[;{}<]/g, "")); }); f.srcdoc = doc(m.html, m.base + c); };
+  const bien = () => ins.every((x, n) => { const v = norma(x.value), t = m.ok[n]; return typeof t === "function" ? t(v) : t.test(v); });
+  const gana = nuevo => { art.classList.add("ganada"); est.textContent = nuevo ? "¡Bloque arreglado! +100 · Estrella conseguida" : "Misión superada. Estrella en el bolsillo."; ins.forEach(x => x.readOnly = true); };
+  let t; ins.forEach(x => x.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => {
+    pinta(); if (art.classList.contains("ganada")) return;
+    if (bien()) { E.mis[m.id] = 1; E.misv[m.id] = ins.map(i => i.value); guarda(); gana(true); hud(); pita([523, 659, 784, 1047], .09); const r = art.getBoundingClientRect(); flota(r.left + 40, r.top + 20, "+100"); }
+    else if (ins.every(i => i.value.trim())) est.textContent = "Todavía no. Mira la vista: ¿hace lo que pide el enunciado?";
+  }, 350); }));
+  if (E.mis[m.id]) { (E.misv[m.id] || []).forEach((v, n) => { if (ins[n]) ins[n].value = v; }); gana(false); }
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { pinta(); o.disconnect(); } }, { rootMargin: "400px" }).observe(art);
+});
+
+/* ---------- meta: la bandera sube con los puntos ---------- */
+const RANGOS = [[0, "Aprendiz de puntero"], [250, "Saltador de bloques"], [600, "Explorador de la isla"], [900, "Maestro del hover"], [1150, "Leyenda de Isla Hover"]];
+function pintaFin() {
+  const p = puntos(), cog = Object.keys(E.mon).filter(id => MONEDAS.includes(id)), sec = cog.filter(id => id.startsWith("s-")).length, totSec = MONEDAS.filter(id => id.startsWith("s-")).length;
+  $("#finScore").textContent = String(p).padStart(6, "0");
+  $("#finRango").textContent = "Rango: " + RANGOS.filter(r => p >= r[0]).pop()[1];
+  $("#finDesglose").innerHTML = `<span>Monedas</span><b>${cog.length - sec}/${MONEDAS.length - totSec}</b><span>Secretas</span><b>${sec}/${totSec}</b><span>Estrellas</span><b>${Object.keys(E.mis).length}/${MISIONES.length}</b><span>Mejor test</span><b>${E.test}/${TEST.length}</b>`;
+  $("#bandera").style.setProperty("--alza", Math.min(1, p / MAX).toFixed(3));
+}
+$("#borraPartida").onclick = () => { if (!confirm("¿Borrar tus monedas, estrellas y aciertos?")) return; E = Object.assign(E, { mon: {}, mis: {}, misv: {}, test: 0 }); guarda(); location.reload(); };
+/* ---------- errores y test ---------- */
+function bloque(host, lista, alPuntuar) {
+  const h = $(host), cards = [];
+  lista.forEach((it, i) => {
+    const c = el("div", "q"); c.innerHTML = `<p class="qq">${i + 1}. ${it.q}</p>`; if (it.code) c.append(cajaCodigo("css", it.code, "CSS"));
+    const ops = el("div"); it.o.map((_, k) => k).sort(() => Math.random() - .5).forEach(k => { const l = el("label", "opt"); l.innerHTML = `<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${esc(it.o[k])}</span>`; ops.append(l); });
+    const ex = el("div", "ex", it.e); c.append(ops, ex);
+    c.corrige = () => { $$(".opt", c).forEach(l => { l.classList.remove("right", "wrong"); const v = +$("input", l).value; if (v === it.a) l.classList.add("right"); else if ($("input", l).checked) l.classList.add("wrong"); }); ex.classList.add("show"); };
+    c.limpia = () => { $$("input", c).forEach(x => x.checked = false); $$(".opt", c).forEach(l => l.classList.remove("right", "wrong")); ex.classList.remove("show"); };
+    c.bien = () => { const s = $("input:checked", c); return !!s && +s.value === it.a; };
+    ops.addEventListener("change", () => { c.corrige(); alPuntuar && alPuntuar(); }); cards.push(c); h.append(c);
+  });
+  return cards;
+}
+bloque("#fixes", FIX);
+{ let cards; const up = () => { const n = cards.filter(c => c.bien()).length; $("#qScore").textContent = `${n} / ${TEST.length}` + (n === TEST.length ? " · ¡castillo superado!" : ""); };
+  cards = bloque("#quiz", TEST, up); $("#qAll").onclick = () => { cards.forEach(c => c.corrige()); up(); }; $("#qReset").onclick = () => { cards.forEach(c => c.limpia()); up(); }; }
+/* ---------- el test suma puntos: se guarda el mejor resultado ---------- */
+{
+  const aciertos = () => $$("#quiz .q").filter(q => { const s = $("input:checked", q); return s && s.closest(".opt").classList.contains("right"); }).length;
+  const up = () => { const n = aciertos(); if (n > E.test) { E.test = n; guarda(); hud(); if (n === TEST.length) { pita([392, 523, 659, 784, 1047, 1319], .08); const r = $("#quiz").getBoundingClientRect(); flota(r.left + 40, Math.max(80, r.top), "¡CASTILLO SUPERADO!"); } } };
+  $("#quiz").addEventListener("change", up); $("#qAll").addEventListener("click", up);
+}
+hud();
+})();
+
+</script>
+</body>
+</html>
