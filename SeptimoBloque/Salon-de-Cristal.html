@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El salón de cristal · details, dialog, template y slot</title>
+<meta name="description" content="Bloque 07 · parte 2. Interactividad nativa: details y summary (acordeón de preguntas, exclusivo y animado), dialog modal con command y showModal(), ::backdrop, template y slot sin JavaScript.">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%92%8E%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   EL SALÓN DE CRISTAL · noche de gala: champán, cuarzo rosa y ámbar
+   ===================================================================== */
+:root{
+  --noche:#150b18; --noche-2:#22122a; --champan:#f3d6a4; --champan-2:#ffe9c4; --cuarzo:#f2a7bd; --ambar:#ffb36b; --violeta:#9b7bd8;
+  --texto:#f7ecf0; --suave:#c9b3c2; --borde:rgb(243 214 164 / 28%); --borde-2:rgb(243 214 164 / 55%);
+  --vidrio:rgb(255 236 225 / 6%); --vidrio-2:rgb(255 236 225 / 11%); --brillo:rgb(255 240 220 / 35%);
+  --oro:linear-gradient(115deg, var(--champan-2), var(--champan) 30%, var(--cuarzo) 65%, var(--ambar));
+  --radio:20px; --radio-s:12px; --esp:clamp(1rem, .8rem + 1vw, 1.6rem);
+  --f-tit:'Italiana', 'Didot', Georgia, serif; --f-txt:'Outfit', system-ui, sans-serif; --f-code:'JetBrains Mono', ui-monospace, monospace;
+  --ancho:min(1120px, 100% - 2rem); --codigo:#0e0711;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.4rem}
+body{margin:0;min-height:100vh;color:var(--texto);background:var(--noche);font:400 clamp(1rem, .96rem + .2vw, 1.08rem)/1.7 var(--f-txt);overflow-x:clip}
+/* luz cálida de las lámparas: tres focos fijos */
+body::before{content:"";position:fixed;inset:-10vmax;z-index:-2;pointer-events:none;
+  background:radial-gradient(34vmax 28vmax at 50% -4%, rgb(243 214 164 / 26%), transparent 70%), radial-gradient(30vmax 26vmax at 92% 40%, rgb(242 167 189 / 16%), transparent 70%),
+  radial-gradient(32vmax 28vmax at 6% 75%, rgb(255 179 107 / 12%), transparent 70%), linear-gradient(var(--noche), var(--noche-2))}
+/* haces de luz que caen desde arriba, muy tenues */
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background:conic-gradient(from 160deg at 50% -10%, transparent 0deg, rgb(255 233 196 / 7%) 8deg, transparent 16deg, transparent 22deg, rgb(242 167 189 / 6%) 28deg, transparent 36deg, transparent 44deg, rgb(255 233 196 / 5%) 50deg, transparent 58deg)}
+a{color:var(--champan);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--champan);outline-offset:3px;border-radius:6px}
+code{font-family:var(--f-code);font-size:.84em;background:var(--vidrio-2);border:1px solid var(--borde);padding:.04em .38em;border-radius:7px;color:var(--champan-2)}
+.skip{position:fixed;left:1rem;top:-4rem;z-index:999;background:var(--champan);color:var(--noche);padding:.6rem 1rem;border-radius:10px;transition:top .2s}
+.skip:focus{top:1rem}
+.wrap{width:var(--ancho);margin-inline:auto}
+
+/* ----- el vidrio de la casa: cálido, con filo dorado ----- */
+.vidrio{position:relative;background:linear-gradient(160deg, var(--vidrio-2), var(--vidrio));border:1px solid var(--borde);border-radius:var(--radio);
+  box-shadow:inset 0 1px 0 var(--brillo), 0 24px 60px -30px rgb(0 0 0 / 70%), 0 0 40px -20px rgb(243 214 164 / 25%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+/* destello que cruza el filo de arriba */
+.vidrio::before{content:"";position:absolute;left:12%;right:12%;top:-1px;height:1px;background:linear-gradient(90deg, transparent, var(--champan-2), transparent);opacity:.9;pointer-events:none}
+
+/* ----- menú ----- */
+.nav{position:sticky;top:0;z-index:60;background:rgb(21 11 24 / 72%);border-bottom:1px solid var(--borde);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.nav-in{display:flex;align-items:center;gap:.4rem;width:min(1240px, 100% - 1rem);margin-inline:auto}
+.nav ul{display:flex;gap:.2rem;list-style:none;margin:0;padding:.55rem 0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:block;white-space:nowrap;text-decoration:none;color:var(--suave);font:500 .88rem/1 var(--f-txt);letter-spacing:.04em;padding:.55rem .9rem;border-radius:999px;border:1px solid transparent;transition:color .25s, border-color .25s, background .25s}
+.nav a:hover{color:var(--texto);border-color:var(--borde)}
+.nav a[aria-current="true"]{color:var(--noche);background:var(--oro);border-color:transparent;font-weight:600}
+.nav-arr{flex:none;width:2.3rem;height:2.3rem;display:grid;place-items:center;border-radius:50%;border:1px solid var(--borde);background:var(--vidrio);color:var(--champan);cursor:pointer}
+.nav-arr:hover{background:var(--vidrio-2)}
+.prog{height:2px;background:var(--oro);transform-origin:left;scale:0 1}
+
+/* ----- portada: la lámpara de araña ----- */
+.portada{position:relative;min-height:min(90vh, 780px);display:grid;align-items:center;padding:5rem 0 3rem;text-align:center;overflow:hidden}
+.lampara{position:absolute;inset:0 0 auto;height:38%;display:flex;justify-content:center;gap:clamp(.8rem, 3vw, 2.6rem);pointer-events:none}
+.gota{position:relative;width:2px;height:var(--h);background:linear-gradient(var(--borde-2), transparent);animation:mece 6s ease-in-out infinite alternate;animation-delay:var(--d, 0s);transform-origin:top}
+.gota::after{content:"";position:absolute;left:50%;bottom:-6px;width:var(--t, 16px);aspect-ratio:.62;translate:-50% 0;border-radius:50% 50% 50% 50% / 62% 62% 38% 38%;
+  background:radial-gradient(circle at 35% 30%, #fff 0 8%, transparent 22%), linear-gradient(160deg, var(--champan-2), var(--cuarzo) 55%, var(--violeta));
+  box-shadow:0 0 18px rgb(255 233 196 / 55%), 0 0 40px rgb(242 167 189 / 30%);opacity:.92}
+@keyframes mece{to{rotate:1.6deg}}
+.portada .wrap{position:relative;z-index:1}
+.sello{display:inline-block;font:500 .74rem/1 var(--f-txt);letter-spacing:.32em;text-transform:uppercase;color:var(--champan);padding:.6rem 1rem;border-radius:999px;border:1px solid var(--borde)}
+.titulo{font:400 clamp(3.4rem, 2rem + 7vw, 7.4rem)/.95 var(--f-tit);letter-spacing:.02em;margin:1.4rem 0 1rem;background:var(--oro);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 24px rgb(243 214 164 / 30%))}
+.lead{max-width:60ch;margin-inline:auto;color:var(--suave);font-size:1.12rem;font-weight:300}
+.ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:1.8rem}
+.boton{display:inline-flex;align-items:center;gap:.5rem;font:600 .95rem/1 var(--f-txt);letter-spacing:.04em;text-decoration:none;color:var(--texto);padding:.95rem 1.5rem;border-radius:999px;border:1px solid var(--borde-2);
+  background:var(--vidrio-2);box-shadow:inset 0 1px 0 var(--brillo);cursor:pointer;transition:translate .2s, box-shadow .2s}
+.boton:hover{translate:0 -2px;box-shadow:inset 0 1px 0 var(--brillo), 0 0 26px -6px rgb(243 214 164 / 55%)}
+.boton:active{translate:0 1px}
+.boton.pri{background:var(--oro);color:var(--noche);border-color:transparent}
+.boton.peq{padding:.6rem 1rem;font-size:.85rem}
+@media (prefers-reduced-motion: reduce){ .gota{animation:none} }
+
+/* ----- secciones ----- */
+.sec{padding:clamp(3rem, 2rem + 4vw, 5.5rem) 0}
+.cab{display:flex;align-items:center;gap:1.1rem;margin-bottom:1.6rem}
+.cab .num{flex:none;width:3.6rem;height:3.6rem;display:grid;place-items:center;border-radius:50%;font:400 1.5rem/1 var(--f-tit);color:var(--champan)}
+.cab small{display:block;font:500 .72rem/1 var(--f-txt);letter-spacing:.26em;text-transform:uppercase;color:var(--cuarzo);margin-bottom:.4rem}
+.cab h2{margin:0;font:400 clamp(2.1rem, 1.5rem + 2.4vw, 3.3rem)/1.05 var(--f-tit);color:var(--champan-2)}
+h3{font:400 clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem)/1.15 var(--f-tit);color:var(--champan-2);margin:2.6rem 0 .6rem}
+h4{font:600 1rem/1.3 var(--f-txt);margin:0 0 .3rem;color:var(--texto)}
+.lectura{max-width:70ch}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr));gap:1rem;margin:1.4rem 0}
+.rejilla .vidrio{padding:1.1rem 1.2rem}
+.rejilla p{margin:0;color:var(--suave);font-size:.95rem}
+.nota{margin:1.4rem 0;padding:1rem 1.2rem 1rem 3.2rem}
+.nota::after{content:"✧";position:absolute;left:1.1rem;top:.9rem;font-size:1.3rem;color:var(--champan)}
+.nota.peligro::after{content:"⚠";color:var(--cuarzo)}
+.nota.puente::after{content:"⌁";color:var(--ambar)}
+.nota .tit{display:block;font:600 .76rem/1.2 var(--f-txt);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.25rem;color:var(--champan)}
+.tabla-scroll{overflow-x:auto;margin:1.2rem 0}
+.tabla{width:100%;border-collapse:collapse;font-size:.93rem;min-width:600px}
+.tabla th,.tabla td{text-align:left;padding:.65rem .85rem;border-bottom:1px solid var(--borde);vertical-align:top}
+.tabla th{font:600 .72rem/1.2 var(--f-txt);letter-spacing:.16em;text-transform:uppercase;color:var(--champan)}
+.tabla td:first-child{color:var(--champan-2);font-weight:600}
+
+/* ----- ejemplos y código (motor común) ----- */
+.ejemplo{margin:1.6rem 0;overflow:hidden}
+.ejemplo .src{display:none}
+.ej-cab{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1.1rem;font:500 .76rem/1.2 var(--f-txt);letter-spacing:.16em;text-transform:uppercase;color:var(--suave);border-bottom:1px solid var(--borde)}
+.ej-cab span:last-child{color:var(--champan)}
+.ej-vivo iframe{display:block;width:100%;border:0;height:var(--alto, 220px);background:#fff}
+.ej-codigo{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 330px), 1fr));background:var(--codigo)}
+.caja{min-width:0;border-top:1px solid rgb(243 214 164 / 14%)}
+.caja + .caja{border-left:1px solid rgb(243 214 164 / 10%)}
+.caja-t{display:flex;justify-content:space-between;align-items:center;padding:.5rem .9rem;font:700 .7rem/1 var(--f-code);letter-spacing:.14em;color:#b99fae;text-transform:uppercase}
+.copiar{font:700 .68rem/1 var(--f-code);color:var(--noche);background:var(--oro);border:0;padding:.42rem .75rem;border-radius:999px;cursor:pointer}
+.caja pre{margin:0;padding:.3rem 1rem 1rem;overflow:auto;max-height:480px;font:400 .82rem/1.65 var(--f-code);color:#f4e6ec;tab-size:2}
+.h-c{color:#9a8296;font-style:italic}.h-s{color:#ffd6a0}.h-p{color:#f7b8cb}.h-v{color:#e6d0ff}.h-t{color:#ffc48a}.h-a{color:#f7b8cb}.h-q{color:#d9f0c8}.h-at{color:#c9b5ff}
+
+/* ----- ¿cuál uso? ----- */
+.elige{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr));gap:1rem;margin:1.4rem 0}
+.elige .vidrio{padding:1.2rem 1.3rem}
+.elige .tag{display:inline-block;font:700 .9rem/1 var(--f-code);color:var(--noche);background:var(--oro);padding:.4rem .7rem;border-radius:999px;margin-bottom:.7rem}
+.elige p{margin:.3rem 0 0;color:var(--suave);font-size:.95rem}
+.elige b{color:var(--texto)}
+
+/* ----- errores y test (motor común) ----- */
+.q{padding:1.1rem 1.2rem;margin:.9rem 0;border-radius:var(--radio-s);background:var(--vidrio);border:1px solid var(--borde)}
+.qq{margin:0 0 .6rem;font-weight:600}
+.q .caja{border-radius:12px;overflow:hidden;background:var(--codigo);margin:.5rem 0 .7rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .7rem;border:1px solid transparent;border-radius:12px;cursor:pointer}
+.opt:hover{background:var(--vidrio-2)}
+.opt.right{border-color:#8fd6a8;background:rgb(143 214 168 / 12%)}
+.opt.wrong{border-color:var(--cuarzo);background:rgb(242 167 189 / 12%)}
+.opt input{margin-top:.45rem;accent-color:var(--champan)}
+.ex{display:none;margin-top:.6rem;padding:.6rem .9rem;border-left:3px solid var(--champan);border-radius:0 10px 10px 0;background:rgb(243 214 164 / 8%);font-size:.94rem}
+.ex.show{display:block}
+.marcador{position:sticky;top:4.2rem;z-index:5;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;padding:.5rem .5rem .5rem 1.2rem;border-radius:999px;margin-bottom:1rem;font-weight:600}
+
+.pie{padding:3rem 0 4rem;text-align:center;color:var(--suave);font-size:.9rem}
+.pie .firma{font:400 2.4rem/1 var(--f-tit);background:var(--oro);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<nav class="nav" aria-label="Salas del salón de cristal">
+  <div class="nav-in">
+    <button class="nav-arr" id="navL" type="button" aria-label="Salas anteriores">◀</button>
+    <ul id="navUl"></ul>
+    <button class="nav-arr" id="navR" type="button" aria-label="Salas siguientes">▶</button>
+  </div>
+  <div class="prog" id="prog"></div>
+</nav>
+
+<header class="portada" id="portada" data-nav="Portada">
+  <div class="lampara" aria-hidden="true">
+    <span class="gota" style="--h:38%;--t:12px;--d:-1s"></span><span class="gota" style="--h:58%;--d:-3s"></span><span class="gota" style="--h:30%;--t:10px"></span>
+    <span class="gota" style="--h:72%;--t:22px;--d:-2s"></span><span class="gota" style="--h:46%;--d:-4s"></span><span class="gota" style="--h:66%;--t:20px;--d:-1.5s"></span>
+    <span class="gota" style="--h:34%;--t:11px;--d:-2.5s"></span><span class="gota" style="--h:54%;--d:-.5s"></span><span class="gota" style="--h:28%;--t:10px;--d:-3.5s"></span>
+  </div>
+  <div class="wrap">
+    <span class="sello">Bloque 07 · parte 2</span>
+    <h1 class="titulo">El salón de cristal</h1>
+    <p class="lead">Esta noche hay gala. Las <b>vitrinas</b> se abren al tocarlas, el <b>reservado</b> corre su cortina y las <b>tarjetas</b> salen todas del mismo molde. Y casi todo lo hace el propio navegador, con HTML: <code>details</code>, <code>dialog</code>, <code>template</code> y <code>slot</code>.</p>
+    <div class="ctas"><a class="boton pri" href="#vitrinas">Entrar al salón</a><a class="boton" href="#reservado">Ir al reservado</a></div>
+  </div>
+</header>
+
+<main id="contenido">
+
+<!-- 1 · DETAILS ===================================================== -->
+<section class="sec" id="vitrinas" data-nav="1 · details y summary">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">I</span><div><small>Sala 1 · las vitrinas</small><h2>details y summary: abrir y cerrar sin código</h2></div></div>
+    <div class="lectura">
+      <p><code>&lt;details&gt;</code> es una vitrina con tapa: dentro guarda contenido escondido. Su primer hijo, <code>&lt;summary&gt;</code>, es la etiqueta de la tapa: siempre se ve y, al pulsarla, la vitrina se abre o se cierra. Sin una línea de JavaScript.</p>
+      <p>Y viene con regalos: se abre con <b>Intro</b> o <b>Espacio</b>, el lector de pantalla anuncia «contraído / expandido», y el buscador del navegador (<b>Ctrl + F</b>) abre solo la vitrina donde está la palabra que buscas.</p>
+    </div>
+    <div class="rejilla">
+      <div class="vidrio"><h4>El atributo <code>open</code></h4><p>Si lo escribes en el HTML, la vitrina empieza abierta. El navegador lo pone y lo quita al pulsar: el CSS lo lee con <code>details[open]</code>.</p></div>
+      <div class="vidrio"><h4>El triangulito es un <code>::marker</code></h4><p>Como las viñetas de una lista. Se quita con <code>list-style: none</code> <b>en el summary</b> y se dibuja otro con <code>::after</code>.</p></div>
+      <div class="vidrio"><h4>Acordeón exclusivo: <code>name</code></h4><p>Varias vitrinas con el mismo <code>name</code> forman un grupo: al abrir una, se cierra la anterior. En todos los navegadores (Chrome 120, Safari 17.2, Firefox 130).</p></div>
+    </div>
+
+    <div class="ejemplo vidrio" data-alto="330" data-t="Preguntas frecuentes: un acordeón exclusivo y estilado">
+<textarea class="src" data-lang="html"><section class="faq">
+  <details name="faq" open>
+    <summary>¿Hay que reservar mesa?</summary>
+    <p>Sí. El salón tiene sitio para cuarenta personas y se llena pronto.</p>
+  </details>
+  <details name="faq">
+    <summary>¿Cómo hay que venir vestido?</summary>
+    <p>De gala: con algo que brille, aunque sea un botón.</p>
+  </details>
+  <details name="faq">
+    <summary>¿Se puede venir con niños?</summary>
+    <p>Hasta las nueve de la noche, sí.</p>
+  </details>
+</section></textarea>
+<textarea class="src" data-lang="css">body {
+  margin: 0; /* sin margen */
+  padding: 1.5rem; /* aire alrededor */
+  font-family: system-ui, sans-serif; /* letra */
+  color: #f7ecf0; /* texto claro */
+  background-color: #1b0f1f; /* noche de gala */
+}
+.faq {
+  display: grid; /* las vitrinas, una debajo de otra */
+  gap: 0.6rem; /* separación */
+  max-width: 540px; /* ancho cómodo de leer */
+}
+details {
+  border: 1px solid rgb(243 214 164 / 35%); /* filo de champán */
+  border-radius: 14px; /* esquinas */
+  background-color: rgb(255 236 225 / 6%); /* vidrio cálido */
+}
+details[open] {
+  border-color: #f3d6a4; /* la vitrina abierta se ilumina */
+}
+summary {
+  display: flex; /* texto a un lado, icono al otro */
+  justify-content: space-between; /* separados */
+  align-items: center; /* centrados en vertical */
+  gap: 1rem; /* aire entre los dos */
+  padding: 1rem 1.2rem; /* relleno de la tapa */
+  font-weight: 600; /* la pregunta, en negrita */
+  cursor: pointer; /* manita: se puede pulsar */
+  list-style: none; /* fuera el triangulito */
+}
+summary::-webkit-details-marker {
+  display: none; /* fuera también en Safari antiguo */
+}
+summary::after {
+  content: "+"; /* nuestro icono */
+  font-size: 1.4rem; /* grande */
+  line-height: 1; /* sin aire extra */
+  color: #f3d6a4; /* champán */
+  transition: rotate 0.3s; /* gira suave */
+}
+details[open] summary::after {
+  rotate: 45deg; /* el + girado es una × */
+}
+summary:focus-visible {
+  outline: 2px solid #f3d6a4; /* el teclado ve dónde está */
+  outline-offset: -4px; /* por dentro del borde */
+  border-radius: 14px; /* con la misma curva */
+}
+details p {
+  margin: 0; /* sin márgenes */
+  padding: 0 1.2rem 1.1rem; /* alineado con la pregunta */
+  color: #c9b3c2; /* respuesta en tono suave */
+}</textarea>
+    </div>
+    <div class="nota vidrio"><span class="tit">Pruébalo</span>Abre la segunda pregunta: la primera se cierra sola, gracias a <code>name="faq"</code>. Ahora navega con el tabulador y abre con Intro: funciona igual.</div>
+
+    <h3>Animar la apertura: <code>::details-content</code></h3>
+    <div class="lectura">
+      <p>Hasta hace poco, el contenido de un <code>details</code> aparecía de golpe y no había forma de animarlo con CSS. Ahora el navegador le pone una caja propia, <code>::details-content</code> (en todos desde 2025: Chrome 131, Safari 18.4, Firefox 143), a la que se le puede cambiar la altura.</p>
+      <p>Falta una pieza: animar hasta <code>auto</code>. Eso lo permite <code>interpolate-size: allow-keywords</code>, que de momento <b>solo entiende Chrome</b> (MDN, 19-11-2026). En los demás la vitrina se abre de golpe, como siempre: es <b>mejora progresiva</b>, nadie pierde nada.</p>
+    </div>
+    <div class="ejemplo vidrio" data-alto="300" data-t="La vitrina se abre despacio">
+<textarea class="src" data-lang="html"><details class="vitrina">
+  <summary>Abrir la vitrina de las joyas</summary>
+  <p>Collar de cuarzo rosa, pendientes de ámbar y una tiara de cristal de roca con ciento doce piezas talladas a mano.</p>
+</details></textarea>
+<textarea class="src" data-lang="css">:root {
+  interpolate-size: allow-keywords; /* deja animar hasta height: auto (Chrome) */
+}
+body {
+  padding: 1.5rem; /* aire */
+  font-family: system-ui, sans-serif; /* letra */
+  color: #f7ecf0; /* texto claro */
+  background-color: #1b0f1f; /* noche */
+}
+.vitrina {
+  max-width: 460px; /* ancho */
+  border: 1px solid #f3d6a4; /* filo de champán */
+  border-radius: 14px; /* esquinas */
+  background-color: rgb(255 236 225 / 6%); /* vidrio */
+}
+.vitrina summary {
+  padding: 1rem 1.2rem; /* relleno */
+  cursor: pointer; /* manita */
+  font-weight: 600; /* negrita */
+}
+.vitrina::details-content {
+  block-size: 0; /* cerrada: altura cero */
+  overflow: hidden; /* lo que no cabe, no se ve */
+  transition: block-size 0.5s, content-visibility 0.5s allow-discrete; /* la altura, suave; el «mostrar», al final */
+}
+.vitrina[open]::details-content {
+  block-size: auto; /* abierta: la altura que necesite */
+}
+.vitrina p {
+  margin: 0; /* sin márgenes */
+  padding: 0 1.2rem 1.2rem; /* alineado con la tapa */
+  color: #c9b3c2; /* tono suave */
+}</textarea>
+    </div>
+    <div class="nota peligro vidrio"><span class="tit">Por qué no basta con height</span>Un <code>transition: height</code> en el <code>details</code> no hace nada: el contenido cerrado no está «bajito», está <b>oculto</b>, y además <code>auto</code> no se puede interpolar. Por eso hacen falta las dos piezas: la caja <code>::details-content</code> y <code>interpolate-size</code>. Y <code>content-visibility … allow-discrete</code> espera al final de la animación para esconder el contenido al cerrar.</div>
+  </div>
+</section>
+
+<!-- 2 · DIALOG ===================================================== -->
+<section class="sec" id="reservado" data-nav="2 · dialog y ::backdrop">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">II</span><div><small>Sala 2 · el reservado</small><h2>dialog: una ventana de verdad</h2></div></div>
+    <div class="lectura">
+      <p><code>&lt;dialog&gt;</code> es una ventana dentro de la página. Puede abrirse de dos maneras, y no son lo mismo:</p>
+    </div>
+    <div class="rejilla">
+      <div class="vidrio"><h4>Normal (no modal)</h4><p>Aparece en su sitio, como un bloque más. Lo de alrededor se sigue pudiendo usar. Casi nunca es lo que quieres.</p></div>
+      <div class="vidrio"><h4>Modal</h4><p>Sale <b>por encima de todo</b> (la «capa superior»), tapa la página con un velo, el resto de la página <b>no se puede tocar</b>, el foco entra en la ventana y <b>Esc</b> la cierra. Es el reservado con la cortina echada.</p></div>
+      <div class="vidrio"><h4><code>::backdrop</code></h4><p>El velo que hay entre la ventana modal y la página. Es un pseudoelemento: se le pone color, desenfoque o lo que quieras.</p></div>
+    </div>
+
+    <h3>Abrir un modal sin JavaScript: <code>command</code></h3>
+    <div class="lectura"><p>Durante años, abrir un <code>dialog</code> modal exigía JavaScript. Ya no: un botón con <code>commandfor="id-del-dialog"</code> y <code>command="show-modal"</code> lo abre, y otro con <code>command="close"</code> lo cierra. Funciona en todos los navegadores actuales: Chrome 135, Safari 26.2 y Firefox 144 (MDN, 19-11-2026). Y con <code>closedby="any"</code> también se cierra al pulsar fuera, en el velo (Chrome 134, Firefox 141, Safari 27.3).</p></div>
+    <div class="ejemplo vidrio" data-alto="340" data-t="El reservado: dialog modal con command, ::backdrop y entrada animada">
+<textarea class="src" data-lang="html"><button class="abrir" commandfor="reserva" command="show-modal">Reservar mesa</button>
+<dialog id="reserva" closedby="any">
+  <h2>Tu mesa en el salón</h2>
+  <p>Mesa 7, bajo la lámpara grande. Te esperamos a las nueve.</p>
+  <button commandfor="reserva" command="close">Cerrar</button>
+</dialog></textarea>
+<textarea class="src" data-lang="css">body {
+  min-height: 300px; /* sitio para el velo */
+  display: grid; /* para centrar el botón */
+  place-items: center; /* en el centro */
+  font-family: system-ui, sans-serif; /* letra */
+  background: radial-gradient(circle at 50% 0, #4a2a3f, #1b0f1f 70%); /* el salón de noche */
+}
+button {
+  font: 600 1rem system-ui, sans-serif; /* letra del botón */
+  padding: 0.8rem 1.4rem; /* relleno */
+  border: 1px solid #f3d6a4; /* filo de champán */
+  border-radius: 999px; /* píldora */
+  color: #1b0f1f; /* texto oscuro */
+  background-color: #f3d6a4; /* champán */
+  cursor: pointer; /* manita */
+}
+dialog {
+  max-width: 340px; /* ancho de la ventana */
+  padding: 1.6rem; /* relleno */
+  border: 1px solid rgb(243 214 164 / 60%); /* filo dorado */
+  border-radius: 22px; /* esquinas */
+  color: #f7ecf0; /* texto claro */
+  background-color: rgb(40 22 44 / 85%); /* vidrio oscuro */
+  opacity: 0; /* cerrada: invisible… */
+  scale: 0.92; /* …y algo más pequeña */
+  transition: opacity 0.35s, scale 0.35s, display 0.35s allow-discrete, overlay 0.35s allow-discrete; /* entra y sale suave */
+}
+dialog[open] {
+  opacity: 1; /* abierta: visible */
+  scale: 1; /* a su tamaño */
+}
+@starting-style {
+  dialog[open] {
+    opacity: 0; /* punto de partida al abrir */
+    scale: 0.92; /* desde un poco más pequeña */
+  }
+}
+dialog h2 {
+  margin-top: 0; /* sin hueco arriba */
+  font-weight: 400; /* título fino */
+  color: #f3d6a4; /* champán */
+}
+dialog::backdrop {
+  background-color: rgb(21 11 24 / 0%); /* el velo empieza transparente */
+  transition: background-color 0.35s, display 0.35s allow-discrete, overlay 0.35s allow-discrete; /* y se oscurece suave */
+}
+dialog[open]::backdrop {
+  background-color: rgb(21 11 24 / 70%); /* la cortina echada */
+  -webkit-backdrop-filter: blur(4px); /* Safari: desenfoca la página */
+  backdrop-filter: blur(4px); /* el resto */
+}
+@starting-style {
+  dialog[open]::backdrop {
+    background-color: rgb(21 11 24 / 0%); /* el velo también parte de cero */
+  }
+}</textarea>
+    </div>
+    <div class="nota vidrio"><span class="tit">Pruébalo</span>Abre el reservado y pulsa <b>Esc</b>, o pulsa fuera, en el velo. Mientras está abierto, intenta pulsar algo de detrás: no se puede. Todo eso lo hace el navegador.</div>
+    <div class="lectura"><p>La animación es la misma receta que viste con el popover en <a href="../SextoBloque/Isla-Hover.html#entrar">Isla Hover</a>: el estado cerrado, el abierto, <code>@starting-style</code> para el punto de partida y <code>display</code> + <code>overlay</code> con <code>allow-discrete</code> para que la salida también se vea. Lo nuevo es que <code>::backdrop</code> se anima igual.</p></div>
+
+    <h3>Un formulario que cierra la ventana: <code>method="dialog"</code></h3>
+    <div class="lectura"><p>Si dentro del <code>dialog</code> hay un <code>&lt;form method="dialog"&gt;</code>, al pulsar uno de sus botones la ventana se cierra <b>sin enviar nada a ningún servidor</b>, y el <code>value</code> del botón pulsado queda guardado en el <code>dialog</code>. Para <b>leer</b> ese valor ya hace falta JavaScript: es justo el puente de la sala siguiente.</p></div>
+  </div>
+</section>
+
+<!-- 3 · EL PUENTE A JS ===================================================== -->
+<section class="sec" id="puente" data-nav="3 · El puente a JavaScript">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">III</span><div><small>Sala 3 · la llave</small><h2>showModal() y close(): el primer puente</h2></div></div>
+    <div class="nota puente vidrio"><span class="tit">Por qué está aquí, si esto es CSS</span>El temario marcaba <code>showModal()</code> como fuera de alcance por ser JavaScript. Con <code>command</code> ya no hace falta para abrir y cerrar. Pero <b>sí</b> hace falta para todo lo demás: abrir la ventana tras cargar la página, después de un error o leer qué eligió el usuario. Son cuatro líneas y son la mejor puerta al bloque 10: por eso se incluyen <b>como excepción</b>, solo para leerlas y entenderlas.</div>
+    <div class="lectura">
+      <p>Un <code>dialog</code> tiene tres «llaves» que JavaScript puede usar:</p>
+    </div>
+    <div class="tabla-scroll vidrio"><table class="tabla">
+      <tr><th>JavaScript</th><th>Qué hace</th><th>Equivale en HTML a</th></tr>
+      <tr><td><code>ventana.showModal()</code></td><td>Abre como modal: velo, capa superior, Esc.</td><td><code>command="show-modal"</code></td></tr>
+      <tr><td><code>ventana.close()</code></td><td>Cierra. Se le puede pasar un valor: <code>close("sí")</code>.</td><td><code>command="close"</code></td></tr>
+      <tr><td><code>ventana.returnValue</code></td><td>El valor con el que se cerró (el del botón del <code>form method="dialog"</code>).</td><td>Nada: solo se puede leer con JS.</td></tr>
+    </table></div>
+    <div class="ejemplo vidrio" data-alto="300" data-t="La carta de bebidas: showModal(), form method=dialog y returnValue">
+<textarea class="src" data-lang="html"><button id="abrir">Ver la carta</button>
+<p id="eleccion">Todavía no has elegido nada.</p>
+<dialog id="carta">
+  <form method="dialog">
+    <p>¿Qué te apetece?</p>
+    <button value="champán">Champán</button>
+    <button value="zumo de granada">Zumo de granada</button>
+  </form>
+</dialog>
+<script>
+  const carta = document.querySelector("#carta");
+  document.querySelector("#abrir").addEventListener("click", () => carta.showModal());
+  carta.addEventListener("close", () => {
+    document.querySelector("#eleccion").textContent = "Has elegido: " + carta.returnValue;
+  });
+</script></textarea>
+<textarea class="src" data-lang="css">body {
+  min-height: 260px; /* sitio para la ventana */
+  padding: 1.5rem; /* aire */
+  font-family: system-ui, sans-serif; /* letra */
+  color: #f7ecf0; /* texto claro */
+  background-color: #1b0f1f; /* noche */
+}
+button {
+  font: 600 1rem system-ui, sans-serif; /* letra */
+  padding: 0.7rem 1.2rem; /* relleno */
+  margin: 0.2rem; /* separación entre botones */
+  border: 1px solid #f3d6a4; /* filo de champán */
+  border-radius: 999px; /* píldora */
+  color: #1b0f1f; /* texto oscuro */
+  background-color: #f3d6a4; /* champán */
+  cursor: pointer; /* manita */
+}
+dialog {
+  padding: 1.4rem; /* relleno */
+  border: 1px solid #f3d6a4; /* filo dorado */
+  border-radius: 20px; /* esquinas */
+  color: #f7ecf0; /* texto claro */
+  background-color: #2a1730; /* vidrio oscuro */
+}
+dialog::backdrop {
+  background-color: rgb(21 11 24 / 70%); /* el velo */
+}</textarea>
+    </div>
+    <div class="lectura">
+      <p>Léelo como una frase: «busca la carta; cuando pulsen <b>Ver la carta</b>, ábrela como modal; cuando la carta se cierre, escribe en el párrafo lo que eligieron». <code>addEventListener</code> significa «cuando pase esto, haz aquello». Lo escribirás tú en el bloque 10.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · TEMPLATE Y SLOT ===================================================== -->
+<section class="sec" id="moldes" data-nav="4 · template y slot">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">IV</span><div><small>Sala 4 · los moldes</small><h2>template y slot: piezas de un mismo molde</h2></div></div>
+    <div class="lectura">
+      <p><code>&lt;template&gt;</code> es un <b>molde</b>: el navegador lee lo que hay dentro, pero <b>no lo pinta</b>. Se usa para fabricar copias. Normalmente las fabrica JavaScript (bloque 10), pero hay una forma sin JS: <code>&lt;template shadowrootmode="open"&gt;</code> (Chrome 111, Safari 16.4, Firefox 123). Con ella, el molde se convierte en el «interior privado» de su elemento padre: su <b>sombra</b> (<i>shadow DOM</i>).</p>
+      <p><code>&lt;slot&gt;</code> es un <b>hueco</b> en el molde. Lo que escribes dentro del elemento, fuera del template, va a parar a su hueco: el que tiene <code>slot="titulo"</code> cae en <code>&lt;slot name="titulo"&gt;</code> y el resto, en el hueco sin nombre. Si no rellenas un hueco, se ve lo que el slot traía de serie.</p>
+    </div>
+    <div class="ejemplo vidrio" data-alto="300" data-t="Dos tarjetas con el mismo molde: template, slot y ::part">
+<textarea class="src" data-lang="html"><article class="pieza">
+  <template shadowrootmode="open">
+    <div part="marco">
+      <slot name="titulo">Pieza sin nombre</slot>
+      <slot>Todavía no hay descripción.</slot>
+    </div>
+  </template>
+  <h2 slot="titulo">Lámpara de araña</h2>
+  <p>Mil doscientas gotas de cristal de roca.</p>
+</article>
+<article class="pieza">
+  <template shadowrootmode="open">
+    <div part="marco">
+      <slot name="titulo">Pieza sin nombre</slot>
+      <slot>Todavía no hay descripción.</slot>
+    </div>
+  </template>
+</article></textarea>
+<textarea class="src" data-lang="css">body {
+  display: flex; /* tarjetas en fila */
+  flex-wrap: wrap; /* bajan si no caben */
+  gap: 1rem; /* separación */
+  padding: 1.5rem; /* aire */
+  font-family: system-ui, sans-serif; /* letra */
+  color: #f7ecf0; /* texto claro: la sombra lo hereda */
+  background-color: #1b0f1f; /* noche */
+}
+.pieza {
+  flex: 1 1 220px; /* las dos iguales */
+}
+.pieza::part(marco) {
+  display: grid; /* título y texto, uno encima del otro */
+  gap: 0.4rem; /* separación */
+  padding: 1.3rem; /* relleno */
+  border: 1px solid #f3d6a4; /* filo dorado */
+  border-radius: 18px; /* esquinas */
+  background-color: rgb(255 236 225 / 7%); /* vidrio */
+}
+.pieza h2 {
+  margin: 0; /* sin márgenes */
+  font-weight: 400; /* fino */
+  color: #f3d6a4; /* champán */
+}
+.pieza p {
+  margin: 0; /* sin márgenes */
+  color: #c9b3c2; /* tono suave */
+}</textarea>
+    </div>
+    <div class="nota peligro vidrio"><span class="tit">La sombra tiene paredes</span>El CSS de la página <b>no entra</b> en el shadow DOM: <code>.pieza div</code> no encuentra el marco. Para darle estilo desde fuera, el molde marca la pieza con <code>part="marco"</code> y tú la alcanzas con <code>::part(marco)</code>. Lo que sí atraviesa la pared es lo que se hereda: <code>color</code>, <code>font-family</code>… y las variables CSS. La segunda tarjeta no rellena ningún hueco: por eso enseña los textos de serie.</div>
+  </div>
+</section>
+
+<!-- 5 · CUÁL USO ===================================================== -->
+<section class="sec" id="elige" data-nav="5 · ¿Cuál uso?">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">V</span><div><small>Sala 5 · el maître</small><h2>¿details, dialog o popover?</h2></div></div>
+    <div class="lectura"><p>Los tres abren y cierran cosas. El <code>popover</code> lo viste en el bloque 3; aquí tienes cuándo elegir cada uno:</p></div>
+    <div class="elige">
+      <div class="vidrio"><span class="tag">details</span><p><b>Contenido que se despliega dentro de la página</b> y empuja lo de debajo: preguntas frecuentes, «ver más», filtros de una tienda.</p></div>
+      <div class="vidrio"><span class="tag">popover</span><p><b>Algo que flota</b> sobre la página sin bloquearla: un menú, un aviso, una ayuda. Se cierra al pulsar fuera y la página sigue usable.</p></div>
+      <div class="vidrio"><span class="tag">dialog modal</span><p><b>Algo que exige una respuesta</b> antes de seguir: confirmar un borrado, iniciar sesión, elegir una opción. Bloquea el resto de la página.</p></div>
+    </div>
+    <div class="nota vidrio"><span class="tit">Regla del maître</span>Si el usuario puede ignorarlo, no es un modal. Un modal para un simple aviso es como cerrar la puerta del salón para decir «buenas noches».</div>
+  </div>
+</section>
+
+<!-- 6 · ERRORES, TEST, CHULETA ===================================================== -->
+<section class="sec" id="errores" data-nav="6 · Arregla el código">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">VI</span><div><small>Cristales rotos</small><h2>Seis errores típicos</h2></div></div>
+    <div class="lectura"><p>Cada código tiene un fallo. Elige la explicación correcta y se corrige al momento.</p></div>
+    <div id="fixes"></div>
+  </div>
+</section>
+
+<section class="sec" id="test" data-nav="Test">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">✧</span><div><small>El brindis final</small><h2>Test final</h2></div></div>
+    <div class="marcador vidrio"><span>Aciertos: <b id="qScore">0 / 10</b></span><span><button class="boton peq" type="button" id="qAll">Corregir todo</button> <button class="boton peq" type="button" id="qReset">Otra vez</button></span></div>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+<section class="sec" id="chuleta" data-nav="Chuleta">
+  <div class="wrap">
+    <div class="cab"><span class="num vidrio">✎</span><div><small>Para llevar</small><h2>La chuleta</h2></div></div>
+    <div class="tabla-scroll vidrio"><table class="tabla">
+      <tr><th>Quiero…</th><th>Escribo</th></tr>
+      <tr><td>Contenido que se abre y se cierra</td><td><code>&lt;details&gt;&lt;summary&gt;Título&lt;/summary&gt;…&lt;/details&gt;</code></td></tr>
+      <tr><td>Que empiece abierto</td><td><code>&lt;details open&gt;</code> · en CSS: <code>details[open]</code></td></tr>
+      <tr><td>Que solo haya uno abierto</td><td>El mismo <code>name="faq"</code> en todos los <code>details</code></td></tr>
+      <tr><td>Quitar el triangulito</td><td><code>summary { list-style: none; }</code> + <code>summary::-webkit-details-marker { display: none; }</code></td></tr>
+      <tr><td>Animar la apertura</td><td><code>:root { interpolate-size: allow-keywords; }</code> + <code>::details-content</code> de <code>block-size: 0</code> a <code>auto</code></td></tr>
+      <tr><td>Abrir un modal sin JS</td><td><code>&lt;button commandfor="id" command="show-modal"&gt;</code> · cerrar: <code>command="close"</code></td></tr>
+      <tr><td>Cerrar al pulsar fuera</td><td><code>&lt;dialog closedby="any"&gt;</code></td></tr>
+      <tr><td>El velo de detrás</td><td><code>dialog::backdrop { background-color: …; backdrop-filter: blur(4px); }</code></td></tr>
+      <tr><td>Animar entrada y salida</td><td><code>transition: opacity .3s, display .3s allow-discrete, overlay .3s allow-discrete;</code> + <code>@starting-style</code></td></tr>
+      <tr><td>Abrir y leer la respuesta con JS</td><td><code>ventana.showModal()</code> · <code>ventana.close()</code> · <code>ventana.returnValue</code></td></tr>
+      <tr><td>Un molde con huecos, sin JS</td><td><code>&lt;template shadowrootmode="open"&gt;</code> con <code>&lt;slot name="…"&gt;</code> · estilo desde fuera: <code>::part()</code></td></tr>
+    </table></div>
+  </div>
+</section>
+
+</main>
+<footer class="pie">
+  <p class="firma">El salón de cristal</p>
+  <p>Bloque 07 · parte 2 · details, dialog, template y slot</p>
+  <p><a href="../index.html">Volver al índice</a> · <a href="Cisne-de-Cristal.html">Parte 1: El cisne de cristal</a></p>
+</footer>
+
+<script>
+/* ---------- errores típicos ---------- */
+const FIX = [
+ {q:"Quité el triangulito del acordeón, pero sigue apareciendo.",code:"details {\n  list-style: none;\n}",o:["El triangulito es el ::marker del summary: list-style: none va en summary (y en Safari antiguo, summary::-webkit-details-marker { display: none; })","details no admite list-style","Hay que poner display: none al details"],a:0,e:"El marcador pertenece al summary, igual que la viñeta pertenece al li y no al ul."},
+ {q:"Quería que el acordeón se abriera despacio, pero aparece de golpe.",code:"details {\n  height: 60px;\n  transition: height 0.5s;\n}\ndetails[open] {\n  height: auto;\n}",o:["auto no se interpola y el contenido cerrado está oculto: hay que animar ::details-content con interpolate-size: allow-keywords","Falta un will-change","transition no admite height"],a:0,e:"La caja que se anima es ::details-content, de block-size: 0 a auto, y auto necesita interpolate-size (Chrome). En los demás, se abre de golpe."},
+ {q:"Mi ventana sale, pero sin velo, Esc no la cierra y se puede pulsar lo de detrás.",code:"<dialog id=\"aviso\" open>\n  ¿Seguro que quieres salir?\n</dialog>",o:["El atributo open la abre en modo normal. Para que sea modal hay que abrirla con command=\"show-modal\" o con showModal()","Falta un z-index muy alto","dialog no funciona en Chrome"],a:0,e:"Solo el modo modal trae capa superior, velo (::backdrop), Esc y página inerte."},
+ {q:"El dialog se ve siempre, aunque esté cerrado.",code:"dialog {\n  display: flex;\n  gap: 1rem;\n}",o:["display: flex pisa el display: none que el navegador pone al dialog cerrado. Escríbelo en dialog[open]","gap no funciona en dialog","Falta position: fixed"],a:0,e:"El navegador esconde el dialog cerrado con display: none; si lo sobrescribes, queda siempre visible."},
+ {q:"El botón no abre la ventana y no da ningún error.",code:"<button commandfor=\"reserva\" command=\"showModal\">Reservar</button>\n<dialog id=\"reserva\">…</dialog>",o:["El valor del atributo es show-modal, con guion. showModal() es el nombre en JavaScript","Falta onclick","commandfor tiene que llevar #reserva"],a:0,e:"En HTML: command=\"show-modal\". En JavaScript: ventana.showModal(). Y commandfor lleva el id sin almohadilla."},
+ {q:"Puse el mismo name en las preguntas, pero se pueden abrir todas a la vez.",code:"<details>\n  <summary name=\"faq\">Pregunta 1</summary>\n  …\n</details>",o:["El atributo name va en el details, no en el summary","name solo funciona con tres details o más","Hay que escribir exclusive=\"true\""],a:0,e:"<details name=\"faq\">: es la vitrina la que pertenece al grupo."}
+];
+
+/* ---------- test final ---------- */
+const TEST = [
+ {q:"¿Qué elemento hace de «etiqueta» siempre visible de un <code>details</code>?",o:["summary","legend","caption"],a:0,e:"El primer hijo, summary: al pulsarlo se abre o se cierra."},
+ {q:"¿Cómo se hace que solo pueda haber un <code>details</code> abierto a la vez?",o:["Con el mismo atributo name en todos","Con JavaScript, no hay otra forma","Con details:only-child"],a:0,e:"Mismo name, mismo grupo: al abrir uno se cierra el anterior."},
+ {q:"¿Qué selector apunta a un <code>details</code> abierto?",o:["details:active","details[open]","details.open"],a:1,e:"El navegador pone y quita el atributo open."},
+ {q:"¿Qué es <code>::backdrop</code>?",o:["El velo entre un dialog modal (o un popover) y la página","El fondo de un details abierto","La sombra de un botón"],a:0,e:"Solo existe mientras hay algo en la capa superior."},
+ {q:"¿Qué trae un dialog abierto como modal que no trae uno con <code>open</code>?",o:["Nada, son iguales","Capa superior, velo, cierre con Esc y página de detrás bloqueada","Solo un borde más grueso"],a:1,e:"Por eso un modal se abre con command=\"show-modal\" o showModal()."},
+ {q:"¿Qué atributos abren un dialog modal sin JavaScript?",o:["commandfor=\"id\" y command=\"show-modal\" en un botón","href=\"#id\"","popovertarget=\"id\""],a:0,e:"Chrome 135, Safari 26.2 y Firefox 144 (MDN, nov. 2026)."},
+ {q:"¿Qué hace <code>&lt;form method=\"dialog\"&gt;</code> dentro de un dialog?",o:["Envía los datos al servidor","Cierra la ventana al pulsar uno de sus botones y guarda su value en returnValue","Abre otra ventana"],a:1,e:"No envía nada: cierra y recuerda qué se pulsó."},
+ {q:"¿Para qué sirve <code>@starting-style</code> al animar un dialog?",o:["Para dar el punto de partida de la animación de entrada","Para que la ventana empiece abierta","Para cargar los estilos antes"],a:0,e:"Sin él, el navegador pinta la ventana directamente en su estado final."},
+ {q:"¿Qué pasa con el contenido de un <code>&lt;template&gt;</code> normal?",o:["Se pinta dos veces","El navegador lo lee pero no lo pinta: es un molde","Se convierte en una imagen"],a:1,e:"Con shadowrootmode=\"open\" se convierte en la sombra de su padre."},
+ {q:"¿Cómo das estilo desde fuera a una pieza del shadow DOM?",o:["Con un selector normal: .tarjeta div","Marcándola con part=\"nombre\" y usando ::part(nombre)","No se puede de ninguna forma"],a:1,e:"El CSS de la página no entra en la sombra, salvo lo heredado, las variables y ::part()."}
+];
+
+/* =====================================================================
+   MOTOR DEL SALÓN DE CRISTAL
+   ===================================================================== */
+(() => {
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- resaltado de código ---------- */
+function hlCssLinea(code) {
+  const decl = s => s.replace(/([\w-]+)(\s*:\s*)([^;]*)(;?)/g, (m, p, c, v, f) => `<span class="h-p">${p}</span>${c}<span class="h-v">${v}</span>${f}`);
+  let m;
+  if (/^\s*@/.test(code)) return code.replace(/(@[\w-]+)/, '<span class="h-at">$1</span>');
+  if ((m = code.match(/^(\s*)([^{]+)\{(.*)\}(\s*)$/))) return `${m[1]}<span class="h-s">${m[2]}</span>{${decl(m[3])}}${m[4]}`;
+  if (code.includes("{")) return code.replace(/^(\s*)([^{]*)\{/, '$1<span class="h-s">$2</span>{');
+  if (/^\s*[\w-]+\s*:/.test(code)) return decl(code);
+  return code;
+}
+const hlCss = src => esc(src).split("\n").map(l => { const i = l.indexOf("/*"); return i < 0 ? hlCssLinea(l) : hlCssLinea(l.slice(0, i)) + `<span class="h-c">${l.slice(i)}</span>`; }).join("\n");
+const hlHtml = src => esc(src).replace(/(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g, (m, a, t, at, z) => `${a}<span class="h-t">${t}</span>${at.replace(/([\w-:]+)(=)(&quot;.*?&quot;)/g, '<span class="h-a">$1</span>$2<span class="h-q">$3</span>')}${z}`);
+let nCaja = 0;
+function cajaCodigo(lang, src, titulo) {
+  const c = el("div", "caja"), id = "cod" + (++nCaja);
+  c.innerHTML = `<div class="caja-t">${esc(titulo)} <button class="copiar" type="button" data-copia="${id}">Copiar</button></div><pre id="${id}">${lang === "css" ? hlCss(src) : hlHtml(src)}</pre>`;
+  return c;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".copiar"); if (!b) return; const n = document.getElementById(b.dataset.copia);
+  (navigator.clipboard ? navigator.clipboard.writeText(n.textContent) : Promise.reject()).then(() => { b.textContent = "¡Copiado!"; setTimeout(() => b.textContent = "Copiar", 1400); },
+    () => { const r = document.createRange(); r.selectNodeContents(n); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Ctrl + C"; });
+});
+
+/* ---------- ejemplos en vivo (iframe perezoso) ---------- */
+const BASE = "body{margin:0;padding:16px;font:16px/1.5 system-ui,sans-serif;color:#222;background:#fff}";
+const doc = (h, c) => `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><base href="about:srcdoc"><style>${BASE}</style><style>${c}</style></head><body>${h}</body></html>`;
+const perezosos = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting && x.target._doc) { x.target.srcdoc = x.target._doc; x.target._doc = null; perezosos.unobserve(x.target); } }), { rootMargin: "500px" });
+function iframe(h, c, alto, titulo, ajusta) {
+  const f = el("iframe"); f.title = titulo; f._doc = doc(h, ajusta ? c : "html{overflow:hidden}" + c); /* las vistas del catálogo no deben mostrar barras */ if (alto) f.style.setProperty("--alto", alto + "px");
+  if (ajusta) f.addEventListener("load", () => { try { const d = f.contentDocument, a = () => f.style.setProperty("--alto", Math.min(Math.max(alto, d.documentElement.scrollHeight), 760) + "px"); a(); setTimeout(a, 500); } catch (e) {} });
+  perezosos.observe(f); return f;
+}
+$$(".ejemplo").forEach(ej => {
+  const [h, c] = ["html", "css"].map(l => (ej.querySelector(`.src[data-lang="${l}"]`) || {}).value || "");
+  const vivo = el("div", "ej-vivo"); vivo.append(iframe(h, c, +ej.dataset.alto || 220, "Ejemplo: " + ej.dataset.t, true));
+  const cod = el("div", "ej-codigo"); if (h) cod.append(cajaCodigo("html", h, "HTML")); cod.append(cajaCodigo("css", c, "CSS"));
+  ej.append(el("div", "ej-cab", `<span>${esc(ej.dataset.t)}</span><span>en vivo</span>`), vivo, cod);
+});
+
+/* ---------- menú y progreso ---------- */
+const ZONAS = $$("[data-nav]"), ul = $("#navUl");
+ZONAS.forEach(z => { const li = el("li"); li.innerHTML = `<a href="#${z.id}">${esc(z.dataset.nav)}</a>`; ul.append(li); });
+$("#navL").onclick = () => ul.scrollBy({ left: -240, behavior: "smooth" }); $("#navR").onclick = () => ul.scrollBy({ left: 240, behavior: "smooth" });
+const links = $$("a", ul); let actual = -1;
+function alScroll() {
+  const vh = innerHeight, tot = document.documentElement.scrollHeight - vh; $("#prog").style.scale = `${tot > 0 ? scrollY / tot : 0} 1`;
+  let i = 0; ZONAS.forEach((z, k) => { if (z.getBoundingClientRect().top < vh * .4) i = k; });
+  if (i !== actual) { actual = i; links.forEach((a, k) => a.setAttribute("aria-current", k === i)); const a = links[i]; ul.scrollTo({ left: a.offsetLeft - ul.clientWidth / 2 + a.clientWidth / 2, behavior: "smooth" }); }
+}
+let pend = false; addEventListener("scroll", () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; alScroll(); }); } }, { passive: true }); alScroll();
+
+
+/* ---------- errores y test ---------- */
+function bloque(host, lista, alPuntuar) {
+  const h = $(host), cards = [];
+  lista.forEach((it, i) => {
+    const c = el("div", "q"); c.innerHTML = `<p class="qq">${i + 1}. ${it.q}</p>`; if (it.code) c.append(cajaCodigo("css", it.code, "CSS"));
+    const ops = el("div"); it.o.map((_, k) => k).sort(() => Math.random() - .5).forEach(k => { const l = el("label", "opt"); l.innerHTML = `<input type="radio" name="${host.slice(1)}${i}" value="${k}"><span>${esc(it.o[k])}</span>`; ops.append(l); });
+    const ex = el("div", "ex", it.e); c.append(ops, ex);
+    c.corrige = () => { $$(".opt", c).forEach(l => { l.classList.remove("right", "wrong"); const v = +$("input", l).value; if (v === it.a) l.classList.add("right"); else if ($("input", l).checked) l.classList.add("wrong"); }); ex.classList.add("show"); };
+    c.limpia = () => { $$("input", c).forEach(x => x.checked = false); $$(".opt", c).forEach(l => l.classList.remove("right", "wrong")); ex.classList.remove("show"); };
+    c.bien = () => { const s = $("input:checked", c); return !!s && +s.value === it.a; };
+    ops.addEventListener("change", () => { c.corrige(); alPuntuar && alPuntuar(); }); cards.push(c); h.append(c);
+  });
+  return cards;
+}
+bloque("#fixes", FIX);
+{ let cards; const up = () => { const n = cards.filter(c => c.bien()).length; $("#qScore").textContent = `${n} / ${TEST.length}` + (n === TEST.length ? " · ¡brindis por ti!" : ""); };
+  cards = bloque("#quiz", TEST, up); $("#qAll").onclick = () => { cards.forEach(c => c.corrige()); up(); }; $("#qReset").onclick = () => { cards.forEach(c => c.limpia()); up(); }; }
+})();
+
+</script>
+</body>
+</html>
