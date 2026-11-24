@@ -428,6 +428,10 @@ footer a{color:var(--oro)}
   outline: 4px dashed #1a3fd1; /* el teclado también ve dónde está */
   outline-offset: 3px; /* separado del borde */
 }
+.boton:active {
+  translate: 0 3px; /* al pulsar se hunde: con ratón, dedo, Espacio o Intro */
+  background-color: #8a2d05; /* y se oscurece */
+}
 @media (pointer: coarse) {
   .boton {
     min-height: 3rem; /* 48px: más de los 44 recomendados */
@@ -532,6 +536,11 @@ footer a{color:var(--oro)}
   opacity: 0.4; /* las demás, casi transparentes */
   scale: 0.94; /* un poco más pequeñas */
   filter: grayscale(1); /* y en gris */
+}
+.carta:active {
+  scale: 0.9; /* al pulsarla se encoge: la has cogido */
+  background-color: #e3262b; /* y se pone roja */
+  color: #fff; /* con el texto blanco */
 }</textarea>
     </div>
     <div class="panel">
@@ -566,10 +575,13 @@ footer a{color:var(--oro)}
   font-size: 2rem; /* tamaño del icono */
   text-decoration: none; /* sin subrayado */
   transform-origin: bottom; /* crece hacia arriba */
-  transition: scale 0.2s; /* crecer suave */
+  transition: scale 0.2s, translate 0.15s; /* crecer y saltar suave */
 }
 .dock a:is(:hover, :focus-visible) {
   scale: 1.7; /* el señalado, mucho */
+}
+.dock a:active {
+  translate: 0 -0.8rem; /* al pulsarlo, da un saltito como al abrir una app */
 }
 .dock a:has(+ a:is(:hover, :focus-visible)),
 .dock a:is(:hover, :focus-visible) + a {
@@ -792,7 +804,7 @@ body {
       <p>El globo está dentro del botón con <code>display: none</code>. Al pasar el ratón (o llegar con el teclado) pasa a <code>display: block</code>, y <code>@starting-style</code> le da el punto de partida del fundido.</p>
     </div>
     <div class="ejemplo" data-alto="200" data-t="Globo de ayuda que aparece al pasar el ratón">
-<textarea class="src" data-lang="html"><button class="ayuda">Saltar <span class="globo">Pulsa A para saltar más alto</span></button></textarea>
+<textarea class="src" data-lang="html"><button class="ayuda">Saltar <span class="globo">Mantenme pulsado y salto</span></button></textarea>
 <textarea class="src" data-lang="css">body {
   padding-top: 4.5rem; /* sitio para el globo, que sale por arriba */
 }
@@ -803,6 +815,7 @@ body {
   background-color: #2fae3b; /* verde tubería */
   color: #fff; /* texto blanco */
   border: 4px solid #16121f; /* borde de píxel */
+  transition: translate 0.15s; /* el salto, suave */
 }
 .globo {
   display: none; /* escondido de verdad: no ocupa ni se lee */
@@ -826,6 +839,9 @@ body {
   .ayuda:is(:hover, :focus-visible) .globo {
     opacity: 0; /* punto de partida del fundido */
   }
+}
+.ayuda:active {
+  translate: 0 -1rem; /* mientras lo pulsas, salta (y el globo con él) */
 }</textarea>
     </div>
 
@@ -921,14 +937,48 @@ a:interest-source {
       <div class="ojo-cuidado"><code>touch-action: none</code> en el <code>body</code> deja la página sin desplazamiento y sin zoom en el móvil. Es un error de accesibilidad grave: aplícalo solo al elemento que lo necesita.</div>
     </div>
 
-    <div class="ejemplo" data-alto="200" data-t="Un mando de botones para el dedo">
-<textarea class="src" data-lang="html"><div class="mando">
-  <button aria-label="Izquierda">◀</button>
-  <button aria-label="Derecha">▶</button>
-  <button class="a">A</button>
-  <button class="b">B</button>
+    <div class="ejemplo" data-alto="250" data-t="Un mando de botones para el dedo (y para el teclado)">
+<textarea class="src" data-lang="html"><div class="consola">
+  <div class="pantalla"><span class="heroe">🍄</span></div>
+  <div class="mando">
+    <button class="izq" data-tecla="ArrowLeft" aria-label="Izquierda">◀</button>
+    <button class="der" data-tecla="ArrowRight" aria-label="Derecha">▶</button>
+    <button class="a" data-tecla="a">A</button>
+    <button class="b" data-tecla="b">B</button>
+  </div>
 </div></textarea>
-<textarea class="src" data-lang="css">.mando {
+<textarea class="src" data-lang="css">.consola {
+  width: max-content; /* tan ancha como el mando */
+}
+.pantalla {
+  position: relative; /* el héroe se coloca dentro */
+  height: 7rem; /* alto del nivel */
+  margin-bottom: 0.8rem; /* separación con el mando */
+  overflow: hidden; /* el héroe no se sale */
+  background: linear-gradient(#6b8cff 0 75%, #c84c0c 75%); /* cielo y suelo de ladrillo */
+}
+.heroe {
+  position: absolute; /* libre dentro de la pantalla */
+  left: calc(50% - 1rem); /* empieza en el centro */
+  bottom: 25%; /* de pie sobre el suelo */
+  font-size: 2rem; /* tamaño del héroe */
+  line-height: 1; /* sin aire extra */
+  transform-origin: bottom; /* se agacha hacia el suelo */
+  transition: translate 1s linear, bottom 0.2s, scale 0.15s; /* andar despacio, saltar y agacharse rápido */
+}
+.consola:has(.izq:is(:active, .pulsado)) .heroe {
+  translate: -7rem 0; /* mientras mantienes ◀, camina a la izquierda */
+}
+.consola:has(.der:is(:active, .pulsado)) .heroe {
+  translate: 7rem 0; /* mientras mantienes ▶, a la derecha */
+}
+.consola:has(.a:is(:active, .pulsado)) .heroe {
+  bottom: 70%; /* A: salta */
+}
+.consola:has(.b:is(:active, .pulsado)) .heroe {
+  scale: 1.3 0.6; /* B: se agacha */
+}
+.mando {
   display: flex; /* botones en fila */
   gap: 0.8rem; /* separación: que el pulgar no toque dos */
   padding: 1rem; /* aire */
@@ -949,7 +999,7 @@ a:interest-source {
   user-select: none; /* ni seleccionar el texto */
   -webkit-tap-highlight-color: transparent; /* sin el recuadro del móvil… */
 }
-.mando button:active {
+.mando button:is(:active, .pulsado) {
   translate: 0 5px; /* …porque ya hay respuesta propia: el botón se hunde */
   box-shadow: 0 0 0 #000; /* y pierde el relieve */
 }
@@ -959,6 +1009,11 @@ a:interest-source {
 .mando .b {
   background-color: #1a3fd1; /* botón B azul */
 }</textarea>
+    </div>
+
+    <div class="panel">
+      <p><b>Pruébalo:</b> mantén pulsado ◀ o ▶ y la seta camina; A salta y B se agacha. Con el teclado también: <b>flechas</b>, <b>A</b> y <b>B</b> mientras el mando esté a la vista.</p>
+      <div class="ojo-cuidado">El CSS <b>no oye las teclas</b>: <code>:active</code> solo se entera del ratón, del dedo y del Espacio o Intro sobre el botón con foco. Para las flechas y las letras, esta página trae unas líneas de <b>JavaScript</b> (no las ves en el código) que ponen la clase <code>.pulsado</code> al botón cuyo <code>data-tecla</code> coincide, y se la quitan al soltar. Por eso el CSS dice <code>:is(:active, .pulsado)</code>. Y al soltar, la seta vuelve al centro: el CSS no recuerda dónde se quedó.</div>
     </div>
 
     <div class="mision-host" data-m="dedos"></div>
@@ -1085,7 +1140,7 @@ const MISIONES = [
     min-height: 3rem;
   }
 }`, w:[12, 14], ok:[v => /^hover:hover$/.test(sinEsp(v)), v => /^(any-)?pointer:coarse$/.test(sinEsp(v))],
- html:`<button class="boton">Saltar</button> <button class="boton">Correr</button>`, base:"body{padding:2rem 1rem}",
+ html:`<button class="boton">Saltar</button> <button class="boton">Correr</button>`, base:"body{padding:2rem 1rem}button:active{translate:0 3px!important;filter:brightness(.8)}",
  pista:"Las dos son preguntas de @media del nivel 1: una sobre si se puede «posar» (hover) y otra sobre la precisión del puntero (pointer). Se escriben como nombre: valor."},
 {id:"apaga", t:"La fila que no se entera", h:"#2fae3b",
  enun:"Al pasar el ratón por una carta, las demás deberían apagarse. Rellena el selector: «la fila que <b>tiene</b> una carta con el ratón encima» y, dentro, «las cartas que <b>no</b> tienen el ratón encima».",
@@ -1162,7 +1217,7 @@ const MISIONES = [
   -webkit-user-select: none;
   user-select: [[1]];
 }`, w:[13, 6], ok:[/^manipulation$/, /^none$/],
- html:`<div class="mando"><button>A</button> <button>B</button></div>`, base:"body{padding:2rem 1rem}",
+ html:`<div class="mando"><button>A</button> <button>B</button></div>`, base:"body{padding:2rem 1rem}button:active{translate:0 4px;filter:brightness(.8)}",
  pista:"touch-action tiene un valor pensado justo para botones: deja desplazar y hacer zoom con dos dedos, pero no el doble toque. Para no seleccionar, el valor es el mismo que en la línea de -webkit-."}
 ];
 
@@ -1294,6 +1349,27 @@ $$(".moneda").forEach(m => {
 });
 /* Puntero: cinco toques dan premio */
 { let n = 0; $("#puntero").addEventListener("click", e => { pita([440 + n * 110]); if (++n === 5) coge("s-puntero", e.clientX, e.clientY); }); }
+
+/* ---------- teclas de verdad para los ejemplos con data-tecla: el CSS no oye el teclado ---------- */
+{
+  const conTeclas = [];
+  const tecla = (e, f) => {
+    if (e.ctrlKey || e.altKey || e.metaKey) return;
+    const b = $(`[data-tecla="${e.key.length === 1 ? e.key.toLowerCase() : e.key}"]`, f.contentDocument); if (!b) return;
+    e.preventDefault(); b.classList.toggle("pulsado", e.type === "keydown");
+  };
+  $$(".ej-vivo iframe").forEach(f => f.addEventListener("load", () => {
+    const d = f.contentDocument; if (f._teclas || !d.querySelector("[data-tecla]")) return; f._teclas = 1; conTeclas.push(f);
+    ["keydown", "keyup"].forEach(t => d.addEventListener(t, e => tecla(e, f)));
+  }));
+  /* desde la página: solo si el ejemplo se ve y no estás escribiendo en un hueco */
+  ["keydown", "keyup"].forEach(t => addEventListener(t, e => {
+    if (e.target.closest("input, textarea, select, [contenteditable]")) return;
+    conTeclas.forEach(f => { const r = f.getBoundingClientRect(); if (r.bottom > innerHeight * .15 && r.top < innerHeight * .85) tecla(e, f); });
+  }));
+  /* si cambias de ventana con una tecla pulsada, que no se quede pegada */
+  addEventListener("blur", () => conTeclas.forEach(f => $$(".pulsado", f.contentDocument).forEach(b => b.classList.toggle("pulsado", false))));
+}
 
 /* ---------- misiones ---------- */
 const norma = v => v.trim().replace(/\s+/g, " ").replace(/;$/, "").toLowerCase();
